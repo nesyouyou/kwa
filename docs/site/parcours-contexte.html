@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="fr" data-nkui-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parcours 2 : Context engineering | Kata</title>
+<script>try{if(localStorage.getItem('kata-docs-theme')==='light')document.documentElement.dataset.nkuiTheme='light'}catch(e){}</script>
+<link rel="stylesheet" href="ds/fonts.css"><link rel="stylesheet" href="ds/tokens.css"><link rel="stylesheet" href="ds/nakama.css"><link rel="stylesheet" href="src/parcours.css">
+<style>
+/* Extensions propres à la documentation Kata. Uniquement les tokens du design system : aucune couleur ajoutée. */
+html{scroll-behavior:smooth;overflow-x:clip}
+section{scroll-margin-top:84px}
+.nkds-hero{grid-template-columns:minmax(0,1fr)}
+.kd-term{min-width:0}
+.kd-eyebrow{font:400 12px/1.4 'Geist Mono',ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--nkui-mut);margin-bottom:20px}
+.kd-lead{max-width:68ch;color:var(--nkui-body);font-size:clamp(15px,1.4vw,17px);margin:0}
+.kd-head .nkds-section-title{margin-bottom:20px}
+.kd-section{padding-top:128px}
+.kd-bar{position:sticky;top:0;z-index:20;padding-block:14px;background:var(--nkui-glass);backdrop-filter:blur(8px);border-bottom:1px solid var(--nkui-rule-soft)}
+.kd-bar .row{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.kd-brand{display:flex;align-items:center;gap:14px;text-decoration:none;white-space:nowrap}
+.kd-brand svg{width:101px;height:auto;display:block}
+.kd-brand span{font:400 12px 'Geist Mono',monospace;letter-spacing:.08em;color:var(--nkui-mut)}
+.kd-nav{display:flex;gap:22px;overflow-x:auto;scrollbar-width:none}
+.kd-nav a{font:400 12px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;color:var(--nkui-body);white-space:nowrap}
+.kd-nav a:hover{color:var(--nkui-fg)}
+.kd-nav::-webkit-scrollbar{display:none}
+.kd-code{margin:0;background:var(--nkui-brick);border:1px solid var(--nkui-rule);border-radius:12px;padding:16px 18px;overflow-x:auto;font:13px/1.7 'Geist Mono',monospace;color:var(--nkui-fg)}
+.kd-code .p{color:var(--nkui-mut)} .kd-code .s{color:var(--nkui-green)}
+.kd-term{margin-top:40px;max-width:760px}
+.kd-term .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font:400 11px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--nkui-mut)}
+.kd-copy{font:400 11px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;background:transparent;color:var(--nkui-body);border:1px solid var(--nkui-rule);border-radius:999px;padding:6px 12px;min-height:30px}
+.kd-copy:hover{background:var(--nkui-raise)}
+code{font:.9em 'Geist Mono',monospace;background:var(--nkui-tint);border:1px solid var(--nkui-rule-soft);border-radius:6px;padding:1px 6px}
+.kd-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.kd-stat{padding:24px;border:1px solid var(--nkui-rule);border-radius:20px}
+.kd-stat .n{font:300 clamp(40px,5vw,64px)/1 Manrope,sans-serif;letter-spacing:-.045em}
+.kd-stat .l{margin-top:10px;color:var(--nkui-body);font-size:14px}
+.kd-grid{display:grid;gap:12px}
+.kd-g2{grid-template-columns:repeat(2,minmax(0,1fr))}.kd-g3{grid-template-columns:repeat(3,minmax(0,1fr))}.kd-g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.kd-card{min-width:0;padding:24px;border:1px solid var(--nkui-rule);border-radius:20px;background:transparent;text-align:left;font:inherit;color:inherit}
+.kd-card h3{font:500 18px/1.4 Geist,sans-serif;margin:0 0 12px}
+.kd-card p{color:var(--nkui-body);font-size:14px;line-height:1.625;margin:0}
+.kd-flow{display:grid;grid-template-columns:280px minmax(0,1fr);gap:12px;align-items:start}
+.kd-steps{display:grid;gap:8px}
+.kd-step{display:grid;grid-template-columns:30px minmax(0,1fr);align-items:center;gap:10px;text-align:left;min-height:44px;padding:10px 16px;border:1px solid var(--nkui-rule);border-radius:12px;background:transparent;color:var(--nkui-fg);font:500 14px Geist,sans-serif;transition:background .2s ease,color .2s ease}
+.kd-step i{font:400 11px 'Geist Mono',monospace;color:var(--nkui-mut);font-style:normal}
+.kd-step:hover{background:var(--nkui-raise)}
+.kd-step[aria-selected="true"]{background:var(--nkui-invert-bg);color:var(--nkui-invert-fg);border-color:transparent}
+.kd-step[aria-selected="true"] i{color:var(--nkui-invert-fg);opacity:.7}
+.kd-panel{border:1px solid var(--nkui-rule);border-radius:20px;padding:32px;min-height:420px}
+.kd-panel h3{font:300 clamp(30px,3.6vw,44px)/1.1 Manrope,sans-serif;letter-spacing:-.045em;margin:6px 0 16px}
+.kd-panel h3 strong{font-weight:700}
+.kd-panel .cols{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px}
+.kd-panel h4,.kd-detail h4{margin:0 0 8px;font:400 11px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--nkui-mut)}
+.kd-panel ul{margin:0;padding-left:18px;color:var(--nkui-body);font-size:14px;line-height:1.7}
+.kd-panel p.v{font:14px/1.6 'Geist Mono',monospace;margin:0}
+.kd-tools{display:flex;flex-wrap:wrap;gap:8px;margin:32px 0 20px;align-items:center}
+.kd-chip{font:400 12px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;background:transparent;color:var(--nkui-body);border:1px solid var(--nkui-rule);border-radius:999px;padding:9px 14px;min-height:36px;transition:background .2s ease}
+.kd-chip:hover{background:var(--nkui-raise)}
+.kd-chip[aria-pressed="true"]{background:var(--nkui-invert-bg);color:var(--nkui-invert-fg);border-color:transparent}
+.kd-search{flex:1;min-width:200px;min-height:36px;background:transparent;border:1px solid var(--nkui-rule);border-radius:999px;color:var(--nkui-fg);padding:8px 16px;font:13px 'Geist Mono',monospace}
+.kd-table{border:1px solid var(--nkui-rule);border-radius:20px;overflow:hidden}
+.kd-row{display:grid;grid-template-columns:110px minmax(0,1fr);gap:4px 20px;padding:16px 20px;border-top:1px solid var(--nkui-rule-soft);align-items:start}
+.kd-row:first-child{border-top:0}
+.kd-pill{display:inline-flex;align-items:center;gap:8px;padding:3px 10px;border-radius:999px;border:1px solid var(--nkui-rule);font:400 11px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase}
+.kd-pill.deny{background:var(--nkui-invert-bg);color:var(--nkui-invert-fg);border-color:transparent}
+.kd-pill.ask{border-color:var(--nkui-fg)}
+.kd-pill.allow{color:var(--nkui-green);border-color:currentColor}
+.kd-row .cmd{font:13px/1.55 'Geist Mono',monospace;white-space:pre-wrap;word-break:break-word}
+.kd-row .meta{font:400 11px 'Geist Mono',monospace;letter-spacing:.06em;color:var(--nkui-mut);text-transform:uppercase;margin-left:10px}
+.kd-row .why{grid-column:2;color:var(--nkui-body);font-size:14px}
+.kd-note{margin-top:14px;font:400 12px 'Geist Mono',monospace;letter-spacing:.04em;color:var(--nkui-mut)}
+.kd-legend{display:flex;flex-wrap:wrap;gap:10px 22px;margin:0 0 26px;font:400 11px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--nkui-body)}
+.kd-legend span{display:inline-flex;align-items:center;gap:9px}
+.sw{width:24px;height:14px;display:inline-block;border:1px solid var(--nkui-fg);border-radius:3px}
+.sw.hook{border-style:dashed}.sw.agent{border-style:double;border-width:4px}.sw.garde{border-color:var(--nkui-rule);border-left:4px solid var(--nkui-fg)}.sw.humain{background:var(--nkui-invert-bg);border-radius:10px;border-color:transparent}
+.kd-track{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:34px 36px}
+.kd-brick{position:relative;text-align:left;font:inherit;color:inherit;background:transparent;border:1px solid var(--nkui-fg);border-radius:12px;padding:16px 18px;transition:translate .2s ease,background .2s ease}
+.kd-brick:hover{translate:0 -2px;background:var(--nkui-tint)}
+.kd-brick[aria-pressed="true"]{background:var(--nkui-raise)}
+.kd-brick .ty{display:block;margin-bottom:8px;font:400 11px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--nkui-mut)}
+.kd-brick b{display:block;font:500 16px/1.35 Geist,sans-serif;margin-bottom:6px}
+.kd-brick .d{display:block;font-size:13.5px;line-height:1.55;color:var(--nkui-body)}
+.kd-brick .when{display:block;margin-top:10px;font:400 11px/1.5 'Geist Mono',monospace;letter-spacing:.04em;color:var(--nkui-mut)}
+.kd-brick.hook{border:1px dashed var(--nkui-fg)}
+.kd-brick.agent{border:4px double var(--nkui-fg);padding:13px 15px}
+.kd-brick.garde{border-color:var(--nkui-rule);border-left:4px solid var(--nkui-fg)}
+.kd-brick.humain{background:var(--nkui-invert-bg);color:var(--nkui-invert-fg);border-color:transparent;border-radius:28px;padding:18px 22px}
+.kd-brick.humain .ty,.kd-brick.humain .d,.kd-brick.humain .when{color:var(--nkui-invert-fg);opacity:.75}
+.kd-brick:not(:last-child)::after{content:"→";position:absolute;right:-28px;top:50%;translate:0 -50%;font:16px 'Geist Mono',monospace;color:var(--nkui-mut)}
+.kd-detail{margin-top:26px;border:1px solid var(--nkui-rule);border-radius:20px;padding:22px 26px;min-height:92px}
+.kd-detail p{margin:0;color:var(--nkui-body);font-size:14.5px;line-height:1.65}
+.kd-sk{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.kd-sk .kd-card h3{font:500 16px 'Geist Mono',monospace;margin-top:10px}
+.kd-fam{font:400 11px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--nkui-mut)}
+.kd-origin{display:inline-flex;align-items:center;gap:8px;margin:14px 6px 0 0;padding:3px 12px 3px 3px;border-radius:999px;background:var(--nkui-invert-bg);color:var(--nkui-invert-fg);font:10px/1.7 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase}
+.kd-origin img{width:22px;height:22px;border-radius:50%;object-fit:cover}
+.kd-origin.kata{padding:3px 12px}
+.kd-av{width:56px;height:56px;border-radius:50%;object-fit:cover;border:1px solid var(--nkui-rule);margin-bottom:14px;display:block}
+.kd-origin.kata{background:transparent;color:var(--nkui-fg);border:1px solid var(--nkui-fg)}
+.kd-src{display:grid;gap:12px}
+.kd-src .kd-card{display:grid;grid-template-columns:230px minmax(0,1fr);gap:8px 32px}
+.kd-src a{display:inline-block;margin-top:8px;font:12px 'Geist Mono',monospace;color:var(--nkui-body);word-break:break-all}
+.kd-tag{display:inline-block;margin:10px 6px 0 0;padding:3px 9px;border:1px solid var(--nkui-rule);border-radius:999px;font:11px 'Geist Mono',monospace;color:var(--nkui-body)}
+.kd-loop{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:34px}
+.kd-node{position:relative;padding:20px;border:1px solid var(--nkui-rule);border-radius:20px}
+.kd-node:not(:last-child)::after{content:"→";position:absolute;right:-28px;top:50%;translate:0 -50%;font:16px 'Geist Mono',monospace;color:var(--nkui-mut)}
+.kd-node b{display:block;font:500 15px Geist,sans-serif;margin-bottom:8px}.kd-node span{display:block;font-size:13.5px;line-height:1.6;color:var(--nkui-body)}
+.kd-gate{margin-top:12px;border:1px dashed var(--nkui-dim);border-radius:20px;padding:18px 22px;display:flex;gap:16px;align-items:baseline;color:var(--nkui-body);font-size:14px}
+.kd-gate b{font:400 12px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--nkui-fg);white-space:nowrap}
+.kd-ob{display:grid;gap:12px}
+.kd-ob .item{display:grid;grid-template-columns:56px minmax(0,1fr);gap:20px;padding:24px;border:1px solid var(--nkui-rule);border-radius:20px}
+.kd-ob .num{font:300 48px/1 Manrope,sans-serif;letter-spacing:-.045em;color:var(--nkui-dim)}
+.kd-ob h3{font:500 18px Geist,sans-serif;margin:0 0 6px}.kd-ob p{margin:0 0 14px;color:var(--nkui-body);font-size:14px}
+.kd-wrap{border:1px solid var(--nkui-rule);border-radius:20px;overflow-x:auto}
+.kd-wrap table{width:100%;min-width:560px;border-collapse:collapse;font-size:14px}
+.kd-wrap th{font:400 11px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--nkui-mut);text-align:left;padding:14px 20px;border-bottom:1px solid var(--nkui-rule)}
+.kd-wrap td{padding:14px 20px;border-top:1px solid var(--nkui-rule-soft);vertical-align:top;color:var(--nkui-body);line-height:1.6}
+.kd-wrap td:first-child{color:var(--nkui-fg);font-weight:500}
+details{border-top:1px solid var(--nkui-rule);padding:20px 0}
+details summary{cursor:pointer;font:500 18px Geist,sans-serif;min-height:44px;display:flex;align-items:center}
+details p{margin:10px 0 0;color:var(--nkui-body);max-width:68ch}
+.kd-rv{opacity:1;transform:none}
+.js .kd-rv{opacity:0;transform:translateY(18px);transition:opacity .88s var(--nkds-ease),transform .88s var(--nkds-ease)}
+.js .kd-rv.in{opacity:1;transform:none}
+footer.nkds-footer{margin-top:128px}
+@media (max-width:1023px){.kd-g4{grid-template-columns:repeat(2,minmax(0,1fr))}.kd-nav{display:none}}
+@media (max-width:900px){
+  .kd-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.kd-g2,.kd-g3{grid-template-columns:minmax(0,1fr)}
+  .kd-flow{grid-template-columns:minmax(0,1fr)}.kd-steps{grid-template-columns:repeat(2,minmax(0,1fr))}.kd-panel{padding:22px;min-height:0}.kd-panel .cols{grid-template-columns:minmax(0,1fr)}
+  .kd-loop{grid-template-columns:minmax(0,1fr)}.kd-node:not(:last-child)::after{content:"↓";right:auto;left:50%;top:auto;bottom:-30px;translate:-50% 0}
+  .kd-track{grid-template-columns:minmax(0,1fr);gap:34px}.kd-brick:not(:last-child)::after{content:"↓";right:auto;left:50%;top:auto;bottom:-30px;translate:-50% 0}
+  .kd-src .kd-card{grid-template-columns:minmax(0,1fr)}.kd-row{grid-template-columns:minmax(0,1fr)}.kd-row .why{grid-column:1}
+  .kd-ob .item{grid-template-columns:minmax(0,1fr);padding:18px}.kd-ob .num{display:none}.kd-section{padding-top:88px}.kd-brand span{display:none}
+}
+@media (prefers-reduced-motion:reduce){.js .kd-rv{opacity:1;transform:none;transition:none}}
+@media print{.kd-bar{display:none}.js .kd-rv{opacity:1;transform:none}}
+</style></head>
+<body class="nkds">
+<div class="kd-bar"><div class="nkds-container row">
+  <a class="kd-brand" href="index.html" aria-label="Nakama Kata, accueil"><svg id="logo-nav" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 944 180.2" fill="currentColor" role="img" aria-label="Nakama"></svg><span>/ kata</span></a>
+  <nav class="kd-nav" aria-label="Pages"><a href="index.html">Accueil</a><a href="skill-map.html">Carte</a><a href="board.html">Board</a><a href="terminal.html">Terminal</a><a href="parcours.html">Parcours</a></nav>
+  <button type="button" class="nkds-btn nkds-btn--small" id="theme" aria-pressed="false">Thème sombre</button>
+</div></div>
+
+<main class="nkds-container" style="padding-top:48px">
+  <div class="kd-eyebrow">Donner le bon contexte</div>
+  <h1 class="nkds-section-title" style="margin-bottom:32px">Parcours 2 : Context engineering<strong>.</strong></h1>
+  <p class="pc-intro">Du prompt isolé à un contexte entretenu : fichiers d'instructions, skills, agents, serveurs MCP et permissions, avec les vrais fichiers de configuration. Les exemples sont des configurations valides, vérifiées à la génération de la page. Prérequis : le parcours Culture, ou une bonne pratique d'un assistant d'IA. Environ trois heures, à calibrer en séance.</p><ol class="pc-nav"><li style="list-style:none"><a href="#etape-1">1 · Le contexte</a></li><li style="list-style:none"><a href="#etape-2">2 · AGENTS.md</a></li><li style="list-style:none"><a href="#etape-3">3 · Skills</a></li><li style="list-style:none"><a href="#etape-4">4 · Agents</a></li><li style="list-style:none"><a href="#etape-5">5 · MCP</a></li><li style="list-style:none"><a href="#etape-6">6 · Permissions</a></li></ol><section class="pc-stage" id="etape-1"><div class="pc-num">1</div><div class="pc-main"><h2 class="pc-h">Du prompt au contexte</h2><p class="pc-tag">Choisir ce que le modèle voit, au lieu de tout lui montrer.</p><p>Le <strong>context engineering</strong> est l'ensemble des moyens qui curent et entretiennent ce qui se trouve dans le contexte du modèle pendant le travail : consignes, outils, données externes, historique. Le prompt n'en est qu'une partie. L'objectif tient en une phrase : le plus petit ensemble d'informations très utiles qui produit le résultat voulu.</p>
+<p>Dans une session d'agent de code, ce qui entre dans la fenêtre vient de six endroits : les consignes du système, vos fichiers d'instructions, les définitions des outils (y compris ceux des serveurs MCP), la liste des skills, l'historique, et les résultats des outils. Quatre techniques gardent le contexte sain, et chacune a son pendant dans l'outil :</p>
+<table class="pc-table"><thead><tr><th>Technique</th><th>Dans Claude Code</th></tr></thead><tbody>
+<tr><td>Charger à la demande plutôt que tout précharger</td><td>Une skill n'entre en entier que lorsqu'elle est appelée ; l'agent lit les fichiers au moment du besoin</td></tr>
+<tr><td>Résumer quand la fenêtre se remplit</td><td>La compaction de la conversation</td></tr>
+<tr><td>Écrire des notes hors de la fenêtre</td><td>Les fichiers d'instructions, la mémoire automatique, les notes de session</td></tr>
+<tr><td>Déléguer à un contexte propre</td><td>Les sous-agents, qui renvoient un résumé</td></tr></tbody></table>
+<p>Retournez à la jauge du parcours précédent, préréglage « Session d'agent », et repérez les deux postes que vous contrôlez le mieux.</p><div class="pc-proof"><div><b>Preuve attendue</b><p>Nommer les six sources du contexte d'une session d'agent et associer une technique à chacun de ses problèmes.</p></div><div><b>Piège</b><p>Ajouter des informations « au cas où » alourdit le contexte. Ce qui n'aide pas la tâche la dessert.</p></div></div></div></section>
+<section class="pc-stage" id="etape-2"><div class="pc-num">2</div><div class="pc-main"><h2 class="pc-h">Les fichiers d'instructions</h2><p class="pc-tag">CLAUDE.md et AGENTS.md : du contexte persistant, pas une contrainte.</p><p>Chaque session démarre avec une fenêtre vide. Deux mécanismes transmettent la connaissance d'une session à l'autre : les fichiers d'instructions que <strong>vous</strong> écrivez (<code>CLAUDE.md</code>, ou <code>AGENTS.md</code> que Claude Code peut lire à la place), et la <strong>mémoire automatique</strong> que Claude écrit lui-même d'après vos corrections.</p>
+<p>Deux faits à retenir. D'abord, ces fichiers sont du <strong>contexte</strong> : l'agent les lit et peut s'en écarter. Pour interdire une action quelle que soit sa décision, il faut un hook (parcours suivant). Ensuite, plus une instruction est précise et courte, plus elle est suivie de manière constante.</p>
+<p>Le projet de ce site utilise un seul fichier commun et un pointeur : <code>AGENTS.md</code> porte les règles, <code>CLAUDE.md</code> contient une ligne <code>@AGENTS.md</code>. Des règles par type de fichier peuvent vivre dans <code>.claude/rules/</code>.</p>
+<p>Lequel de ces deux fichiers est le plus utile à un agent qui arrive sur le projet ?</p><div class="pc-proof" style="margin:0 0 16px"><div><b>Fichier A</b><pre class="kd-code" style="margin-top:10px;white-space:pre-wrap"># AGENTS.md
+
+Tu es un expert senior. Écris du code propre, performant et maintenable.
+Fais attention à la sécurité. Teste bien ton code. Sois prudent.</pre></div><div><b>Fichier B</b><pre class="kd-code" style="margin-top:10px;white-space:pre-wrap"># AGENTS.md
+
+Site vitrine (Next.js, pnpm). Répondre en français.
+
+## Vérifier avant de dire « fait »
+- `npx tsc --noEmit` puis `pnpm test:int` : citer le résultat.
+- `pnpm lint` est cassé : ne pas s'y fier.
+
+## Pièges
+- Le serveur de développement tourne sur le port 3100, pas 3000.
+- Après un changement de collection : `pnpm migrate:create &lt;nom&gt;` puis `pnpm migrate`.
+
+## Interdit
+- Pas de commit sur main : une branche par sujet, une PR par branche.</pre></div></div><details class="pc-reveal"><summary>Réponse</summary><div><p>Le B. Il contient ce que l'agent ne peut pas deviner en lisant le code : les commandes de vérification, les pièges, ce qui est interdit. Le A dit des intentions que n'importe quel modèle suit déjà (« écris du code propre ») sans rien de vérifiable. Une bonne instruction se teste : on peut dire si elle a été suivie.</p></div></details><p><strong>Exercice</strong> : écrivez dix lignes d'<code>AGENTS.md</code> pour un projet que vous connaissez, avec uniquement des commandes, des pièges et des interdits.</p><div class="pc-proof"><div><b>Preuve attendue</b><p>Produire dix lignes d'instructions vérifiables, et expliquer pourquoi elles ne remplacent pas un garde-fou.</p></div><div><b>Piège</b><p>Un fichier trop long ou contradictoire dilue ce qui compte. Deux sources qui se contredisent valent pire qu'une seule.</p></div></div></div></section>
+<section class="pc-stage" id="etape-3"><div class="pc-num">3</div><div class="pc-main"><h2 class="pc-h">Les skills</h2><p class="pc-tag">Une procédure chargée seulement quand elle sert.</p><p>Une skill est un dossier avec un fichier <code>SKILL.md</code> : un en-tête qui dit <strong>quand</strong> l'appeler, un corps qui dit <strong>comment</strong>. Claude l'invoque quand la description correspond à la conversation, ou vous la tapez avec <code>/nom</code>.</p>
+<pre class="kd-code">---
+name: relance-client
+description: Rédiger une relance commerciale. À utiliser quand l'utilisateur demande un mail de relance ou « relance ce client ».
+disable-model-invocation: false
+---
+
+# Relance client
+
+1. Demander la date et l'objet de la dernière proposition si absents.
+2. Rédiger un objet et trois phrases au plus, une question fermée.
+3. Relire : aucun montant ni date qui ne vienne de l'utilisateur.</pre>
+<p>Le point clé est le <strong>chargement progressif</strong> : seule la description reste toujours dans le contexte ; le corps n'est lu qu'à l'appel, et les fichiers annexes seulement au besoin. Une skill volumineuse ne coûte donc rien tant qu'on ne s'en sert pas.</p>
+<table class="pc-table"><thead><tr><th>Emplacement</th><th>Portée</th></tr></thead><tbody>
+<tr><td><code>~/.claude/skills/&lt;nom&gt;/SKILL.md</code></td><td>Personnel : tous vos projets</td></tr>
+<tr><td><code>.claude/skills/&lt;nom&gt;/SKILL.md</code></td><td>Ce dépôt, partagé en le versionnant</td></tr>
+<tr><td>Plugin</td><td>Là où le plugin est activé</td></tr></tbody></table>
+<p>Champs utiles : <code>disable-model-invocation: true</code> pour ne la lancer que par commande, <code>allowed-tools</code> pour pré-autoriser des outils pendant son exécution.</p>
+<p><strong>Exercice</strong> : transformez une tâche que vous répétez (relance, compte rendu, revue) en skill. Écrivez d'abord la description : elle doit dire quand, jamais le déroulé.</p><div class="pc-proof"><div><b>Preuve attendue</b><p>Écrire une skill dont la description déclenche au bon moment et dont le corps tient en dix lignes.</p></div><div><b>Piège</b><p>Une description qui résume les étapes pousse l'agent à les suivre sans lire le corps. Elle sert à choisir, pas à exécuter.</p></div></div></div></section>
+<section class="pc-stage" id="etape-4"><div class="pc-num">4</div><div class="pc-main"><h2 class="pc-h">Les agents</h2><p class="pc-tag">Un second collaborateur avec sa propre fenêtre de contexte.</p><p>Un <strong>sous-agent</strong> est un assistant spécialisé qui travaille dans une fenêtre de contexte isolée, avec ses propres consignes, ses propres outils et éventuellement un autre modèle. Il fait la tâche et ne renvoie qu'un résumé : la lecture de trente fichiers ne pollue pas la conversation principale. C'est la technique « déléguer à un contexte propre » du début du parcours.</p>
+<pre class="kd-code">---
+name: relecteur
+description: Relit un diff et signale les risques. À utiliser après une modification, avant la PR.
+tools: Read, Glob, Grep
+model: sonnet
+---
+
+Tu relis un changement sans le modifier. Pour chaque constat : fichier, comportement observé, comment le reproduire,
+importance. N'affirme pas avoir exécuté une commande que tu ne peux pas lancer.</pre>
+<p>Le fichier vit dans <code>.claude/agents/</code> (projet) ou <code>~/.claude/agents/</code> (personnel). Les champs obligatoires sont <code>name</code> et <code>description</code> ; <code>tools</code> restreint ses outils (ici, lecture seule) et hérite de tout si on l'omet. On l'invoque en le nommant, par @-mention, ou pour toute la session.</p>
+<p>Limites à connaître : chaque appel repart de zéro, il consomme du quota comme la session principale, et le nombre d'agents simultanés et la profondeur d'imbrication sont bornés.</p>
+<p><strong>Exercice</strong> : écrivez un agent « relecteur » en lecture seule pour votre projet. Quelles sont les trois informations que vous lui donnez avec sa tâche, puisqu'il n'a pas votre conversation ?</p><details class="pc-reveal"><summary>Piste</summary><div><p>La demande d'origine et ses critères de réussite, le diff ou les fichiers touchés, et les résultats des vérifications déjà faites. Un agent ne voit que ce qu'on lui envoie : un résumé vague produit une relecture vague.</p></div></details><div class="pc-proof"><div><b>Preuve attendue</b><p>Dire ce qu'un sous-agent gagne (un contexte propre) et ce qu'il perd (la conversation).</p></div><div><b>Piège</b><p>Restreindre les outils est une protection réelle pour un relecteur. Un agent qui peut tout modifier relit mal ce qu'il peut aussi corriger.</p></div></div></div></section>
+<section class="pc-stage" id="etape-5"><div class="pc-num">5</div><div class="pc-main"><h2 class="pc-h">MCP : brancher des outils</h2><p class="pc-tag">Un protocole commun pour donner à l'agent l'accès à des données et à des services.</p><p>Le <strong>Model Context Protocol</strong> permet à l'agent d'utiliser des serveurs externes : base de données, tracker, documentation, navigateur. Chaque serveur expose des outils que l'agent appelle. Deux conséquences : ils <strong>entrent dans le contexte</strong> (leurs définitions comptent dans la fenêtre) et ils <strong>peuvent agir</strong> (lire des données, écrire, supprimer). On n'installe donc que des serveurs de confiance, avec l'accès minimal.</p>
+<table class="pc-table"><thead><tr><th>Portée</th><th>Visible</th><th>Stockée dans</th></tr></thead><tbody>
+<tr><td>Locale (par défaut)</td><td>Ce projet, vous seul</td><td><code>~/.claude.json</code></td></tr>
+<tr><td>Projet</td><td>Ce projet, toute l'équipe</td><td><code>.mcp.json</code> à la racine, versionné</td></tr>
+<tr><td>Utilisateur</td><td>Tous vos projets, vous seul</td><td><code>~/.claude.json</code></td></tr></tbody></table>
+<p>Un fichier <code>.mcp.json</code> de projet :</p><pre class="kd-code">{
+  "mcpServers": {
+    "base-de-donnees": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@bytebase/dbhub"
+      ],
+      "env": {
+        "DATABASE_URL": "${DB_CONNECTION_STRING}"
+      }
+    },
+    "api-interne": {
+      "type": "http",
+      "url": "https://mcp.example.org/mcp",
+      "headers": {
+        "Authorization": "Bearer ${API_TOKEN}"
+      }
+    }
+  }
+}</pre>
+<p>Remarquez les <code>${...}</code> : les secrets viennent de variables d'environnement, jamais du fichier versionné. Un serveur de portée projet demande une approbation avant son premier usage.</p>
+<pre class="kd-code"><span class="p">$</span> claude mcp add --transport http &lt;nom&gt; &lt;url&gt;</pre><pre class="kd-code"><span class="p">$</span> claude mcp list</pre><pre class="kd-code"><span class="p">$</span> claude mcp remove &lt;nom&gt;</pre>
+<p>Dans les règles de permission, un outil MCP se nomme <code>mcp__&lt;serveur&gt;__&lt;outil&gt;</code> (par exemple <code>mcp__notion__.*</code> pour tous les outils d'un serveur).</p>
+<p><strong>Exercice</strong> : écrivez le <code>.mcp.json</code> d'un serveur en lecture seule sur une base de test. Où va le mot de passe ?</p><details class="pc-reveal"><summary>Réponse</summary><div><p>Dans une variable d'environnement, référencée par <code>${NOM}</code>, définie hors du dépôt. Le fichier versionné ne contient aucun secret. Pour la base elle-même, un compte en lecture seule : la permission la plus étroite possible est la première protection.</p></div></details><div class="pc-proof"><div><b>Preuve attendue</b><p>Choisir la bonne portée d'un serveur MCP et écrire sa configuration sans secret en clair.</p></div><div><b>Piège</b><p>Un serveur MCP n'est pas une simple lecture : il agit avec vos droits. Chaque serveur ajouté alourdit aussi le contexte.</p></div></div></div></section>
+<section class="pc-stage" id="etape-6"><div class="pc-num">6</div><div class="pc-main"><h2 class="pc-h">Permissions et réglages</h2><p class="pc-tag">Ce que l'agent peut faire, décidé hors de son texte.</p><p>Contrairement aux fichiers d'instructions, les <strong>règles de permission</strong> sont appliquées par l'outil, pas suggérées au modèle. Elles vivent dans les fichiers de réglages : <code>.claude/settings.json</code> (projet, partagé), <code>.claude/settings.local.json</code> (vos choix locaux, à garder hors du dépôt), <code>~/.claude/settings.json</code> (personnel), et des réglages d'organisation qui priment.</p>
+<pre class="kd-code">{
+  "permissions": {
+    "allow": [
+      "Bash(npm test *)",
+      "Bash(git status)"
+    ],
+    "ask": [
+      "Bash(git push *)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./secrets/**)",
+      "Bash(rm -rf *)"
+    ]
+  }
+}</pre>
+<p>Trois listes, évaluées dans cet ordre : <strong>deny</strong>, puis <strong>ask</strong>, puis <strong>allow</strong>. La première qui correspond décide, quelle que soit la précision des règles. Pronostiquez :</p>
+<table class="pc-table"><thead><tr><th>Cas</th><th>Résultat</th></tr></thead><tbody><tr><td>allow Bash(aws s3 ls) et deny Bash(aws *) : que se passe-t-il pour aws s3 ls ?</td><td><details class="pc-reveal"><summary>Mon pronostic</summary><div><span class="kd-pill deny">refusé</span> Refusé. Une règle d'interdiction large bloque aussi ce qu'une règle d'autorisation plus précise voudrait laisser passer.</div></details></td></tr><tr><td>allow Bash(git push *) et ask Bash(git push *) : que se passe-t-il pour git push origin feat ?</td><td><details class="pc-reveal"><summary>Mon pronostic</summary><div><span class="kd-pill ask">demande</span> Une confirmation est demandée. Une règle « demander » l'emporte sur une règle « autoriser ».</div></details></td></tr><tr><td>Un hook PreToolUse répond « autoriser » mais deny Read(./.env) existe : lecture de .env ?</td><td><details class="pc-reveal"><summary>Mon pronostic</summary><div><span class="kd-pill deny">refusé</span> Refusée. Les règles d'interdiction et de confirmation sont évaluées quel que soit le résultat d'un hook.</div></details></td></tr></tbody></table>
+<p>Les <strong>modes</strong> règlent le niveau d'autonomie : <code>default</code> (demande à la première utilisation), <code>acceptEdits</code> (accepte les modifications de fichiers), <code>plan</code> (explore sans modifier), <code>auto</code> (un classifieur vérifie les actions), <code>dontAsk</code> (refuse ce qui demanderait), <code>bypassPermissions</code> (aucune demande : réservé aux environnements isolés).</p>
+<p><strong>Limite à connaître</strong> : une règle sur une commande shell lit le texte que l'agent écrit. Elle couvre la forme habituelle d'un appel, pas toutes ses variantes : ce n'est pas une frontière de sécurité autour d'un programme. Pour bloquer la lecture d'un fichier par les outils de fichiers, on écrit une règle <code>Read</code> sur son chemin.</p>
+<p>Ce que les règles ne savent pas dire (« pas de commit sur main », « une PR doit être liée à une issue ») se règle avec des <strong>hooks</strong> : c'est l'objet du parcours Harness.</p><div class="pc-proof"><div><b>Preuve attendue</b><p>Prédire le résultat d'un jeu de règles deny, ask et allow, et dire ce qu'elles ne couvrent pas.</p></div><div><b>Piège</b><p>Mettre le mode le plus permissif « pour aller vite » retire justement la couche qui rattrape les erreurs. Il se réserve aux environnements jetables.</p></div></div></div></section><div class="pc-check"><h2>Vous avez compris si vous savez</h2><ul><li>lister ce qui remplit la fenêtre d'une session d'agent, et la technique qui répond à chaque problème ;</li><li>écrire des instructions vérifiables et dire pourquoi elles ne contraignent pas ;</li><li>écrire une skill, un sous-agent, et choisir leur emplacement ;</li><li>configurer un serveur MCP sans secret en clair, avec la bonne portée ;</li><li>prédire le résultat de règles deny, ask et allow, et nommer ce qu'elles ne garantissent pas.</li></ul></div><div class="pc-check"><h2>Sources</h2><p class="kd-note" style="margin:0 0 12px">Les documentations officielles font foi. Les noms de réglages et les limites évoluent avec les versions : vérifiez avant une séance.</p><ul><li><a href="https://code.claude.com/docs/en/memory">Instructions et mémoire (CLAUDE.md, AGENTS.md)</a></li><li><a href="https://code.claude.com/docs/en/skills">Skills</a></li><li><a href="https://code.claude.com/docs/en/sub-agents">Sous-agents</a></li><li><a href="https://code.claude.com/docs/en/mcp">MCP : portées et configuration</a></li><li><a href="https://code.claude.com/docs/en/permissions">Permissions</a></li><li><a href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents">Effective context engineering for AI agents</a></li></ul></div>
+</main>
+<footer class="nkds-footer nkds-invert"><div class="nkds-container nkds-footer-grid">
+  <div><svg id="logo-foot" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 944 180.2" fill="currentColor" role="img" aria-label="Nakama"></svg></div>
+  <div><h3>Kata</h3><p>v<span id="ver2"></span><br><span id="tests"></span></p></div>
+  <div><h3>Documentation</h3><p>Régénérée par <code>docs/site/build.py</code> ; exemples calculés en exécutant les gardes.</p></div>
+  <div><h3>Design</h3><p>Design system Nakama 1.0.0 (7 octobre 2026), fichiers vendorisés dans <code>docs/site/ds/</code>.</p></div>
+</div></footer>
+<script src="data.js"></script>
+<script>
+const DATA = window.KATA;
+const $ = (s, r=document) => r.querySelector(s);
+/* thème : clair par défaut, seul un choix explicite est enregistré */
+const root = document.documentElement, tbtn = $('#theme');
+function syncTheme(){ const dark = root.dataset.nkuiTheme==='dark'; tbtn.textContent = dark ? 'Thème clair' : 'Thème sombre'; tbtn.setAttribute('aria-pressed', String(dark)); }
+tbtn.onclick = () => { root.dataset.nkuiTheme = root.dataset.nkuiTheme==='dark' ? 'light' : 'dark'; try{ localStorage.setItem('kata-docs-theme', root.dataset.nkuiTheme); }catch(e){} syncTheme(); };
+syncTheme();
+document.addEventListener('click', e => { const b = e.target.closest('[data-copy]'); if(!b) return; navigator.clipboard?.writeText(b.dataset.copy); const o=b.textContent; b.textContent='Copié'; setTimeout(()=>b.textContent=o,1200); });
+
+/* logo : une seule géométrie, injectée dans les deux emplacements */
+
+document.querySelectorAll('svg[id^="logo-"]').forEach(s => s.innerHTML = DATA.logo);
+$('#ver2').textContent = DATA.version; $('#tests').textContent = `${DATA.tests} tests ${DATA.tests_ok ? 'au vert' : 'en échec'}`;
+
+</script></body></html>

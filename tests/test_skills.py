@@ -118,27 +118,53 @@ class Humanize(unittest.TestCase):
 
 
 class Parcours(unittest.TestCase):
-    PAGE = os.path.join(PACK, "docs", "site", "parcours.html")
+    SITE = os.path.join(PACK, "docs", "site")
+    PAGES = ["parcours.html", "parcours-culture.html", "parcours-contexte.html", "parcours-harness.html"]
 
-    def page(self):
-        return open(self.PAGE, encoding="utf-8").read()
+    def page(self, name):
+        return open(os.path.join(self.SITE, name), encoding="utf-8").read()
 
-    def test_page_has_eight_stages_with_real_output(self):
-        text = self.page()
-        for n in range(1, 9):
+    def test_harness_page_has_history_and_eight_stages_with_real_output(self):
+        text = self.page("parcours-harness.html")
+        for n in range(0, 9):
             self.assertIn(f'id="etape-{n}"', text)
         self.assertIn("non branchés dans settings.json", text)  # sortie réelle de kata doctor
         self.assertIn("permissionDecision", text)               # sortie réelle d'un garde
 
+    def test_culture_and_context_stages(self):
+        for name, count in (("parcours-culture.html", 6), ("parcours-contexte.html", 6)):
+            text = self.page(name)
+            for n in range(1, count + 1):
+                self.assertIn(f'id="etape-{n}"', text, name)
+        self.assertIn("parcours-widgets.js", self.page("parcours-culture.html"))
+        self.assertTrue(os.path.isfile(os.path.join(self.SITE, "src", "parcours-widgets.js")))
+
+    def test_hub_links_the_three_parcours(self):
+        text = self.page("parcours.html")
+        for target in self.PAGES[1:]:
+            self.assertIn(f'href="{target}"', text)
+
+    def test_context_examples_are_valid_and_secret_free(self):
+        text = self.page("parcours-contexte.html")
+        self.assertIn("${DB_CONNECTION_STRING}", text)
+        self.assertIsNone(re.search(r"sk-[A-Za-z0-9]{8,}", text))
+
     def test_no_temp_path_or_private_term(self):
-        text = self.page()
-        for bad in ("/var/folders", "/private/", "kata-parcours-", "/Users/"):
-            self.assertNotIn(bad, text)
-        self.assertIsNone(re.search(r"(?i)mycecca|cecca|\\bvault\\b", text))
+        for name in self.PAGES:
+            text = self.page(name)
+            for bad in ("/var/folders", "/private/", "kata-parcours-", "/Users/"):
+                self.assertNotIn(bad, text, name)
+            self.assertIsNone(re.search(r"(?i)mycecca|cecca|\\bvault\\b", text), name)
+
+    def test_prose_has_no_em_dash_outside_real_output(self):
+        # la prose écrite à la main applique /kata-humanize ; seules les sorties réelles d'un garde portent « Kata — »
+        for name in ("parcours.html", "parcours-culture.html", "parcours-contexte.html"):
+            body = re.search(r"<main.*?</main>", self.page(name), re.S).group(0)
+            self.assertNotIn("\u2014", body, name)
 
     def test_linked_from_home_and_readme(self):
-        self.assertIn("parcours.html", open(os.path.join(PACK, "docs", "site", "template.html"), encoding="utf-8").read())
         self.assertIn("parcours.html", open(os.path.join(PACK, "README.md"), encoding="utf-8").read())
+        self.assertIn("parcours.html", open(os.path.join(self.SITE, "template.html"), encoding="utf-8").read())
 
 
 if __name__ == "__main__":

@@ -235,9 +235,10 @@ def render(c: dict) -> str:
          "Trouver un contournement, et dire quelle barrière complète le garde.",
          "Ne jamais présenter un hook comme une garantie. Un contournement trouvé en séance est un bon résultat."),
     ]
-    out = []
-    for n, title, tag, body, proof, pitfall in stages:
-        out.append(f"""<section class="pc-stage" id="etape-{n}"><div class="pc-num">{n}</div><div class="pc-main">
-<h2 class="pc-h">{esc(title)}</h2><p class="pc-tag">{esc(tag)}</p>{body}
-<div class="pc-proof"><div><b>Preuve attendue</b><p>{esc(proof)}</p></div><div><b>Piège</b><p>{pitfall}</p></div></div></div></section>""")
-    return "\n".join(out)
+    return "\n".join(stage(*st) for st in stages)
+
+
+def stage(n: str, title: str, tag: str, body: str, proof: str, pitfall: str) -> str:
+    return (f'<section class="pc-stage" id="etape-{n}"><div class="pc-num">{n}</div><div class="pc-main">'
+            f'<h2 class="pc-h">{esc(title)}</h2><p class="pc-tag">{esc(tag)}</p>{body}'
+            f'<div class="pc-proof"><div><b>Preuve attendue</b><p>{proof}</p></div><div><b>Piège</b><p>{pitfall}</p></div></div></div></section>')

@@ -90,8 +90,6 @@ def tests_count():
     return int(m.group(1)) if m else 0, ok
 
 
-PARCOURS_HEAD = """<p class="pc-intro">Huit étapes, de la lecture d'un fichier d'instructions à la recherche d'un contournement. Chaque étape se joue sur un dépôt jetable, avec les vrais gardes : les sorties affichées sont celles de l'exécution, recalculées à chaque génération du site. Comptez environ trois heures. Prérequis : Python 3, git, un terminal. Aucun compte, aucune clé.</p>
-<ol class="pc-nav">""" + "".join(f'<li style="list-style:none"><a href="#etape-{n}">{n} · {t}</a></li>' for n, t in [("1", "Instructions"), ("2", "Un garde"), ("3", "Le branchement"), ("4", "La politique"), ("5", "Une skill"), ("6", "La mémoire"), ("7", "Le circuit"), ("8", "Les limites")]) + "</ol>"
 PARCOURS_TAIL = """<div class="pc-check"><h2>Vous avez compris si vous savez</h2><ul>
 <li>dire pourquoi un fichier d'instructions ne contraint pas, et nommer ce qui contraint ;</li>
 <li>prédire le verdict d'une commande, puis relier un garde à son entrée dans <code>settings.json</code> ;</li>
@@ -158,7 +156,11 @@ def main():
     sys.path.insert(0, src)
     import parcours  # noqa: E402
     stages = parcours.collect(PACK, verdict, worst, make_repo, POLICY)[0]
-    pages["parcours.html"] = ("Parcours d'apprentissage", "Comprendre un harness en le lisant et en le cassant", "parcours", PARCOURS_HEAD + parcours.render(stages) + PARCOURS_TAIL, "")
+    import parcours_pages  # noqa: E402
+    pages["parcours.html"] = ("Parcours d'apprentissage", "Trois parcours, du modèle au harness", "parcours", parcours_pages.hub(), "")
+    pages["parcours-culture.html"] = ("Parcours 1 : Culture IA générative", "Comprendre le modèle", "parcours", parcours_pages.culture(), "")
+    pages["parcours-contexte.html"] = ("Parcours 2 : Context engineering", "Donner le bon contexte", "parcours", parcours_pages.contexte(), "")
+    pages["parcours-harness.html"] = ("Parcours 3 : Harness", "Encadrer l'agent", "parcours", parcours_pages.harness(parcours.render(stages) + PARCOURS_TAIL), "")
     for fname, (title, eyebrow, widget, mount_html, mount_js) in pages.items():
         wcss, wjs = assets([widget])
         bar_p = bar.replace('href="#top"', 'href="index.html"').replace('<nav class="kd-nav" aria-label="Sections">', '<nav class="kd-nav" aria-label="Pages">')
@@ -190,7 +192,7 @@ $('#ver2').textContent = DATA.version; $('#tests').textContent = `${{DATA.tests}
     # contrôle de syntaxe des scripts inline des pages générées (une apostrophe oubliée casse toute la page)
     import shutil, tempfile
     if shutil.which("node"):
-        for page in ["index.html", "skill-map.html", "board.html", "terminal.html", "parcours.html"]:
+        for page in ["index.html", "skill-map.html", "board.html", "terminal.html", "parcours.html", "parcours-culture.html", "parcours-contexte.html", "parcours-harness.html"]:
             for i, code in enumerate(re.findall(r"<script>(.*?)</script>", open(os.path.join(HERE, page), encoding="utf-8").read(), re.S)):
                 with tempfile.NamedTemporaryFile("w", suffix=".js", delete=False, encoding="utf-8") as f:
                     f.write(code)
