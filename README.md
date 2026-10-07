@@ -3,6 +3,8 @@
 Le socle commun des projets Nakama : mêmes règles, mêmes garde-fous, mêmes skills, partout. Un kata est une forme
 qu'on répète à l'identique.
 
+**Parcours d'apprentissage** : `docs/site/parcours.html`, trois parcours qui s'enchaînent. 1) Culture IA générative (modèle, jetons, fenêtre de contexte, hallucinations, prompt engineering). 2) Context engineering (AGENTS.md et CLAUDE.md, skills, sous-agents, MCP et ses fichiers de configuration, permissions). 3) Harness (de l'histoire du processus de développement à Kata, avec huit étapes pratiques sur un dépôt jetable dont les sorties viennent de l'exécution réelle).
+
 **Documentation illustrée** : `docs/site/index.html` (workflow cliquable, briques de déclenchement, gardes en action,
 modules, skills et origines, mémoire, onboarding, crédits), au design system Nakama 1.0.0 (fichiers vendorisés dans
 `docs/site/ds/`, avec leurs licences de polices). Régénérer avec `python3 docs/site/build.py` : les exemples sont

@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="fr" data-nkui-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Carte des skills | Kata</title>
+<title>Parcours 1 : Culture IA générative | Kata</title>
 <script>try{if(localStorage.getItem('kata-docs-theme')==='light')document.documentElement.dataset.nkuiTheme='light'}catch(e){}</script>
-<link rel="stylesheet" href="ds/fonts.css"><link rel="stylesheet" href="ds/tokens.css"><link rel="stylesheet" href="ds/nakama.css"><link rel="stylesheet" href="src/map.css">
+<link rel="stylesheet" href="ds/fonts.css"><link rel="stylesheet" href="ds/tokens.css"><link rel="stylesheet" href="ds/nakama.css"><link rel="stylesheet" href="src/parcours.css">
 <style>
 /* Extensions propres à la documentation Kata. Uniquement les tokens du design system : aucune couleur ajoutée. */
 html{scroll-behavior:smooth;overflow-x:clip}
@@ -142,9 +142,66 @@ footer.nkds-footer{margin-top:128px}
 </div></div>
 
 <main class="nkds-container" style="padding-top:48px">
-  <div class="kd-eyebrow">Carte interactive</div>
-  <h1 class="nkds-section-title" style="margin-bottom:32px">Carte des skills<strong>.</strong></h1>
-  <div id="map" data-deeplink></div>
+  <div class="kd-eyebrow">Comprendre le modèle</div>
+  <h1 class="nkds-section-title" style="margin-bottom:32px">Parcours 1 : Culture IA générative<strong>.</strong></h1>
+  <p class="pc-intro">Six étapes pour comprendre ce que fait vraiment un modèle de langage : le texte, les jetons, la fenêtre de contexte, les erreurs, la manière de demander. Aucun outil à installer ; un outil d'IA au choix suffit pour les exercices. Environ deux heures, à calibrer en séance.</p><ol class="pc-nav"><li style="list-style:none"><a href="#etape-1">1 · Le modèle</a></li><li style="list-style:none"><a href="#etape-2">2 · Les jetons</a></li><li style="list-style:none"><a href="#etape-3">3 · Le contexte</a></li><li style="list-style:none"><a href="#etape-4">4 · Les hallucinations</a></li><li style="list-style:none"><a href="#etape-5">5 · Le prompt</a></li><li style="list-style:none"><a href="#etape-6">6 · Usages</a></li></ol><section class="pc-stage" id="etape-1"><div class="pc-num">1</div><div class="pc-main"><h2 class="pc-h">Ce qu'est un modèle de langage</h2><p class="pc-tag">Un outil qui prolonge un texte, pas une base de connaissances.</p><p>Un modèle de langage a lu une très grande quantité de textes et calcule, mot après mot, la suite la plus plausible de ce qu'on lui donne. Il ne consulte pas une base de faits : il produit du texte vraisemblable. De là viennent ses deux forces (rédiger, reformuler, transformer) et ses deux faiblesses (inventer, ignorer ce qui s'est passé après son entraînement).</p>
+<p><strong>À essayer</strong> avec l'outil de votre choix : posez trois fois exactement la même question ouverte (par exemple « propose-moi un plan pour présenter notre offre »). Comparez les trois réponses.</p>
+<details class="pc-reveal"><summary>Ce qu'on observe</summary><div><p>Les réponses diffèrent : le modèle tire sa suite parmi plusieurs possibles, il ne rejoue pas une réponse stockée. Pour une tâche qui doit être identique à chaque fois (un calcul, un contrôle), on ne s'en remet pas au texte du modèle : on utilise un programme, et le modèle ne fait que lire ou rédiger.</p></div></details><div class="pc-proof"><div><b>Preuve attendue</b><p>Expliquer en deux phrases pourquoi deux réponses à la même question peuvent différer.</p></div><div><b>Piège</b><p>« Il sait » ou « il a cherché » : le modèle ne cherche pas, il produit. Les outils de recherche ou de lecture de fichiers sont ajoutés à côté.</p></div></div></div></section>
+<section class="pc-stage" id="etape-2"><div class="pc-num">2</div><div class="pc-main"><h2 class="pc-h">Les jetons</h2><p class="pc-tag">L'unité de texte que le modèle lit, écrit, et que l'on compte.</p><p>Le modèle ne lit pas des lettres ni des mots entiers : il découpe le texte en morceaux appelés <strong>jetons</strong> (tokens). Tout se mesure en jetons : la longueur de ce qu'il peut lire, la longueur de sa réponse, les limites d'usage et le coût d'un appel à l'API. Un texte plus long, ou une langue découpée plus finement, consomme plus de jetons.</p>
+<p>Estimez les jetons d'un de vos textes. Le résultat est un <strong>ordre de grandeur</strong> : le vrai compte dépend du modèle, et l'API propose un compteur exact (voir les sources).</p><div class="pc-widget"><label class="pc-lbl" for="tok-input">Collez un texte de votre travail (il reste dans votre navigateur)</label>
+<textarea id="tok-input" rows="5" placeholder="Un paragraphe d'un rapport, un e-mail, une page de documentation..."></textarea>
+<div id="tok-out" class="pc-out"></div></div><div class="pc-proof"><div><b>Preuve attendue</b><p>Donner l'ordre de grandeur d'un document de votre travail en jetons, et dire ce qui le rend plus ou moins gros.</p></div><div><b>Piège</b><p>Compter en pages ou en mots donne une idée, jamais le chiffre : deux textes de même longueur peuvent coûter des jetons différents.</p></div></div></div></section>
+<section class="pc-stage" id="etape-3"><div class="pc-num">3</div><div class="pc-main"><h2 class="pc-h">La fenêtre de contexte</h2><p class="pc-tag">Tout ce que le modèle peut voir à un instant donné, et rien d'autre.</p><p>La fenêtre de contexte est la « mémoire de travail » du modèle : <strong>tout</strong> ce qu'il peut consulter pour répondre, sa réponse comprise. Elle contient bien plus que votre dernier message : consignes du système, fichiers d'instructions, définitions des outils, historique de la conversation, fichiers lus, résultats des outils. Le modèle n'a pas de mémoire en dehors de cette fenêtre : une nouvelle session repart de zéro.</p>
+<p>Plus grande ne veut pas dire meilleure. À mesure que le contexte grossit, la précision et le rappel peuvent baisser : c'est ce que la documentation appelle <em>context rot</em>. Choisir ce qui entre compte autant que la place disponible.</p>
+<p>Remplissez la jauge, puis essayez les trois situations types.</p><div class="pc-widget" id="ctx-gauge">
+<div class="pc-presets"><span>Situations types</span>
+<button type="button" class="kd-copy" data-ctx-preset="chat">Discussion courte</button>
+<button type="button" class="kd-copy" data-ctx-preset="agent">Session d'agent</button>
+<button type="button" class="kd-copy" data-ctx-preset="long">Session trop longue</button></div>
+<div class="pc-fields">
+<label>Consignes du système<input id="ctx-sys" type="number" min="0" step="500" value="6000"></label>
+<label>Fichiers d'instructions<input id="ctx-rules" type="number" min="0" step="500" value="3000"></label>
+<label>Définitions d'outils<input id="ctx-tools" type="number" min="0" step="500" value="12000"></label>
+<label>Historique de la conversation<input id="ctx-hist" type="number" min="0" step="1000" value="30000"></label>
+<label>Fichiers lus<input id="ctx-files" type="number" min="0" step="1000" value="40000"></label>
+<label>Résultats d'outils<input id="ctx-res" type="number" min="0" step="1000" value="25000"></label>
+<label>Taille de la fenêtre<select id="ctx-win"><option value="200000">200 000</option><option value="1000000">1 000 000</option></select></label>
+</div>
+<div class="pc-bar"><div id="ctx-bar"></div></div><p id="ctx-txt" class="pc-big"></p><p id="ctx-msg"></p></div><div class="pc-proof"><div><b>Preuve attendue</b><p>Citer ce qui occupe une fenêtre en dehors de votre message, et dire pourquoi la remplir n'est pas un but.</p></div><div><b>Piège</b><p>Les valeurs de la jauge sont des exemples pour comprendre, pas des mesures. Une interface de chat peut aussi faire glisser la conversation en oubliant les débuts.</p></div></div></div></section>
+<section class="pc-stage" id="etape-4"><div class="pc-num">4</div><div class="pc-main"><h2 class="pc-h">Les hallucinations</h2><p class="pc-tag">Un texte faux dit avec assurance.</p><p>Un modèle peut produire une affirmation fausse ou une source qui n'existe pas, avec le même ton que le vrai. On parle d'<strong>hallucination</strong>. Elle ne se règle pas par une phrase magique : on la réduit par la manière de demander, puis on la contrôle.</p>
+<p>Quatre leviers documentés :</p>
+<ul class="pc-list">
+<li><strong>Autoriser le « je ne sais pas »</strong> : dire explicitement qu'admettre l'incertitude est une bonne réponse.</li>
+<li><strong>Citer d'abord</strong> : sur un long document, demander les passages exacts avant l'analyse, puis ne raisonner que sur eux.</li>
+<li><strong>Exiger des citations</strong> pour chaque affirmation, et retirer celles qu'aucun passage ne soutient.</li>
+<li><strong>Limiter aux documents fournis</strong> : interdire de s'appuyer sur ses connaissances générales.</li>
+</ul>
+<p>Réécrivez cette demande avec au moins deux leviers :</p><div class="pc-proof" style="margin:0 0 16px"><div><b>Avant</b><pre class="kd-code" style="margin-top:10px;white-space:pre-wrap">Résume les risques juridiques de ce contrat et dis-moi ce qu'on doit négocier.</pre></div><div><b>Une version possible</b><pre class="kd-code" style="margin-top:10px;white-space:pre-wrap">Voici le contrat entre &lt;contrat&gt; et &lt;/contrat&gt;.
+1. Extrais d'abord les passages exacts qui parlent de responsabilité, de résiliation et de pénalités. Si tu n'en trouves pas, écris « aucun passage trouvé ».
+2. Analyse les risques en citant le numéro de chaque passage. N'utilise rien d'autre que ce contrat.
+3. Si un point te semble manquer, dis « je ne peux pas l'affirmer à partir du document ».</pre></div></div><details class="pc-reveal"><summary>Ce que ça ne règle pas</summary><div><p>Ces techniques réduisent les hallucinations, elles ne les suppriment pas. Pour une décision importante, une personne relit les passages cités dans le document d'origine. Un chiffre, une date, une référence légale ou une citation s'écrivent dans un texte seulement après vérification à la source.</p></div></details><div class="pc-proof"><div><b>Preuve attendue</b><p>Réécrire une demande pour qu'elle autorise l'incertitude et exige des passages, puis vérifier un passage cité à la main.</p></div><div><b>Piège</b><p>Une réponse bien rédigée n'est pas une réponse vraie. Le ton d'assurance ne dit rien sur l'exactitude.</p></div></div></div></section>
+<section class="pc-stage" id="etape-5"><div class="pc-num">5</div><div class="pc-main"><h2 class="pc-h">Le prompt engineering</h2><p class="pc-tag">Écrire pour un lecteur très compétent qui n'a aucun contexte.</p><p>Un prompt est un texte de travail : on le rédige comme une consigne à un collègue brillant qui arrive ce matin. La règle d'or de la documentation : montrez votre consigne à quelqu'un qui n'a pas le contexte et demandez-lui de l'exécuter. S'il hésite, le modèle hésitera aussi.</p>
+<ul class="pc-list">
+<li><strong>Être clair et direct</strong> : le résultat attendu, son format, ses contraintes, les étapes dans l'ordre quand l'ordre compte.</li>
+<li><strong>Donner le contexte et la raison</strong> : « pas de listes à puces, ce texte sera lu à voix haute » vaut mieux que « pas de listes ».</li>
+<li><strong>Donner des exemples</strong> : trois à cinq, proches de votre cas réel, variés, séparés des consignes par des balises.</li>
+<li><strong>Structurer avec des balises</strong> (<code>&lt;consignes&gt;</code>, <code>&lt;document&gt;</code>, <code>&lt;exemple&gt;</code>) quand le prompt mélange consignes, documents et exemples.</li>
+<li><strong>Donner un rôle</strong> en une phrase pour cadrer le ton et le point de vue.</li>
+</ul>
+<p>Améliorez cette demande :</p><div class="pc-proof" style="margin:0 0 16px"><div><b>Avant</b><pre class="kd-code" style="margin-top:10px;white-space:pre-wrap">Fais-moi un mail de relance client.</pre></div><div><b>Une version possible</b><pre class="kd-code" style="margin-top:10px;white-space:pre-wrap">Tu rédiges pour une ESN. Écris un e-mail de relance à un client dont la proposition est restée sans réponse depuis dix jours.
+Contexte : première relance, ton cordial et direct, sans pression commerciale.
+Format : objet, puis trois phrases au plus, une question fermée pour avancer.
+&lt;exemple&gt;
+Objet : Votre avis sur la proposition
+Bonjour, je reviens vers vous au sujet de la proposition du 3. Avez-vous pu la relire ? Je peux répondre à vos questions cette semaine.
+&lt;/exemple&gt;</pre></div></div><details class="pc-reveal"><summary>Pourquoi la seconde marche mieux</summary><div><p>Elle dit pour qui on écrit, dans quelle situation, avec quel ton, quel format, et montre un exemple. Rien n'est laissé à deviner. Notez aussi ce qu'elle ne fait pas : elle n'empile pas vingt règles. Le but est le plus petit ensemble d'informations qui change vraiment le résultat.</p></div></details><div class="pc-proof"><div><b>Preuve attendue</b><p>Transformer une demande vague en consigne qu'un collègue sans contexte pourrait exécuter.</p></div><div><b>Piège</b><p>Un prompt plus long n'est pas un meilleur prompt. Ajoutez ce qui manque au lecteur, pas ce qui rassure l'auteur.</p></div></div></div></section>
+<section class="pc-stage" id="etape-6"><div class="pc-num">6</div><div class="pc-main"><h2 class="pc-h">Usages responsables</h2><p class="pc-tag">Ce qu'on n'envoie pas, ce qu'on vérifie, qui décide.</p><ul class="pc-list">
+<li><strong>Données</strong> : ne pas coller de données personnelles, de secrets ni de données client réelles dans un outil que l'on ne maîtrise pas. Anonymiser ou fabriquer des exemples.</li>
+<li><strong>Vérification</strong> : relire, contrôler les chiffres, les références et les citations à la source.</li>
+<li><strong>Responsabilité</strong> : la décision et la signature restent humaines. Le modèle propose, la personne répond du résultat.</li>
+<li><strong>Calcul</strong> : un montant, un total ou un contrôle s'obtiennent par un tableur ou un script vérifiable. Le modèle lit et rédige autour.</li>
+</ul>
+<p>Prochaine étape : passer d'un prompt isolé à un <strong>contexte entretenu</strong>, avec des fichiers, des skills et des outils. C'est le parcours suivant.</p><div class="pc-proof"><div><b>Preuve attendue</b><p>Dire ce qu'on ne colle jamais dans un outil d'IA et qui répond du résultat.</p></div><div><b>Piège</b><p>« C'est l'IA qui l'a dit » ne tient devant personne. La personne qui diffuse un texte en répond.</p></div></div></div></section><div class="pc-check"><h2>Vous avez compris si vous savez</h2><ul><li>dire pourquoi un modèle produit du texte plausible sans consulter une base de faits ;</li><li>estimer les jetons d'un texte et lister ce qui occupe une fenêtre de contexte ;</li><li>expliquer pourquoi remplir la fenêtre ne rend pas la réponse meilleure ;</li><li>réécrire une demande pour réduire le risque d'hallucination, puis vérifier à la source ;</li><li>écrire une consigne qu'un collègue sans contexte pourrait exécuter.</li></ul></div><div class="pc-check"><h2>Sources</h2><p class="kd-note" style="margin:0 0 12px">Les documentations officielles font foi. Les noms de réglages et les limites évoluent avec les versions : vérifiez avant une séance.</p><ul><li><a href="https://platform.claude.com/docs/en/build-with-claude/context-windows">Fenêtres de contexte (jetons, context rot, compaction)</a></li><li><a href="https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations">Réduire les hallucinations</a></li><li><a href="https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices">Bonnes pratiques de prompting</a></li><li><a href="https://platform.claude.com/docs/en/build-with-claude/token-counting">Compter les jetons (API)</a></li></ul></div><script src="src/parcours-widgets.js"></script>
 </main>
 <footer class="nkds-footer nkds-invert"><div class="nkds-container nkds-footer-grid">
   <div><svg id="logo-foot" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 944 180.2" fill="currentColor" role="img" aria-label="Nakama"></svg></div>
@@ -152,7 +209,7 @@ footer.nkds-footer{margin-top:128px}
   <div><h3>Documentation</h3><p>Régénérée par <code>docs/site/build.py</code> ; exemples calculés en exécutant les gardes.</p></div>
   <div><h3>Design</h3><p>Design system Nakama 1.0.0 (7 octobre 2026), fichiers vendorisés dans <code>docs/site/ds/</code>.</p></div>
 </div></footer>
-<script src="data.js"></script><script src="src/map.js"></script>
+<script src="data.js"></script>
 <script>
 const DATA = window.KATA;
 const $ = (s, r=document) => r.querySelector(s);
@@ -167,5 +224,5 @@ document.addEventListener('click', e => { const b = e.target.closest('[data-copy
 
 document.querySelectorAll('svg[id^="logo-"]').forEach(s => s.innerHTML = DATA.logo);
 $('#ver2').textContent = DATA.version; $('#tests').textContent = `${DATA.tests} tests ${DATA.tests_ok ? 'au vert' : 'en échec'}`;
-DATA.map && KataMap.mount($('#map'), DATA.map);
+
 </script></body></html>
