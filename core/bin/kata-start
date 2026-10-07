@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """kata-start — démarre un développement selon le circuit issue-flow.
 
-    kata-start <fix|feat|chore|docs> <slug> "<titre>" [--issue N] [--body-file f]
+    kata-start <fix|feat|chore|docs> <slug> "<titre>" [--issue N | --no-issue] [--body-file f]
 
   <slug>         nom court de la branche, en anglais, kebab-case (ex. my-portfolio-filter)
   <titre>        titre de l'issue, en français
   --issue N      reprend une issue existante au lieu d'en ouvrir une
+  --no-issue     ne crée aucune issue : branche <type>/<slug> (défaut si la politique a flow.auto_issue: false)
   --body-file f  corps de la nouvelle issue (sinon un squelette à compléter)
 
 Ouvre l'issue, crée la branche <type>/<n°>-<slug> dans un worktree à côté du dépôt principal, puis lance
@@ -45,10 +46,12 @@ def main(argv: list[str]) -> int:
     if not re.fullmatch(r"[a-z0-9]+(-[a-z0-9]+)*", slug):
         print(f"slug invalide : « {slug} » (attendu : kebab-case anglais, ex. my-portfolio-filter)", file=sys.stderr)
         return 2
-    issue, body_file = "", ""
+    issue, body_file, no_issue = "", "", False
     while rest:
         if rest[0] == "--issue" and len(rest) > 1:
             issue, rest = rest[1], rest[2:]
+        elif rest[0] == "--no-issue":
+            no_issue, rest = True, rest[1:]
         elif rest[0] == "--body-file" and len(rest) > 1:
             body_file, rest = rest[1], rest[2:]
         else:
@@ -64,8 +67,12 @@ def main(argv: list[str]) -> int:
     start = policy.get("start", {})
     base = policy.get("base_branch", "main")
     labels = {"fix": "bug", "feat": "enhancement", **start.get("labels", {})}
+    if not issue and not policy.get("flow", {}).get("auto_issue", True):
+        no_issue = True
 
-    if not issue:
+    if no_issue and not issue:
+        print("aucune issue créée (flow.auto_issue: false ou --no-issue)")
+    elif not issue:
         tmp = None
         if not body_file:
             fd, tmp = tempfile.mkstemp(suffix=".md")
@@ -84,8 +91,9 @@ def main(argv: list[str]) -> int:
         run("gh", "issue", "view", issue, "--json", "number", cwd=root)
         print(f"issue reprise : #{issue}")
 
-    branch = f"{typ}/{issue}-{slug}"
-    wt = os.path.join(os.path.dirname(main_root), f"{os.path.basename(main_root)}-wt-{issue}-{slug}")
+    ref = f"{issue}-{slug}" if issue else slug
+    branch = f"{typ}/{ref}"
+    wt = os.path.join(os.path.dirname(main_root), f"{os.path.basename(main_root)}-wt-{ref}")
     run("git", "fetch", "-q", "origin", base, cwd=root)
     run("git", "worktree", "add", "-q", "-b", branch, wt, f"origin/{base}", cwd=root)
     print(f"branche : {branch}\nworktree : {wt}")

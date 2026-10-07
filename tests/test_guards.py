@@ -27,7 +27,7 @@ def bash(hook, cmd, **kw):
 
 class Secrets(unittest.TestCase):
     def test_denied(self):
-        for cmd in ["cat .env", "cat .env.local", "cat .env.backup", "cat prod.env", "cat .e''nv",
+        for cmd in ["cat .env", "cat .env.local", "cat .env.backup", "cat config/prod.env", "cat .e''nv",
                     "bash -c 'cat .env'", "env A=1 cat .env", "KEY=1\ncat .env", "printenv",
                     "gh auth token", "cat ~/.netrc", "cat ~/.config/gh/hosts.yml", "cat id_rsa",
                     "scw config get secret-key", "echo ok; cat .env", "cat < .env", "nice -n 5 cat .env"]:
@@ -39,9 +39,46 @@ class Secrets(unittest.TestCase):
             with self.subTest(cmd=cmd):
                 self.assertEqual(bash("guard-secrets.py", cmd), "allow")
 
+    def test_code_identifiers_are_not_files(self):
+        """`process.env`, `self.env`, `config.env` sont des identifiants de code, pas des fichiers : pas de faux positif."""
+        d = tempfile.mkdtemp()
+        for cmd in ["grep -rn process.env src/", "node -e \"console.log(process.env.HOME)\"", "python3 -c 'print(self.env)'",
+                    "grep -rn config.env docs/"]:
+            with self.subTest(cmd=cmd):
+                self.assertEqual(bash("guard-secrets.py", cmd, cwd=d), "allow")
+
+    def test_dotted_name_that_exists_as_a_file_is_denied(self):
+        d = tempfile.mkdtemp()
+        open(os.path.join(d, "prod.env"), "w").write("X=1\n")
+        self.assertEqual(bash("guard-secrets.py", "cat prod.env", cwd=d), "deny")
+        self.assertEqual(bash("guard-secrets.py", "cat ./prod.env", cwd=d), "deny")
+
     def test_read_tool(self):
         self.assertEqual(run("guard-secrets.py", "Read", {"file_path": "/x/.env"}), "deny")
         self.assertEqual(run("guard-secrets.py", "Read", {"file_path": "/x/.env.example"}), "allow")
+
+
+class Heredocs(unittest.TestCase):
+    """Un corps de heredoc est une donnée, sauf si la commande qui le porte est un interpréteur."""
+
+    def setUp(self):
+        self.d = tempfile.mkdtemp()
+
+    def secrets(self, cmd):
+        return bash("guard-secrets.py", cmd, cwd=self.d)
+
+    def test_data_even_when_another_command_on_the_line_is_an_interpreter(self):
+        self.assertEqual(self.secrets("python3 build.py; git commit -q -F - <<'EOF'\nmessage qui cite cat .env\nEOF"), "allow")
+        self.assertEqual(self.secrets("node build.js && cat > note.md <<'EOF'\nne jamais faire cat .env\nEOF"), "allow")
+
+    def test_executed_when_the_carrier_is_an_interpreter(self):
+        self.assertEqual(self.secrets("bash <<'EOF'\ncat .env\nEOF"), "deny")
+        self.assertEqual(self.secrets("echo ok; sh <<'EOF'\ncat .env\nEOF"), "deny")
+        self.assertEqual(self.secrets("python3 - <<'PY'\ncat .env\nPY"), "deny")
+
+    def test_executed_when_piped_to_an_interpreter(self):
+        self.assertEqual(self.secrets("cat <<'EOF' | bash\ncat .env\nEOF"), "deny")
+        self.assertEqual(self.secrets("cat <<'EOF' | sudo sh\ncat .env\nEOF"), "deny")
 
 
 class Git(unittest.TestCase):

@@ -43,7 +43,7 @@ python3 .claude/kata/bin/kata-start <fix|feat|chore|docs> <slug> "<titre>" --bod
 python3 .claude/kata/bin/kata-start <type> <slug> "<titre>" --issue <n°>
 ```
 
-`<slug>` : anglais, kebab-case. Titre de l'issue : français. Le script ouvre l'issue, crée `<type>/<n°>-<slug>` dans
+`<slug>` : anglais, kebab-case. Titre de l'issue : français. **L'issue est ouverte automatiquement** à partir de la demande, sans la redemander, sauf si la politique a `flow.auto_issue: false` ou si tu passes `--no-issue` : on a alors juste la branche `<type>/<slug>`. Le script ouvre l'issue, crée `<type>/<n°>-<slug>` dans
 un worktree à côté du dépôt et lance `start.install`. **Tout le travail se fait dans ce worktree.**
 
 ## 3. Développer
