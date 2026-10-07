@@ -91,5 +91,31 @@ class Router(unittest.TestCase):
         self.assertEqual(self.run_router([]), "")
 
 
+class Humanize(unittest.TestCase):
+    def read(self, *parts):
+        return open(os.path.join(PACK, *parts), encoding="utf-8").read()
+
+    def test_never_invents_and_bans_dashes(self):
+        text = self.read("core", "skills", "humanize", "SKILL.md")
+        self.assertIn("n'inventer aucun fait", text)
+        self.assertIn("ne contient pas de tiret cadratin", text)
+
+    def test_own_prose_has_no_dash(self):
+        # la skill doit appliquer ce qu'elle enseigne : seule la ligne qui nomme les tirets les cite
+        lines = [l for l in self.read("core", "skills", "humanize", "SKILL.md").splitlines() if "\u2014" in l or "\u2013" in l]
+        self.assertEqual(len(lines), 1, lines)
+        self.assertIn("tiret cadratin", lines[0])
+
+    def test_wired_into_commit_ship_and_router(self):
+        for skill in ("commit", "ship"):
+            self.assertIn("/kata-humanize", self.read("core", "skills", skill, "SKILL.md"))
+        self.assertIn("/kata-humanize", self.read("core", "templates", "skills-router.md"))
+
+    def test_module_ships_it(self):
+        manifest = json.loads(self.read("manifest.json"))
+        dests = [d.get("dest") for m in manifest["modules"].values() for d in (m.get("files") or {}).values()]
+        self.assertIn(".claude/skills/kata-humanize", dests)
+
+
 if __name__ == "__main__":
     unittest.main()

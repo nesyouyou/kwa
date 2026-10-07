@@ -156,6 +156,9 @@
         "core/skills/rephrase/*": {
           "dest": ".claude/skills/kata-rephrase"
         },
+        "core/skills/humanize/*": {
+          "dest": ".claude/skills/kata-humanize"
+        },
         "core/skills/prototype/*": {
           "dest": ".claude/skills/kata-prototype"
         },

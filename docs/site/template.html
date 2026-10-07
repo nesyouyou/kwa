@@ -362,7 +362,7 @@ DATA.modules.forEach(m=>{
 });
 
 /* skills */
-const FAMILIES = {cadrage:['interview','brainstorm','plan','tickets','questionnaire','prototype','architecture','rephrase'], faire:['execute','agents','parallel','tdd','simple','start-dev'], prouver:['debug','verify','review','review-feedback','audit'], livrer:['commit','ship','deploy','testflight'], memoire:['learn','handoff','agent-docs']};
+const FAMILIES = {cadrage:['interview','brainstorm','plan','tickets','questionnaire','prototype','architecture','rephrase'], faire:['execute','agents','parallel','tdd','simple','start-dev'], prouver:['debug','verify','review','review-feedback','audit'], livrer:['commit','ship','deploy','testflight','humanize'], memoire:['learn','handoff','agent-docs']};
 const FLAB = {cadrage:'Cadrer', faire:'Faire', prouver:'Prouver', livrer:'Livrer', memoire:'Mémoire'};
 const famOf = n => Object.keys(FAMILIES).find(f=>FAMILIES[f].includes(n)) || 'faire';
 let ff='all';
