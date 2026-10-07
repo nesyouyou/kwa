@@ -90,6 +90,17 @@ def tests_count():
     return int(m.group(1)) if m else 0, ok
 
 
+PARCOURS_HEAD = """<p class="pc-intro">Huit étapes, de la lecture d'un fichier d'instructions à la recherche d'un contournement. Chaque étape se joue sur un dépôt jetable, avec les vrais gardes : les sorties affichées sont celles de l'exécution, recalculées à chaque génération du site. Comptez environ trois heures. Prérequis : Python 3, git, un terminal. Aucun compte, aucune clé.</p>
+<ol class="pc-nav">""" + "".join(f'<li style="list-style:none"><a href="#etape-{n}">{n} · {t}</a></li>' for n, t in [("1", "Instructions"), ("2", "Un garde"), ("3", "Le branchement"), ("4", "La politique"), ("5", "Une skill"), ("6", "La mémoire"), ("7", "Le circuit"), ("8", "Les limites")]) + "</ol>"
+PARCOURS_TAIL = """<div class="pc-check"><h2>Vous avez compris si vous savez</h2><ul>
+<li>dire pourquoi un fichier d'instructions ne contraint pas, et nommer ce qui contraint ;</li>
+<li>prédire le verdict d'une commande, puis relier un garde à son entrée dans <code>settings.json</code> ;</li>
+<li>ajouter une règle de projet et montrer qu'elle change un verdict ;</li>
+<li>écrire l'en-tête d'une skill et lire l'échec d'un test ;</li>
+<li>dire ce qu'aucun de ces garde-fous ne garantit, et quelle barrière complète.</li></ul>
+<p class="kd-note" style="margin-top:18px">Pour les consignes de chaque outil, les documentations officielles font foi : <a href="https://code.claude.com/docs/en/memory">mémoire et instructions</a>, <a href="https://code.claude.com/docs/en/hooks">hooks</a>, <a href="https://code.claude.com/docs/en/settings">réglages</a>. Les commandes et les noms de réglages évoluent avec les versions : vérifiez avant une séance.</p></div>"""
+
+
 def main():
     man = json.load(open(os.path.join(PACK, "manifest.json")))["modules"]
     mods = []
@@ -144,10 +155,14 @@ def main():
         "board.html": ("Le board", "Une demande, de bout en bout", "board", '<div id="board-root"></div>', "KataBoard.mount($('#board-root'));"),
         "terminal.html": ("Le terminal", "Comment on l'utilise", "terminal", '<div id="term-root"></div>', "KataTerminal.mount($('#term-root'), DATA.terminal);"),
     }
+    sys.path.insert(0, src)
+    import parcours  # noqa: E402
+    stages = parcours.collect(PACK, verdict, worst, make_repo, POLICY)[0]
+    pages["parcours.html"] = ("Parcours d'apprentissage", "Comprendre un harness en le lisant et en le cassant", "parcours", PARCOURS_HEAD + parcours.render(stages) + PARCOURS_TAIL, "")
     for fname, (title, eyebrow, widget, mount_html, mount_js) in pages.items():
         wcss, wjs = assets([widget])
         bar_p = bar.replace('href="#top"', 'href="index.html"').replace('<nav class="kd-nav" aria-label="Sections">', '<nav class="kd-nav" aria-label="Pages">')
-        bar_p = re.sub(r'<nav class="kd-nav".*?</nav>', '<nav class="kd-nav" aria-label="Pages"><a href="index.html">Accueil</a><a href="skill-map.html">Carte</a><a href="board.html">Board</a><a href="terminal.html">Terminal</a></nav>', bar_p, flags=re.S)
+        bar_p = re.sub(r'<nav class="kd-nav".*?</nav>', '<nav class="kd-nav" aria-label="Pages"><a href="index.html">Accueil</a><a href="skill-map.html">Carte</a><a href="board.html">Board</a><a href="terminal.html">Terminal</a><a href="parcours.html">Parcours</a></nav>', bar_p, flags=re.S)
         html = f"""<!doctype html>
 <html lang="fr" data-nkui-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title} | Kata</title>
@@ -175,7 +190,7 @@ $('#ver2').textContent = DATA.version; $('#tests').textContent = `${{DATA.tests}
     # contrôle de syntaxe des scripts inline des pages générées (une apostrophe oubliée casse toute la page)
     import shutil, tempfile
     if shutil.which("node"):
-        for page in ["index.html", "skill-map.html", "board.html", "terminal.html"]:
+        for page in ["index.html", "skill-map.html", "board.html", "terminal.html", "parcours.html"]:
             for i, code in enumerate(re.findall(r"<script>(.*?)</script>", open(os.path.join(HERE, page), encoding="utf-8").read(), re.S)):
                 with tempfile.NamedTemporaryFile("w", suffix=".js", delete=False, encoding="utf-8") as f:
                     f.write(code)

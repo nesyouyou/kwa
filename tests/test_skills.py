@@ -117,5 +117,29 @@ class Humanize(unittest.TestCase):
         self.assertIn(".claude/skills/kata-humanize", dests)
 
 
+class Parcours(unittest.TestCase):
+    PAGE = os.path.join(PACK, "docs", "site", "parcours.html")
+
+    def page(self):
+        return open(self.PAGE, encoding="utf-8").read()
+
+    def test_page_has_eight_stages_with_real_output(self):
+        text = self.page()
+        for n in range(1, 9):
+            self.assertIn(f'id="etape-{n}"', text)
+        self.assertIn("non branchés dans settings.json", text)  # sortie réelle de kata doctor
+        self.assertIn("permissionDecision", text)               # sortie réelle d'un garde
+
+    def test_no_temp_path_or_private_term(self):
+        text = self.page()
+        for bad in ("/var/folders", "/private/", "kata-parcours-", "/Users/"):
+            self.assertNotIn(bad, text)
+        self.assertIsNone(re.search(r"(?i)mycecca|cecca|\\bvault\\b", text))
+
+    def test_linked_from_home_and_readme(self):
+        self.assertIn("parcours.html", open(os.path.join(PACK, "docs", "site", "template.html"), encoding="utf-8").read())
+        self.assertIn("parcours.html", open(os.path.join(PACK, "README.md"), encoding="utf-8").read())
+
+
 if __name__ == "__main__":
     unittest.main()

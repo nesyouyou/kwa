@@ -3,6 +3,8 @@
 Le socle commun des projets Nakama : mêmes règles, mêmes garde-fous, mêmes skills, partout. Un kata est une forme
 qu'on répète à l'identique.
 
+**Parcours d'apprentissage** : `docs/site/parcours.html`, huit étapes pour comprendre un harness en le lisant et en le cassant (garde, branchement, politique, skill, mémoire, circuit, limites). Les sorties affichées viennent de l'exécution réelle sur un dépôt jetable.
+
 **Documentation illustrée** : `docs/site/index.html` (workflow cliquable, briques de déclenchement, gardes en action,
 modules, skills et origines, mémoire, onboarding, crédits), au design system Nakama 1.0.0 (fichiers vendorisés dans
 `docs/site/ds/`, avec leurs licences de polices). Régénérer avec `python3 docs/site/build.py` : les exemples sont
