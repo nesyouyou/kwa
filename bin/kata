@@ -1,0 +1,630 @@
+#!/usr/bin/env python3
+"""kata — uniformise les projets Nakama : AGENTS.md, garde-fous, règles, skills, politique projet.
+
+    kata detect    <cible>                         stack détectée, modules proposés, politique déduite
+    kata install   <cible> [--modules auto|a,b] [--with m ...] [--codex] [--dry-run]
+    kata status    <cible>                         version, modules, dérive locale
+    kata doctor    <cible>                         conformité (bloc, hooks, politique, doublons projet)
+    kata recommend <cible>                         skills tierces utiles pour cette stack (rien n'est installé)
+
+Principes :
+  - Noyau + modules ; ce qui dépend du projet vit dans .claude/kata.policy.json (propriété du projet,
+    créée une fois, jamais écrasée).
+  - AGENTS.md est la source unique ; CLAUDE.md devient un pointeur « @AGENTS.md ».
+  - Rien hors des marqueurs <!-- kata:begin … --> / <!-- kata:end --> n'est modifié.
+  - settings.json est fusionné sans doublon, sauvegardé, écrit de façon atomique.
+  - Une retouche locale d'un fichier géré est sauvegardée avant d'être écrasée ; un fichier « seed »
+    (gabarits GitHub, liste d'exceptions) n'est copié que s'il n'existe pas.
+  - Aucune action git : kata n'ajoute, ne commite, ne pousse jamais.
+
+Codes de sortie : 0 ok, 1 vérification échouée, 2 refusé / entrée invalide.
+Python 3.9+, bibliothèque standard uniquement.
+"""
+from __future__ import annotations
+
+import argparse
+import copy
+import hashlib
+import json
+import os
+import re
+import shutil
+import sys
+import tempfile
+import time
+from pathlib import Path
+
+PACK = Path(__file__).resolve().parent.parent
+BEGIN_RE = re.compile(r"^<!-- kata:begin\b.*-->\s*$")
+END_RE = re.compile(r"^<!-- kata:end -->\s*$")
+POINTER = "@AGENTS.md"
+POLICY_REL = ".claude/kata.policy.json"
+SKIP_DIRS = {"node_modules", ".git", ".next", ".turbo", "dist", "build", ".expo", "ios", "android", "Pods", ".venv", "coverage"}
+OVERLAP = {  # fichiers du projet que Kata remplace, une fois sa politique validée
+    "hooks": {"guard-bash.sh": "guard-policy + guard-git", "guard-github.sh": "guard-github (issue-flow)",
+              "guard-write.sh": "guard-write", "format-after-edit.sh": "format-after-edit (verify)",
+              "verify-stop.sh": "verify-stop (verify)"},
+    "skills": {"start-dev": "kata-start-dev", "deploy-recette": "kata-deploy", "deploy-prod": "kata-deploy",
+               "testflight": "kata-testflight"},
+}
+
+
+def die(msg: str, code: int = 2) -> None:
+    print(f"kata: {msg}", file=sys.stderr)
+    sys.exit(code)
+
+
+def sha(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def atomic_write(path: Path, text: str, mode: int | None = None) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, tmp = tempfile.mkstemp(dir=str(path.parent), prefix=f".{path.name}.")
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            f.write(text)
+            f.flush()
+            os.fsync(f.fileno())
+        if mode is not None:
+            os.chmod(tmp, mode)
+        elif path.exists():
+            shutil.copymode(path, tmp)
+        os.replace(tmp, path)
+    except BaseException:
+        if os.path.exists(tmp):
+            os.unlink(tmp)
+        raise
+
+
+def version() -> str:
+    return (PACK / "VERSION").read_text().strip()
+
+
+def manifest() -> dict:
+    return json.loads((PACK / "manifest.json").read_text())["modules"]
+
+
+def module_files(module: dict) -> list[tuple[str, dict]]:
+    """Fichiers d'un module. Une clé se terminant par `/*` copie tout le dossier source vers `dest` (un dossier)."""
+    out = []
+    for src_rel, spec in module.get("files", {}).items():
+        if src_rel.endswith("/*"):
+            base = PACK / src_rel[:-2]
+            for f in sorted(p for p in base.rglob("*") if p.is_file()):
+                rel = f.relative_to(base).as_posix()
+                out.append((f.relative_to(PACK).as_posix(), {**spec, "dest": f"{spec['dest'].rstrip('/')}/{rel}"}))
+        else:
+            out.append((src_rel, spec))
+    return out
+
+
+def read_json(path: Path, default=None):
+    if not path.exists():
+        return default
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except ValueError as e:
+        die(f"{path} n'est pas du JSON valide ({e}) ; laissé intact, corriger à la main")
+    if not isinstance(data, dict):
+        die(f"{path} n'est pas un objet JSON ; laissé intact")
+    return data
+
+
+# --------------------------------------------------------------------------- détection
+
+def walk(root: Path, max_depth: int = 4):
+    root = root.resolve()
+    for d, dirs, files in os.walk(root):
+        depth = len(Path(d).relative_to(root).parts)
+        dirs[:] = [x for x in dirs if x not in SKIP_DIRS and depth < max_depth]
+        yield Path(d), dirs, files
+
+
+def package_manager(target: Path) -> str:
+    for lock, pm in (("pnpm-lock.yaml", "pnpm"), ("yarn.lock", "yarn"), ("bun.lockb", "bun"), ("package-lock.json", "npm")):
+        if (target / lock).exists():
+            return pm
+    return "npm" if (target / "package.json").exists() else ""
+
+
+def detect(target: Path) -> dict:
+    found = {"tags": [], "modules": ["core"], "suggested": [], "inferred": {}}
+    pkg = read_json(target / "package.json", {}) or {}
+    pm = package_manager(target)
+    eas = [d / "eas.json" for d, _, fs in walk(target) if "eas.json" in fs]
+    prisma = [d for d, _, _ in walk(target) if d.name == "migrations" and d.parent.name == "prisma"]
+    all_pkgs = [read_json(d / "package.json", {}) or {} for d, _, fs in walk(target, 3) if "package.json" in fs]
+    all_deps = {k for p in all_pkgs for k in {**p.get("dependencies", {}), **p.get("devDependencies", {})}}
+    wf_dir = target / ".github" / "workflows"
+    wf = list(wf_dir.glob("*.y*ml")) if wf_dir.is_dir() else []
+    wf_text = "\n".join(f.read_text(errors="replace") for f in wf)
+
+    tags = []
+    if (target / "pnpm-workspace.yaml").exists() or pkg.get("workspaces"):
+        tags.append("monorepo")
+    for tag, dep in (("next", "next"), ("nest", "@nestjs/core"), ("expo", "expo"), ("react-native", "react-native"),
+                     ("payload", "payload"), ("prisma", "prisma"), ("playwright", "@playwright/test")):
+        if dep in all_deps:
+            tags.append(tag)
+    if any((target / f).exists() for f in ("pyproject.toml", "requirements.txt")):
+        tags.append("python")
+    found["tags"] = sorted(set(tags))
+
+    modules = ["core"]
+    if (target / ".git").exists():
+        modules += ["craft", "memory"]
+    if (target / ".git").exists() and (target / ".github").exists():
+        modules.append("issue-flow")
+    scripts = pkg.get("scripts", {})
+    verify = [f"{pm} {s}" for s in ("typecheck", "lint", "test") if s in scripts] if pm else []
+    if verify:
+        modules.append("verify")
+    if prisma:
+        modules.append("stack-prisma")
+    if eas:
+        modules.append("stack-expo")
+    if re.search(r"scw |scaleway|SCW_", wf_text, re.I):
+        modules.append("stack-scaleway")
+    if any("deploy" in f.name for f in wf):
+        modules.append("deploy")
+    found["modules"] = modules
+    found["suggested"] = ["client-handover"]  # dépend de l'intention : toujours proposé, jamais déduit
+
+    inferred: dict = {}
+    if verify:
+        inferred["verify"] = {"commands": verify}
+    if pm == "pnpm":
+        install = ["pnpm install --frozen-lockfile"]
+        if "db:generate" in scripts:
+            install.append("pnpm db:generate")
+        inferred["start"] = {"install": install}
+    elif pm:
+        inferred["start"] = {"install": [f"{pm} install"]}
+    code_dirs = [d + "/" for d in ("apps", "packages", "src", "app", "lib") if (target / d).is_dir()]
+    if code_dirs:
+        inferred["write"] = {"no_code_on_main": code_dirs}
+    if eas:
+        data = read_json(eas[0], {}) or {}
+        profiles = list((data.get("build") or {}).keys())
+        guess = next((p for p in profiles if "testflight" in p), None)
+        inferred["mobile"] = {"eas_config": str(eas[0].relative_to(target)), "profiles": profiles,
+                              "testflight_profile": guess, "release_check_before_build": True}
+    found["inferred"] = inferred
+    return found
+
+
+# --------------------------------------------------------------------------- politique
+
+def merge_policy(base: dict, extra: dict) -> dict:
+    """Fusion profonde ; les listes se concatènent (sans doublon d'`id`)."""
+    out = copy.deepcopy(base)
+    for k, v in extra.items():
+        if isinstance(v, dict) and isinstance(out.get(k), dict):
+            out[k] = merge_policy(out[k], v)
+        elif isinstance(v, list) and isinstance(out.get(k), list):
+            have = {x.get("id") for x in out[k] if isinstance(x, dict) and x.get("id")}
+            out[k] += [x for x in v if not (isinstance(x, dict) and x.get("id") in have)]
+        elif k not in out or out[k] in ({}, [], None):
+            out[k] = copy.deepcopy(v)
+    return out
+
+
+def build_policy(modules: list[str], inferred: dict) -> dict:
+    man = manifest()
+    pol: dict = {"kata": 1, "protected_branches": ["main"], "git": {"push_branch": "ask"}}
+    for m in modules:
+        pol = merge_policy(pol, man[m].get("policy", {}))
+    return merge_policy(pol, inferred)
+
+
+def rule_ids(policy: dict) -> set[str]:
+    ids = set()
+    for kind in ("deny", "ask"):
+        ids |= {f"bash.{kind}:{r['id']}" for r in policy.get("bash", {}).get(kind, []) if "id" in r}
+    ids |= {f"write.deny:{r['id']}" for r in policy.get("write", {}).get("deny", []) if "id" in r}
+    return ids
+
+
+def apply_policy(target: Path, modules: list[str], inferred: dict, dry: bool) -> str:
+    path = target / POLICY_REL
+    if path.exists():
+        current = read_json(path, {})
+        missing = sorted(rule_ids(build_policy(modules, {})) - rule_ids(current))
+        return "conservée (propriété du projet)" + (f" — règles Kata absentes : {', '.join(missing)}" if missing else "")
+    if not dry:
+        atomic_write(path, json.dumps(build_policy(modules, inferred), indent=2, ensure_ascii=False) + "\n")
+    return "créée à partir de la détection — à relire et compléter"
+
+
+# --------------------------------------------------------------------------- AGENTS.md
+
+def markers(lines: list[str]) -> list[tuple[int, int]]:
+    pairs, start = [], None
+    for i, line in enumerate(lines):
+        if BEGIN_RE.match(line):
+            start = i
+        elif END_RE.match(line) and start is not None:
+            pairs.append((start, i))
+            start = None
+    return pairs
+
+
+def render_block(profile: str, modules: list[str], target: Path | None = None) -> list[str]:
+    body = (PACK / "core" / "templates" / "agents-block.md").read_text(encoding="utf-8").strip("\n")
+    body = body.replace("{{PROFILE_RULES}}", (PACK / "profiles" / f"{profile}.md").read_text(encoding="utf-8").strip("\n"))
+    body = body.replace("{{MODULES}}", ", ".join(modules))
+    kb = ((read_json(target / POLICY_REL, {}) if target else {}) or {}).get("knowledge_base")
+    line = f"- Contexte de l'entreprise (clients, décisions) : `{kb}` fait foi ; s'il est muet, le dire, ne pas inventer." if kb else ""
+    body = body.replace("{{KNOWLEDGE_LINE}}\n", line + "\n" if line else "").replace("{{KNOWLEDGE_LINE}}", line)
+    head = f"<!-- kata:begin v{version()} profile={profile} (géré ; toute retouche ici est écrasée à la mise à jour) -->"
+    return [head] + body.splitlines() + ["<!-- kata:end -->"]
+
+
+def apply_block(target: Path, profile: str, modules: list[str], dry: bool) -> str:
+    path = target / "AGENTS.md"
+    block = render_block(profile, modules, target)
+    if not path.exists():
+        if not dry:
+            atomic_write(path, "# AGENTS.md\n\n" + "\n".join(block) + "\n")
+        return "créé"
+    text = path.read_text(encoding="utf-8")
+    lines = text.splitlines()
+    pairs = markers(lines)
+    if len(pairs) > 1:
+        die(f"{path} contient {len(pairs)} blocs kata ; n'en garder qu'un puis relancer")
+    if any(BEGIN_RE.match(x) for x in lines) and not pairs:
+        die(f"{path} : marqueur kata:begin sans kata:end ; corriger à la main")
+    if pairs:
+        b, e = pairs[0]
+        new, verdict = lines[:b] + block + lines[e + 1:], "mis à jour"
+    else:
+        new = lines + ([""] if lines and lines[-1].strip() else []) + block
+        verdict = "inséré"
+    new_text = "\n".join(new) + "\n"
+    if new_text == text:
+        return "inchangé"
+    if not dry:
+        atomic_write(path, new_text)
+    return verdict
+
+
+def is_pointer(text: str) -> bool:
+    first = next((x.strip() for x in text.splitlines() if x.strip()), "")
+    return first == POINTER
+
+
+def apply_pointer(target: Path, dry: bool) -> str:
+    path = target / "CLAUDE.md"
+    if path.is_symlink():
+        return "lien symbolique conservé"
+    if path.exists():
+        if is_pointer(path.read_text(encoding="utf-8")):
+            return "inchangé"
+        return "À FUSIONNER : CLAUDE.md porte ses propres règles (kata ne l'écrase pas)"
+    if not dry:
+        atomic_write(path, POINTER + "\n")
+    return "créé"
+
+
+# --------------------------------------------------------------------------- settings.json / hooks
+
+def merge_hooks(settings: dict, snippet: dict) -> list[str]:
+    hooks = settings.setdefault("hooks", {})
+    added = []
+    for event, entries in snippet.items():
+        current = hooks.setdefault(event, [])
+        for entry in entries:
+            matcher = entry.get("matcher")
+            have = {h.get("command") for e in current if e.get("matcher") == matcher for h in e.get("hooks", [])}
+            holder = next((e for e in current if e.get("matcher") == matcher), None)
+            for h in entry["hooks"]:
+                if h["command"] in have:
+                    continue
+                if holder is None:
+                    holder = {"matcher": matcher} if matcher is not None else {}
+                    holder["hooks"] = []
+                    current.append(holder)
+                holder["hooks"].append(h)
+                have.add(h["command"])
+                added.append(f"{event} {matcher or '*'}: {h['command']}")
+    return added
+
+
+def module_hooks(modules: list[str]) -> dict:
+    snippet: dict = {}
+    for m in modules:
+        for event, entries in manifest()[m].get("hooks", {}).items():
+            snippet.setdefault(event, []).extend(copy.deepcopy(entries))
+    return snippet
+
+
+def save_settings(path: Path, settings: dict) -> None:
+    if path.exists():
+        shutil.copy2(path, f"{path}.bak-{time.strftime('%Y%m%d%H%M%S')}")
+    atomic_write(path, json.dumps(settings, indent=2, ensure_ascii=False) + "\n")
+
+
+def apply_settings(target: Path, modules: list[str], dry: bool) -> list[str]:
+    path = target / ".claude" / "settings.json"
+    settings = read_json(path, {})
+    added = merge_hooks(settings, module_hooks(modules))
+    if added and not dry:
+        save_settings(path, settings)
+    return added
+
+
+def apply_codex(target: Path, modules: list[str], dry: bool) -> list[str]:
+    """Parité Codex : mêmes skills (liens relatifs dans .agents/skills) et mêmes hooks (.codex/hooks.json)."""
+    notes = []
+    skills = sorted({Path(spec["dest"]).parts[2] for m in modules for _, spec in module_files(manifest()[m])
+                     if spec["dest"].startswith(".claude/skills/")})
+    for name in skills:
+        link = target / ".agents" / "skills" / name
+        if link.is_symlink() or link.exists():
+            continue
+        notes.append(f"lien .agents/skills/{name}")
+        if not dry:
+            link.parent.mkdir(parents=True, exist_ok=True)
+            link.symlink_to(f"../../.claude/skills/{name}")
+    snippet = module_hooks(modules)
+    prefix = 'cd "$(git rev-parse --show-toplevel)" && '
+    for entries in snippet.values():
+        for e in entries:
+            for h in e["hooks"]:
+                h["command"] = prefix + h["command"].replace('python3 "$CLAUDE_PROJECT_DIR"/', "python3 ")
+    path = target / ".codex" / "hooks.json"
+    settings = read_json(path, {})
+    added = merge_hooks(settings, snippet)
+    if added and not dry:
+        save_settings(path, settings)
+    notes.append(f".codex/hooks.json : {len(added)} hook(s) ajouté(s)")
+    return notes
+
+
+# --------------------------------------------------------------------------- fichiers gérés
+
+def sync_files(target: Path, modules: list[str], dry: bool) -> dict:
+    """Copie les fichiers des modules. Géré : retouche locale sauvegardée avant écrasement.
+    Seed : copié seulement s'il n'existe pas, puis laissé au projet."""
+    kata_dir = target / ".claude" / "kata"
+    state_path = kata_dir / "state.json"
+    old = read_json(state_path, {"files": {}})
+    report = {"ajouté": [], "mis à jour": [], "sauvegardé": [], "inchangé": [], "retiré": [], "seed": []}
+    new_files = {}
+    backup_dir = kata_dir / "backup" / time.strftime("%Y%m%d-%H%M%S")
+    for m in modules:
+        for src_rel, spec in module_files(manifest()[m]):
+            src, dest_rel = PACK / src_rel, spec["dest"]
+            dst = target / dest_rel
+            if src.is_symlink() or not src.is_file():
+                die(f"manifeste : {src_rel} absent ou lien symbolique")
+            if dst.is_symlink():
+                die(f"{dest_rel} est un lien symbolique ; kata refuse d'écrire à travers")
+            if spec.get("seed"):
+                if not dst.exists():
+                    report["seed"].append(dest_rel)
+                    if not dry:
+                        dst.parent.mkdir(parents=True, exist_ok=True)
+                        shutil.copy2(src, dst)
+                continue
+            new_sha = sha(src)
+            new_files[dest_rel] = new_sha
+            if not dst.exists():
+                report["ajouté"].append(dest_rel)
+            elif sha(dst) == new_sha:
+                report["inchangé"].append(dest_rel)
+                continue
+            else:
+                if sha(dst) != old["files"].get(dest_rel):
+                    report["sauvegardé"].append(dest_rel)
+                    if not dry:
+                        (backup_dir / dest_rel).parent.mkdir(parents=True, exist_ok=True)
+                        shutil.copy2(dst, backup_dir / dest_rel)
+                report["mis à jour"].append(dest_rel)
+            if not dry:
+                dst.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(src, dst)
+                os.chmod(dst, int(spec.get("mode", "644"), 8))
+    for rel in set(old["files"]) - set(new_files):
+        report["retiré"].append(rel)
+        if not dry and (target / rel).exists():
+            (target / rel).unlink()
+    if not dry:
+        atomic_write(state_path, json.dumps({"version": version(), "modules": modules, "files": new_files},
+                                            indent=2, sort_keys=True) + "\n")
+    return report
+
+
+def apply_local_excludes(target: Path, dry: bool) -> str:
+    """Notes locales et sauvegardes ne se versionnent pas : exclusion dans .git/info/exclude (local, hors historique)."""
+    git = target / ".git"
+    if not git.is_dir():
+        return "pas de dépôt git"
+    path = git / "info" / "exclude"
+    wanted = [".claude/kata/local/", ".claude/kata/backup/", ".claude/settings.json.bak-*"]
+    have = path.read_text(encoding="utf-8").splitlines() if path.exists() else []
+    missing = [w for w in wanted if w not in have]
+    if missing and not dry:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with open(path, "a", encoding="utf-8") as f:
+            f.write(("\n" if have and have[-1] else "") + "# kata\n" + "\n".join(missing) + "\n")
+    return f"{len(missing)} motif(s) ajouté(s)" if missing else "à jour"
+
+
+# --------------------------------------------------------------------------- recommandations
+
+def recommendations(tags: list[str], modules: list[str]) -> list[dict]:
+    data = json.loads((PACK / "core" / "recommended.json").read_text())
+    keys = ["all"] + [k for k in data if k != "all" and (k in tags or k in modules)]
+    seen, out = set(), []
+    for k in keys:
+        for item in data.get(k, []):
+            if item["name"] not in seen:
+                seen.add(item["name"])
+                out.append(item)
+    return out
+
+
+def skill_present(name: str, target: Path) -> bool:
+    home = Path(os.environ.get("KATA_HOME") or Path.home()) / ".claude"
+    if any((p / name).exists() for p in (home / "skills", target / ".claude" / "skills", target / ".agents" / "skills")):
+        return True
+    plugins = read_json(home / "plugins" / "installed_plugins.json", {}) or {}
+    return any(k.split("@")[0] == name for k in plugins.get("plugins", {}))
+
+
+# --------------------------------------------------------------------------- commandes
+
+def resolve_modules(a, target: Path) -> list[str]:
+    man = manifest()
+    state = read_json(target / ".claude" / "kata" / "state.json", {})
+    spec = a.modules or ("auto" if not state.get("modules") else ",".join(state["modules"]))
+    chosen = ["core"] + [m for m in (detect(target)["modules"] if spec == "auto" else spec.split(",")) if m != "core"]
+    chosen += list(a.with_ or [])
+    unknown = [m for m in chosen if m not in man]
+    if unknown:
+        die(f"module(s) inconnu(s) : {', '.join(unknown)} (disponibles : {', '.join(man)})")
+    return list(dict.fromkeys(chosen))
+
+
+def cmd_detect(a) -> int:
+    target = Path(a.target).resolve()
+    d = detect(target)
+    man = manifest()
+    print(f"Stack détectée : {', '.join(d['tags']) or '—'}")
+    print("Modules proposés :")
+    for m in d["modules"]:
+        print(f"  ✓ {m:16} {man[m]['about']}")
+    for m in d["suggested"]:
+        print(f"  ? {m:16} {man[m]['about']}  (sur demande : --with {m})")
+    print("Politique déduite :")
+    print(json.dumps(d["inferred"], indent=2, ensure_ascii=False))
+    return 0
+
+
+def cmd_install(a) -> int:
+    target = Path(a.target).resolve()
+    if not target.is_dir():
+        die(f"cible introuvable : {target}")
+    if target == PACK:
+        die("la cible ne peut pas être le pack lui-même")
+    modules = resolve_modules(a, target)
+    profile = "pr-flow"
+    found = detect(target)
+    tag = "[simulation] " if a.dry_run else ""
+    print(f"{tag}kata v{version()} → {target}")
+    print(f"  modules : {', '.join(modules)}")
+    rep = sync_files(target, modules, a.dry_run)
+    for k, v in rep.items():
+        if v:
+            print(f"  fichiers {k} : {len(v)}" + ("".join(f"\n    - {x}" for x in v) if k in ("sauvegardé", "retiré", "seed") else ""))
+    print(f"  AGENTS.md : {apply_block(target, profile, modules, a.dry_run)}")
+    print(f"  CLAUDE.md : {apply_pointer(target, a.dry_run)}")
+    print(f"  politique {POLICY_REL} : {apply_policy(target, modules, found['inferred'], a.dry_run)}")
+    print(f"  .git/info/exclude : {apply_local_excludes(target, a.dry_run)}")
+    added = apply_settings(target, modules, a.dry_run)
+    print(f"  hooks settings.json : {len(added)} ajouté(s)" + "".join(f"\n    + {x}" for x in added))
+    if a.codex:
+        print("  codex : " + "; ".join(apply_codex(target, modules, a.dry_run)))
+    recs = [r for r in recommendations(found["tags"], modules) if not skill_present(r["name"], target)]
+    if recs:
+        print("  skills recommandées, non installées (voir `kata recommend`) : " + ", ".join(r["name"] for r in recs))
+    print("  git : rien n'a été ajouté, commité ni poussé.")
+    return 0
+
+
+def cmd_status(a) -> int:
+    target = Path(a.target).resolve()
+    state = read_json(target / ".claude" / "kata" / "state.json", {})
+    if not state:
+        print("kata n'est pas installé ici")
+        return 1
+    drift = [r for r, h in state["files"].items() if not (target / r).exists() or sha(target / r) != h]
+    print(f"installé : v{state['version']} (pack : v{version()}) — modules : {', '.join(state.get('modules', []))}")
+    print(f"dérive locale : {len(drift)} fichier(s)" + "".join(f"\n  ~ {x}" for x in drift))
+    return 0 if state["version"] == version() and not drift else 1
+
+
+def cmd_doctor(a) -> int:
+    target = Path(a.target).resolve()
+    state = read_json(target / ".claude" / "kata" / "state.json", {})
+    modules = state.get("modules", ["core"])
+    problems, notes = [], []
+    agents = target / "AGENTS.md"
+    if not agents.exists():
+        problems.append("AGENTS.md absent")
+    else:
+        lines = agents.read_text(encoding="utf-8").splitlines()
+        if len(markers(lines)) != 1:
+            problems.append(f"AGENTS.md : {len(markers(lines))} bloc(s) kata (attendu : 1)")
+        if len(lines) > 300:
+            problems.append(f"AGENTS.md : {len(lines)} lignes (> 300), déplacer le détail dans docs/")
+    claude = target / "CLAUDE.md"
+    if claude.exists() and not claude.is_symlink() and not is_pointer(claude.read_text(encoding="utf-8")):
+        problems.append("CLAUDE.md porte des règles propres : fusionner dans AGENTS.md")
+    settings = read_json(target / ".claude" / "settings.json", {})
+    missing_hooks = merge_hooks(json.loads(json.dumps(settings)), module_hooks(modules))
+    if missing_hooks:
+        problems.append(f"{len(missing_hooks)} hook(s) kata non branchés dans settings.json")
+    pol_path = target / POLICY_REL
+    if not pol_path.exists():
+        problems.append(f"{POLICY_REL} absent")
+    else:
+        missing = sorted(rule_ids(build_policy(modules, {})) - rule_ids(read_json(pol_path, {})))
+        if missing:
+            problems.append(f"politique : règles Kata absentes ({', '.join(missing)})")
+    for kind, table in OVERLAP.items():
+        folder = target / ".claude" / kind
+        if folder.is_dir():
+            for name, by in table.items():
+                if (folder / name).exists():
+                    notes.append(f".claude/{kind}/{name} fait doublon avec {by} : à retirer une fois la politique validée")
+    home_settings = read_json(Path(os.environ.get("KATA_HOME") or Path.home()) / ".claude" / "settings.json", {}) or {}
+    if "craft" in modules and any(k.startswith("superpowers@") and v for k, v in home_settings.get("enabledPlugins", {}).items()):
+        notes.append("le plugin superpowers est actif au niveau utilisateur : il fait doublon avec le module craft "
+                     "(deux routeurs de skills) ; le désactiver une fois Kata validé")
+    foreign = [h["command"] for ev in settings.get("hooks", {}).values() for e in ev for h in e.get("hooks", [])
+               if "/.claude/kata/" not in h.get("command", "")]
+    if foreign:
+        notes.append(f"{len(foreign)} hook(s) propres au projet dans settings.json (conservés)")
+    for n in notes:
+        print(f"• {n}")
+    if problems:
+        print("\n".join(f"✗ {p}" for p in problems))
+        return 1
+    print("✓ cible conforme")
+    return 0
+
+
+def cmd_recommend(a) -> int:
+    target = Path(a.target).resolve()
+    state = read_json(target / ".claude" / "kata" / "state.json", {})
+    d = detect(target)
+    recs = recommendations(d["tags"], state.get("modules", d["modules"]))
+    print(f"Stack : {', '.join(d['tags']) or '—'}")
+    for r in recs:
+        mark = "✓ présente" if skill_present(r["name"], target) else "✗ à installer"
+        print(f"  {mark:14} {r['name']:30} {r['why']}")
+    print("Kata n'installe aucune skill tierce : relire la source, puis l'installer à la main.")
+    return 0
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    sub = ap.add_subparsers(dest="cmd", required=True)
+    p = sub.add_parser("install")
+    p.add_argument("target")
+    p.add_argument("--modules")
+    p.add_argument("--with", dest="with_", action="append")
+    p.add_argument("--codex", action="store_true")
+    p.add_argument("--dry-run", action="store_true")
+    for name in ("detect", "status", "doctor", "recommend"):
+        p = sub.add_parser(name)
+        p.add_argument("target")
+    a = ap.parse_args()
+    return globals()[f"cmd_{a.cmd}"](a)
+
+
+if __name__ == "__main__":
+    sys.exit(main())

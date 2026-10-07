@@ -1,0 +1,132 @@
+/* KataBoard : tableau animé « Une demande, de bout en bout ».
+   Design system Nakama 1.0.0 : uniquement les variables --nkui-*, aucune couleur ajoutée.
+   Les types de briques se distinguent par le trait, pas par la couleur. */
+.kb { --kb-sp: 1; --kb-ease: cubic-bezier(.22, 1, .36, 1); position: relative; display: block; width: 100%; max-width: 100%; color: var(--nkui-fg); font: 400 15px/1.6 Geist, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.kb *, .kb *::before, .kb *::after { box-sizing: border-box; }
+:where(.kb) :is(p, h3, ul) { margin: 0; padding: 0; }
+:where(.kb) button { font: inherit; color: inherit; cursor: pointer; }
+.kb :focus-visible { outline: 2px solid var(--nkui-fg); outline-offset: 3px; }
+:where(.kb) [hidden] { display: none !important; }
+
+/* ---------- scénarios ---------- */
+.kb-tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+.kb-tab { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 20px; background: transparent; border: 1px solid var(--nkui-rule); border-radius: 999px; font-size: 14px; transition: background .4s var(--kb-ease), border-color .4s var(--kb-ease), color .4s var(--kb-ease); }
+.kb-tab-n { font: 400 11px 'Geist Mono', monospace; letter-spacing: .08em; color: var(--nkui-mut); }
+.kb-tab[aria-pressed="true"] { background: var(--nkui-invert-bg); color: var(--nkui-invert-fg); border-color: transparent; }
+.kb-tab[aria-pressed="true"] .kb-tab-n { color: var(--nkui-invert-fg); opacity: .7; }
+@media (hover: hover) { .kb-tab:not([aria-pressed="true"]):hover { border-color: var(--nkui-dim); background: var(--nkui-tint); } }
+.kb-intro { margin-top: 16px; max-width: 68ch; color: var(--nkui-body); font-size: clamp(14px, 1.4vw, 17px); line-height: 1.65; }
+
+/* ---------- contrôles ---------- */
+.kb-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 20px; }
+.kb-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 20px; background: transparent; border: 1px solid var(--nkui-rule); border-radius: 999px; font-size: 14px; line-height: 1.4; transition: background .4s var(--kb-ease), border-color .4s var(--kb-ease), translate .4s var(--kb-ease), opacity .4s var(--kb-ease); }
+.kb-btn:disabled { opacity: .4; cursor: not-allowed; }
+.kb-btn--primary { background: var(--nkui-invert-bg); color: var(--nkui-invert-fg); border-color: transparent; font-weight: 500; box-shadow: var(--nkui-button-shadow); }
+.kb-play { min-width: 128px; }
+.kb-btn:active:not(:disabled) { translate: 0 1px; }
+@media (hover: hover) { .kb-btn:not(.kb-btn--primary):not(:disabled):hover { border-color: var(--nkui-dim); background: var(--nkui-tint); } .kb-btn--primary:not(:disabled):hover { translate: 0 -2px; } }
+.kb-count { margin-left: auto; font: 400 12px 'Geist Mono', monospace; letter-spacing: .08em; text-transform: uppercase; color: var(--nkui-mut); }
+.kb-progress { display: flex; gap: 4px; margin-top: 14px; }
+.kb-progress i { flex: 1; height: 4px; border-radius: 2px; background: var(--nkui-rule-soft); transition: background .6s var(--kb-ease); }
+.kb-progress i.is-done { background: var(--nkui-dim); }
+.kb-progress i.is-cur { background: var(--nkui-fg); }
+
+/* ---------- tableau ---------- */
+.kb-boardwrap { position: relative; margin-top: 16px; padding: 12px; border: 1px solid var(--nkui-rule); border-radius: 20px; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x proximity; scroll-padding-left: 12px; overscroll-behavior-x: contain; }
+.kb-board { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+.kb-col { min-width: 0; display: grid; grid-template-rows: auto 122px 152px; gap: 8px; padding: 10px; border: 1px solid var(--nkui-rule-soft); border-radius: 12px; scroll-snap-align: start; transition: border-color .6s var(--kb-ease); }
+.kb-col--on { border-color: var(--nkui-fg); }
+.kb-col-h { display: flex; flex-direction: column; gap: 2px; padding: 2px 2px 4px; }
+.kb-col h3 { display: flex; align-items: baseline; gap: 8px; font: 700 17px/1.3 Manrope, sans-serif; letter-spacing: -.02em; }
+.kb-num { font: 400 11px 'Geist Mono', monospace; letter-spacing: .08em; color: var(--nkui-mut); }
+.kb-col-st { font: 400 11px 'Geist Mono', monospace; letter-spacing: .08em; text-transform: uppercase; color: var(--nkui-mut); }
+.kb-col--on .kb-col-st { color: var(--nkui-fg); }
+.kb-body { min-height: 0; border-radius: 12px; }
+.kb-gate { position: relative; min-height: 0; padding: 8px; border: 1px dashed var(--nkui-rule); border-radius: 12px; transition: background .6s var(--kb-ease), border-color .6s var(--kb-ease), color .6s var(--kb-ease); }
+.kb-gate-l { display: block; margin-bottom: 6px; font: 400 11px 'Geist Mono', monospace; letter-spacing: .08em; text-transform: uppercase; color: var(--nkui-mut); }
+.kb-gate--on { background: var(--nkui-invert-bg); border: 1px solid transparent; border-radius: 28px; }
+.kb-gate--on .kb-gate-l { color: var(--nkui-invert-fg); opacity: .75; padding-left: 6px; }
+
+/* ---------- carte ---------- */
+.kb-card { position: relative; display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; background: var(--nkui-brick); color: var(--nkui-fg); border: 1px solid var(--nkui-fg); border-radius: 12px; transition: translate calc(900ms / var(--kb-sp)) var(--kb-ease), border-style .2s; will-change: translate; z-index: 2; }
+.kb-card-id { font: 400 11px 'Geist Mono', monospace; letter-spacing: .08em; color: var(--nkui-mut); }
+.kb-card-t { font: 500 14.5px/1.35 Geist, sans-serif; overflow-wrap: anywhere; }
+.kb-card-st { font: 400 11px/1.4 'Geist Mono', monospace; letter-spacing: .04em; color: var(--nkui-body); }
+.kb-card--wait { border-style: dashed; }
+.kb-card--deny { border-left-width: 4px; }
+.kb-nope { animation: kb-nope calc(800ms / var(--kb-sp)) var(--kb-ease) var(--kb-nope-d, 0ms) both; }
+@keyframes kb-nope { 0% { transform: translateX(0); } 16% { transform: translateX(22px); } 34% { transform: translateX(-12px); } 52% { transform: translateX(8px); } 72% { transform: translateX(-4px); } 100% { transform: translateX(0); } }
+
+/* ---------- bandeau « Ce qui se déclenche » ---------- */
+.kb-banner { margin-top: 12px; padding: 24px; border: 1px solid var(--nkui-rule); border-radius: 20px; }
+.kb-banner-head { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.kb-eyebrow, .kb-eyebrow-n { font: 400 12px 'Geist Mono', monospace; letter-spacing: .08em; text-transform: uppercase; color: var(--nkui-mut); }
+.kb-status { margin-top: 12px; min-height: 5.4em; }
+.kb-caption { max-width: 78ch; font-size: 16px; line-height: 1.65; color: var(--nkui-fg); }
+.kb-deny { margin-top: 14px; padding: 12px 16px; border: 1px solid var(--nkui-rule); border-left: 4px solid var(--nkui-fg); border-radius: 12px; }
+.kb-deny-t { font: 400 11px 'Geist Mono', monospace; letter-spacing: .08em; text-transform: uppercase; color: var(--nkui-fg); }
+.kb-deny-m { margin-top: 4px; font: 400 13px/1.55 'Geist Mono', monospace; letter-spacing: 0; color: var(--nkui-fg-2); overflow-wrap: anywhere; }
+.kb-approved { margin-top: 12px; font: 400 12px 'Geist Mono', monospace; letter-spacing: .08em; text-transform: uppercase; color: var(--nkui-fg); }
+.kb-gatebar { position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-top: 12px; padding: 12px 12px 12px 22px; background: var(--nkui-invert-bg); color: var(--nkui-invert-fg); border-radius: 28px; overflow: hidden; }
+.kb-gate-t { flex: 1 1 220px; font-size: 14px; line-height: 1.5; }
+.kb-gatebar .kb-btn { background: var(--nkui-invert-fg); color: var(--nkui-invert-bg); box-shadow: none; }
+.kb-gatebar .kb-btn:focus-visible { outline-color: var(--nkui-invert-fg); outline-offset: 2px; }
+.kb-wait { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: transparent; }
+.kb-wait i { display: block; height: 100%; width: 100%; background: var(--nkui-invert-fg); opacity: .6; transform-origin: left; animation: kb-wait linear both; }
+@keyframes kb-wait { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+.kb-bricks { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr)); gap: 12px; margin-top: 16px; min-height: 120px; align-content: start; }
+.kb-brick { position: relative; min-width: 0; text-align: left; background: transparent; border: 1px solid var(--nkui-fg); border-radius: 12px; padding: 14px 16px; transition: translate .2s ease, background .2s ease; animation: kb-in calc(600ms / var(--kb-sp)) var(--kb-ease) calc((350ms + var(--i, 0) * 450ms) / var(--kb-sp)) both; }
+@keyframes kb-in { from { opacity: 0; transform: translateY(12px) scale(.96); } to { opacity: 1; transform: none; } }
+@media (hover: hover) { .kb-brick:hover { translate: 0 -2px; background: var(--nkui-tint); } }
+.kb-brick[aria-pressed="true"] { background: var(--nkui-raise); }
+.kb-ty { display: block; margin-bottom: 6px; font: 400 11px 'Geist Mono', monospace; letter-spacing: .08em; text-transform: uppercase; color: var(--nkui-mut); }
+.kb-brick b { display: block; margin-bottom: 4px; font: 500 15px/1.35 Geist, sans-serif; overflow-wrap: anywhere; }
+.kb-d { display: block; font-size: 13px; line-height: 1.55; color: var(--nkui-body); }
+.kb-brick--hook { border-style: dashed; }
+.kb-brick--agent { border-width: 4px; border-style: double; padding: 11px 13px; }
+.kb-brick--garde { border-color: var(--nkui-rule); border-left: 4px solid var(--nkui-fg); }
+.kb-brick--humain { background: var(--nkui-invert-bg); color: var(--nkui-invert-fg); border-color: transparent; border-radius: 28px; padding: 16px 22px; }
+.kb-brick--humain .kb-ty, .kb-brick--humain .kb-d { color: var(--nkui-invert-fg); opacity: .75; }
+.kb-brick--humain:focus-visible { outline-color: var(--nkui-fg); }
+@media (hover: hover) { .kb-brick--humain:hover { background: var(--nkui-invert-bg); } }
+.kb-brick--humain[aria-pressed="true"] { background: var(--nkui-invert-bg); outline: 2px solid var(--nkui-fg); outline-offset: 2px; }
+
+.kb-detail { margin-top: 12px; min-height: 5.2em; padding: 12px 16px; border-top: 1px solid var(--nkui-rule-soft); }
+.kb-detail-hint { font-size: 13.5px; color: var(--nkui-mut); }
+.kb-detail-t { font: 400 12px 'Geist Mono', monospace; letter-spacing: .08em; text-transform: uppercase; color: var(--nkui-mut); }
+.kb-detail-t b { font-weight: 500; color: var(--nkui-fg); }
+.kb-detail-b { margin-top: 6px; max-width: 78ch; font-size: 14.5px; line-height: 1.6; color: var(--nkui-fg-2); }
+.kb-detail-w { margin-top: 6px; font: 400 11px 'Geist Mono', monospace; letter-spacing: .04em; color: var(--nkui-mut); }
+
+/* ---------- légende ---------- */
+.kb-legend { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); gap: 10px 20px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--nkui-rule-soft); list-style: none; }
+.kb-legend li { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; line-height: 1.45; color: var(--nkui-body); }
+.kb-legend b { font-weight: 500; color: var(--nkui-fg); }
+.kb-sw { flex: none; width: 24px; height: 14px; margin-top: 3px; display: inline-block; border: 1px solid var(--nkui-fg); border-radius: 3px; }
+.kb-sw--hook { border-style: dashed; }
+.kb-sw--agent { border-style: double; border-width: 4px; }
+.kb-sw--garde { border-color: var(--nkui-rule); border-left: 4px solid var(--nkui-fg); }
+.kb-sw--humain { background: var(--nkui-invert-bg); border-radius: 10px; border-color: transparent; }
+
+/* ---------- responsive : colonnes qui défilent ---------- */
+@media (max-width: 900px) {
+  .kb-boardwrap { scroll-snap-type: x mandatory; }
+  .kb-board { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: min(78%, 270px); }
+  .kb-banner { padding: 18px 16px; }
+  .kb-count { margin-left: 0; flex-basis: 100%; }
+  .kb-status { min-height: 11em; }
+  .kb-gatebar { border-radius: 24px; padding: 14px 14px 14px 20px; }
+}
+@media (max-width: 480px) {
+  .kb-btn, .kb-tab { padding: 0 16px; }
+  .kb-play { min-width: 112px; }
+}
+
+/* ---------- mouvement réduit : tout est affiché, pas de lecture automatique ---------- */
+.kb--reduce .kb-play, .kb--reduce .kb-speed { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  .kb *, .kb *::before, .kb *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  .kb-play, .kb-speed { display: none; }
+}
+@media print { .kb-controls, .kb-progress { display: none; } .kb-brick { animation: none; } }

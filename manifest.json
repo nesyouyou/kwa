@@ -1,0 +1,477 @@
+{
+  "modules": {
+    "core": {
+      "always": true,
+      "about": "Garde-fous (secrets, git, suppression, écriture, politique), règles, /kata-commit, /kata-ship",
+      "files": {
+        "core/hooks/_kata.py": {
+          "dest": ".claude/kata/hooks/_kata.py"
+        },
+        "core/hooks/guard-secrets.py": {
+          "dest": ".claude/kata/hooks/guard-secrets.py",
+          "mode": "755"
+        },
+        "core/hooks/guard-git.py": {
+          "dest": ".claude/kata/hooks/guard-git.py",
+          "mode": "755"
+        },
+        "core/hooks/guard-delete.py": {
+          "dest": ".claude/kata/hooks/guard-delete.py",
+          "mode": "755"
+        },
+        "core/hooks/guard-write.py": {
+          "dest": ".claude/kata/hooks/guard-write.py",
+          "mode": "755"
+        },
+        "core/hooks/guard-policy.py": {
+          "dest": ".claude/kata/hooks/guard-policy.py",
+          "mode": "755"
+        },
+        "core/rules/git-discipline.md": {
+          "dest": ".claude/rules/kata-git-discipline.md"
+        },
+        "core/rules/writing-standard.md": {
+          "dest": ".claude/rules/kata-writing-standard.md"
+        },
+        "core/skills/commit/SKILL.md": {
+          "dest": ".claude/skills/kata-commit/SKILL.md"
+        },
+        "core/skills/ship/SKILL.md": {
+          "dest": ".claude/skills/kata-ship/SKILL.md"
+        }
+      },
+      "hooks": {
+        "PreToolUse": [
+          {
+            "matcher": "Bash|Read|Grep",
+            "hooks": [
+              {
+                "type": "command",
+                "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kata/hooks/guard-secrets.py",
+                "timeout": 10
+              }
+            ]
+          },
+          {
+            "matcher": "Bash",
+            "hooks": [
+              {
+                "type": "command",
+                "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kata/hooks/guard-git.py",
+                "timeout": 10
+              },
+              {
+                "type": "command",
+                "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kata/hooks/guard-delete.py",
+                "timeout": 10
+              },
+              {
+                "type": "command",
+                "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kata/hooks/guard-policy.py",
+                "timeout": 10
+              }
+            ]
+          },
+          {
+            "matcher": "Edit|Write|MultiEdit|NotebookEdit",
+            "hooks": [
+              {
+                "type": "command",
+                "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kata/hooks/guard-write.py",
+                "timeout": 10
+              }
+            ]
+          }
+        ]
+      },
+      "policy": {
+        "bash": {
+          "deny": [
+            {
+              "id": "force-push",
+              "reason": "Force-push interdit (y compris dans un script interprété).",
+              "all": [
+                "git +push\\b.*(--force( |$)|-f( |$))"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "craft": {
+      "about": "Méthode de travail (cadrer, faire, prouver, relire) : brainstorm, grill, plan, execute, agents, parallel, tdd, debug, verify, review, simple, audit, architecture, prototype, handoff, questionnaire… + routage des skills au démarrage",
+      "files": {
+        "core/templates/skills-router.md": {
+          "dest": ".claude/kata/router.md"
+        },
+        "core/hooks/skills-router.py": {
+          "dest": ".claude/kata/hooks/skills-router.py",
+          "mode": "755"
+        },
+        "core/skills/brainstorm/*": {
+          "dest": ".claude/skills/kata-brainstorm"
+        },
+        "core/skills/plan/*": {
+          "dest": ".claude/skills/kata-plan"
+        },
+        "core/skills/execute/*": {
+          "dest": ".claude/skills/kata-execute"
+        },
+        "core/skills/agents/*": {
+          "dest": ".claude/skills/kata-agents"
+        },
+        "core/skills/parallel/*": {
+          "dest": ".claude/skills/kata-parallel"
+        },
+        "core/skills/tdd/*": {
+          "dest": ".claude/skills/kata-tdd"
+        },
+        "core/skills/debug/*": {
+          "dest": ".claude/skills/kata-debug"
+        },
+        "core/skills/verify/*": {
+          "dest": ".claude/skills/kata-verify"
+        },
+        "core/skills/review/*": {
+          "dest": ".claude/skills/kata-review"
+        },
+        "core/skills/review-feedback/*": {
+          "dest": ".claude/skills/kata-review-feedback"
+        },
+        "core/skills/simple/*": {
+          "dest": ".claude/skills/kata-simple"
+        },
+        "core/skills/audit/*": {
+          "dest": ".claude/skills/kata-audit"
+        },
+        "core/skills/grill/*": {
+          "dest": ".claude/skills/kata-grill"
+        },
+        "core/skills/handoff/*": {
+          "dest": ".claude/skills/kata-handoff"
+        },
+        "core/skills/questionnaire/*": {
+          "dest": ".claude/skills/kata-questionnaire"
+        },
+        "core/skills/reexplain/*": {
+          "dest": ".claude/skills/kata-reexplain"
+        },
+        "core/skills/prototype/*": {
+          "dest": ".claude/skills/kata-prototype"
+        },
+        "core/skills/agent-docs/*": {
+          "dest": ".claude/skills/kata-agent-docs"
+        },
+        "core/skills/architecture/*": {
+          "dest": ".claude/skills/kata-architecture"
+        }
+      },
+      "hooks": {
+        "SessionStart": [
+          {
+            "matcher": "startup|clear|compact",
+            "hooks": [
+              {
+                "type": "command",
+                "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kata/hooks/skills-router.py",
+                "timeout": 10
+              }
+            ]
+          }
+        ]
+      },
+      "policy": {
+        "memory": {
+          "specs_dir": "docs/specs",
+          "plans_dir": "docs/plans"
+        }
+      }
+    },
+    "memory": {
+      "about": "Capitalisation des sessions : notes en cours de route, invitation unique en fin de session, /kata-learn range décisions, pièges et règles au bon endroit après accord",
+      "files": {
+        "core/bin/kata-memory": {
+          "dest": ".claude/kata/bin/kata-memory",
+          "mode": "755"
+        },
+        "core/hooks/memory-context.py": {
+          "dest": ".claude/kata/hooks/memory-context.py",
+          "mode": "755"
+        },
+        "core/hooks/memory-nudge.py": {
+          "dest": ".claude/kata/hooks/memory-nudge.py",
+          "mode": "755"
+        },
+        "core/skills/learn/SKILL.md": {
+          "dest": ".claude/skills/kata-learn/SKILL.md"
+        }
+      },
+      "hooks": {
+        "SessionStart": [
+          {
+            "hooks": [
+              {
+                "type": "command",
+                "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kata/hooks/memory-context.py",
+                "timeout": 10
+              }
+            ]
+          }
+        ],
+        "Stop": [
+          {
+            "hooks": [
+              {
+                "type": "command",
+                "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kata/hooks/memory-nudge.py",
+                "timeout": 10
+              }
+            ]
+          }
+        ]
+      },
+      "policy": {
+        "memory": {
+          "min_files": 3,
+          "decisions_dir": "docs/decisions",
+          "gotchas_file": "docs/gotchas.md"
+        }
+      }
+    },
+    "issue-flow": {
+      "about": "Circuit issue → branche/worktree → preuve → PR « Closes #N » → fusion gardée ; /kata-start-dev, gabarits GitHub",
+      "files": {
+        "core/hooks/guard-github.py": {
+          "dest": ".claude/kata/hooks/guard-github.py",
+          "mode": "755"
+        },
+        "core/bin/kata-start": {
+          "dest": ".claude/kata/bin/kata-start",
+          "mode": "755"
+        },
+        "core/rules/github-workflow.md": {
+          "dest": ".claude/rules/kata-github-workflow.md"
+        },
+        "core/skills/start-dev/SKILL.md": {
+          "dest": ".claude/skills/kata-start-dev/SKILL.md"
+        },
+        "core/templates/github/pull_request_template.md": {
+          "dest": ".github/pull_request_template.md",
+          "seed": true
+        },
+        "core/templates/github/ISSUE_TEMPLATE/bug.md": {
+          "dest": ".github/ISSUE_TEMPLATE/bug.md",
+          "seed": true
+        },
+        "core/templates/github/ISSUE_TEMPLATE/feature.md": {
+          "dest": ".github/ISSUE_TEMPLATE/feature.md",
+          "seed": true
+        },
+        "core/templates/github/ISSUE_TEMPLATE/config.yml": {
+          "dest": ".github/ISSUE_TEMPLATE/config.yml",
+          "seed": true
+        },
+        "core/skills/tickets/*": {
+          "dest": ".claude/skills/kata-tickets"
+        }
+      },
+      "hooks": {
+        "PreToolUse": [
+          {
+            "matcher": "Bash",
+            "hooks": [
+              {
+                "type": "command",
+                "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kata/hooks/guard-github.py",
+                "timeout": 20
+              }
+            ]
+          }
+        ]
+      },
+      "policy": {
+        "flow": {
+          "issue_required": true,
+          "proof_required_for_merge": true
+        }
+      }
+    },
+    "verify": {
+      "about": "Formatage des fichiers nouveaux seulement ; garde Stop opt-in (KATA_STOP_VERIFY=1) qui refuse de finir sur du rouge",
+      "files": {
+        "core/hooks/format-after-edit.py": {
+          "dest": ".claude/kata/hooks/format-after-edit.py",
+          "mode": "755"
+        },
+        "core/hooks/verify-stop.py": {
+          "dest": ".claude/kata/hooks/verify-stop.py",
+          "mode": "755"
+        }
+      },
+      "hooks": {
+        "PostToolUse": [
+          {
+            "matcher": "Edit|Write",
+            "hooks": [
+              {
+                "type": "command",
+                "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kata/hooks/format-after-edit.py",
+                "timeout": 60
+              }
+            ]
+          }
+        ],
+        "Stop": [
+          {
+            "hooks": [
+              {
+                "type": "command",
+                "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kata/hooks/verify-stop.py",
+                "timeout": 600
+              }
+            ]
+          }
+        ]
+      },
+      "policy": {
+        "verify": {
+          "commands": []
+        },
+        "format": {}
+      }
+    },
+    "deploy": {
+      "about": "/kata-deploy : pré-vol, déploiement et vérification avec preuve, pilotés par les environnements de la politique",
+      "files": {
+        "core/skills/deploy/SKILL.md": {
+          "dest": ".claude/skills/kata-deploy/SKILL.md"
+        }
+      },
+      "policy": {
+        "environments": {}
+      }
+    },
+    "client-handover": {
+      "about": "Dépôt remis au client : règle des 4 tests, contrôle d'hygiène (secrets, comptes perso, noms, mesures datées) + job CI",
+      "files": {
+        "core/rules/remise-au-client.md": {
+          "dest": ".claude/rules/kata-remise-au-client.md"
+        },
+        "core/bin/kata-hygiene": {
+          "dest": ".claude/kata/bin/kata-hygiene",
+          "mode": "755"
+        },
+        "core/templates/github/workflows/kata-hygiene.yml": {
+          "dest": ".github/workflows/kata-hygiene.yml",
+          "seed": true
+        },
+        "core/templates/hygiene.allow": {
+          "dest": ".claude/kata.hygiene.allow",
+          "seed": true
+        }
+      },
+      "policy": {
+        "hygiene": {
+          "personal_domains": [
+            "gmail",
+            "googlemail",
+            "outlook",
+            "hotmail",
+            "yahoo",
+            "icloud",
+            "proton"
+          ],
+          "names": [],
+          "stale_in": [
+            ".claude/"
+          ]
+        }
+      }
+    },
+    "stack-prisma": {
+      "about": "Migrations append-only, pas de reset / db push",
+      "detect": {
+        "dir_glob": [
+          "**/prisma/migrations"
+        ]
+      },
+      "policy": {
+        "write": {
+          "deny": [
+            {
+              "id": "prisma-migrations",
+              "glob": "**/prisma/migrations/**",
+              "reason": "Migrations append-only : celles-ci sont peut-être déjà appliquées en recette ou en prod. Réécrire un fichier appliqué désynchronise _prisma_migrations. Créer une nouvelle migration."
+            }
+          ]
+        },
+        "bash": {
+          "deny": [
+            {
+              "id": "prisma-reset",
+              "reason": "reset / db push réécrivent l'historique des migrations : interdit. Créer une nouvelle migration.",
+              "any": [
+                "prisma migrate reset",
+                "--force-reset",
+                "prisma db push"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "stack-expo": {
+      "about": "/kata-testflight (Release sur simulateur avant build EAS), soumission EAS soumise à confirmation",
+      "detect": {
+        "files": [
+          "**/eas.json"
+        ]
+      },
+      "files": {
+        "core/skills/testflight/SKILL.md": {
+          "dest": ".claude/skills/kata-testflight/SKILL.md"
+        }
+      },
+      "policy": {
+        "bash": {
+          "ask": [
+            {
+              "id": "eas-submit",
+              "reason": "Soumission TestFlight / store (visible par le client). Le build a-t-il été validé en Release sur simulateur ? Voir /kata-testflight.",
+              "any": [
+                "eas submit",
+                "eas-cli submit"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "stack-scaleway": {
+      "about": "Déploiement Scaleway en direct soumis à confirmation",
+      "detect": {
+        "text_in": {
+          "glob": ".github/workflows/*.yml",
+          "any": [
+            "scw ",
+            "scaleway",
+            "SCW_"
+          ]
+        }
+      },
+      "policy": {
+        "bash": {
+          "ask": [
+            {
+              "id": "scw-direct",
+              "reason": "Déploiement Scaleway en direct = contournement du pipeline CI. Rappel : un update d'env REMPLACE toute la map, et un update redéploie (jobs en cours tués).",
+              "any": [
+                "scw container container (update|deploy)"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,229 @@
+"""kata-start, kata-hygiene, mémoire, modules et détection de l'installeur."""
+import json
+import os
+import stat
+import subprocess
+import sys
+import tempfile
+import unittest
+
+from helpers import HOOKS
+
+PACK = os.path.join(os.path.dirname(__file__), "..")
+KATA = os.path.join(PACK, "bin", "kata")
+BIN = os.path.join(PACK, "core", "bin")
+
+
+def sh(*cmd, cwd=None, env=None, input=None):
+    return subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, env={**os.environ, **(env or {})}, input=input)
+
+
+def git_repo(files=None, branch="main"):
+    d = os.path.realpath(tempfile.mkdtemp())
+    sh("git", "init", "-q", "-b", branch, d)
+    sh("git", "-C", d, "config", "user.email", "t@example.test")
+    sh("git", "-C", d, "config", "user.name", "t")
+    for rel, text in (files or {}).items():
+        p = os.path.join(d, rel)
+        os.makedirs(os.path.dirname(p), exist_ok=True)
+        open(p, "w").write(text)
+    return d
+
+
+class Start(unittest.TestCase):
+    def setUp(self):
+        base = os.path.realpath(tempfile.mkdtemp())
+        self.origin = os.path.join(base, "origin.git")
+        sh("git", "init", "-q", "--bare", "-b", "main", self.origin)
+        self.repo = os.path.join(base, "proj")
+        sh("git", "clone", "-q", self.origin, self.repo)
+        for k, v in (("user.email", "t@example.test"), ("user.name", "t")):
+            sh("git", "-C", self.repo, "config", k, v)
+        os.makedirs(os.path.join(self.repo, ".claude"))
+        json.dump({"start": {"install": ["touch installed.flag"]}}, open(os.path.join(self.repo, ".claude", "kata.policy.json"), "w"))
+        open(os.path.join(self.repo, "a.txt"), "w").write("a")
+        sh("git", "-C", self.repo, "add", "-A")
+        sh("git", "-C", self.repo, "commit", "-q", "-m", "init")
+        sh("git", "-C", self.repo, "push", "-q", "origin", "main")
+        stub = os.path.join(base, "gh")
+        open(stub, "w").write('#!/bin/sh\ncase "$1 $2" in\n  "issue create") echo "https://github.com/o/r/issues/7" ;;\n  "issue view") echo "{}" ;;\nesac\n')
+        os.chmod(stub, os.stat(stub).st_mode | stat.S_IEXEC)
+        self.env = {"PATH": base + os.pathsep + os.environ["PATH"]}
+        self.base = base
+
+    def test_creates_issue_branch_worktree_and_installs(self):
+        r = sh(sys.executable, os.path.join(BIN, "kata-start"), "feat", "my-filter", "Un filtre", cwd=self.repo, env=self.env)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        wt = os.path.join(self.base, "proj-wt-7-my-filter")
+        self.assertTrue(os.path.isdir(wt))
+        self.assertTrue(os.path.exists(os.path.join(wt, "installed.flag")))
+        self.assertEqual(sh("git", "-C", wt, "symbolic-ref", "--short", "HEAD").stdout.strip(), "feat/7-my-filter")
+        self.assertEqual(sh("git", "-C", self.repo, "symbolic-ref", "--short", "HEAD").stdout.strip(), "main", "main reste propre")
+
+    def test_existing_issue_and_bad_slug(self):
+        r = sh(sys.executable, os.path.join(BIN, "kata-start"), "fix", "x-y", "t", "--issue", "9", cwd=self.repo, env=self.env)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertTrue(os.path.isdir(os.path.join(self.base, "proj-wt-9-x-y")))
+        bad = sh(sys.executable, os.path.join(BIN, "kata-start"), "fix", "Bad Slug", "t", cwd=self.repo, env=self.env)
+        self.assertEqual(bad.returncode, 2)
+
+
+class Hygiene(unittest.TestCase):
+    def run_h(self, files, extra=None, *args):
+        d = git_repo(files)
+        if extra:
+            os.makedirs(os.path.join(d, ".claude"), exist_ok=True)
+            for rel, text in extra.items():
+                open(os.path.join(d, rel), "w").write(text)
+        sh("git", "-C", d, "add", "-A")
+        return sh(sys.executable, os.path.join(BIN, "kata-hygiene"), "--root", d, *args)
+
+    def test_secret_blocks(self):
+        r = self.run_h({"src/a.ts": 'const password = "abcdefghijklmnopqrstuv1234"\n'})
+        self.assertEqual(r.returncode, 1, r.stdout)
+
+    def test_placeholder_and_env_reference_pass(self):
+        r = self.run_h({"src/a.ts": 'const password = process.env.PW; const token = "changeme-changeme-changeme"\n'})
+        self.assertEqual(r.returncode, 0, r.stdout)
+
+    def test_personal_account_blocks_and_is_masked(self):
+        r = self.run_h({"src/a.ts": "const admin = 'jean.dupont@gmail.com'\n"})
+        self.assertEqual(r.returncode, 1)
+        self.assertNotIn("jean.dupont", r.stdout)
+
+    def test_docs_and_tests_out_of_scope(self):
+        r = self.run_h({"docs/n.md": "contact x@gmail.com", "src/a.spec.ts": 'password = "abcdefghijklmnopqrstuv1234"'})
+        self.assertEqual(r.returncode, 0, r.stdout)
+
+    def test_name_is_warning_then_strict_fails(self):
+        files = {"src/a.ts": "// écrit par Jeanne\n"}
+        extra = {".claude/kata.policy.json": json.dumps({"hygiene": {"names": ["Jeanne"]}})}
+        self.assertEqual(self.run_h(files, extra).returncode, 0)
+        self.assertEqual(self.run_h(files, extra, "--strict").returncode, 1)
+
+    def test_allow_list_defers_and_is_shown(self):
+        files = {"src/a.ts": "const a = 'x@gmail.com'\n"}
+        extra = {".claude/kata.hygiene.allow": "PERSONNEL\tsrc/a.ts\tà passer en variable d'env avant la remise\n"}
+        r = self.run_h(files, extra)
+        self.assertEqual(r.returncode, 0, r.stdout)
+        self.assertIn("avant la remise", r.stdout)
+
+
+class Memory(unittest.TestCase):
+    def nudge(self, repo, payload=None, env=None):
+        p = {"session_id": "s1", "cwd": repo, **(payload or {})}
+        return sh(sys.executable, os.path.join(HOOKS, "memory-nudge.py"), input=json.dumps(p), env={"CLAUDE_PROJECT_DIR": repo, **(env or {})})
+
+    def test_capture_pending_clear(self):
+        d = git_repo()
+        mem = os.path.join(BIN, "kata-memory")
+        self.assertEqual(sh(sys.executable, mem, "capture", "gotcha", "le boot est lent", cwd=d).returncode, 0)
+        self.assertIn("1 note(s)", sh(sys.executable, mem, "pending", cwd=d).stdout)
+        self.assertEqual(sh(sys.executable, mem, "capture", "nimporte", "x", cwd=d).returncode, 2)
+        sh(sys.executable, mem, "clear", cwd=d)
+        self.assertIn("0 note(s)", sh(sys.executable, mem, "pending", cwd=d).stdout)
+
+    def test_nudge_once_when_substantial(self):
+        d = git_repo({f"src/f{i}.ts": "x" for i in range(4)})
+        self.assertEqual(self.nudge(d).returncode, 2)
+        self.assertEqual(self.nudge(d).returncode, 0, "une seule invitation par session")
+
+    def test_nudge_quiet_cases(self):
+        small = git_repo({"src/a.ts": "x"})
+        self.assertEqual(self.nudge(small).returncode, 0)
+        docs = git_repo({f"docs/d{i}.md": "x" for i in range(5)})
+        self.assertEqual(self.nudge(docs).returncode, 0, "la doc ne déclenche pas")
+        big = git_repo({f"src/f{i}.ts": "x" for i in range(4)})
+        self.assertEqual(self.nudge(big, {"stop_hook_active": True}).returncode, 0)
+        self.assertEqual(self.nudge(big, env={"KATA_MEMORY_NUDGE": "0"}).returncode, 0)
+
+    def test_nudge_skipped_if_notes_captured(self):
+        d = git_repo({f"src/f{i}.ts": "x" for i in range(4)})
+        sh(sys.executable, os.path.join(BIN, "kata-memory"), "capture", "decision", "x", cwd=d)
+        self.assertEqual(self.nudge(d).returncode, 0)
+
+    def test_session_start_context(self):
+        d = git_repo()
+        quiet = sh(sys.executable, os.path.join(HOOKS, "memory-context.py"), input=json.dumps({"cwd": d}), env={"CLAUDE_PROJECT_DIR": d})
+        self.assertEqual(quiet.stdout.strip(), "")
+        sh(sys.executable, os.path.join(BIN, "kata-memory"), "capture", "pref", "x", cwd=d)
+        out = sh(sys.executable, os.path.join(HOOKS, "memory-context.py"), input=json.dumps({"cwd": d}), env={"CLAUDE_PROJECT_DIR": d})
+        self.assertIn("/kata-learn", json.loads(out.stdout)["hookSpecificOutput"]["additionalContext"])
+
+
+class Modules(unittest.TestCase):
+    def project(self):
+        d = git_repo({"package.json": json.dumps({"scripts": {"typecheck": "tsc", "lint": "eslint", "db:generate": "x"}}),
+                      "pnpm-lock.yaml": "", "apps/web/page.tsx": "x", ".github/workflows/deploy.yml": "run: scw container deploy"})
+        return d
+
+    def kata(self, *args, env=None):
+        return sh(sys.executable, KATA, *args, env={"KATA_HOME": tempfile.mkdtemp(), **(env or {})})
+
+    def test_auto_detection_and_policy(self):
+        d = self.project()
+        r = self.kata("install", d)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        state = json.load(open(os.path.join(d, ".claude/kata/state.json")))
+        for m in ("core", "memory", "issue-flow", "verify", "stack-scaleway", "deploy"):
+            self.assertIn(m, state["modules"])
+        pol = json.load(open(os.path.join(d, ".claude/kata.policy.json")))
+        self.assertEqual(pol["verify"]["commands"], ["pnpm typecheck", "pnpm lint"])
+        self.assertEqual(pol["start"]["install"], ["pnpm install --frozen-lockfile", "pnpm db:generate"])
+        self.assertEqual(pol["write"]["no_code_on_main"], ["apps/"])
+        self.assertTrue(os.path.exists(os.path.join(d, ".github/pull_request_template.md")))
+        self.assertTrue(os.path.exists(os.path.join(d, ".claude/skills/kata-learn/SKILL.md")))
+        self.assertEqual(self.kata("doctor", d).returncode, 0, self.kata("doctor", d).stdout)
+
+    def test_policy_and_seeds_belong_to_project(self):
+        d = self.project()
+        self.kata("install", d)
+        pol_path = os.path.join(d, ".claude/kata.policy.json")
+        pol = json.load(open(pol_path))
+        pol["bash"]["deny"].append({"id": "mine", "reason": "r", "any": ["x"]})
+        json.dump(pol, open(pol_path, "w"))
+        open(os.path.join(d, ".github/pull_request_template.md"), "w").write("mon gabarit\n")
+        r = self.kata("install", d)
+        self.assertIn("conservée", r.stdout)
+        self.assertIn("mine", [x["id"] for x in json.load(open(pol_path))["bash"]["deny"]])
+        self.assertEqual(open(os.path.join(d, ".github/pull_request_template.md")).read(), "mon gabarit\n")
+
+    def test_git_exclude_and_no_commit(self):
+        d = self.project()
+        self.kata("install", d)
+        self.assertIn(".claude/kata/local/", open(os.path.join(d, ".git/info/exclude")).read())
+        self.assertNotEqual(sh("git", "-C", d, "log", "--oneline").returncode, 0)
+        self.assertEqual(sh("git", "-C", d, "diff", "--cached", "--name-only").stdout, "")
+
+    def test_codex_parity(self):
+        d = self.project()
+        self.kata("install", d, "--codex")
+        self.assertTrue(os.path.islink(os.path.join(d, ".agents/skills/kata-commit")))
+        hooks = json.load(open(os.path.join(d, ".codex/hooks.json")))
+        cmds = [h["command"] for e in hooks["hooks"]["PreToolUse"] for h in e["hooks"]]
+        self.assertTrue(all(c.startswith('cd "$(git rev-parse --show-toplevel)" && python3 .claude/kata/hooks/') for c in cmds))
+
+    def test_unknown_module_and_with(self):
+        d = self.project()
+        self.assertEqual(self.kata("install", d, "--with", "nope").returncode, 2)
+        self.assertEqual(self.kata("install", d, "--modules", "core", "--with", "client-handover").returncode, 0)
+        self.assertTrue(os.path.exists(os.path.join(d, ".claude/kata/bin/kata-hygiene")))
+
+    def test_doctor_flags_project_overlap(self):
+        d = self.project()
+        os.makedirs(os.path.join(d, ".claude/hooks"))
+        open(os.path.join(d, ".claude/hooks/guard-bash.sh"), "w").write("#!/bin/sh\n")
+        self.kata("install", d)
+        self.assertIn("fait doublon", self.kata("doctor", d).stdout)
+
+    def test_recommend_reports_presence(self):
+        d = git_repo({"package.json": json.dumps({"dependencies": {"expo": "1"}})})
+        home = tempfile.mkdtemp()
+        os.makedirs(os.path.join(home, ".claude", "skills", "aso"))
+        r = sh(sys.executable, KATA, "recommend", d, env={"KATA_HOME": home})
+        self.assertRegex(r.stdout, r"✓ présente\s+aso")
+        self.assertRegex(r.stdout, r"✗ à installer\s+eas-app-stores")
+
+
+if __name__ == "__main__":
+    unittest.main()

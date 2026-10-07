@@ -1,0 +1,7 @@
+# Exceptions acceptées au contrôle d'hygiène de remise (kata-hygiene).
+#
+# Format :  FAMILLE <tab|espaces> chemin <tab|espaces> raison et échéance
+# Familles : SECRET · PERSONNEL · NOMINATIF · PÉRISSABLE
+#
+# Une entrée ici n'efface pas le problème : elle le REPORTE en le rendant explicite. Le script les réaffiche à
+# chaque exécution — cette liste EST la checklist de remise. Une exception sans échéance lisible n'a rien à faire ici.

@@ -1,0 +1,228 @@
+{
+  "kata": 1,
+  "protected_branches": [
+    "main"
+  ],
+  "base_branch": "main",
+  "git": {
+    "push_branch": "allow"
+  },
+  "flow": {
+    "issue_required": true,
+    "proof_required_for_merge": true
+  },
+  "verify": {
+    "commands": [
+      "pnpm typecheck",
+      "pnpm lint"
+    ]
+  },
+  "start": {
+    "install": [
+      "pnpm install --frozen-lockfile",
+      "pnpm db:generate"
+    ]
+  },
+  "write": {
+    "no_code_on_main": [
+      "apps/",
+      "packages/"
+    ],
+    "deny": [
+      {
+        "id": "prisma-migrations",
+        "glob": "**/prisma/migrations/**",
+        "reason": "Migrations append-only : déjà appliquées en staging et en prod. Réécrire un fichier appliqué désynchronise _prisma_migrations. Créer une nouvelle migration."
+      }
+    ]
+  },
+  "bash": {
+    "deny": [
+      {
+        "id": "force-push",
+        "reason": "Force-push interdit : main est la branche de production et déclenche un déploiement.",
+        "all": [
+          "git +push\\b.*(--force( |$)|-f( |$))"
+        ]
+      },
+      {
+        "id": "prisma-reset",
+        "reason": "Les migrations sont déployées en staging ET en prod. reset / db push réécrivent l'historique : interdit.",
+        "any": [
+          "prisma migrate reset",
+          "--force-reset",
+          "prisma db push"
+        ]
+      },
+      {
+        "id": "prod-reset-endpoint",
+        "reason": "Appel de l'endpoint de reset prod : hors de portée d'un agent. Le mainteneur le déclenche à la main.",
+        "all": [
+          "curl|wget|http ",
+          "prod-reset|PROD_RESET_TOKEN"
+        ]
+      },
+      {
+        "id": "prod-namespace",
+        "reason": "Registry / namespace PROD ciblé en direct. Le seul chemin prod est le workflow Deploy (/kata-deploy).",
+        "all": [
+          "myapp-prod",
+          "docker +(push|build)|scw +|--password|registry"
+        ]
+      },
+      {
+        "id": "prod-http-write",
+        "reason": "Écriture HTTP directe sur la PROD. Passer par l'IHM ou un endpoint admin tracé, jamais par curl.",
+        "all": [
+          "curl.*(app\\.example\\.org|myapp-api-prod)",
+          "-X *(POST|PUT|PATCH|DELETE)|--data|-d "
+        ]
+      }
+    ],
+    "ask": [
+      {
+        "id": "deploy-prod-workflow",
+        "reason": "Déploiement PRODUCTION. Pré-vol /kata-deploy fait ? (jobs de fond en cours tués par le redeploy, migrations au boot, mails réels)",
+        "all": [
+          "workflow run.*deploy",
+          "target=prod"
+        ]
+      },
+      {
+        "id": "scw-direct",
+        "reason": "Déploiement Scaleway en direct = contournement du pipeline CI. Un update d'env REMPLACE toute la map ; un update tue les jobs de fond en cours.",
+        "any": [
+          "scw container container (update|deploy)"
+        ]
+      },
+      {
+        "id": "eas-submit",
+        "reason": "Soumission TestFlight (visible par le client). Build validé en Release sur simulateur ? Voir /kata-testflight.",
+        "any": [
+          "eas submit",
+          "eas-cli submit"
+        ]
+      }
+    ]
+  },
+  "mobile": {
+    "eas_config": "apps/mobile/eas.json",
+    "testflight_profile": "testflight-staging",
+    "release_check_before_build": true
+  },
+  "environments": {
+    "staging": {
+      "trigger": "auto_on_merge",
+      "health": "https://staging.example.org",
+      "preflight": [
+        {
+          "id": "jobs",
+          "check": "Un job long tourne-t-il ?",
+          "how": "Un déploiement redéploie le conteneur : les jobs de fond en cours sont tués (backfill un service tiers, run de reprise). Vérifier /admin/jobs avant de fusionner."
+        },
+        {
+          "id": "ci",
+          "check": "CI verte ?",
+          "how": "gh pr checks <n> : typecheck, lint, tests, job integration (Postgres + Redis + migrate deploy + smoke seed)."
+        },
+        {
+          "id": "migrations",
+          "check": "Le lot contient-il une migration ?",
+          "how": "git diff --name-only origin/main -- packages/db/prisma/migrations/ — elles tournent au boot de l'API : un boot lent n'est pas un échec."
+        }
+      ],
+      "deploy": {
+        "command": "gh pr merge <n> --squash --delete-branch"
+      },
+      "verify": [
+        "curl -fsS https://api-staging.example.org/health",
+        "curl -fsS -o /dev/null -w '%{http_code}\\n' {health}"
+      ],
+      "rationalisations": [
+        {
+          "excuse": "Je déploie vite avec scw container update",
+          "reality": "Tu contournes le build CI : l'image ne correspond plus à un commit de main."
+        },
+        {
+          "excuse": "/health répond 200, l'API est bonne",
+          "reality": "/health ne touche ni un service tiers, ni un autre service tiers, ni la GED. Les connecteurs se vérifient un par un."
+        }
+      ]
+    },
+    "prod": {
+      "trigger": "manual",
+      "requires": "staging",
+      "health": "https://app.example.org",
+      "preflight": [
+        {
+          "id": "staging",
+          "check": "Le lot est-il passé en staging ?",
+          "how": "Si non, stop : la prod ne reçoit que du déjà validé."
+        },
+        {
+          "id": "jobs",
+          "check": "Des jobs tournent-ils ?",
+          "how": "Déployer tue les jobs de fond en cours (cause n°1 des incidents passés). Vérifier /admin/jobs sur la prod. Éviter les créneaux des jobs planifiés."
+        },
+        {
+          "id": "migrations",
+          "check": "Migrations dans le lot ?",
+          "how": "git diff --name-only <dernier-tag-prod>..HEAD -- packages/db/prisma/migrations/ ; lire le SQL : sur les volumes de prod, une migration sans index peut tenir le boot plusieurs minutes."
+        },
+        {
+          "id": "mails",
+          "check": "Le lot fait-il partir des e-mails ?",
+          "how": "Les e-mails partent vers de vrais destinataires en production : lister ce que le lot peut envoyer et à combien de destinataires, au premier passage du job compris."
+        },
+        {
+          "id": "demo-switches",
+          "check": "Les interrupteurs de démonstration sont-ils fermés ?",
+          "how": "Endpoints de démonstration et données synthétiques désactivés en production."
+        }
+      ],
+      "deploy": {
+        "command": "gh workflow run deploy.yml -f target=prod -f apps=web+api -f confirm=deploy-prod",
+        "confirm_phrase": "deploy-prod"
+      },
+      "verify": [
+        "curl -fsS https://api.example.org/health",
+        "curl -fsS -o /dev/null -w '%{http_code}\\n' {health}"
+      ],
+      "rationalisations": [
+        {
+          "excuse": "Ça a marché en staging",
+          "reality": "La staging n'a pas le volume des données réel ni les migrations accumulées sur des tables pleines."
+        },
+        {
+          "excuse": "Je corrige juste une variable d'env",
+          "reality": "Un update d'env remplace la map entière et tue les jobs. Ce n'est jamais « juste »."
+        },
+        {
+          "excuse": "Je teste vite le parcours en prod",
+          "reality": "Toute écriture en prod est une donnée réelle chez un vrai client. Lecture seule."
+        },
+        {
+          "excuse": "Personne n'utilise l'app la nuit",
+          "reality": "Les jobs nocturnes, si. Déployer dessus les tue."
+        }
+      ]
+    }
+  },
+  "hygiene": {
+    "names": [],
+    "personal_domains": [
+      "gmail",
+      "googlemail",
+      "outlook",
+      "hotmail",
+      "yahoo",
+      "icloud",
+      "proton"
+    ]
+  },
+  "memory": {
+    "min_files": 3,
+    "decisions_dir": "docs/decisions",
+    "gotchas_file": "docs/gotchas.md"
+  }
+}

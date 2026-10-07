@@ -1,0 +1,37 @@
+{
+  "all": [],
+  "expo": [
+    {
+      "name": "expo-react-native-typescript",
+      "why": "conventions Expo / React Native TypeScript"
+    },
+    {
+      "name": "eas-app-stores",
+      "why": "builds EAS, signature, soumission TestFlight / Play, métadonnées de fiche"
+    },
+    {
+      "name": "app-store-screenshots",
+      "why": "captures App Store / Play aux dimensions exactes"
+    },
+    {
+      "name": "aso",
+      "why": "audit de fiche App Store / Play"
+    }
+  ],
+  "next": [
+    {
+      "name": "impeccable",
+      "why": "revue et polish d'interface (hiérarchie, accessibilité, états, responsive)"
+    },
+    {
+      "name": "design-taste-frontend",
+      "why": "garde-fou anti-gabarit pour les pages publiques"
+    }
+  ],
+  "payload": [
+    {
+      "name": "design-taste-frontend",
+      "why": "garde-fou anti-gabarit pour les pages publiques"
+    }
+  ]
+}

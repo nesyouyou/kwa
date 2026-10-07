@@ -1,0 +1,32 @@
+{
+  "sources": [
+    {
+      "id": "superpowers", "name": "superpowers", "author": "Jesse Vincent", "url": "https://github.com/obra/superpowers",
+      "license": "MIT", "license_file": "licenses/superpowers-MIT.txt", "ref": "v6.4.1",
+      "credit_line": "Inspiré de superpowers (Jesse Vincent, MIT, v6.4.1) ; réécrit pour Kata.",
+      "took": "La discipline des skills : lois de fer, signaux d'alerte, tableaux d'excuses, revues en deux temps, porte d'approbation, routeur de session.",
+      "skills": ["brainstorm", "plan", "execute", "agents", "parallel", "tdd", "debug", "verify", "review", "review-feedback"]
+    },
+    {
+      "id": "mattpocock", "name": "skills", "author": "Matt Pocock", "url": "https://github.com/mattpocock/skills",
+      "license": "MIT", "license_file": "licenses/mattpocock-skills-MIT.txt", "ref": "f3fc563",
+      "credit_line": "Inspiré des skills de Matt Pocock (mattpocock/skills, MIT, commit f3fc563) ; réécrit pour Kata.",
+      "took": "L'interrogatoire sans relâche d'un plan, la reprise de session, le questionnaire pour un tiers, le prototype jetable, l'approfondissement des modules, les tickets en balles traçantes, la preuve par mutation, la rétrospective.",
+      "skills": ["grill", "handoff", "questionnaire", "reexplain", "prototype", "agent-docs", "architecture", "tickets", "debug", "learn"]
+    },
+    {
+      "id": "ponytail", "name": "ponytail", "author": "DietrichGebert", "url": "https://github.com/DietrichGebert/ponytail",
+      "license": "MIT", "license_file": "licenses/ponytail-MIT.txt", "ref": "552acd5",
+      "credit_line": "Inspiré de ponytail (DietrichGebert, MIT, commit 552acd5) ; réécrit pour Kata.",
+      "took": "L'échelle de simplicité (le meilleur code est celui qu'on n'écrit pas), l'audit de sur-ingénierie et de dette, l'axe de revue anti-sur-ingénierie.",
+      "skills": ["simple", "audit", "review"]
+    },
+    {
+      "id": "super-board", "name": "super-board", "author": "Eric Tech", "url": "https://github.com/EricTechPro/super-board",
+      "license": "MIT", "license_file": "licenses/super-board-MIT.txt", "ref": "120bc1d",
+      "credit_line": "Inspiré de super-board (Eric Tech, MIT, commit 120bc1d) ; réécrit pour Kata.",
+      "took": "Le bloc géré dans AGENTS.md entre marqueurs versionnés, la fusion idempotente de settings.json, le standard d'écriture vérifié par des tests, l'idée d'un workflow documenté en briques, le découpage commit / publication de git-sync.",
+      "skills": ["commit", "ship"]
+    }
+  ]
+}
