@@ -1,6 +1,6 @@
 ---
 name: kata-architecture
-description: Repérer où approfondir les modules d'un dépôt quand le code est dur à comprendre, à tester ou à modifier sans tout casser : interfaces larges sur peu de logique, couplages, fuites d'implémentation, tests qui visent l'intérieur. À utiliser pour un audit d'architecture, avant une refonte, ou quand un même secteur du code revient sans cesse dans les correctifs ("l'architecture est bancale", "où refactorer", "/kata-architecture").
+description: Repérer où approfondir les modules d'un dépôt quand le code est dur à comprendre, à tester ou à modifier sans tout casser — interfaces larges sur peu de logique, couplages, fuites d'implémentation, tests qui visent l'intérieur. À utiliser pour un audit d'architecture, avant une refonte, ou quand un même secteur du code revient sans cesse dans les correctifs ("l'architecture est bancale", "où refactorer", "/kata-architecture").
 allowed-tools: Bash(git log *) Bash(git diff *) Read Grep Glob
 ---
 

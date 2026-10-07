@@ -32,6 +32,17 @@ class Lint(unittest.TestCase):
                 self.assertLessEqual(len(fm["description"]), 700)
                 self.assertLessEqual(len(text.splitlines()), 220, "SKILL.md trop long : déplacer le détail en annexe")
 
+    def test_description_survives_yaml_parsing(self):
+        """Un « #N » ou un « : » dans une description non quotée tronque ou casse l'en-tête YAML : la skill perd ses déclencheurs."""
+        for d in self.skills():
+            with self.subTest(skill=d):
+                line = open(os.path.join(SKILLS, d, "SKILL.md"), encoding="utf-8").read().split("\n")[2]
+                value = line.split(": ", 1)[1]
+                if value[:1] not in "\"'":
+                    self.assertIsNone(re.search(r"\s#", value), "« #… » est lu comme un commentaire YAML : description tronquée")
+                    self.assertNotIn(": ", value, "« : » dans une description non quotée casse le YAML")
+                self.assertNotRegex(value, r"(?i)\bvault\b")
+
     def test_no_residue(self):
         for d in self.skills():
             for dirpath, _, files in os.walk(os.path.join(SKILLS, d)):
