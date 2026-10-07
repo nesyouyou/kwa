@@ -1,6 +1,6 @@
 ---
 name: kata-learn
-description: Capitaliser ce que la session a appris — décisions, pièges, commandes, règles à automatiser — en le rangeant au bon endroit (docs du projet, garde-fous, mémoire de l'agent, vault Nakama) après accord de l'utilisateur. À lancer en fin de session substantielle, quand un piège a coûté du temps, ou quand l'invitation Kata mémoire le propose ("/kata-learn", "capitalise", "qu'est-ce qu'on retient ?").
+description: Capitaliser ce que la session a appris — décisions, pièges, commandes, règles à automatiser — en le rangeant au bon endroit (docs du projet, garde-fous, mémoire de l'agent, base de connaissance de l'équipe) après accord de l'utilisateur. À lancer en fin de session substantielle, quand un piège a coûté du temps, ou quand l'invitation Kata mémoire le propose ("/kata-learn", "capitalise", "qu'est-ce qu'on retient ?").
 allowed-tools: Bash(python3 .claude/kata/bin/kata-memory *) Bash(git *) Read Grep Glob
 ---
 

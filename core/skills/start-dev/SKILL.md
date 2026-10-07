@@ -1,6 +1,6 @@
 ---
 name: kata-start-dev
-description: Démarrer puis livrer tout développement selon le circuit issue → branche dédiée dans un worktree → preuve → PR « Closes #N ». À utiliser DÈS qu'une demande implique de modifier le produit (correctif, fonctionnalité, retouche d'interface, web, mobile ou API), avant d'écrire la moindre ligne de code, même pour un petit changement.
+description: Démarrer puis livrer tout développement selon le circuit issue → branche dédiée dans un worktree → preuve → PR liée à son issue (« Closes »). À utiliser DÈS qu'une demande implique de modifier le produit (correctif, fonctionnalité, retouche d'interface, web, mobile ou API), avant d'écrire la moindre ligne de code, même pour un petit changement.
 allowed-tools: Bash(gh *) Bash(git *) Bash(python3 .claude/kata/bin/kata-start *) Bash(pnpm *)
 ---
 

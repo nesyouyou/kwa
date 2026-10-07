@@ -1,6 +1,6 @@
 ---
 name: kata-simple
-description: À utiliser avant d'écrire du code neuf, et dès qu'une solution prévoit une abstraction, une dépendance, une option de configuration ou un « au cas où ». Déclencheurs : ajouter une fonctionnalité, un helper, un wrapper, une lib, un cache, un service ; ou quand l'utilisateur dit « le plus simple », « sans sur-ingénierie », « YAGNI », « on a vraiment besoin de ça ? ».
+description: À utiliser avant d'écrire du code neuf, et dès qu'une solution prévoit une abstraction, une dépendance, une option de configuration ou un « au cas où ». Déclencheurs — ajouter une fonctionnalité, un helper, un wrapper, une lib, un cache, un service ; ou quand l'utilisateur dit « le plus simple », « sans sur-ingénierie », « YAGNI », « on a vraiment besoin de ça ? ».
 ---
 
 # Le plus simple qui marche

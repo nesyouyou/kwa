@@ -1,6 +1,6 @@
 ---
 name: kata-audit
-description: À utiliser pour passer un dépôt ou un dossier au crible de la sur-ingénierie et de la dette : « audite ce code », « qu'est-ce qu'on peut supprimer », « trouve le code mort », « on a trop de dépendances », « ce dossier est devenu illisible », avant un gros refactor ou une reprise de projet. Produit un rapport, ne modifie rien.
+description: À utiliser pour passer un dépôt ou un dossier au crible de la sur-ingénierie et de la dette — « audite ce code », « qu'est-ce qu'on peut supprimer », « trouve le code mort », « on a trop de dépendances », « ce dossier est devenu illisible », avant un gros refactor ou une reprise de projet. Produit un rapport, ne modifie rien.
 allowed-tools: Read Grep Glob Agent Bash(git log *) Bash(git status *) Bash(wc *)
 ---
 

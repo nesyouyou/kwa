@@ -1,6 +1,6 @@
 ---
 name: kata-agent-docs
-description: Écrire ou modifier un document destiné aux agents : skill, AGENTS.md, règle, gabarit, note de politique. À utiliser dès qu'on crée ou édite un fichier dans .claude/skills, .claude/rules, core/skills ou AGENTS.md, quand une skill ne se déclenche pas comme prévu, ou quand l'utilisateur dit « écris une skill », « ajoute une règle », « /kata-agent-docs ».
+description: Écrire ou modifier un document destiné aux agents — skill, AGENTS.md, règle, gabarit, note de politique. À utiliser dès qu'on crée ou édite un fichier dans .claude/skills, .claude/rules, core/skills ou AGENTS.md, quand une skill ne se déclenche pas comme prévu, ou quand l'utilisateur dit « écris une skill », « ajoute une règle », « /kata-agent-docs ».
 allowed-tools: Read Grep Glob Edit Write
 ---
 
