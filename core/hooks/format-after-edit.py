@@ -30,6 +30,9 @@ def main() -> int:
     if not path or not os.path.isfile(path) or os.path.splitext(path)[1] not in policy.get("extensions", DEFAULT_EXT):
         return 0
     root = project_dir(d)
+    real = os.path.realpath(path)
+    if real != root and not real.startswith(root + os.sep):
+        return 0  # fichier d'un autre dépôt ou d'un worktree voisin : ni sa politique ni son suivi git ne sont connus ici
     write = policy.get("command", "npx --no-install prettier --write {file}")
     check = policy.get("check", "npx --no-install prettier --check {file}")
     try:

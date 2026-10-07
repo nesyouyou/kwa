@@ -44,7 +44,7 @@ python3 .claude/kata/bin/kata-start <type> <slug> "<titre>" --issue <n°>
 ```
 
 `<slug>` : anglais, kebab-case. Titre de l'issue : français. **L'issue est ouverte automatiquement** à partir de la demande, sans la redemander, sauf si la politique a `flow.auto_issue: false` ou si tu passes `--no-issue` : on a alors juste la branche `<type>/<slug>`. Le script ouvre l'issue, crée `<type>/<n°>-<slug>` dans
-un worktree à côté du dépôt et lance `start.install`. **Tout le travail se fait dans ce worktree.**
+un worktree à côté du dépôt, relie les fichiers locaux de `start.link` (un fichier d'environnement ignoré par git : lien symbolique vers celui du dépôt principal, jamais une copie) et lance `start.install`. `--base <branche>` change la branche de départ. **Tout le travail se fait dans ce worktree.**
 
 ## 3. Développer
 
