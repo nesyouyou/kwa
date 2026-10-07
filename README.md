@@ -9,8 +9,8 @@ modules, skills et origines, mémoire, onboarding, crédits), au design system N
 calculés en exécutant les gardes.
 
 ```bash
-bin/kata detect    <projet>                  # stack, modules proposés, politique déduite — n'écrit rien
-bin/kata install   <projet> --dry-run        # montre ce qui changerait — n'écrit rien
+bin/kata detect    <projet>                  # stack, modules proposés, politique déduite ; n'écrit rien
+bin/kata install   <projet> --dry-run        # montre ce qui changerait ; n'écrit rien
 bin/kata install   <projet> [--with client-handover] [--codex]
 bin/kata doctor    <projet>                  # conformité, doublons avec l'outillage existant du projet
 bin/kata status    <projet>                  # version, modules, dérive locale

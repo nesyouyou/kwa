@@ -150,7 +150,7 @@ def main():
         bar_p = re.sub(r'<nav class="kd-nav".*?</nav>', '<nav class="kd-nav" aria-label="Pages"><a href="index.html">Accueil</a><a href="skill-map.html">Carte</a><a href="board.html">Board</a><a href="terminal.html">Terminal</a></nav>', bar_p, flags=re.S)
         html = f"""<!doctype html>
 <html lang="fr" data-nkui-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{title} — Kata</title>
+<title>{title} | Kata</title>
 <script>try{{if(localStorage.getItem('kata-docs-theme')==='light')document.documentElement.dataset.nkuiTheme='light'}}catch(e){{}}</script>
 <link rel="stylesheet" href="ds/fonts.css"><link rel="stylesheet" href="ds/tokens.css"><link rel="stylesheet" href="ds/nakama.css">{wcss}
 {head}</head>
