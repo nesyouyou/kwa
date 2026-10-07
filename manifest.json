@@ -292,7 +292,8 @@
       "policy": {
         "flow": {
           "issue_required": true,
-          "proof_required_for_merge": true
+          "proof_required_for_merge": true,
+          "auto_issue": true
         }
       }
     },

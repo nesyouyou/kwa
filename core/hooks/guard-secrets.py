@@ -18,6 +18,17 @@ CMD_DENY = [
 ]
 
 
+# « truc.env » sans dossier est ambigu : un fichier de secrets, ou un identifiant de code (process.env, config.env).
+# Dans une commande, on ne le traite comme un fichier que s'il existe réellement ; `.env`, `.env.local`,
+# `config/prod.env` et tout chemin avec un dossier restent refusés sans condition.
+def secret_word(word: str, cwd: str) -> bool:
+    if not is_secret(word):
+        return False
+    if "/" not in word and word.endswith(".env") and not word.startswith("."):
+        return os.path.exists(os.path.join(cwd, os.path.expanduser(word)))
+    return True
+
+
 def main() -> None:
     d = load_payload()
     tool, ti = d.get("tool_name", ""), d.get("tool_input", {}) or {}
@@ -34,8 +45,9 @@ def main() -> None:
                 decide("deny", f"commande refusée : {' '.join(pat)} ({why})")
         if base[0] == "env" and len(words) == 1:
             decide("deny", "`env` seul affiche tout l'environnement")
+        cwd = d.get("cwd") or os.getcwd()
         for w in words[1:]:
-            if is_secret(w) or any(is_secret(x) for x in re.split(r"[=,:<>]", w) if x):
+            if secret_word(w, cwd) or any(secret_word(x, cwd) for x in re.split(r"[=,:<>]", w) if x):
                 decide("deny", f"commande refusée : touche un fichier de secrets ({os.path.basename(w)})")
 
 

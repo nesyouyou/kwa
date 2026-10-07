@@ -102,9 +102,21 @@ def strip_heredocs(command: str) -> str:
             continue
         out.append(line)
         m = HEREDOC_RE.search(line)
-        if m and not INTERP_RE.search(line):
+        if m and not heredoc_is_executed(line, m):
             delim = m.group(1)
     return "\n".join(out)
+
+
+STAGE_SEP = re.compile(r"\|\||&&|[;&|(`]")
+PIPED_INTERP = re.compile(r"\|\s*(?:sudo\s+|env\s+)*(?:(?:ba|z|k)?sh|python[0-9.]*|node|ruby|perl|xargs)\b")
+
+
+def heredoc_is_executed(line: str, m: "re.Match") -> bool:
+    """Le corps est exécuté si la commande qui porte le heredoc est un interpréteur (`python3 - <<EOF`, `bash <<EOF`)
+    ou si elle est enchaînée par un tube vers un interpréteur (`cat <<EOF | bash`). Les autres commandes de la même
+    ligne (`python3 build.py ; git commit -F - <<EOF`) ne comptent pas : le corps reste une donnée."""
+    own = STAGE_SEP.split(line[:m.start()])[-1]
+    return bool(INTERP_RE.search(own) or PIPED_INTERP.search(line[m.end():]))
 
 
 # --- politique projet : .claude/kata.policy.json, propriété du projet (jamais écrasée par kata)

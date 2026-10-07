@@ -46,7 +46,7 @@ class Start(unittest.TestCase):
         sh("git", "-C", self.repo, "commit", "-q", "-m", "init")
         sh("git", "-C", self.repo, "push", "-q", "origin", "main")
         stub = os.path.join(base, "gh")
-        open(stub, "w").write('#!/bin/sh\ncase "$1 $2" in\n  "issue create") echo "https://github.com/o/r/issues/7" ;;\n  "issue view") echo "{}" ;;\nesac\n')
+        open(stub, "w").write('#!/bin/sh\ncase "$1 $2" in\n  "issue create") echo called >> "$(dirname "$0")/gh-issue-create.log"; echo "https://github.com/o/r/issues/7" ;;\n  "issue view") echo "{}" ;;\nesac\n')
         os.chmod(stub, os.stat(stub).st_mode | stat.S_IEXEC)
         self.env = {"PATH": base + os.pathsep + os.environ["PATH"]}
         self.base = base
@@ -59,6 +59,43 @@ class Start(unittest.TestCase):
         self.assertTrue(os.path.exists(os.path.join(wt, "installed.flag")))
         self.assertEqual(sh("git", "-C", wt, "symbolic-ref", "--short", "HEAD").stdout.strip(), "feat/7-my-filter")
         self.assertEqual(sh("git", "-C", self.repo, "symbolic-ref", "--short", "HEAD").stdout.strip(), "main", "main reste propre")
+
+    def issue_calls(self):
+        log = os.path.join(self.base, "gh-issue-create.log")
+        return len(open(log).read().split()) if os.path.exists(log) else 0
+
+    def set_flow(self, **flow):
+        p = os.path.join(self.repo, ".claude", "kata.policy.json")
+        d = json.load(open(p))
+        d["flow"] = flow
+        json.dump(d, open(p, "w"))
+
+    def test_issue_is_created_automatically_by_default(self):
+        r = sh(sys.executable, os.path.join(BIN, "kata-start"), "feat", "auto-one", "Auto", cwd=self.repo, env=self.env)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertEqual(self.issue_calls(), 1)
+        self.assertTrue(os.path.isdir(os.path.join(self.base, "proj-wt-7-auto-one")))
+
+    def test_auto_issue_false_makes_only_a_branch(self):
+        self.set_flow(auto_issue=False)
+        r = sh(sys.executable, os.path.join(BIN, "kata-start"), "feat", "no-issue-here", "Sans issue", cwd=self.repo, env=self.env)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertEqual(self.issue_calls(), 0, "aucune issue ne doit être créée")
+        wt = os.path.join(self.base, "proj-wt-no-issue-here")
+        self.assertTrue(os.path.isdir(wt))
+        self.assertEqual(sh("git", "-C", wt, "symbolic-ref", "--short", "HEAD").stdout.strip(), "feat/no-issue-here")
+
+    def test_no_issue_flag_overrides_policy(self):
+        r = sh(sys.executable, os.path.join(BIN, "kata-start"), "fix", "flag-only", "Flag", "--no-issue", cwd=self.repo, env=self.env)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertEqual(self.issue_calls(), 0)
+        self.assertTrue(os.path.isdir(os.path.join(self.base, "proj-wt-flag-only")))
+
+    def test_explicit_issue_still_wins_when_auto_issue_is_false(self):
+        self.set_flow(auto_issue=False)
+        r = sh(sys.executable, os.path.join(BIN, "kata-start"), "fix", "reuse", "Reprise", "--issue", "9", cwd=self.repo, env=self.env)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertTrue(os.path.isdir(os.path.join(self.base, "proj-wt-9-reuse")))
 
     def test_existing_issue_and_bad_slug(self):
         r = sh(sys.executable, os.path.join(BIN, "kata-start"), "fix", "x-y", "t", "--issue", "9", cwd=self.repo, env=self.env)
