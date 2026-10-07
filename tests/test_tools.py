@@ -97,12 +97,85 @@ class Start(unittest.TestCase):
         self.assertEqual(r.returncode, 0, r.stderr)
         self.assertTrue(os.path.isdir(os.path.join(self.base, "proj-wt-9-reuse")))
 
+    def test_start_link_symlinks_local_files_instead_of_copying(self):
+        open(os.path.join(self.repo, "secret.local"), "w").write("VALEUR=1\n")  # fichier local, non suivi par git
+        p = os.path.join(self.repo, ".claude", "kata.policy.json")
+        d = json.load(open(p))
+        d["start"]["link"] = ["secret.local", "../dehors", "a.txt", "absent.local"]
+        json.dump(d, open(p, "w"))
+        r = sh(sys.executable, os.path.join(BIN, "kata-start"), "feat", "linked", "Lien", "--no-issue", cwd=self.repo, env=self.env)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        wt = os.path.join(self.base, "proj-wt-linked")
+        link = os.path.join(wt, "secret.local")
+        self.assertTrue(os.path.islink(link), "le fichier local est relié, pas copié")
+        self.assertEqual(os.path.realpath(link), os.path.realpath(os.path.join(self.repo, "secret.local")))
+        self.assertFalse(os.path.islink(os.path.join(wt, "a.txt")), "un fichier suivi par git n'est jamais remplacé")
+        self.assertFalse(os.path.lexists(os.path.join(self.base, "dehors")), "un chemin hors du projet est ignoré")
+        self.assertIn("hors du projet", r.stderr)
+        self.assertFalse(os.path.lexists(os.path.join(wt, "absent.local")), "un fichier absent n'est pas relié")
+
+    def test_base_option_starts_from_another_branch(self):
+        sh("git", "-C", self.repo, "switch", "-q", "-c", "dev")
+        open(os.path.join(self.repo, "dev-only.txt"), "w").write("d")
+        sh("git", "-C", self.repo, "add", "-A")
+        sh("git", "-C", self.repo, "commit", "-q", "-m", "dev")
+        sh("git", "-C", self.repo, "push", "-q", "origin", "dev")
+        sh("git", "-C", self.repo, "switch", "-q", "main")
+        r = sh(sys.executable, os.path.join(BIN, "kata-start"), "feat", "from-dev", "Depuis dev", "--no-issue", "--base", "dev", cwd=self.repo, env=self.env)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertTrue(os.path.exists(os.path.join(self.base, "proj-wt-from-dev", "dev-only.txt")))
+        r2 = sh(sys.executable, os.path.join(BIN, "kata-start"), "feat", "from-main", "Depuis main", "--no-issue", cwd=self.repo, env=self.env)
+        self.assertEqual(r2.returncode, 0, r2.stderr)
+        self.assertFalse(os.path.exists(os.path.join(self.base, "proj-wt-from-main", "dev-only.txt")), "sans --base, on part de main")
+
     def test_existing_issue_and_bad_slug(self):
         r = sh(sys.executable, os.path.join(BIN, "kata-start"), "fix", "x-y", "t", "--issue", "9", cwd=self.repo, env=self.env)
         self.assertEqual(r.returncode, 0, r.stderr)
         self.assertTrue(os.path.isdir(os.path.join(self.base, "proj-wt-9-x-y")))
         bad = sh(sys.executable, os.path.join(BIN, "kata-start"), "fix", "Bad Slug", "t", cwd=self.repo, env=self.env)
         self.assertEqual(bad.returncode, 2)
+
+
+class FormatBoundary(unittest.TestCase):
+    """Le formateur ne touche qu'aux fichiers du projet : jamais à ceux d'un autre dépôt ou d'un worktree voisin."""
+
+    def setUp(self):
+        self.base = os.path.realpath(tempfile.mkdtemp())
+        self.log = os.path.join(self.base, "npx.log")
+        stub = os.path.join(self.base, "bin")
+        os.makedirs(stub)
+        open(os.path.join(stub, "npx"), "w").write(
+            '#!/bin/sh\ncase "$*" in\n  *--version*) exit 0 ;;\n  *--write*) echo "$*" >> "%s" ;;\nesac\n' % self.log)
+        os.chmod(os.path.join(stub, "npx"), 0o755)
+        self.env = {"PATH": stub + os.pathsep + os.environ["PATH"]}
+        self.project = os.path.join(self.base, "project")
+        self.other = os.path.join(self.base, "autre-depot")
+        for d in (self.project, self.other):
+            os.makedirs(d)
+            sh("git", "init", "-q", "-b", "main", d)
+
+    def run_hook(self, path):
+        open(path, "w").write("# titre\n")
+        return sh(sys.executable, os.path.join(HOOKS, "format-after-edit.py"), env={**self.env, "CLAUDE_PROJECT_DIR": self.project},
+                  input=json.dumps({"tool_name": "Write", "tool_input": {"file_path": path}, "cwd": self.project}))
+
+    def calls(self):
+        return open(self.log).read().count("--write") if os.path.exists(self.log) else 0
+
+    def test_new_file_inside_the_project_is_formatted(self):
+        self.assertEqual(self.run_hook(os.path.join(self.project, "note.md")).returncode, 0)
+        self.assertEqual(self.calls(), 1)
+
+    def test_file_of_another_repository_is_left_alone(self):
+        self.assertEqual(self.run_hook(os.path.join(self.other, "note.md")).returncode, 0)
+        self.assertEqual(self.calls(), 0, "un fichier hors du projet ne doit jamais être formaté")
+
+    def test_tracked_file_inside_the_project_is_not_rewritten(self):
+        p = os.path.join(self.project, "suivi.md")
+        open(p, "w").write("# a\n")
+        sh("git", "-C", self.project, "add", "suivi.md")
+        self.run_hook(p)
+        self.assertEqual(self.calls(), 0, "un fichier déjà suivi n'est pas reformaté (seulement signalé)")
 
 
 class Hygiene(unittest.TestCase):
@@ -211,6 +284,16 @@ class Modules(unittest.TestCase):
         self.assertTrue(os.path.exists(os.path.join(d, ".github/pull_request_template.md")))
         self.assertTrue(os.path.exists(os.path.join(d, ".claude/skills/kata-learn/SKILL.md")))
         self.assertEqual(self.kata("doctor", d).returncode, 0, self.kata("doctor", d).stdout)
+
+    def test_detection_proposes_linking_the_local_environment_file(self):
+        d = self.project()
+        open(os.path.join(d, ".env"), "w").write("A=1\n")
+        self.kata("install", d)
+        pol = json.load(open(os.path.join(d, ".claude/kata.policy.json")))
+        self.assertEqual(pol["start"]["link"], [".env"])
+        sans = self.project()
+        self.kata("install", sans)
+        self.assertNotIn("link", json.load(open(os.path.join(sans, ".claude/kata.policy.json")))["start"])
 
     def test_policy_and_seeds_belong_to_project(self):
         d = self.project()

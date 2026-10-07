@@ -1,17 +1,20 @@
 #!/usr/bin/env python3
 """kata-start — démarre un développement selon le circuit issue-flow.
 
-    kata-start <fix|feat|chore|docs> <slug> "<titre>" [--issue N | --no-issue] [--body-file f]
+    kata-start <fix|feat|chore|docs> <slug> "<titre>" [--issue N | --no-issue] [--base B] [--body-file f]
 
   <slug>         nom court de la branche, en anglais, kebab-case (ex. my-portfolio-filter)
   <titre>        titre de l'issue, en français
   --issue N      reprend une issue existante au lieu d'en ouvrir une
   --no-issue     ne crée aucune issue : branche <type>/<slug> (défaut si la politique a flow.auto_issue: false)
+  --base B       branche de départ du worktree (défaut : base_branch de la politique, sinon main)
   --body-file f  corps de la nouvelle issue (sinon un squelette à compléter)
 
-Ouvre l'issue, crée la branche <type>/<n°>-<slug> dans un worktree à côté du dépôt principal, puis lance
-start.install de la politique (.claude/kata.policy.json). Pourquoi un worktree : plusieurs sessions travaillent sur
-le même dépôt ; chacune garde sa copie et `main` reste propre. Ne pousse rien, ne commite rien.
+Ouvre l'issue, crée la branche <type>/<n°>-<slug> dans un worktree à côté du dépôt principal, relie au worktree les
+fichiers locaux listés dans start.link (par exemple un fichier d'environnement ignoré par git : lien symbolique vers
+celui du dépôt principal, jamais une copie), puis lance start.install de la politique (.claude/kata.policy.json).
+Pourquoi un worktree : plusieurs sessions travaillent sur le même dépôt ; chacune garde sa copie et `main` reste
+propre. Ne pousse rien, ne commite rien.
 """
 from __future__ import annotations
 
@@ -39,6 +42,24 @@ def run(*cmd: str, cwd: str | None = None, check: bool = True) -> str:
     return r.stdout.strip()
 
 
+def link_shared(paths: list[str], main_root: str, wt: str) -> list[str]:
+    """Lien symbolique, dans le worktree, vers chaque fichier local du dépôt principal (start.link).
+    Ignore les chemins qui sortent du projet, ceux qui n'existent pas et ceux que le worktree a déjà."""
+    done = []
+    for rel in paths:
+        norm = os.path.normpath(rel)
+        if os.path.isabs(norm) or norm == ".." or norm.startswith(".." + os.sep):
+            print(f"attention : start.link ignore « {rel} » (chemin hors du projet)", file=sys.stderr)
+            continue
+        src, dst = os.path.join(main_root, norm), os.path.join(wt, norm)
+        if not os.path.exists(src) or os.path.lexists(dst):
+            continue
+        os.makedirs(os.path.dirname(dst), exist_ok=True)
+        os.symlink(src, dst)
+        done.append(norm)
+    return done
+
+
 def main(argv: list[str]) -> int:
     if len(argv) < 3 or argv[0] not in {"fix", "feat", "chore", "docs"}:
         usage()
@@ -46,10 +67,12 @@ def main(argv: list[str]) -> int:
     if not re.fullmatch(r"[a-z0-9]+(-[a-z0-9]+)*", slug):
         print(f"slug invalide : « {slug} » (attendu : kebab-case anglais, ex. my-portfolio-filter)", file=sys.stderr)
         return 2
-    issue, body_file, no_issue = "", "", False
+    issue, body_file, no_issue, base_arg = "", "", False, ""
     while rest:
         if rest[0] == "--issue" and len(rest) > 1:
             issue, rest = rest[1], rest[2:]
+        elif rest[0] == "--base" and len(rest) > 1:
+            base_arg, rest = rest[1], rest[2:]
         elif rest[0] == "--no-issue":
             no_issue, rest = True, rest[1:]
         elif rest[0] == "--body-file" and len(rest) > 1:
@@ -65,7 +88,7 @@ def main(argv: list[str]) -> int:
     except (OSError, ValueError):
         policy = {}
     start = policy.get("start", {})
-    base = policy.get("base_branch", "main")
+    base = base_arg or policy.get("base_branch", "main")
     labels = {"fix": "bug", "feat": "enhancement", **start.get("labels", {})}
     if not issue and not policy.get("flow", {}).get("auto_issue", True):
         no_issue = True
@@ -97,6 +120,9 @@ def main(argv: list[str]) -> int:
     run("git", "fetch", "-q", "origin", base, cwd=root)
     run("git", "worktree", "add", "-q", "-b", branch, wt, f"origin/{base}", cwd=root)
     print(f"branche : {branch}\nworktree : {wt}")
+    linked = link_shared(start.get("link", []), main_root, wt)
+    if linked:
+        print("liens vers le dépôt principal : " + ", ".join(linked))
     for cmd in start.get("install", []):
         r = subprocess.run(cmd, shell=True, cwd=wt, capture_output=True, text=True)
         if r.returncode != 0:

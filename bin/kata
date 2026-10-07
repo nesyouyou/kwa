@@ -198,6 +198,8 @@ def detect(target: Path) -> dict:
         inferred["start"] = {"install": install}
     elif pm:
         inferred["start"] = {"install": [f"{pm} install"]}
+    if (target / ".env").is_file():  # fichier local ignoré : un worktree ne le reçoit pas, on le relie
+        inferred.setdefault("start", {})["link"] = [".env"]
     code_dirs = [d + "/" for d in ("apps", "packages", "src", "app", "lib") if (target / d).is_dir()]
     if code_dirs:
         inferred["write"] = {"no_code_on_main": code_dirs}
