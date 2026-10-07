@@ -77,6 +77,23 @@ def atomic_write(path: Path, text: str, mode: int | None = None) -> None:
         raise
 
 
+def atomic_write_raw(path: Path, text: str) -> None:
+    """Comme atomic_write, mais sans toucher aux fins de ligne (newline='')."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, tmp = tempfile.mkstemp(dir=str(path.parent), prefix=f".{path.name}.")
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8", newline="") as f:
+            f.write(text)
+            f.flush()
+            os.fsync(f.fileno())
+        shutil.copymode(path, tmp)
+        os.replace(tmp, path)
+    except BaseException:
+        if os.path.exists(tmp):
+            os.unlink(tmp)
+        raise
+
+
 def version() -> str:
     return (PACK / "VERSION").read_text().strip()
 
@@ -261,31 +278,47 @@ def render_block(profile: str, modules: list[str], target: Path | None = None) -
     return [head] + body.splitlines() + ["<!-- kata:end -->"]
 
 
+def split_keep(text: str) -> list[str]:
+    """Découpe aux seuls \\n, en gardant les fins de ligne : rien d'autre (CRLF, saut de page…) n'est touché."""
+    parts = text.split("\n")
+    return [x + "\n" for x in parts[:-1]] + ([parts[-1]] if parts[-1] else [])
+
+
 def apply_block(target: Path, profile: str, modules: list[str], dry: bool) -> str:
+    """Écrit le bloc géré. Tout ce qui est hors des marqueurs reste identique octet pour octet :
+    même fins de ligne, mêmes espaces, même absence de retour final (seul un \\n de séparation peut être ajouté
+    avant un bloc neuf, jamais à l'intérieur du contenu existant)."""
     path = target / "AGENTS.md"
     block = render_block(profile, modules, target)
     if not path.exists():
         if not dry:
             atomic_write(path, "# AGENTS.md\n\n" + "\n".join(block) + "\n")
         return "créé"
-    text = path.read_text(encoding="utf-8")
-    lines = text.splitlines()
-    pairs = markers(lines)
+    with open(path, encoding="utf-8", newline="") as f:
+        text = f.read()
+    eol = "\r\n" if "\r\n" in text else "\n"
+    raw = split_keep(text)
+    probe = [x.rstrip("\r\n") for x in raw]
+    pairs = markers(probe)
     if len(pairs) > 1:
         die(f"{path} contient {len(pairs)} blocs kata ; n'en garder qu'un puis relancer")
-    if any(BEGIN_RE.match(x) for x in lines) and not pairs:
+    if any(BEGIN_RE.match(x) for x in probe) and not pairs:
         die(f"{path} : marqueur kata:begin sans kata:end ; corriger à la main")
+    new_block = eol.join(block) + eol
     if pairs:
-        b, e = pairs[0]
-        new, verdict = lines[:b] + block + lines[e + 1:], "mis à jour"
+        bgn, end = pairs[0]
+        last_has_eol = raw[end].endswith("\n")
+        new_text = "".join(raw[:bgn]) + (new_block if last_has_eol else new_block.rstrip("\r\n")) + "".join(raw[end + 1:])
+        verdict = "mis à jour"
     else:
-        new = lines + ([""] if lines and lines[-1].strip() else []) + block
+        sep = "" if (not text or text.endswith("\n")) else eol
+        gap = eol if text.strip() and not text.endswith(("\n\n", "\r\n\r\n")) else ""
+        new_text = text + sep + gap + new_block
         verdict = "inséré"
-    new_text = "\n".join(new) + "\n"
     if new_text == text:
         return "inchangé"
     if not dry:
-        atomic_write(path, new_text)
+        atomic_write_raw(path, new_text)
     return verdict
 
 

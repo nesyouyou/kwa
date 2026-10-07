@@ -12,7 +12,7 @@
       "license": "MIT", "license_file": "licenses/mattpocock-skills-MIT.txt", "ref": "f3fc563",
       "credit_line": "Inspiré des skills de Matt Pocock (mattpocock/skills, MIT, commit f3fc563) ; réécrit pour Kata.",
       "took": "L'interrogatoire sans relâche d'un plan, la reprise de session, le questionnaire pour un tiers, le prototype jetable, l'approfondissement des modules, les tickets en balles traçantes, la preuve par mutation, la rétrospective.",
-      "skills": ["grill", "handoff", "questionnaire", "reexplain", "prototype", "agent-docs", "architecture", "tickets", "debug", "learn"]
+      "skills": ["interview", "handoff", "questionnaire", "rephrase", "prototype", "agent-docs", "architecture", "tickets", "debug", "learn"]
     },
     {
       "id": "ponytail", "name": "ponytail", "author": "DietrichGebert", "url": "https://github.com/DietrichGebert/ponytail",

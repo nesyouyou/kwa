@@ -33,7 +33,7 @@ KINDS = {
 }
 
 FAMILIES = {
-    "cadrer": ["brainstorm", "grill", "plan", "tickets", "prototype", "questionnaire", "architecture", "reexplain"],
+    "cadrer": ["brainstorm", "interview", "plan", "tickets", "prototype", "questionnaire", "architecture", "rephrase"],
     "faire": ["start-dev", "tdd", "execute", "agents", "parallel", "simple"],
     "prouver": ["debug", "verify", "review", "review-feedback", "audit"],
     "livrer": ["commit", "ship", "deploy", "testflight"],
@@ -68,16 +68,33 @@ def clean_md(t: str) -> str:
     return t.strip()
 
 
-def first_sentence(text: str, limit: int = 200) -> str:
+def paragraph(lines: list[str], start: int) -> str:
+    """Premier paragraphe à partir de `start` : lignes consécutives jusqu'à une ligne vide ou un bloc (titre, tableau, code)."""
+    out = []
+    for l in lines[start:]:
+        if not l.strip():
+            if out:
+                break
+            continue
+        if l.startswith(("#", "|", "```", ">")):
+            if out:
+                break
+            continue
+        out.append(clean_md(l))
+    return " ".join(out)
+
+
+def first_sentence(text: str, limit: int = 420) -> str:
+    """Phrases entières jusqu'à `limit` caractères ; une phrase unique plus longue est coupée au dernier mot, avec « … »."""
     text = re.sub(r"`([^`]*)`", r"\1", re.sub(r"\*\*([^*]*)\*\*", r"\1", text)).strip()
     out = ""
     for part in re.split(r"(?<=[.!?])\s+", text):
-        if out and len(out) + len(part) > limit:
+        if out and len(out) + len(part) + 1 > limit:
             break
         out = f"{out} {part}".strip()
-        if len(out) >= 90:
-            break
-    return out[:limit]
+    if len(out) > limit:
+        out = out[:limit].rsplit(" ", 1)[0].rstrip(" ,;:") + "…"
+    return out
 
 
 def parse_skill(skill_id: str, credits: dict) -> dict:
@@ -90,21 +107,15 @@ def parse_skill(skill_id: str, credits: dict) -> dict:
     intro = ""
     for i, l in enumerate(lines):
         if l.startswith("# "):
-            for nxt in lines[i + 1:]:
-                if nxt.strip() and not nxt.startswith("#"):
-                    intro = nxt.strip()
-                    break
+            intro = paragraph(lines, i + 1)
             break
-    sections, cur = [], None
+    sections = []
     in_code = False
-    for l in lines:
+    for i, l in enumerate(lines):
         if l.strip().startswith("```"):
             in_code = not in_code
         if not in_code and l.startswith("## "):
-            cur = {"title": l[3:].strip(), "text": ""}
-            sections.append(cur)
-        elif cur is not None and not cur["text"] and l.strip() and not l.startswith(("|", "#", "```", ">")) and not in_code:
-            cur["text"] = clean_md(l)
+            sections.append({"title": l[3:].strip(), "text": first_sentence(paragraph(lines, i + 1), 320)})
     refs = sorted({m for m in re.findall(r"(?<![\w./-])/kata-([a-z]+(?:-[a-z]+)*)(?![\w/])", body) if m != skill_id})
     origins = [s["id"] for s in credits["sources"] if skill_id in s["skills"]] or ["kata"]
     annex = sorted(f for f in os.listdir(os.path.join(SKILLS, skill_id)) if f != "SKILL.md")
@@ -170,7 +181,12 @@ def build(catalog_ids: list[str], credits: dict, wf_text: dict) -> dict:
         ["examples/expo-monorepo.policy.json"])
     add("r:request", "humain", "Ta demande", "Tu écris. L'agent choisit la skill qui correspond.", "", "Les consignes d'AGENTS.md et les tiennes priment toujours sur une skill.")
 
-    W, H_ = 252, 118  # pas de grille
+    W, H_ = 280, 118  # pas de grille ; un nœud fait 224 × 92, l'écart laisse la place aux cadres et aux arêtes
+    NW, NH = 224, 92
+
+    def grp(label, c0, ncols, rows):
+        """Cadre qui englobe vraiment ses nœuds : marge de 18 px autour, 56 px pour le titre en haut."""
+        return {"label": label, "x": c0 * W - 18, "y": 8, "w": (ncols - 1) * W + NW + 36, "h": 48 + (rows - 1) * H_ + NH + 18}
 
     def pos(c, r, x0=0, y0=0):
         return {"x": x0 + c * W, "y": y0 + r * H_}
@@ -190,16 +206,16 @@ def build(catalog_ids: list[str], credits: dict, wf_text: dict) -> dict:
             else:
                 items.append({"id": f"s:{sid}", **pos(c0, i, 0, 56)})
         rows = (len(ids) + 1) // 2 if ncols == 2 else len(ids)
-        groups.append({"label": FAMILY_LABEL[fam], "x": c0 * W - 16, "y": 8, "w": ncols * W - 36, "h": rows * H_ + 76})
+        groups.append(grp(FAMILY_LABEL[fam], c0, ncols, rows))
     # gardes et hooks : deux colonnes à droite, pour garder un plan large plutôt que haut
     for i, k in enumerate(["secrets", "git", "delete", "policy", "github", "write"]):
         items.append({"id": f"g:{k}", **pos(6, i, 0, 56)})
-    groups.append({"label": "Gardes · PreToolUse", "x": 6 * W - 16, "y": 8, "w": W - 36, "h": 6 * H_ + 76})
+    groups.append(grp("Gardes · PreToolUse", 6, 1, 6))
     for i, k in enumerate(["router", "memctx", "format", "verify", "nudge"]):
         items.append({"id": f"h:{k}", **pos(7, i, 0, 56)})
-    groups.append({"label": "Hooks · Session, Stop", "x": 7 * W - 16, "y": 8, "w": W - 36, "h": 6 * H_ + 76})
+    groups.append(grp("Hooks · Session, Stop", 7, 1, 6))
     items.append({"id": "p:policy", **pos(7, 5, 0, 56)})
-    for a, b, kind in [("brainstorm", "plan", "calls"), ("grill", "brainstorm", "feeds"), ("plan", "start-dev", "calls"), ("plan", "execute", "calls"),
+    for a, b, kind in [("brainstorm", "plan", "calls"), ("interview", "brainstorm", "feeds"), ("plan", "start-dev", "calls"), ("plan", "execute", "calls"),
                        ("plan", "agents", "calls"), ("start-dev", "tdd", "calls"), ("tdd", "verify", "calls"), ("debug", "tdd", "calls"),
                        ("agents", "review", "calls"), ("verify", "commit", "calls"), ("review", "review-feedback", "calls"),
                        ("commit", "ship", "calls"), ("ship", "deploy", "calls"), ("deploy", "learn", "calls"), ("learn", "handoff", "feeds")]:
@@ -223,7 +239,7 @@ def build(catalog_ids: list[str], credits: dict, wf_text: dict) -> dict:
     flow("session", "Une session", "Ce qui se déclenche tout seul, dans l'ordre, de l'ouverture à la fermeture.",
          ["h:router", "h:memctx", "r:request", "g:secrets", "g:git", "g:delete", "g:policy", "g:github", "g:write", "h:format", "h:verify", "h:nudge"], per_row=4)
     flow("feature", "Une fonctionnalité", "De l'intention floue à la décision de commit : trois portes humaines, quatre sous-agents.",
-         ["s:grill", "s:brainstorm", "u:spec", "s:plan", "s:start-dev", "a:impl", "a:spec", "a:qual", "s:verify", "a:rev", "u:commit"], per_row=4,
+         ["s:interview", "s:brainstorm", "u:spec", "s:plan", "s:start-dev", "a:impl", "a:spec", "a:qual", "s:verify", "a:rev", "u:commit"], per_row=4,
          loop=("a:qual", "a:impl", "retours critiques"))
     flow("bug", "Un bug", "Aucune correction avant la cause racine ; le correctif est prouvé en le retirant.",
          ["s:debug", "a:explore", "s:tdd", "s:simple", "s:verify", "h:nudge", "s:learn"], per_row=4)

@@ -1,11 +1,11 @@
 <!doctype html>
-<html lang="fr" data-nkui-theme="light">
+<html lang="fr" data-nkui-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Kata — le socle commun Nakama</title>
 <meta name="description" content="Mêmes règles, mêmes garde-fous, mêmes skills sur tous les projets Nakama.">
-<script>try{if(localStorage.getItem('kata-docs-theme')==='dark')document.documentElement.dataset.nkuiTheme='dark'}catch(e){}</script>
+<script>try{if(localStorage.getItem('kata-docs-theme')==='light')document.documentElement.dataset.nkuiTheme='light'}catch(e){}</script>
 <link rel="stylesheet" href="ds/fonts.css"><link rel="stylesheet" href="ds/tokens.css"><link rel="stylesheet" href="ds/nakama.css">
 <!--EXTRA_CSS-->
 <style>
@@ -252,7 +252,7 @@ footer.nkds-footer{margin-top:128px}
     <p class="kd-lead">Le module <code>craft</code> reprend les principes de discipline (lois de fer, signaux d'alerte, revues en deux temps), réécrits en français et branchés sur la politique du projet. Un rappel de routage est injecté au démarrage de session, limité aux skills réellement installées.</p></div>
   <div class="kd-wrap" style="margin-top:40px"><table>
     <tr><th>Avant (superpowers)</th><th>Dans Kata</th><th>Ce qui change</th></tr>
-    <tr><td>brainstorming</td><td>/kata-brainstorm, /kata-grill</td><td>Spec dans docs/specs, porte d'approbation humaine, interrogatoire question par question, sans serveur visuel.</td></tr>
+    <tr><td>brainstorming</td><td>/kata-brainstorm, /kata-interview</td><td>Spec dans docs/specs, porte d'approbation humaine, interrogatoire question par question, sans serveur visuel.</td></tr>
     <tr><td>writing-plans</td><td>/kata-plan, /kata-tickets</td><td>Commandes tirées de <code>verify.commands</code>, jamais d'étape de commit ; découpe possible en tickets GitHub.</td></tr>
     <tr><td>executing-plans</td><td>/kata-execute</td><td>Arrêt et remontée au moindre blocage, jamais de décision silencieuse.</td></tr>
     <tr><td>subagent-driven-development</td><td>/kata-agents</td><td>Un agent frais par tâche, relecture conformité puis qualité, aucun agent ne commite, un refus de garde se remonte.</td></tr>
@@ -362,7 +362,7 @@ DATA.modules.forEach(m=>{
 });
 
 /* skills */
-const FAMILIES = {cadrage:['grill','brainstorm','plan','tickets','questionnaire','prototype','architecture','reexplain'], faire:['execute','agents','parallel','tdd','simple','start-dev'], prouver:['debug','verify','review','review-feedback','audit'], livrer:['commit','ship','deploy','testflight'], memoire:['learn','handoff','agent-docs']};
+const FAMILIES = {cadrage:['interview','brainstorm','plan','tickets','questionnaire','prototype','architecture','rephrase'], faire:['execute','agents','parallel','tdd','simple','start-dev'], prouver:['debug','verify','review','review-feedback','audit'], livrer:['commit','ship','deploy','testflight'], memoire:['learn','handoff','agent-docs']};
 const FLAB = {cadrage:'Cadrer', faire:'Faire', prouver:'Prouver', livrer:'Livrer', memoire:'Mémoire'};
 const famOf = n => Object.keys(FAMILIES).find(f=>FAMILIES[f].includes(n)) || 'faire';
 let ff='all';

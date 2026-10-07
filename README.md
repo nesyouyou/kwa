@@ -39,7 +39,7 @@ Le spécifique d'un projet vit dans `.claude/kata.policy.json` (créé une fois 
 
 ## Garanties
 
-- `AGENTS.md` : seul le bloc `<!-- kata:begin … -->` est géré, le reste est intact (testé octet pour octet).
+- `AGENTS.md` : seul le bloc `<!-- kata:begin … -->` est géré, le reste est intact (testé dans `tests/test_agents_md_bytes.py` : fins de ligne CRLF, absence de retour final, espaces en fin de ligne, saut de page, BOM, accents).
   `CLAUDE.md` devient un pointeur `@AGENTS.md`, sans jamais écraser un fichier qui porte ses propres règles.
 - `settings.json` : fusion sans doublon, sauvegarde, écriture atomique, JSON invalide laissé intact.
 - Retouche locale d'un fichier géré : sauvegardée avant d'être écrasée. Gabarits « seed » : copiés une fois.

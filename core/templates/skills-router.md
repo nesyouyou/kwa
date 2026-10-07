@@ -5,7 +5,7 @@ d'explorer le code ; elle dit comment le faire. Une question simple ou une conve
 | Quand | Skill |
 |---|---|
 | Fonctionnalité ou changement non trivial, intention encore floue | /kata-brainstorm |
-| Mettre un plan ou une décision à l'épreuve, question par question | /kata-grill |
+| Mettre un plan ou une décision à l'épreuve, question par question | /kata-interview |
 | Question de conception à trancher par un essai jetable | /kata-prototype |
 | Décision à faire trancher par quelqu'un d'autre (client, tiers) | /kata-questionnaire |
 | Spec approuvée à transformer en tâches | /kata-plan |
@@ -29,7 +29,7 @@ d'explorer le code ; elle dit comment le faire. Une question simple ou une conve
 | Fin de session substantielle, piège coûteux à retenir | /kata-learn |
 | Passer le relais à un autre agent ou à une autre session | /kata-handoff |
 | Écrire ou modifier un AGENTS.md, une règle ou une skill | /kata-agent-docs |
-| « Je n'ai pas compris » : reformuler le dernier message | /kata-reexplain |
+| « Je n'ai pas compris » : reformuler le dernier message | /kata-rephrase |
 
 Ordre : la méthode d'abord (cadrer, déboguer), l'implémentation ensuite. Les consignes de l'utilisateur et d'AGENTS.md
 priment toujours sur une skill.

@@ -25,7 +25,7 @@ Avant la moindre ligne : une phrase qui commence par un verbe de décision, et u
 - « Le modèle d'état couvre-t-il l'annulation après paiement partiel ? »
 - « Quelle forme de tableau de bord lit-on le plus vite : liste, grille ou résumé ? »
 
-Une question sans critère donne un prototype sans fin. Si elle est floue, `/kata-grill` d'abord. La voie
+Une question sans critère donne un prototype sans fin. Si elle est floue, `/kata-interview` d'abord. La voie
 « sonde » de `/kata-brainstorm` mène ici.
 
 ## 2. Choisir la forme selon la question

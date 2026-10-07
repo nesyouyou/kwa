@@ -1,6 +1,6 @@
 ---
-name: kata-grill
-description: Interroger sans relâche l'utilisateur sur un plan, une conception ou une décision pour l'éprouver avant d'agir. À utiliser quand il dit « challenge-moi », « grille-moi », « teste mon idée », « /kata-grill », ou quand un plan paraît flou, que des termes du domaine se contredisent ou que /kata-brainstorm bute sur une décision à fort enjeu.
+name: kata-interview
+description: Interroger sans relâche l'utilisateur sur un plan, une conception ou une décision pour l'éprouver avant d'agir. À utiliser quand il dit « challenge-moi », « interviewe-moi », « grille-moi », « teste mon idée », « /kata-interview », ou quand un plan paraît flou, que des termes du domaine se contredisent ou que /kata-brainstorm bute sur une décision à fort enjeu.
 allowed-tools: Read Grep Glob Bash(git log *) Bash(git status *) Write Edit
 ---
 

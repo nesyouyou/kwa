@@ -61,7 +61,7 @@
 .km-arrow--loop{stroke:var(--nkui-mut)}
 /* zoom sémantique : de loin, seulement les noms, en plus gros */
 .km-far .km-sub,.km-far .km-kind,.km-far .km-handle,.km-far .km-open{display:none}
-.km-far .km-label{font-size:21px;font-weight:600}
+.km-far .km-label{font-size:16px;font-weight:600}
 .km-far .km-node .km-label{transform:translateY(14px)}
 .km-far .km-grouplabel{font-size:16px}
 /* panneau */
@@ -93,11 +93,11 @@
 .km-sw--humain{background:var(--nkui-invert-bg);border-color:transparent;border-radius:8px}.km-sw--policy{border-style:dotted;background:var(--nkui-tint)}
 .km-sw--step{border-color:var(--nkui-rule)}.km-sw--av{width:13px;border-radius:50%;background:var(--nkui-raise)}
 .km-lg-line i{width:22px;height:0;border-top:1.5px solid var(--nkui-body);display:inline-block}.km-lg-line--loop i{border-top-style:dashed;border-color:var(--nkui-mut)}
-.km-mini{position:absolute;right:12px;bottom:64px;width:168px;height:100px;border:1px solid var(--nkui-rule);border-radius:12px;background:var(--nkui-glass);backdrop-filter:blur(8px);overflow:hidden;cursor:pointer;touch-action:none}
+.km-mini{position:absolute;left:12px;bottom:12px;width:168px;height:100px;border:1px solid var(--nkui-rule);border-radius:12px;background:var(--nkui-glass);backdrop-filter:blur(8px);overflow:hidden;cursor:pointer;touch-action:none}
 .km-mini svg{width:100%;height:100%;display:block}
 .km-mg{fill:none;stroke:var(--nkui-rule)}.km-mn{fill:var(--nkui-body);opacity:.55}.km-mn--humain{fill:var(--nkui-fg);opacity:.9}
 .km-mv{fill:none;stroke:var(--nkui-fg);stroke-width:1.5}
-.km-panel:not([hidden]) ~ .km-mini,.km-panel:not([hidden]) ~ .km-zoom{right:364px}
+.km-panel:not([hidden]) ~ .km-zoom{right:364px}
 .km-zoom{position:absolute;right:12px;bottom:12px;display:flex;align-items:center;gap:4px;padding:4px;border:1px solid var(--nkui-rule);border-radius:999px;background:var(--nkui-glass);backdrop-filter:blur(8px)}
 .km-zoom button{min-width:36px;height:36px;padding:0 10px;border:0;border-radius:999px;background:transparent;color:var(--nkui-fg);font:500 13px 'Geist Mono',monospace;cursor:pointer}
 .km-zoom button:hover{background:var(--nkui-raise)}

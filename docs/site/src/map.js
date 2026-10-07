@@ -180,6 +180,13 @@
         if (e.label) { var mid = pts[Math.floor(pts.length / 2)]; var lt = s('text', { class: 'km-edgelabel', x: (pts[1] || mid)[0] + 6, y: (pts[1] || mid)[1] - 6 }, el.gEdges); lt.textContent = e.label; }
       });
       v.nodes.forEach(function (p) { var g = drawNode(p); if (g) el.gNodes.appendChild(g); });
+      /* un nom trop long est comprimé pour tenir dans son nœud (mesure réelle du texte) */
+      el.gNodes.querySelectorAll('.km-label').forEach(function (t) {
+        try {
+          var max = t.closest('.km-node--humain') ? W - 52 : W - 32;
+          if (t.getComputedTextLength() > max) { t.setAttribute('textLength', max); t.setAttribute('lengthAdjust', 'spacingAndGlyphs'); }
+        } catch (e) { /* texte non rendu */ }
+      });
       var crumbs = '<button type="button" data-v="pack">Le pack Kata</button>';
       if (state.view !== 'pack') crumbs += '<span>›</span><b>' + esc(v.title) + '</b>';
       el.crumbs.innerHTML = crumbs + '<p class="km-intro">' + esc(v.intro || '') + '</p>';

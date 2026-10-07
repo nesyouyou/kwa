@@ -14,7 +14,7 @@ Kata assemble des idées éprouvées par d'autres projets, tous sous licence MIT
 - Dépôt : https://github.com/mattpocock/skills (référence : f3fc563)
 - Licence : `licenses/mattpocock-skills-MIT.txt`
 - Ce que Kata en a pris : L'interrogatoire sans relâche d'un plan, la reprise de session, le questionnaire pour un tiers, le prototype jetable, l'approfondissement des modules, les tickets en balles traçantes, la preuve par mutation, la rétrospective.
-- Skills ou éléments concernés : /kata-grill, /kata-handoff, /kata-questionnaire, /kata-reexplain, /kata-prototype, /kata-agent-docs, /kata-architecture, /kata-tickets, /kata-debug, /kata-learn
+- Skills ou éléments concernés : /kata-interview, /kata-handoff, /kata-questionnaire, /kata-rephrase, /kata-prototype, /kata-agent-docs, /kata-architecture, /kata-tickets, /kata-debug, /kata-learn
 
 ## ponytail — DietrichGebert (MIT)
 

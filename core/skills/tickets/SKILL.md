@@ -12,13 +12,13 @@ Cette skill produit la liste, la fait valider, puis crée les issues. **Rien n'e
 
 Articulation : `/kata-brainstorm` cadre le besoin, `/kata-plan` écrit le plan local (étapes d'exécution pour
 l'agent), `/kata-tickets` répartit le travail en issues GitHub. Chaque ticket est ensuite repris par
-`/kata-start-dev <issue>` (branche, worktree, preuve, PR). `/kata-grill` aide si la spec est encore floue.
+`/kata-start-dev <issue>` (branche, worktree, preuve, PR). `/kata-interview` aide si la spec est encore floue.
 
 ## Étape 1 : rassembler
 
 Partir de ce qui est déjà dans la conversation, ou de la référence donnée (chemin de spec ou de plan, numéro
 d'issue : `gh issue view <n°> --comments`). Lire le code concerné pour connaître l'état réel, et le vocabulaire
-du domaine du projet pour nommer les tickets. Si la spec est floue, s'arrêter et passer par `/kata-grill`.
+du domaine du projet pour nommer les tickets. Si la spec est floue, s'arrêter et passer par `/kata-interview`.
 
 Chercher les **préparatifs** : une petite refonte qui rend le reste facile se fait en premier, dans son ticket.
 Rendre le changement facile, puis faire le changement facile.

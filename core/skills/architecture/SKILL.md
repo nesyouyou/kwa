@@ -9,7 +9,7 @@ allowed-tools: Bash(git log *) Bash(git diff *) Read Grep Glob
 Un module profond cache beaucoup de comportement derrière une petite interface. Un module superficiel fait
 l'inverse : il expose presque autant qu'il contient. Cette skill cherche les modules superficiels qui coûtent cher
 et propose de les approfondir. **Lecture seule : aucune modification sans l'accord de l'utilisateur.**
-Elle s'enchaîne avec `/kata-grill` (creuser l'option choisie), `/kata-plan` (planifier la refonte), `/kata-tickets`
+Elle s'enchaîne avec `/kata-interview` (creuser l'option choisie), `/kata-plan` (planifier la refonte), `/kata-tickets`
 (la découper), `/kata-simple` (nettoyage local) et `/kata-audit` (revue plus large).
 
 ## Vocabulaire commun
@@ -77,7 +77,7 @@ Un rapport écrit dans `docs/architecture/AAAA-MM-JJ-<sujet>.md` n'est créé **
 
 ## Étape 4 : creuser le candidat choisi
 
-Lancer `/kata-grill` sur l'option retenue : contraintes, dépendances, forme du module approfondi, ce qui se trouve
+Lancer `/kata-interview` sur l'option retenue : contraintes, dépendances, forme du module approfondi, ce qui se trouve
 derrière la couture, quels tests survivent. Règles de la discussion :
 
 - Une fois le nouveau module en place, les anciens tests sur les modules superficiels deviennent du bruit : on les

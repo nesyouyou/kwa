@@ -1,6 +1,6 @@
 ---
-name: kata-reexplain
-description: Reformuler le dernier message quand l'utilisateur n'a pas compris. À utiliser dès qu'il dit « stop », « je ne comprends pas », « explique autrement », « reformule », « c'est quoi ça ? », « /kata-reexplain ».
+name: kata-rephrase
+description: Reformuler le dernier message quand l'utilisateur n'a pas compris. À utiliser dès qu'il dit « stop », « je ne comprends pas », « explique autrement », « reformule », « c'est quoi ça ? », « /kata-rephrase ».
 disable-model-invocation: true
 ---
 
@@ -36,6 +36,6 @@ d'intelligence de l'utilisateur : c'est ton explication qui a raté.
 ## Si la reformulation échoue aussi
 
 Demander **un seul point précis** : « Qu'est-ce qui coince : le mot X, le pourquoi, ou ce que je te demande ? »
-Reformuler à nouveau à partir de la réponse. Si le sujet est un plan entier flou, proposer `/kata-grill`.
+Reformuler à nouveau à partir de la réponse. Si le sujet est un plan entier flou, proposer `/kata-interview`.
 
 > Inspiré des skills de Matt Pocock (mattpocock/skills, MIT, commit f3fc563) ; réécrit pour Kata.

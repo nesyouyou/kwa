@@ -99,7 +99,7 @@
       }
     },
     "craft": {
-      "about": "Méthode de travail (cadrer, faire, prouver, relire) : brainstorm, grill, plan, execute, agents, parallel, tdd, debug, verify, review, simple, audit, architecture, prototype, handoff, questionnaire… + routage des skills au démarrage",
+      "about": "Méthode de travail (cadrer, faire, prouver, relire) : brainstorm, interview, plan, execute, agents, parallel, tdd, debug, verify, review, simple, audit, architecture, prototype, handoff, questionnaire… + routage des skills au démarrage",
       "files": {
         "core/templates/skills-router.md": {
           "dest": ".claude/kata/router.md"
@@ -144,8 +144,8 @@
         "core/skills/audit/*": {
           "dest": ".claude/skills/kata-audit"
         },
-        "core/skills/grill/*": {
-          "dest": ".claude/skills/kata-grill"
+        "core/skills/interview/*": {
+          "dest": ".claude/skills/kata-interview"
         },
         "core/skills/handoff/*": {
           "dest": ".claude/skills/kata-handoff"
@@ -153,8 +153,8 @@
         "core/skills/questionnaire/*": {
           "dest": ".claude/skills/kata-questionnaire"
         },
-        "core/skills/reexplain/*": {
-          "dest": ".claude/skills/kata-reexplain"
+        "core/skills/rephrase/*": {
+          "dest": ".claude/skills/kata-rephrase"
         },
         "core/skills/prototype/*": {
           "dest": ".claude/skills/kata-prototype"

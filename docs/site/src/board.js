@@ -21,7 +21,7 @@
   var K = {
     router: B('hook', 'skills-router', 'Injecte la table « quand → skill », filtrée sur les skills installées.', 'SessionStart · startup, clear, compact', 'Court et calibré : une conversation simple n’appelle aucune skill. Les lignes dont la skill n’est pas installée sont retirées.'),
     brainstorm: B('skill', '/kata-brainstorm', 'Explore le contexte, compare 2 ou 3 approches, écrit une spec courte.', 'Intention floue ou changement non trivial', 'Spec dans docs/specs/. Aucune ligne de code avant la porte suivante.'),
-    grill: B('skill', '/kata-grill', 'Interrogatoire sans relâche : une question à la fois, avec une recommandation.', 'Au besoin, depuis /kata-brainstorm', 'Consigne les décisions durables (ADR, glossaire) sur accord.'),
+    interview: B('skill', '/kata-interview', 'Interrogatoire sans relâche : une question à la fois, avec une recommandation.', 'Au besoin, depuis /kata-brainstorm', 'Consigne les décisions durables (ADR, glossaire) sur accord.'),
     specOk: B('humain', 'Tu approuves la spec', 'Porte d’approbation avant tout plan.', '', 'Sans accord, on ne passe pas à /kata-plan.'),
     plan: B('skill', '/kata-plan', 'Tâches de 2 à 5 minutes, fichiers exacts, tests d’abord, commandes de verify.commands.', 'Spec approuvée', 'Aucun « à définir ». Auto-relecture : couverture de la spec, cohérence des noms.'),
     startDev: B('skill', '/kata-start-dev', 'Issue, branche dans un worktree, dépendances installées.', 'Demande qui modifie le produit', 'kata-start crée l’issue puis le worktree à côté du dépôt. Jamais de travail sur main.'),
@@ -53,7 +53,7 @@
       id: 'feature', label: 'Fonctionnalité', card: { id: '#12', title: 'Filtre du portefeuille' },
       intro: 'Une idée encore floue devient une fonctionnalité relue, prouvée et publiée, avec deux portes où tu décides.',
       steps: [
-        S(0, 'Ta demande #12 arrive dans Cadrer. skills-router a injecté la table « quand → skill » au démarrage : l’agent choisit /kata-brainstorm au lieu de coder. Pourquoi : une intention floue se clarifie avant toute ligne de code.', [K.router, K.brainstorm, K.grill]),
+        S(0, 'Ta demande #12 arrive dans Cadrer. skills-router a injecté la table « quand → skill » au démarrage : l’agent choisit /kata-brainstorm au lieu de coder. Pourquoi : une intention floue se clarifie avant toute ligne de code.', [K.router, K.brainstorm, K.interview]),
         S(0, 'La spec courte est écrite dans docs/specs/. La carte s’arrête à la porte « Toi » : sans ton accord, on ne passe pas à /kata-plan. Pourquoi : valider l’intention coûte moins que la corriger après coup.', [K.specOk], { gate: true }),
         S(0, 'Spec approuvée : /kata-plan la découpe en tâches de 2 à 5 minutes, avec les commandes de vérification exactes de la politique. Pourquoi : un plan sans « à définir » se vérifie.', [K.plan]),
         S(1, 'La carte passe dans Faire. /kata-start-dev ouvre l’issue #12 et une branche dans un worktree ; guard-write veille à ce qu’aucun code produit ne s’écrive sur main. Pourquoi : le dépôt principal reste propre.', [K.startDev, K.write]),
