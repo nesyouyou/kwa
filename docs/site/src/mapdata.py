@@ -18,6 +18,7 @@ AVATARS = {  # id de source (credits.json) -> avatar vendorisé
     "superpowers": ("assets/avatars/obra.jpg", "@obra"),
     "mattpocock": ("assets/avatars/mattpocock.png", "@mattpocock"),
     "ponytail": ("assets/avatars/DietrichGebert.png", "@DietrichGebert"),
+    "humanizer": ("assets/avatars/blader.jpg", "@blader"),
     "super-board": ("assets/avatars/EricTechPro.jpg", "@EricTechPro"),
     "kata": ("assets/avatars/kata.svg", "Kata"),
 }
@@ -36,7 +37,7 @@ FAMILIES = {
     "cadrer": ["brainstorm", "interview", "plan", "tickets", "prototype", "questionnaire", "architecture", "rephrase"],
     "faire": ["start-dev", "tdd", "execute", "agents", "parallel", "simple"],
     "prouver": ["debug", "verify", "review", "review-feedback", "audit"],
-    "livrer": ["commit", "ship", "deploy", "testflight"],
+    "livrer": ["commit", "ship", "deploy", "testflight", "humanize"],
     "mémoire": ["learn", "handoff", "agent-docs"],
 }
 FAMILY_LABEL = {"cadrer": "Cadrer", "faire": "Faire", "prouver": "Prouver", "livrer": "Livrer", "mémoire": "Mémoire"}
@@ -222,7 +223,7 @@ def build(catalog_ids: list[str], credits: dict, wf_text: dict) -> dict:
         edges.append({"from": f"s:{a}", "to": f"s:{b}", "kind": kind})
     edges.append({"from": "s:learn", "to": "s:brainstorm", "kind": "loop", "label": "la connaissance revient au cadrage"})
     views["pack"] = {"title": "Le pack Kata", "nodes": items, "groups": groups, "edges": edges,
-                     "intro": "26 skills en 5 familles, gardes et hooks, politique du projet. Cliquer un nœud ; double-clic sur une skill pour ses étapes."}
+                     "intro": f"{len(catalog_ids)} skills en 5 familles, gardes et hooks, politique du projet. Cliquer un nœud ; double-clic sur une skill pour ses étapes."}
 
     def flow(view_id, title, intro, seq, per_row=4, extra=None, loop=None):
         its, eds = [], []

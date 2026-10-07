@@ -30,6 +30,7 @@ d'explorer le code ; elle dit comment le faire. Une question simple ou une conve
 | Passer le relais à un autre agent ou à une autre session | /kata-handoff |
 | Écrire ou modifier un AGENTS.md, une règle ou une skill | /kata-agent-docs |
 | « Je n'ai pas compris » : reformuler le dernier message | /kata-rephrase |
+| Texte à relire pour en retirer le ton « écrit par une IA » (doc, README, PR, message) | /kata-humanize |
 
 Ordre : la méthode d'abord (cadrer, déboguer), l'implémentation ensuite. Les consignes de l'utilisateur et d'AGENTS.md
 priment toujours sur une skill.

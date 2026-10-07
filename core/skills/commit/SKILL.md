@@ -16,6 +16,8 @@ Committe les modifications en cours, un commit par changement logique. **Ne pous
    convention du projet (en cas de doute, demander).
 4. Pour chaque groupe : `git add <fichiers précis>` (jamais `git add -A`), puis un message au format de
    `.claude/rules/kata-writing-standard.md`. Ne pas utiliser `--no-verify`.
+   Si la skill `/kata-humanize` est installée, relire le message avec elle en mode intégré avant de committer :
+   le format ne change pas, seuls les tics d'écriture automatique partent.
 5. Si un hook de pré-commit échoue : corriger la cause, recréer un **nouveau** commit, ne pas amender sauf demande.
 6. Terminer par `git log --oneline` des commits créés et l'état de `git status`. Dire que rien n'est poussé.
 

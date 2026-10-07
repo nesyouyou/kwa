@@ -30,3 +30,11 @@ Kata assemble des idées éprouvées par d'autres projets, tous sous licence MIT
 - Ce que Kata en a pris : Le bloc géré dans AGENTS.md entre marqueurs versionnés, la fusion idempotente de settings.json, le standard d'écriture vérifié par des tests, l'idée d'un workflow documenté en briques, le découpage commit / publication de git-sync.
 - Skills ou éléments concernés : /kata-commit, /kata-ship
 
+
+## humanizer — Siqi Chen (blader) (MIT)
+
+- Dépôt : https://github.com/blader/humanizer (référence : 225a6f3)
+- Licence : `licenses/humanizer-MIT.txt`
+- Ce que Kata en a pris : Le catalogue des tics d'écriture automatique (mise en scène, rythme imposé, gonflement, mise en forme, résidus de chat, mauvais lecteur), la méthode en quatre temps et la règle de ne rien inventer en réécrivant.
+- Skills ou éléments concernés : /kata-humanize
+- Origine des motifs : le dépôt d'origine les tire de la page « Signs of AI writing » de Wikipédia (WikiProject AI Cleanup). Kata n'en reprend ni texte ni exemple : la liste est transposée en français, avec des exemples écrits pour Kata.

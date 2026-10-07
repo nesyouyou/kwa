@@ -16,6 +16,8 @@ Publie la branche courante et ouvre (ou met à jour) la PR. **Ne fusionne jamais
 4. Après accord : `git push -u origin <branche>`. Jamais de force.
 5. `gh pr create` avec un titre au format `.claude/rules/kata-writing-standard.md` et un corps
    Contexte / Changements / Vérification / Risque-déploiement. Si l'interface change : captures avant/après.
+   Si `/kata-humanize` est installée, passer le titre et le corps par elle en mode intégré avant `gh pr create`
+   (même format, sans faits ajoutés).
 6. Donner le lien de la PR. Rappeler que la fusion est une décision séparée, et dire si elle déclenche un
    déploiement de production.
 
