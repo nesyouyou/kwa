@@ -152,7 +152,7 @@ class Parcours(unittest.TestCase):
     def test_no_temp_path_or_private_term(self):
         for name in self.PAGES:
             text = self.page(name)
-            for bad in ("/var/folders", "/private/", "kwa-parcours-", "/Users/"):
+            for bad in ("/var/folders", "/private", "kwa-parcours-", "/Users/"):
                 self.assertNotIn(bad, text, name)
             self.assertIsNone(re.search(r"(?i)mycecca|cecca|\\bvault\\b", text), name)
 

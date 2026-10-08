@@ -19,6 +19,8 @@ AVATARS = {  # id de source (credits.json) -> avatar vendorisé
     "mattpocock": ("assets/avatars/mattpocock.png", "@mattpocock"),
     "ponytail": ("assets/avatars/DietrichGebert.png", "@DietrichGebert"),
     "humanizer": ("assets/avatars/blader.jpg", "@blader"),
+    "claudeception": ("assets/avatars/blader.jpg", "@blader"),
+    "claude-reflect": ("assets/avatars/BayramAnnakov.jpg", "@BayramAnnakov"),
     "super-board": ("assets/avatars/EricTechPro.jpg", "@EricTechPro"),
     "kwa": ("assets/avatars/kwa.svg", "Kwa"),
 }
@@ -51,10 +53,13 @@ DETAILS = {  # comment ça se comporte, par garde / hook
     "guard-github": "Lit la PR et ses issues via gh. Preuve = une image, ou une section « Preuve » réellement remplie.",
     "guard-write": "Demande aussi confirmation avant de toucher à .claude/kwa/ ou settings.json.",
     "skills-router": "Court et calibré : une conversation simple n'appelle aucune skill. Les lignes dont la skill n'est pas installée sont retirées.",
-    "memory-context": "Silencieux s'il n'y a rien. Propose de lancer /kwa-learn, n'applique jamais rien seul.",
+    "memory-context": "Au plus 2 000 caractères : la dernière session de la branche, deux titres, l'état git, les notes en attente. Silencieux s'il n'y a rien ; n'applique jamais rien seul.",
     "format-after-edit": "Un formatage global appartient à un lot dédié, pas à chaque sauvegarde.",
     "verify-stop": "Claude Code reprend la main après 8 blocages consécutifs : pas de boucle infinie.",
-    "memory-nudge": "Seulement si 3 fichiers de code ou plus ont changé et qu'aucune note n'a été captée. Désactivable : KWA_MEMORY_NUDGE=0.",
+    "memory-nudge": "Seulement si 3 fichiers de code ou plus ont changé, ou si un signal fort a été capté. Demande l'entrée de journal et l'invitation à capitaliser, chacune seulement si elle manque. Désactivable : KWA_MEMORY_NUDGE=0.",
+    "signal-prompt": "Aucun appel à un modèle, rien d'affiché : une ligne dans les notes, secrets masqués, message court seulement. Désactivable : KWA_JOURNAL=0.",
+    "journal-compact": "Écrit les faits de la session avant que la compaction n'efface le contexte ; le corps déjà rédigé est conservé.",
+    "journal-end": "Filet : SessionEnd ne peut rien bloquer et dispose d'1,5 s. Écrit seulement des faits git, une entrée « automatique » si la session a laissé une trace sans être racontée.",
 }
 
 
@@ -152,10 +157,13 @@ def build(catalog_ids: list[str], credits: dict, wf_text: dict) -> dict:
         add(f"g:{k}", "garde", label, what, when, DETAILS.get(label, ""), [f"core/hooks/{label}.py"])
     H = {
         "router": ("skills-router", "Injecte la table « quand → skill », filtrée sur les skills installées.", "SessionStart · startup, clear, compact"),
-        "memctx": ("memory-context", "Rappelle les notes d'apprentissage restées en attente.", "SessionStart"),
+        "memctx": ("memory-context", "Reprise : la dernière session de la branche, l'état git, les notes en attente.", "SessionStart"),
+        "signal": ("signal-prompt", "Range les corrections et les « retiens : » dans les notes, sans modèle.", "UserPromptSubmit · module memory"),
+        "compact": ("journal-compact", "Sauvegarde les faits de la session avant la compaction.", "PreCompact · module memory"),
+        "end": ("journal-end", "Filet : écrit les faits d'une session fermée sans journal.", "SessionEnd · module memory"),
         "format": ("format-after-edit", "Formate seulement les fichiers nouveaux, signale les autres.", "PostToolUse · Edit, Write"),
         "verify": ("verify-stop", "Refuse de rendre la main sur du rouge (typecheck, lint).", "Stop · opt-in KWA_STOP_VERIFY=1"),
-        "nudge": ("memory-nudge", "Une invitation à capitaliser, une seule par session.", "Stop · module memory"),
+        "nudge": ("memory-nudge", "Demande le journal et invite à capitaliser, une seule fois par session.", "Stop · module memory"),
     }
     for k, (label, what, when) in H.items():
         add(f"h:{k}", "hook", label, what, when, DETAILS.get(label, ""), [f"core/hooks/{label}.py"])
@@ -238,7 +246,7 @@ def build(catalog_ids: list[str], credits: dict, wf_text: dict) -> dict:
         views[view_id] = {"title": title, "intro": intro, "nodes": its, "groups": [], "edges": eds}
 
     flow("session", "Une session", "Ce qui se déclenche tout seul, dans l'ordre, de l'ouverture à la fermeture.",
-         ["h:router", "h:memctx", "r:request", "g:secrets", "g:git", "g:delete", "g:policy", "g:github", "g:write", "h:format", "h:verify", "h:nudge"], per_row=4)
+         ["h:router", "h:memctx", "r:request", "h:signal", "g:secrets", "g:git", "g:delete", "g:policy", "g:github", "g:write", "h:format", "h:verify", "h:nudge", "h:compact", "h:end"], per_row=4)
     flow("feature", "Une fonctionnalité", "De l'intention floue à la décision de commit : trois portes humaines, quatre sous-agents.",
          ["s:interview", "s:brainstorm", "u:spec", "s:plan", "s:start-dev", "a:impl", "a:spec", "a:qual", "s:verify", "a:rev", "u:commit"], per_row=4,
          loop=("a:qual", "a:impl", "retours critiques"))

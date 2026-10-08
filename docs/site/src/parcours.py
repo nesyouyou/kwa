@@ -23,9 +23,9 @@ def sh(cmd: list[str], cwd: str, env: dict | None = None, inp: str | None = None
 
 def clean(text: str, tmp: str) -> str:
     """Retire le dossier temporaire des sorties affichées : le lecteur voit des chemins relatifs à son projet."""
-    for base in {tmp, os.path.realpath(tmp)}:
+    for base in sorted({tmp, os.path.realpath(tmp)}, key=len, reverse=True):  # le chemin réel d'abord : il contient l'autre
         text = text.replace(base + "/", "").replace(base, ".")
-    return text
+    return re.sub(r"\b[0-9a-f]{7}\b", "abc1234", text)  # empreintes git : elles changent à chaque génération
 
 
 def expect(cond: bool, what: str) -> None:
