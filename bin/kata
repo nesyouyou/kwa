@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""kata — uniformise les projets Nakama : AGENTS.md, garde-fous, règles, skills, politique projet.
+"""kata — uniformise les projets : AGENTS.md, garde-fous, règles, skills, politique projet.
 
     kata detect    <cible>                         stack détectée, modules proposés, politique déduite
     kata install   <cible> [--modules auto|a,b] [--with m ...] [--codex] [--dry-run]

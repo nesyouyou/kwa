@@ -119,8 +119,7 @@ def main():
         if os.path.isfile(f):
             m = re.search(r"^description:\s*(.+)$", open(f, encoding="utf-8").read(), re.M)
             catalog.append({"id": d, "description": (m.group(1).strip().strip('"') if m else "")})
-    logo = re.search(r"<svg[^>]*>(.*)</svg>", open(os.path.join(HERE, "ds", "assets", "nakama.svg"), encoding="utf-8").read(), re.S).group(1)
-    data = {"logo": logo, "credits": json.load(open(os.path.join(PACK, "credits.json"))), "catalog": catalog, "version": open(os.path.join(PACK, "VERSION")).read().strip(), "modules": mods, "examples": examples(),
+    data = {"credits": json.load(open(os.path.join(PACK, "credits.json"))), "catalog": catalog, "version": open(os.path.join(PACK, "VERSION")).read().strip(), "modules": mods, "examples": examples(),
             "tests": n_tests, "tests_ok": ok, "detect": detect, "skills": skills,
             "policy": json.load(open(POLICY)), "guards": sorted(f[:-3] for f in os.listdir(HOOKS) if f.startswith("guard-"))}
     src = os.path.join(HERE, "src")
@@ -146,7 +145,7 @@ def main():
     bar = re.search(r'<div class="kd-bar">.*?</div></div>\n', tpl, re.S).group(0)
     head = re.search(r"<style>.*?</style>", tpl, re.S).group(0)
     foot = re.search(r"<footer.*?</footer>", tpl, re.S).group(0)
-    theme_js = re.search(r"/\* thème : clair par défaut.*?/\* logo : une seule géométrie.*?\n", tpl, re.S).group(0)
+    theme_js = re.search(r"/\* thème : clair par défaut.*?/\* fin du bloc thème \*/\n", tpl, re.S).group(0)
     pages = {
         "skill-map.html": ("Carte des skills", "Carte interactive", "map", '<div id="map" data-deeplink></div>',
                            "DATA.map && KataMap.mount($('#map'), DATA.map);"),
@@ -169,7 +168,7 @@ def main():
 <html lang="fr" data-nkui-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title} | Kata</title>
 <script>try{{if(localStorage.getItem('kata-docs-theme')==='light')document.documentElement.dataset.nkuiTheme='light'}}catch(e){{}}</script>
-<link rel="stylesheet" href="ds/fonts.css"><link rel="stylesheet" href="ds/tokens.css"><link rel="stylesheet" href="ds/nakama.css">{wcss}
+<link rel="stylesheet" href="ds/fonts.css"><link rel="stylesheet" href="ds/tokens.css"><link rel="stylesheet" href="ds/base.css">{wcss}
 {head}</head>
 <body class="nkds">
 {bar_p}
@@ -184,7 +183,6 @@ def main():
 const DATA = window.KATA;
 const $ = (s, r=document) => r.querySelector(s);
 {theme_js}
-document.querySelectorAll('svg[id^="logo-"]').forEach(s => s.innerHTML = DATA.logo);
 $('#ver2').textContent = DATA.version; $('#tests').textContent = `${{DATA.tests}} tests ${{DATA.tests_ok ? 'au vert' : 'en échec'}}`;
 {mount_js}
 </script></body></html>"""

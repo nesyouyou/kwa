@@ -1,4 +1,4 @@
-## Kata — socle commun Nakama
+## Kata — socle commun
 
 Ce bloc est géré par Kata (`kata install`) : ne pas l'éditer ici, le modifier dans le pack.
 Tout ce qui est propre au projet va **au-dessus ou en dessous** des marqueurs, ou dans `.claude/kata.policy.json`.

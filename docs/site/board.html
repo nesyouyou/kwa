@@ -2,7 +2,7 @@
 <html lang="fr" data-nkui-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Le board | Kata</title>
 <script>try{if(localStorage.getItem('kata-docs-theme')==='light')document.documentElement.dataset.nkuiTheme='light'}catch(e){}</script>
-<link rel="stylesheet" href="ds/fonts.css"><link rel="stylesheet" href="ds/tokens.css"><link rel="stylesheet" href="ds/nakama.css"><link rel="stylesheet" href="src/board.css">
+<link rel="stylesheet" href="ds/fonts.css"><link rel="stylesheet" href="ds/tokens.css"><link rel="stylesheet" href="ds/base.css"><link rel="stylesheet" href="src/board.css">
 <style>
 /* Extensions propres à la documentation Kata. Uniquement les tokens du design system : aucune couleur ajoutée. */
 html{scroll-behavior:smooth;overflow-x:clip}
@@ -16,7 +16,7 @@ section{scroll-margin-top:84px}
 .kd-bar{position:sticky;top:0;z-index:20;padding-block:14px;background:var(--nkui-glass);backdrop-filter:blur(8px);border-bottom:1px solid var(--nkui-rule-soft)}
 .kd-bar .row{display:flex;align-items:center;justify-content:space-between;gap:16px}
 .kd-brand{display:flex;align-items:center;gap:14px;text-decoration:none;white-space:nowrap}
-.kd-brand svg{width:101px;height:auto;display:block}
+.kd-word{font:700 22px/1 Manrope,Geist,sans-serif;letter-spacing:-.02em}.kd-word--big{font-size:44px}
 .kd-brand span{font:400 12px 'Geist Mono',monospace;letter-spacing:.08em;color:var(--nkui-mut)}
 .kd-nav{display:flex;gap:22px;overflow-x:auto;scrollbar-width:none}
 .kd-nav a{font:400 12px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;color:var(--nkui-body);white-space:nowrap}
@@ -136,7 +136,7 @@ footer.nkds-footer{margin-top:128px}
 </style></head>
 <body class="nkds">
 <div class="kd-bar"><div class="nkds-container row">
-  <a class="kd-brand" href="index.html" aria-label="Nakama Kata, accueil"><svg id="logo-nav" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 944 180.2" fill="currentColor" role="img" aria-label="Nakama"></svg><span>/ kata</span></a>
+  <a class="kd-brand" href="index.html" aria-label="Kata, accueil"><b class="kd-word">kata</b><span>/ harness</span></a>
   <nav class="kd-nav" aria-label="Pages"><a href="index.html">Accueil</a><a href="skill-map.html">Carte</a><a href="board.html">Board</a><a href="terminal.html">Terminal</a><a href="parcours.html">Parcours</a></nav>
   <button type="button" class="nkds-btn nkds-btn--small" id="theme" aria-pressed="false">Thème sombre</button>
 </div></div>
@@ -147,10 +147,10 @@ footer.nkds-footer{margin-top:128px}
   <div id="board-root"></div>
 </main>
 <footer class="nkds-footer nkds-invert"><div class="nkds-container nkds-footer-grid">
-  <div><svg id="logo-foot" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 944 180.2" fill="currentColor" role="img" aria-label="Nakama"></svg></div>
+  <div><b class="kd-word kd-word--big">kata</b></div>
   <div><h3>Kata</h3><p>v<span id="ver2"></span><br><span id="tests"></span></p></div>
   <div><h3>Documentation</h3><p>Régénérée par <code>docs/site/build.py</code> ; exemples calculés en exécutant les gardes.</p></div>
-  <div><h3>Design</h3><p>Design system Nakama 1.0.0 (7 octobre 2026), fichiers vendorisés dans <code>docs/site/ds/</code>.</p></div>
+  <div><h3>Design</h3><p>Design system du site, fichiers vendorisés dans <code>docs/site/ds/</code>.</p></div>
 </div></footer>
 <script src="data.js"></script><script src="src/board.js"></script>
 <script>
@@ -163,9 +163,8 @@ tbtn.onclick = () => { root.dataset.nkuiTheme = root.dataset.nkuiTheme==='dark' 
 syncTheme();
 document.addEventListener('click', e => { const b = e.target.closest('[data-copy]'); if(!b) return; navigator.clipboard?.writeText(b.dataset.copy); const o=b.textContent; b.textContent='Copié'; setTimeout(()=>b.textContent=o,1200); });
 
-/* logo : une seule géométrie, injectée dans les deux emplacements */
+/* fin du bloc thème */
 
-document.querySelectorAll('svg[id^="logo-"]').forEach(s => s.innerHTML = DATA.logo);
 $('#ver2').textContent = DATA.version; $('#tests').textContent = `${DATA.tests} tests ${DATA.tests_ok ? 'au vert' : 'en échec'}`;
 KataBoard.mount($('#board-root'));
 </script></body></html>

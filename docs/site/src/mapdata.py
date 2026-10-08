@@ -270,5 +270,5 @@ def build(catalog_ids: list[str], credits: dict, wf_text: dict) -> dict:
     for s in credits["sources"]:
         path, handle = AVATARS.get(s["id"], AVATARS["kata"])
         origins[s["id"]] = {"avatar": path, "handle": handle, "name": s["author"], "license": s["license"], "ref": s["ref"], "url": s["url"]}
-    origins["kata"] = {"avatar": AVATARS["kata"][0], "handle": "Kata", "name": "Nakama", "license": "interne", "ref": "", "url": ""}
+    origins["kata"] = {"avatar": AVATARS["kata"][0], "handle": "Kata", "name": "Kata", "license": "interne", "ref": "", "url": ""}
     return {"kinds": KINDS, "nodes": nodes, "views": views, "origins": origins, "start": "pack", "grid": {"w": 224, "h": 92}}

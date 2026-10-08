@@ -1,4 +1,4 @@
-/* Kata — terminal simulé. Design system Nakama 1.0.0 : variables --nkui-* uniquement, aucune couleur ajoutée. */
+/* Kata — terminal simulé. Design system du site : variables --nkui-* uniquement, aucune couleur ajoutée. */
 .kt {
   --kt-ease: cubic-bezier(.22, 1, .36, 1);
   color: var(--nkui-fg);
