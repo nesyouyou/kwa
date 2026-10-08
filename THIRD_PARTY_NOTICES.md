@@ -38,3 +38,18 @@ Kwa assemble des idées éprouvées par d'autres projets, tous sous licence MIT.
 - Ce que Kwa en a pris : Le catalogue des tics d'écriture automatique (mise en scène, rythme imposé, gonflement, mise en forme, résidus de chat, mauvais lecteur), la méthode en quatre temps et la règle de ne rien inventer en réécrivant.
 - Skills ou éléments concernés : /kwa-humanize
 - Origine des motifs : le dépôt d'origine les tire de la page « Signs of AI writing » de Wikipédia (WikiProject AI Cleanup). Kwa n'en reprend ni texte ni exemple : la liste est transposée en français, avec des exemples écrits pour Kwa.
+
+## claude-reflect — Bayram Annakov (MIT)
+
+- Dépôt : https://github.com/BayramAnnakov/claude-reflect (référence : b6c4232)
+- Licence : `licenses/claude-reflect-MIT.txt`
+- Ce que Kwa en a pris : L'idée d'un hook sur chaque message qui range les corrections et les « retiens : » dans une file sans appeler de modèle, la sauvegarde avant la compaction, le tri final avec accord de l'utilisateur.
+- Skills ou éléments concernés : /kwa-learn, hook `signal-prompt`, hook `journal-compact`
+
+## Claudeception — Siqi Chen (blader) (MIT)
+
+- Dépôt : https://github.com/blader/claude-code-continuous-learning-skill (référence : 62dbb91)
+- Licence : `licenses/claudeception-MIT.txt` (le fichier d'origine nomme « Claude Code » comme détenteur du droit d'auteur)
+- Ce que Kwa en a pris : Les critères de qualité d'un apprentissage (réutilisable, non trivial, précis, vérifié), la mise à jour plutôt que la création, le cycle de vie d'une connaissance.
+- Skills ou éléments concernés : /kwa-learn
+

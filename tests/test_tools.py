@@ -247,10 +247,14 @@ class Memory(unittest.TestCase):
         self.assertEqual(self.nudge(big, {"stop_hook_active": True}).returncode, 0)
         self.assertEqual(self.nudge(big, env={"KWA_MEMORY_NUDGE": "0"}).returncode, 0)
 
-    def test_nudge_skipped_if_notes_captured(self):
+    def test_nudge_only_asks_for_what_is_missing(self):
         d = git_repo({f"src/f{i}.ts": "x" for i in range(4)})
+        sh(sys.executable, os.path.join(HOOKS, "memory-context.py"), input=json.dumps({"session_id": "s1", "cwd": d}), env={"CLAUDE_PROJECT_DIR": d})
         sh(sys.executable, os.path.join(BIN, "kwa-memory"), "capture", "decision", "x", cwd=d)
-        self.assertEqual(self.nudge(d).returncode, 0)
+        r = self.nudge(d)
+        self.assertEqual(r.returncode, 2, "le journal manque encore")
+        self.assertIn("journal", r.stderr)
+        self.assertNotIn("/kwa-learn", r.stderr, "des notes ont déjà été captées pendant la session")
 
     def test_session_start_context(self):
         d = git_repo()

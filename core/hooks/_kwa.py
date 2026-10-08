@@ -17,15 +17,40 @@ SEP_RE = re.compile(r"\|\||&&|[;&|\n]")
 SUBST_RE = re.compile(r"\$\(([^()]*)\)|`([^`]*)`")
 
 
+_LAST: dict = {}  # dernière charge lue : sert au signal de refus (session, commande)
+
+
 def load_payload() -> dict:
     try:
-        return json.load(sys.stdin)
+        data = json.load(sys.stdin)
     except ValueError:
         return {}
+    if isinstance(data, dict):
+        _LAST.update(data)
+    return data
+
+
+def _log_refusal(reason: str) -> None:
+    """Un refus est le signal d'apprentissage le plus fiable : l'erreur que le projet voulait éviter. Jamais bloquant."""
+    try:
+        import _journal  # module memory : absent ailleurs, sans conséquence
+
+        root = project_dir(_LAST)
+        # seulement là où Kwa est installé : un garde lancé hors installation (tests, essai à la main) n'écrit rien
+        installed = any(os.path.exists(os.path.join(r, ".claude", "kwa", "state.json")) for r in (root, _journal.main_root(root)))
+        if not (_journal.enabled() and installed):
+            return
+        tool = _LAST.get("tool_input") or {}
+        _journal.append_signal(root, "refus", session=_journal._sid(_LAST), key=reason,
+                               text=str(tool.get("command") or tool.get("file_path") or ""))
+    except Exception:  # noqa: BLE001
+        pass
 
 
 def decide(decision: str, reason: str) -> None:
     """decision: deny | ask. Sort avec le code 0 après avoir imprimé la décision."""
+    if decision == "deny":
+        _log_refusal(reason)
     print(json.dumps({"hookSpecificOutput": {
         "hookEventName": "PreToolUse",
         "permissionDecision": decision,
