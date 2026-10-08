@@ -16,6 +16,7 @@ section{scroll-margin-top:84px}
 .kd-bar{position:sticky;top:0;z-index:20;padding-block:14px;background:var(--nkui-glass);backdrop-filter:blur(8px);border-bottom:1px solid var(--nkui-rule-soft)}
 .kd-bar .row{display:flex;align-items:center;justify-content:space-between;gap:16px}
 .kd-brand{display:flex;align-items:center;gap:14px;text-decoration:none;white-space:nowrap}
+.kd-theme{width:40px;height:40px;flex:none;border-radius:50%;border:1px solid var(--nkui-rule);background:transparent;color:var(--nkui-fg);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0}.kd-theme:hover{background:var(--nkui-raise)}.kd-theme svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}.kd-theme .i-sun{display:none}html[data-nkui-theme="dark"] .kd-theme .i-sun{display:block}html[data-nkui-theme="dark"] .kd-theme .i-moon{display:none}
 .kd-word{font:700 22px/1 Manrope,Geist,sans-serif;letter-spacing:-.02em}.kd-word--big{font-size:44px}
 .kd-brand span{font:400 12px 'Geist Mono',monospace;letter-spacing:.08em;color:var(--nkui-mut)}
 .kd-nav{display:flex;gap:22px;overflow-x:auto;scrollbar-width:none}
@@ -138,7 +139,7 @@ footer.nkds-footer{margin-top:128px}
 <div class="kd-bar"><div class="nkds-container row">
   <a class="kd-brand" href="index.html" aria-label="Kwa, accueil"><b class="kd-word">kwa</b><span>/ harness</span></a>
   <nav class="kd-nav" aria-label="Pages"><a href="index.html">Accueil</a><a href="skill-map.html">Carte</a><a href="board.html">Board</a><a href="terminal.html">Terminal</a><a href="parcours.html">Parcours</a></nav>
-  <button type="button" class="nkds-btn nkds-btn--small" id="theme" aria-pressed="false">Thème sombre</button>
+  <button type="button" class="kd-theme" id="theme" aria-label="Passer en thème clair" title="Changer de thème"><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></svg><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 14.6A8.4 8.4 0 0 1 9.4 3.8a8.4 8.4 0 1 0 10.8 10.8z"/></svg></button>
 </div></div>
 
 <main class="nkds-container" style="padding-top:48px">
@@ -230,8 +231,8 @@ FAILED (failures=2)</pre>
 branche : feat/status-filter
 worktree : /privatemon-projet-wt-status-filter
 
-Travailler dans : /privatemon-projet-wt-status-filter</pre><pre class="kd-code">/privatemon-projet                   891342f [main]
-/privatemon-projet-wt-status-filter  891342f [feat/status-filter]</pre>
+Travailler dans : /privatemon-projet-wt-status-filter</pre><pre class="kd-code">/privatemon-projet                   0dd6794 [main]
+/privatemon-projet-wt-status-filter  0dd6794 [feat/status-filter]</pre>
 <p>La suite se joue avec les skills : <code>/kwa-brainstorm</code>, <code>/kwa-plan</code>, <code>/kwa-tdd</code>, <code>/kwa-verify</code>, <code>/kwa-review</code>, <code>/kwa-ship</code>. La page <a href="board.html">Board</a> déroule ce circuit sur une demande réelle, et le <a href="terminal.html">Terminal</a> montre les commandes.</p><div class="pc-proof"><div><b>Preuve attendue</b><p>Conduire un petit changement jusqu'à une PR, avec une preuve que quelqu'un d'autre peut rejouer.</p></div><div><b>Piège</b><p>Versionner n'est pas publier, et un commit n'est pas un déploiement. Chaque étape reste une décision.</p></div></div></div></section>
 <section class="pc-stage" id="etape-8"><div class="pc-num">8</div><div class="pc-main"><h2 class="pc-h">Les limites, sans maquillage</h2><p class="pc-tag">Un garde est un filet contre la bévue, pas une frontière de sécurité.</p><p>Essayez de contourner le garde des secrets. Ces trois commandes lisent le même fichier d'environnement ; seule la forme change :</p>
 <table class="pc-table"><thead><tr><th>Commande</th><th>Verdict réel</th></tr></thead><tbody><tr><td><code>cat $(echo .e)nv</code></td><td><span class="kd-pill allow">passe</span></td></tr><tr><td><code>cat .e*</code></td><td><span class="kd-pill allow">passe</span></td></tr><tr><td><code>python3 -c "print(open('.env').read())"</code></td><td><span class="kd-pill allow">passe</span></td></tr></tbody></table>
@@ -256,7 +257,7 @@ const DATA = window.KWA;
 const $ = (s, r=document) => r.querySelector(s);
 /* thème : clair par défaut, seul un choix explicite est enregistré */
 const root = document.documentElement, tbtn = $('#theme');
-function syncTheme(){ const dark = root.dataset.nkuiTheme==='dark'; tbtn.textContent = dark ? 'Thème clair' : 'Thème sombre'; tbtn.setAttribute('aria-pressed', String(dark)); }
+function syncTheme(){ const dark = root.dataset.nkuiTheme==='dark'; tbtn.setAttribute('aria-label', dark ? 'Passer en thème clair' : 'Passer en thème sombre'); }
 tbtn.onclick = () => { root.dataset.nkuiTheme = root.dataset.nkuiTheme==='dark' ? 'light' : 'dark'; try{ localStorage.setItem('kwa-docs-theme', root.dataset.nkuiTheme); }catch(e){} syncTheme(); };
 syncTheme();
 document.addEventListener('click', e => { const b = e.target.closest('[data-copy]'); if(!b) return; navigator.clipboard?.writeText(b.dataset.copy); const o=b.textContent; b.textContent='Copié'; setTimeout(()=>b.textContent=o,1200); });

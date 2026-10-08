@@ -182,5 +182,22 @@ class Neutral(unittest.TestCase):
         self.assertEqual(hits, [])
 
 
+class ThemeIcon(unittest.TestCase):
+    def test_every_page_uses_an_icon_button_without_visible_label(self):
+        site = os.path.join(PACK, "docs", "site")
+        pages = [f for f in os.listdir(site) if f.endswith(".html")]
+        self.assertGreaterEqual(len(pages), 7)
+        for name in pages:
+            text = open(os.path.join(site, name), encoding="utf-8").read()
+            button = re.search(r'<button[^>]*id="theme".*?</button>', text, re.S)
+            self.assertIsNotNone(button, name)
+            html = button.group(0)
+            self.assertIn("i-sun", html, name)
+            self.assertIn("i-moon", html, name)
+            self.assertIn("aria-label", html, name)
+            self.assertNotRegex(re.sub(r"<[^>]+>", "", html).strip(), r"\S", f"{name} : le bouton ne porte aucun texte visible")
+            self.assertNotIn("Thème sombre</button>", text, name)
+
+
 if __name__ == "__main__":
     unittest.main()
