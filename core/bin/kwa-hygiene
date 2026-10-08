@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
-"""kata-hygiene — contrôle d'hygiène de remise : ce qui ne doit pas partir chez le client.
+"""kwa-hygiene — contrôle d'hygiène de remise : ce qui ne doit pas partir chez le client.
 
-    kata-hygiene [--strict] [--root DIR]
+    kwa-hygiene [--strict] [--root DIR]
 
 Périmètre : les fichiers « produit » (code, config, scripts, .github, outillage .claude/ qui a valeur
-d'instruction) ; hors tests et fixtures, hors docs/, hors le pack Kata lui-même.
+d'instruction) ; hors tests et fixtures, hors docs/, hors le pack Kwa lui-même.
 Par gravité :
   SECRET      une valeur d'identifiant en dur                       bloquant
   PERSONNEL   un compte personnel ou prestataire câblé au produit   bloquant
   NOMINATIF   une personne nommée là où un rôle vieillirait mieux   avertissement
   PÉRISSABLE  une mesure datée dans un fichier d'INSTRUCTION        avertissement
-Exceptions : .claude/kata.hygiene.allow (réaffichées à chaque exécution : c'est la checklist de remise).
-Politique (.claude/kata.policy.json → hygiene) : personal_domains, names, stale_patterns, stale_in, include, exclude.
+Exceptions : .claude/kwa.hygiene.allow (réaffichées à chaque exécution : c'est la checklist de remise).
+Politique (.claude/kwa.policy.json → hygiene) : personal_domains, names, stale_patterns, stale_in, include, exclude.
 --strict : les avertissements deviennent bloquants. Codes : 0 ok, 1 bloquant.
 """
 from __future__ import annotations
@@ -23,8 +23,8 @@ import subprocess
 import sys
 
 INCLUDE = r"^(apps/|packages/|src/|scripts/|\.claude/|\.github/|\.env\.example|[^/]+\.(json|yml|yaml|ts|js|mjs)$)"
-EXCLUDE = (r"(__tests__/|\.spec\.|\.test\.|e2e-spec|/dist/|\.d\.ts$|^docs/|^\.claude/kata/|^\.claude/kata\.|"
-           r"^\.github/(workflows/kata-hygiene|ISSUE_TEMPLATE/|pull_request_template)|^\.claude/rules/kata-)")
+EXCLUDE = (r"(__tests__/|\.spec\.|\.test\.|e2e-spec|/dist/|\.d\.ts$|^docs/|^\.claude/kwa/|^\.claude/kwa\.|"
+           r"^\.github/(workflows/kwa-hygiene|ISSUE_TEMPLATE/|pull_request_template)|^\.claude/rules/kwa-)")
 SECRET = (r"(password|passwd|secret|token|api_?key|apikey)[ \t]*[:=][ \t]*[\"'][A-Za-z0-9+/_=.-]{20,}[\"']")
 SECRET_OK = r"(process\.env|<[A-Za-z_]|changeme|xxx|votre|your|example|placeholder|\$\{)"
 STALE = r"[0-9]{3,} (utilisateurs|sociétés|dossiers|clients|deals|contacts)|[0-9]+ migrations"
@@ -52,10 +52,10 @@ def main(argv: list[str]) -> int:
     root = argv[argv.index("--root") + 1] if "--root" in argv else "."
     root = os.path.abspath(root)
     try:
-        pol = json.load(open(os.path.join(root, ".claude", "kata.policy.json"), encoding="utf-8")).get("hygiene", {})
+        pol = json.load(open(os.path.join(root, ".claude", "kwa.policy.json"), encoding="utf-8")).get("hygiene", {})
     except (OSError, ValueError):
         pol = {}
-    allow = load_allow(os.path.join(root, ".claude", "kata.hygiene.allow"))
+    allow = load_allow(os.path.join(root, ".claude", "kwa.hygiene.allow"))
     files = subprocess.run(["git", "-C", root, "ls-files"], capture_output=True, text=True).stdout.split("\n")
     inc, exc = re.compile(pol.get("include", INCLUDE)), re.compile(pol.get("exclude", EXCLUDE))
     product = [f for f in files if f and inc.search(f) and not exc.search(f)]
@@ -99,7 +99,7 @@ def main(argv: list[str]) -> int:
         else:
             warning += len(hits)
     if deferred:
-        print(f"\nExceptions assumées — {deferred} occurrence(s) écartée(s), cf. .claude/kata.hygiene.allow :")
+        print(f"\nExceptions assumées — {deferred} occurrence(s) écartée(s), cf. .claude/kwa.hygiene.allow :")
         for fam, path, why in allow:
             print(f"      {fam} {path} {why}".rstrip())
     print()

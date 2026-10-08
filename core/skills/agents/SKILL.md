@@ -1,28 +1,28 @@
 ---
-name: kata-agents
-description: Exécuter un plan docs/plans/*.md dont les tâches sont assez indépendantes, en déléguant chaque tâche à un sous-agent frais. À utiliser quand un plan validé existe et que l'utilisateur dit « exécute le plan », « lance les agents », « on délègue » ; pas pour une tâche unique ni un plan fortement couplé (voir /kata-execute).
+name: kwa-agents
+description: Exécuter un plan docs/plans/*.md dont les tâches sont assez indépendantes, en déléguant chaque tâche à un sous-agent frais. À utiliser quand un plan validé existe et que l'utilisateur dit « exécute le plan », « lance les agents », « on délègue » ; pas pour une tâche unique ni un plan fortement couplé (voir /kwa-execute).
 ---
 
 # Développement piloté par sous-agents
 
 Tu es l'orchestrateur. Tu découpes, tu dispatches, tu contrôles, tu intègres. Tu n'écris pas le code produit toi-même.
 Chaque tâche du plan va à un agent frais, qui ne voit rien de ta conversation. Deux relectures successives valident
-le résultat : conformité à la spec, puis qualité. Le plan vient de `/kata-plan` ; le cadrage de `/kata-brainstorm`.
+le résultat : conformité à la spec, puis qualité. Le plan vient de `/kwa-plan` ; le cadrage de `/kwa-brainstorm`.
 
 ## Prérequis
 
 - Un plan `docs/plans/*.md` relu, avec pour chaque tâche : fichiers, étapes, critères d'acceptation vérifiables.
-  Sinon, retourner à `/kata-plan`. Ne jamais improviser un plan en route.
-- Le circuit de `/kata-start-dev` est en place : issue, branche dédiée `<type>/<n°>-<slug>`, worktree. Jamais sur
-  `main`. Si tu es sur `main`, t'arrêter et lancer `/kata-start-dev`.
-- Les commandes de vérification sont celles de `verify.commands` dans `.claude/kata.policy.json`. Les lire une fois,
+  Sinon, retourner à `/kwa-plan`. Ne jamais improviser un plan en route.
+- Le circuit de `/kwa-start-dev` est en place : issue, branche dédiée `<type>/<n°>-<slug>`, worktree. Jamais sur
+  `main`. Si tu es sur `main`, t'arrêter et lancer `/kwa-start-dev`.
+- Les commandes de vérification sont celles de `verify.commands` dans `.claude/kwa.policy.json`. Les lire une fois,
   les recopier dans chaque prompt d'agent. Ne jamais en inventer.
 
 ## Règles de fer
 
 1. **Aucun agent ne committe ni ne pousse.** Toi non plus, sans demande explicite de l'utilisateur. Le travail reste
-   en modifications locales dans le worktree. Le commit se fait ensuite avec `/kata-commit`, la livraison avec `/kata-ship`.
-2. **Les gardes (`.claude/kata/hooks`) s'appliquent aux sous-agents.** Un refus de garde n'est pas un obstacle à
+   en modifications locales dans le worktree. Le commit se fait ensuite avec `/kwa-commit`, la livraison avec `/kwa-ship`.
+2. **Les gardes (`.claude/kwa/hooks`) s'appliquent aux sous-agents.** Un refus de garde n'est pas un obstacle à
    contourner : l'agent s'arrête et remonte le refus. Tu ne le contournes pas à sa place.
 3. **Tu ne fais pas le travail produit.** Pas de « petite retouche rapide » : elle va à un agent. Tu peux lire,
    lancer les vérifications, mettre à jour le suivi.
@@ -40,7 +40,7 @@ le résultat : conformité à la spec, puis qualité. Le plan vient de `/kata-pl
 - `run_in_background: true` pour les tâches indépendantes lancées ensemble ; leur fin te notifie. Ne pas attendre
   en boucle. Une tâche dont la suivante dépend s'exécute au premier plan.
 - `isolation: "worktree"` donne un worktree jetable à l'agent. À réserver aux tâches parallèles qui touchent des
-  zones voisines (voir /kata-parallel). Séquentiellement, tous les agents travaillent dans le worktree de la branche.
+  zones voisines (voir /kwa-parallel). Séquentiellement, tous les agents travaillent dans le worktree de la branche.
 - Un agent ne doit pas lancer d'agents : le dire dans le prompt.
 
 ## Choix du modèle
@@ -92,9 +92,9 @@ Un refus de garde est toujours `BLOCKED`. Un agent qui dit « fait » sans citer
 
 ## Fin de plan
 
-Relecture de toute la branche avec `/kata-review` (base `main`, tête = état du worktree), sur le modèle le plus fort.
-Puis `/kata-verify` sur l'ensemble. Ne proposer `/kata-commit` puis `/kata-ship` qu'une fois les deux verts. Si des
-retours arrivent plus tard d'une PR, `/kata-review-feedback`.
+Relecture de toute la branche avec `/kwa-review` (base `main`, tête = état du worktree), sur le modèle le plus fort.
+Puis `/kwa-verify` sur l'ensemble. Ne proposer `/kwa-commit` puis `/kwa-ship` qu'une fois les deux verts. Si des
+retours arrivent plus tard d'une PR, `/kwa-review-feedback`.
 
 ## Rationalisations
 
@@ -113,4 +113,4 @@ Dispatcher sans modèle explicite. Coller la conversation dans un prompt. Lancer
 mêmes fichiers. Passer à la tâche suivante avec un retour critique ouvert. Dire « terminé » sans avoir relancé les
 vérifications. Éditer le code toi-même pour « gagner du temps ».
 
-> Inspiré de superpowers (Jesse Vincent, MIT, v6.4.1) ; réécrit pour Kata.
+> Inspiré de superpowers (Jesse Vincent, MIT, v6.4.1) ; réécrit pour Kwa.

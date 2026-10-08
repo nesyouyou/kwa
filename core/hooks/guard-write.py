@@ -12,7 +12,7 @@ import subprocess
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from _kata import decide, glob_match, guarded, is_secret_path, load_payload, load_policy, project_dir  # noqa: E402
+from _kwa import decide, glob_match, guarded, is_secret_path, load_payload, load_policy, project_dir  # noqa: E402
 
 KEYS = [
     ("clé Anthropic", r"sk-ant-[A-Za-z0-9_-]{20,}"),
@@ -26,8 +26,8 @@ KEYS = [
     ("URL de base avec mot de passe", r"\b(postgres(ql)?|mysql|mongodb(\+srv)?|redis|amqp)://[^\s:/@]+:[^\s@/]{3,}@"),
     ("clé privée", r"-----BEGIN [A-Z ]*PRIVATE KEY-----"),
 ]
-ALLOW_MARK = "kata:allow-secret"
-PROTECTED = (".claude/settings.json", ".claude/settings.local.json", ".claude/kata/", ".claude/hooks/", ".codex/hooks.json")
+ALLOW_MARK = "kwa:allow-secret"
+PROTECTED = (".claude/settings.json", ".claude/settings.local.json", ".claude/kwa/", ".claude/hooks/", ".codex/hooks.json")
 
 
 def branch_of(path: str) -> str:
@@ -57,7 +57,7 @@ def main() -> None:
                 decide("deny", rule["reason"])
         if any(rel.startswith(p) for p in wr.get("no_code_on_main", [])) \
                 and branch_of(os.path.realpath(path)) in ({"main", "master"} | set(policy.get("protected_branches", []))):
-            decide("deny", "Pas de code sur main : ouvrir d'abord l'issue et sa branche (kata-start-dev), "
+            decide("deny", "Pas de code sur main : ouvrir d'abord l'issue et sa branche (kwa-start-dev), "
                            "puis travailler dans le worktree créé.")
         if any(rel == p or rel.startswith(p) for p in PROTECTED):
             decide("ask", f"modification de {rel} : c'est la configuration des garde-fous, confirmer")

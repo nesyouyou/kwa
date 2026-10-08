@@ -1,13 +1,13 @@
 ---
-name: kata-debug
-description: Diagnostiquer un bug, un test qui échoue, un build cassé, un comportement inattendu, un test instable ou un problème de performance, avant de proposer le moindre correctif. À utiliser dès qu'un symptôme apparaît, surtout sous pression ou après un premier essai raté ("ça plante", "pourquoi", "ça ne marche plus", "/kata-debug").
+name: kwa-debug
+description: Diagnostiquer un bug, un test qui échoue, un build cassé, un comportement inattendu, un test instable ou un problème de performance, avant de proposer le moindre correctif. À utiliser dès qu'un symptôme apparaît, surtout sous pression ou après un premier essai raté ("ça plante", "pourquoi", "ça ne marche plus", "/kwa-debug").
 ---
 
 # Débogage systématique
 
 Deviner coûte plus cher que comprendre : un correctif posé sans cause connue masque le symptôme, déplace le bug
 et en crée un autre. Cette skill vaut pour tout symptôme technique, y compris le « petit » et l'urgent.
-Elle s'enchaîne avec `/kata-tdd` (test de non-régression), `/kata-verify` (preuve) et `/kata-start-dev` (issue, branche).
+Elle s'enchaîne avec `/kwa-tdd` (test de non-régression), `/kwa-verify` (preuve) et `/kwa-start-dev` (issue, branche).
 
 ## La loi
 
@@ -41,9 +41,9 @@ Cela vaut surtout quand c'est urgent, évident, ou quand un premier essai a déj
 
 ## Phase 4 : corriger
 
-1. **Test de non-régression d'abord** (`/kata-tdd`) : il reproduit le bug, on le voit échouer pour la bonne raison.
+1. **Test de non-régression d'abord** (`/kwa-tdd`) : il reproduit le bug, on le voit échouer pour la bonne raison.
 2. **Un seul correctif**, sur la cause racine. Pas de « tant que j'y suis », pas de refactor groupé.
-3. **Vérifier** : le test passe, le reste de la suite aussi, le symptôme d'origine a disparu (`/kata-verify`).
+3. **Vérifier** : le test passe, le reste de la suite aussi, le symptôme d'origine a disparu (`/kwa-verify`).
 4. **Ajouter des garde-fous** si la valeur invalide pouvait passer ailleurs : `defense-en-profondeur.md`.
 
 ## Bug difficile, flaky ou lenteur : la boucle d'abord
@@ -82,7 +82,7 @@ Un seul passage donne l'endroit exact de la rupture ; seulement ensuite, creuser
 Exemples de ce qu'on relève : charge utile envoyée par le mobile et reçue par l'API ; job posé dans la file puis
 repris par le worker ; requête SQL réellement émise et lignes réellement lues ; variable d'environnement présente
 dans le worker mais pas dans l'API. Les commandes d'observation viennent du projet (journaux, scripts du `package.json`,
-`.claude/kata.policy.json`) : ne rien deviner. En recette ou production : lecture seule, jamais d'écriture pour « tester » ; un déploiement relève de `/kata-deploy`.
+`.claude/kwa.policy.json`) : ne rien deviner. En recette ou production : lecture seule, jamais d'écriture pour « tester » ; un déploiement relève de `/kwa-deploy`.
 
 Retirer l'instrumentation temporaire une fois la cause trouvée.
 
@@ -117,10 +117,10 @@ qui cache l'absence d'une donnée. Si l'utilisateur dit « arrête de deviner »
 
 Si l'enquête complète conclut à un cas environnemental, temporel ou externe : le dire, documenter ce qui a été
 établi, ajouter une gestion adaptée (nouvel essai, délai maximal, message d'erreur explicite) et de la surveillance.
-Mais 95 % des « causes inconnues » sont une enquête incomplète. Une leçon durable se range avec `/kata-learn`.
+Mais 95 % des « causes inconnues » sont une enquête incomplète. Une leçon durable se range avec `/kwa-learn`.
 
-Ne jamais committer ni pousser sans demande explicite (`/kata-commit`, `/kata-ship`) ; jamais de correctif sur `main`.
+Ne jamais committer ni pousser sans demande explicite (`/kwa-commit`, `/kwa-ship`) ; jamais de correctif sur `main`.
 
-> Inspiré des skills de Matt Pocock (mattpocock/skills, MIT, commit f3fc563) ; réécrit pour Kata.
+> Inspiré des skills de Matt Pocock (mattpocock/skills, MIT, commit f3fc563) ; réécrit pour Kwa.
 
-> Inspiré de superpowers (Jesse Vincent, MIT, v6.4.1) ; réécrit pour Kata.
+> Inspiré de superpowers (Jesse Vincent, MIT, v6.4.1) ; réécrit pour Kwa.

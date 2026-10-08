@@ -1,4 +1,4 @@
-"""Promesse du README : hors des marqueurs kata:begin / kata:end, AGENTS.md reste identique octet pour octet."""
+"""Promesse du README : hors des marqueurs kwa:begin / kwa:end, AGENTS.md reste identique octet pour octet."""
 import os
 import re
 import subprocess
@@ -6,7 +6,7 @@ import sys
 import tempfile
 import unittest
 
-KATA = os.path.join(os.path.dirname(__file__), "..", "bin", "kata")
+KWA = os.path.join(os.path.dirname(__file__), "..", "bin", "kwa")
 CASES = {
     "lf": b"# Projet\n\nregle perso\n",
     "crlf": b"# Projet\r\n\r\nregle perso\r\n",
@@ -19,7 +19,7 @@ CASES = {
 
 
 def install(d, *extra):
-    return subprocess.run([sys.executable, KATA, "install", d, "--modules", "core", *extra], capture_output=True, text=True)
+    return subprocess.run([sys.executable, KWA, "install", d, "--modules", "core", *extra], capture_output=True, text=True)
 
 
 class ByteForByte(unittest.TestCase):
@@ -30,12 +30,12 @@ class ByteForByte(unittest.TestCase):
         self.assertEqual(install(d).returncode, 0)
         first = open(p, "rb").read()
         self.assertTrue(first.startswith(content), "le contenu d'origine doit rester un préfixe exact")
-        self.assertIn(b"<!-- kata:begin", first)
+        self.assertIn(b"<!-- kwa:begin", first)
         # ré-installation : strictement idempotente
         install(d)
         self.assertEqual(open(p, "rb").read(), first, "une seconde installation ne doit rien changer")
         # contenu ajouté APRÈS le bloc, puis mise à jour du bloc modifié à la main
-        end = first.index(b"<!-- kata:end -->") + len(b"<!-- kata:end -->")
+        end = first.index(b"<!-- kwa:end -->") + len(b"<!-- kwa:end -->")
         eol = b"\r\n" if b"\r\n" in content else b"\n"
         after = first[:end].replace(b"profile=pr-flow", b"profile=pr-flow (retouche)") + eol + b"pied de page" + tail
         open(p, "wb").write(after)
@@ -44,7 +44,7 @@ class ByteForByte(unittest.TestCase):
         self.assertTrue(final.startswith(content), "le début est intact après mise à jour du bloc")
         self.assertTrue(final.endswith(b"pied de page" + tail), "la fin est intacte après mise à jour du bloc")
         self.assertNotIn(b"(retouche)", final, "la retouche faite dans le bloc est bien écrasée")
-        self.assertEqual(final.count(b"<!-- kata:begin"), 1)
+        self.assertEqual(final.count(b"<!-- kwa:begin"), 1)
 
     def test_cases(self):
         for name, content in CASES.items():

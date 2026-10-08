@@ -1,6 +1,6 @@
 ---
-name: kata-tickets
-description: Découper une spec, un plan ou une discussion en tickets GitHub livrables séparément, avec leurs dépendances. À utiliser quand une demande est trop grosse pour une seule issue ou une seule PR, quand un plan validé doit être réparti entre plusieurs personnes ou agents, ou quand l'utilisateur dit "découpe en tickets", "fais les issues", "/kata-tickets".
+name: kwa-tickets
+description: Découper une spec, un plan ou une discussion en tickets GitHub livrables séparément, avec leurs dépendances. À utiliser quand une demande est trop grosse pour une seule issue ou une seule PR, quand un plan validé doit être réparti entre plusieurs personnes ou agents, ou quand l'utilisateur dit "découpe en tickets", "fais les issues", "/kwa-tickets".
 allowed-tools: Bash(gh issue *) Bash(gh auth status) Bash(git log *) Read Grep Glob
 ---
 
@@ -10,15 +10,15 @@ Un gros chantier livré d'un bloc se relit mal, se teste mal et se défait mal. 
 chaque ticket traverse toutes les couches de bout en bout sur un cas étroit, et se livre et se vérifie seul.
 Cette skill produit la liste, la fait valider, puis crée les issues. **Rien n'est créé sans accord.**
 
-Articulation : `/kata-brainstorm` cadre le besoin, `/kata-plan` écrit le plan local (étapes d'exécution pour
-l'agent), `/kata-tickets` répartit le travail en issues GitHub. Chaque ticket est ensuite repris par
-`/kata-start-dev <issue>` (branche, worktree, preuve, PR). `/kata-interview` aide si la spec est encore floue.
+Articulation : `/kwa-brainstorm` cadre le besoin, `/kwa-plan` écrit le plan local (étapes d'exécution pour
+l'agent), `/kwa-tickets` répartit le travail en issues GitHub. Chaque ticket est ensuite repris par
+`/kwa-start-dev <issue>` (branche, worktree, preuve, PR). `/kwa-interview` aide si la spec est encore floue.
 
 ## Étape 1 : rassembler
 
 Partir de ce qui est déjà dans la conversation, ou de la référence donnée (chemin de spec ou de plan, numéro
 d'issue : `gh issue view <n°> --comments`). Lire le code concerné pour connaître l'état réel, et le vocabulaire
-du domaine du projet pour nommer les tickets. Si la spec est floue, s'arrêter et passer par `/kata-interview`.
+du domaine du projet pour nommer les tickets. Si la spec est floue, s'arrêter et passer par `/kwa-interview`.
 
 Chercher les **préparatifs** : une petite refonte qui rend le reste facile se fait en premier, dans son ticket.
 Rendre le changement facile, puis faire le changement facile.
@@ -39,7 +39,7 @@ bloqué par l'expansion ; supprimer l'ancienne forme dans un dernier ticket bloq
 
 Pour chaque ticket, fixer ses **dépendances bloquantes** : les tickets qui doivent être finis avant lui. Pas de
 dépendance par confort, seulement par nécessité réelle. Sans bloquant, le ticket peut démarrer tout de suite :
-c'est ce qui permet de paralléliser (`/kata-parallel`, `/kata-agents`).
+c'est ce qui permet de paralléliser (`/kwa-parallel`, `/kwa-agents`).
 
 ## Étape 3 : proposer la liste, avant toute création
 
@@ -82,7 +82,7 @@ Choix déjà arrêtés qui s'imposent à ce ticket (autrement : « aucune »).
 
 ## Preuve
 
-<!-- Ajoutée à la livraison, voir /kata-start-dev -->
+<!-- Ajoutée à la livraison, voir /kwa-start-dev -->
 ```
 
 Éviter chemins de fichiers et extraits de code : ils périment vite. Seule exception : un extrait qui fixe une
@@ -100,6 +100,6 @@ Après le « oui » de l'utilisateur, et seulement alors :
 4. Rendre à l'utilisateur la liste finale : numéro, titre, bloquants, lien.
 
 Ne pas fermer ni modifier l'issue parente. Ne pas ajouter de labels qui n'existent pas dans le dépôt.
-Le travail démarre par `/kata-start-dev` avec `--issue <n°>`, en commençant par les tickets sans bloquant.
+Le travail démarre par `/kwa-start-dev` avec `--issue <n°>`, en commençant par les tickets sans bloquant.
 
-> Inspiré des skills de Matt Pocock (mattpocock/skills, MIT, commit f3fc563) ; réécrit pour Kata.
+> Inspiré des skills de Matt Pocock (mattpocock/skills, MIT, commit f3fc563) ; réécrit pour Kwa.

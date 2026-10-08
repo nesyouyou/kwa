@@ -1,13 +1,13 @@
 ---
-name: kata-deploy
-description: Pré-vol, déploiement et vérification avec preuve d'un environnement (recette, production…), pilotés par `environments` dans .claude/kata.policy.json. À lancer seulement sur demande explicite de déployer ("déploie", "mets en prod", "/kata-deploy").
+name: kwa-deploy
+description: Pré-vol, déploiement et vérification avec preuve d'un environnement (recette, production…), pilotés par `environments` dans .claude/kwa.policy.json. À lancer seulement sur demande explicite de déployer ("déploie", "mets en prod", "/kwa-deploy").
 disable-model-invocation: true
 allowed-tools: Bash(gh *) Bash(git *) Bash(curl *)
 ---
 
 # Déployer un environnement
 
-Lire `.claude/kata.policy.json` → `environments.<nom>`. Si l'environnement demandé n'y figure pas, **s'arrêter** et
+Lire `.claude/kwa.policy.json` → `environments.<nom>`. Si l'environnement demandé n'y figure pas, **s'arrêter** et
 proposer de le décrire d'abord (voir « Format » en bas) : ne pas improviser un déploiement.
 
 ## La loi

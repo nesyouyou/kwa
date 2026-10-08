@@ -1,6 +1,6 @@
 # Défense en profondeur
 
-Complément de `/kata-debug`. Une fois la cause racine corrigée, une seule validation ne suffit pas : un autre chemin
+Complément de `/kwa-debug`. Une fois la cause racine corrigée, une seule validation ne suffit pas : un autre chemin
 d'appel, un refactor ou un double de test peut la contourner. Valider à **chaque couche** que la donnée traverse
 rend le bug impossible plutôt que corrigé.
 
@@ -20,7 +20,7 @@ rend le bug impossible plutôt que corrigé.
 
 1. Suivre la donnée de sa source jusqu'à l'endroit où elle casse.
 2. Lister chaque point de passage.
-3. Ajouter une vérification à chacun, avec son test (`/kata-tdd`).
+3. Ajouter une vérification à chacun, avec son test (`/kwa-tdd`).
 4. Tester chaque couche séparément : contourner la première, la deuxième doit encore arrêter le bug.
 
 ## Limites

@@ -1,6 +1,6 @@
 ---
-name: kata-handoff
-description: Compacter la conversation en un document de reprise pour un autre agent ou une autre session. À lancer quand l'utilisateur dit « passe la main », « fais un handoff », « je reprends dans une autre session », « /kata-handoff », ou quand le contexte est trop chargé pour continuer ici.
+name: kwa-handoff
+description: Compacter la conversation en un document de reprise pour un autre agent ou une autre session. À lancer quand l'utilisateur dit « passe la main », « fais un handoff », « je reprends dans une autre session », « /kwa-handoff », ou quand le contexte est trop chargé pour continuer ici.
 disable-model-invocation: true
 allowed-tools: Read Grep Glob Bash(git status *) Bash(git log *) Bash(git diff *) Write
 ---
@@ -8,7 +8,7 @@ allowed-tools: Read Grep Glob Bash(git status *) Bash(git log *) Bash(git diff *
 # Passer la main
 
 Un handoff sert la reprise **immédiate** : un agent neuf lit un seul fichier et continue sans reposer les questions
-déjà tranchées. Pour la connaissance durable (décision, piège, procédure), c'est `/kata-learn`. Les deux ne
+déjà tranchées. Pour la connaissance durable (décision, piège, procédure), c'est `/kwa-learn`. Les deux ne
 se substituent pas : ne pas recopier ici ce qui doit vivre dans une doc.
 
 ## 1. Cadrer
@@ -24,7 +24,7 @@ commandes lancés. Un handoff faux est pire que pas de handoff.
 ## 3. Écrire le document
 
 Chemin par défaut : fichier temporaire **hors dépôt** (`$TMPDIR`, sinon `/tmp`), nom
-`kata-handoff-<sujet>-AAAA-MM-JJ.md`. Dans `docs/` seulement si l'utilisateur le demande ; alors vérifier
+`kwa-handoff-<sujet>-AAAA-MM-JJ.md`. Dans `docs/` seulement si l'utilisateur le demande ; alors vérifier
 `write.deny` et `write.no_code_on_main` de la politique. Donner le chemin à la fin.
 
 Plan du document, dans cet ordre :
@@ -37,8 +37,8 @@ Plan du document, dans cet ordre :
 5. **Prochaines étapes** : numérotées, la première immédiatement actionnable. Commande exacte quand elle existe.
 6. **Pièges** : ce qui a échoué, les faux départs, les environnements fragiles.
 7. **Non vérifié** : ce qui est supposé, pas prouvé. Séparer clairement du reste.
-8. **Skills à appeler** : lesquelles des skills Kata l'agent suivant doit lancer (`/kata-execute`,
-   `/kata-debug`, `/kata-verify`...) et pourquoi.
+8. **Skills à appeler** : lesquelles des skills Kwa l'agent suivant doit lancer (`/kwa-execute`,
+   `/kwa-debug`, `/kwa-verify`...) et pourquoi.
 
 ## Règles
 
@@ -53,6 +53,6 @@ Plan du document, dans cet ordre :
 ## Fin
 
 Annoncer le chemin du fichier et la phrase à donner au prochain agent : « Lis `<chemin>` puis continue à partir de
-la première étape. » Si la session a aussi produit des apprentissages durables, proposer `/kata-learn` séparément.
+la première étape. » Si la session a aussi produit des apprentissages durables, proposer `/kwa-learn` séparément.
 
-> Inspiré des skills de Matt Pocock (mattpocock/skills, MIT, commit f3fc563) ; réécrit pour Kata.
+> Inspiré des skills de Matt Pocock (mattpocock/skills, MIT, commit f3fc563) ; réécrit pour Kwa.

@@ -1,4 +1,4 @@
-# Exceptions acceptées au contrôle d'hygiène de remise (kata-hygiene).
+# Exceptions acceptées au contrôle d'hygiène de remise (kwa-hygiene).
 #
 # Format :  FAMILLE <tab|espaces> chemin <tab|espaces> raison et échéance
 # Familles : SECRET · PERSONNEL · NOMINATIF · PÉRISSABLE

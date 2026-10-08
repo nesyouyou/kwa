@@ -33,5 +33,5 @@ def make_repo(policy=None, branch="main"):
     subprocess.run(["git", "init", "-q", "-b", branch, d], check=True)
     if policy:
         os.makedirs(os.path.join(d, ".claude"), exist_ok=True)
-        shutil.copy(policy, os.path.join(d, ".claude", "kata.policy.json"))
+        shutil.copy(policy, os.path.join(d, ".claude", "kwa.policy.json"))
     return d

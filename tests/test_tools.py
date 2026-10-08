@@ -1,4 +1,4 @@
-"""kata-start, kata-hygiene, mémoire, modules et détection de l'installeur."""
+"""kwa-start, kwa-hygiene, mémoire, modules et détection de l'installeur."""
 import json
 import os
 import stat
@@ -10,7 +10,7 @@ import unittest
 from helpers import HOOKS
 
 PACK = os.path.join(os.path.dirname(__file__), "..")
-KATA = os.path.join(PACK, "bin", "kata")
+KWA = os.path.join(PACK, "bin", "kwa")
 BIN = os.path.join(PACK, "core", "bin")
 
 
@@ -40,7 +40,7 @@ class Start(unittest.TestCase):
         for k, v in (("user.email", "t@example.test"), ("user.name", "t")):
             sh("git", "-C", self.repo, "config", k, v)
         os.makedirs(os.path.join(self.repo, ".claude"))
-        json.dump({"start": {"install": ["touch installed.flag"]}}, open(os.path.join(self.repo, ".claude", "kata.policy.json"), "w"))
+        json.dump({"start": {"install": ["touch installed.flag"]}}, open(os.path.join(self.repo, ".claude", "kwa.policy.json"), "w"))
         open(os.path.join(self.repo, "a.txt"), "w").write("a")
         sh("git", "-C", self.repo, "add", "-A")
         sh("git", "-C", self.repo, "commit", "-q", "-m", "init")
@@ -52,7 +52,7 @@ class Start(unittest.TestCase):
         self.base = base
 
     def test_creates_issue_branch_worktree_and_installs(self):
-        r = sh(sys.executable, os.path.join(BIN, "kata-start"), "feat", "my-filter", "Un filtre", cwd=self.repo, env=self.env)
+        r = sh(sys.executable, os.path.join(BIN, "kwa-start"), "feat", "my-filter", "Un filtre", cwd=self.repo, env=self.env)
         self.assertEqual(r.returncode, 0, r.stderr)
         wt = os.path.join(self.base, "proj-wt-7-my-filter")
         self.assertTrue(os.path.isdir(wt))
@@ -65,20 +65,20 @@ class Start(unittest.TestCase):
         return len(open(log).read().split()) if os.path.exists(log) else 0
 
     def set_flow(self, **flow):
-        p = os.path.join(self.repo, ".claude", "kata.policy.json")
+        p = os.path.join(self.repo, ".claude", "kwa.policy.json")
         d = json.load(open(p))
         d["flow"] = flow
         json.dump(d, open(p, "w"))
 
     def test_issue_is_created_automatically_by_default(self):
-        r = sh(sys.executable, os.path.join(BIN, "kata-start"), "feat", "auto-one", "Auto", cwd=self.repo, env=self.env)
+        r = sh(sys.executable, os.path.join(BIN, "kwa-start"), "feat", "auto-one", "Auto", cwd=self.repo, env=self.env)
         self.assertEqual(r.returncode, 0, r.stderr)
         self.assertEqual(self.issue_calls(), 1)
         self.assertTrue(os.path.isdir(os.path.join(self.base, "proj-wt-7-auto-one")))
 
     def test_auto_issue_false_makes_only_a_branch(self):
         self.set_flow(auto_issue=False)
-        r = sh(sys.executable, os.path.join(BIN, "kata-start"), "feat", "no-issue-here", "Sans issue", cwd=self.repo, env=self.env)
+        r = sh(sys.executable, os.path.join(BIN, "kwa-start"), "feat", "no-issue-here", "Sans issue", cwd=self.repo, env=self.env)
         self.assertEqual(r.returncode, 0, r.stderr)
         self.assertEqual(self.issue_calls(), 0, "aucune issue ne doit être créée")
         wt = os.path.join(self.base, "proj-wt-no-issue-here")
@@ -86,24 +86,24 @@ class Start(unittest.TestCase):
         self.assertEqual(sh("git", "-C", wt, "symbolic-ref", "--short", "HEAD").stdout.strip(), "feat/no-issue-here")
 
     def test_no_issue_flag_overrides_policy(self):
-        r = sh(sys.executable, os.path.join(BIN, "kata-start"), "fix", "flag-only", "Flag", "--no-issue", cwd=self.repo, env=self.env)
+        r = sh(sys.executable, os.path.join(BIN, "kwa-start"), "fix", "flag-only", "Flag", "--no-issue", cwd=self.repo, env=self.env)
         self.assertEqual(r.returncode, 0, r.stderr)
         self.assertEqual(self.issue_calls(), 0)
         self.assertTrue(os.path.isdir(os.path.join(self.base, "proj-wt-flag-only")))
 
     def test_explicit_issue_still_wins_when_auto_issue_is_false(self):
         self.set_flow(auto_issue=False)
-        r = sh(sys.executable, os.path.join(BIN, "kata-start"), "fix", "reuse", "Reprise", "--issue", "9", cwd=self.repo, env=self.env)
+        r = sh(sys.executable, os.path.join(BIN, "kwa-start"), "fix", "reuse", "Reprise", "--issue", "9", cwd=self.repo, env=self.env)
         self.assertEqual(r.returncode, 0, r.stderr)
         self.assertTrue(os.path.isdir(os.path.join(self.base, "proj-wt-9-reuse")))
 
     def test_start_link_symlinks_local_files_instead_of_copying(self):
         open(os.path.join(self.repo, "secret.local"), "w").write("VALEUR=1\n")  # fichier local, non suivi par git
-        p = os.path.join(self.repo, ".claude", "kata.policy.json")
+        p = os.path.join(self.repo, ".claude", "kwa.policy.json")
         d = json.load(open(p))
         d["start"]["link"] = ["secret.local", "../dehors", "a.txt", "absent.local"]
         json.dump(d, open(p, "w"))
-        r = sh(sys.executable, os.path.join(BIN, "kata-start"), "feat", "linked", "Lien", "--no-issue", cwd=self.repo, env=self.env)
+        r = sh(sys.executable, os.path.join(BIN, "kwa-start"), "feat", "linked", "Lien", "--no-issue", cwd=self.repo, env=self.env)
         self.assertEqual(r.returncode, 0, r.stderr)
         wt = os.path.join(self.base, "proj-wt-linked")
         link = os.path.join(wt, "secret.local")
@@ -121,18 +121,18 @@ class Start(unittest.TestCase):
         sh("git", "-C", self.repo, "commit", "-q", "-m", "dev")
         sh("git", "-C", self.repo, "push", "-q", "origin", "dev")
         sh("git", "-C", self.repo, "switch", "-q", "main")
-        r = sh(sys.executable, os.path.join(BIN, "kata-start"), "feat", "from-dev", "Depuis dev", "--no-issue", "--base", "dev", cwd=self.repo, env=self.env)
+        r = sh(sys.executable, os.path.join(BIN, "kwa-start"), "feat", "from-dev", "Depuis dev", "--no-issue", "--base", "dev", cwd=self.repo, env=self.env)
         self.assertEqual(r.returncode, 0, r.stderr)
         self.assertTrue(os.path.exists(os.path.join(self.base, "proj-wt-from-dev", "dev-only.txt")))
-        r2 = sh(sys.executable, os.path.join(BIN, "kata-start"), "feat", "from-main", "Depuis main", "--no-issue", cwd=self.repo, env=self.env)
+        r2 = sh(sys.executable, os.path.join(BIN, "kwa-start"), "feat", "from-main", "Depuis main", "--no-issue", cwd=self.repo, env=self.env)
         self.assertEqual(r2.returncode, 0, r2.stderr)
         self.assertFalse(os.path.exists(os.path.join(self.base, "proj-wt-from-main", "dev-only.txt")), "sans --base, on part de main")
 
     def test_existing_issue_and_bad_slug(self):
-        r = sh(sys.executable, os.path.join(BIN, "kata-start"), "fix", "x-y", "t", "--issue", "9", cwd=self.repo, env=self.env)
+        r = sh(sys.executable, os.path.join(BIN, "kwa-start"), "fix", "x-y", "t", "--issue", "9", cwd=self.repo, env=self.env)
         self.assertEqual(r.returncode, 0, r.stderr)
         self.assertTrue(os.path.isdir(os.path.join(self.base, "proj-wt-9-x-y")))
-        bad = sh(sys.executable, os.path.join(BIN, "kata-start"), "fix", "Bad Slug", "t", cwd=self.repo, env=self.env)
+        bad = sh(sys.executable, os.path.join(BIN, "kwa-start"), "fix", "Bad Slug", "t", cwd=self.repo, env=self.env)
         self.assertEqual(bad.returncode, 2)
 
 
@@ -186,7 +186,7 @@ class Hygiene(unittest.TestCase):
             for rel, text in extra.items():
                 open(os.path.join(d, rel), "w").write(text)
         sh("git", "-C", d, "add", "-A")
-        return sh(sys.executable, os.path.join(BIN, "kata-hygiene"), "--root", d, *args)
+        return sh(sys.executable, os.path.join(BIN, "kwa-hygiene"), "--root", d, *args)
 
     def test_secret_blocks(self):
         r = self.run_h({"src/a.ts": 'const password = "abcdefghijklmnopqrstuv1234"\n'})
@@ -207,13 +207,13 @@ class Hygiene(unittest.TestCase):
 
     def test_name_is_warning_then_strict_fails(self):
         files = {"src/a.ts": "// écrit par Jeanne\n"}
-        extra = {".claude/kata.policy.json": json.dumps({"hygiene": {"names": ["Jeanne"]}})}
+        extra = {".claude/kwa.policy.json": json.dumps({"hygiene": {"names": ["Jeanne"]}})}
         self.assertEqual(self.run_h(files, extra).returncode, 0)
         self.assertEqual(self.run_h(files, extra, "--strict").returncode, 1)
 
     def test_allow_list_defers_and_is_shown(self):
         files = {"src/a.ts": "const a = 'x@gmail.com'\n"}
-        extra = {".claude/kata.hygiene.allow": "PERSONNEL\tsrc/a.ts\tà passer en variable d'env avant la remise\n"}
+        extra = {".claude/kwa.hygiene.allow": "PERSONNEL\tsrc/a.ts\tà passer en variable d'env avant la remise\n"}
         r = self.run_h(files, extra)
         self.assertEqual(r.returncode, 0, r.stdout)
         self.assertIn("avant la remise", r.stdout)
@@ -226,7 +226,7 @@ class Memory(unittest.TestCase):
 
     def test_capture_pending_clear(self):
         d = git_repo()
-        mem = os.path.join(BIN, "kata-memory")
+        mem = os.path.join(BIN, "kwa-memory")
         self.assertEqual(sh(sys.executable, mem, "capture", "gotcha", "le boot est lent", cwd=d).returncode, 0)
         self.assertIn("1 note(s)", sh(sys.executable, mem, "pending", cwd=d).stdout)
         self.assertEqual(sh(sys.executable, mem, "capture", "nimporte", "x", cwd=d).returncode, 2)
@@ -245,20 +245,20 @@ class Memory(unittest.TestCase):
         self.assertEqual(self.nudge(docs).returncode, 0, "la doc ne déclenche pas")
         big = git_repo({f"src/f{i}.ts": "x" for i in range(4)})
         self.assertEqual(self.nudge(big, {"stop_hook_active": True}).returncode, 0)
-        self.assertEqual(self.nudge(big, env={"KATA_MEMORY_NUDGE": "0"}).returncode, 0)
+        self.assertEqual(self.nudge(big, env={"KWA_MEMORY_NUDGE": "0"}).returncode, 0)
 
     def test_nudge_skipped_if_notes_captured(self):
         d = git_repo({f"src/f{i}.ts": "x" for i in range(4)})
-        sh(sys.executable, os.path.join(BIN, "kata-memory"), "capture", "decision", "x", cwd=d)
+        sh(sys.executable, os.path.join(BIN, "kwa-memory"), "capture", "decision", "x", cwd=d)
         self.assertEqual(self.nudge(d).returncode, 0)
 
     def test_session_start_context(self):
         d = git_repo()
         quiet = sh(sys.executable, os.path.join(HOOKS, "memory-context.py"), input=json.dumps({"cwd": d}), env={"CLAUDE_PROJECT_DIR": d})
         self.assertEqual(quiet.stdout.strip(), "")
-        sh(sys.executable, os.path.join(BIN, "kata-memory"), "capture", "pref", "x", cwd=d)
+        sh(sys.executable, os.path.join(BIN, "kwa-memory"), "capture", "pref", "x", cwd=d)
         out = sh(sys.executable, os.path.join(HOOKS, "memory-context.py"), input=json.dumps({"cwd": d}), env={"CLAUDE_PROJECT_DIR": d})
-        self.assertIn("/kata-learn", json.loads(out.stdout)["hookSpecificOutput"]["additionalContext"])
+        self.assertIn("/kwa-learn", json.loads(out.stdout)["hookSpecificOutput"]["additionalContext"])
 
 
 class Modules(unittest.TestCase):
@@ -267,80 +267,80 @@ class Modules(unittest.TestCase):
                       "pnpm-lock.yaml": "", "apps/web/page.tsx": "x", ".github/workflows/deploy.yml": "run: scw container deploy"})
         return d
 
-    def kata(self, *args, env=None):
-        return sh(sys.executable, KATA, *args, env={"KATA_HOME": tempfile.mkdtemp(), **(env or {})})
+    def kwa(self, *args, env=None):
+        return sh(sys.executable, KWA, *args, env={"KWA_HOME": tempfile.mkdtemp(), **(env or {})})
 
     def test_auto_detection_and_policy(self):
         d = self.project()
-        r = self.kata("install", d)
+        r = self.kwa("install", d)
         self.assertEqual(r.returncode, 0, r.stderr)
-        state = json.load(open(os.path.join(d, ".claude/kata/state.json")))
+        state = json.load(open(os.path.join(d, ".claude/kwa/state.json")))
         for m in ("core", "memory", "issue-flow", "verify", "stack-scaleway", "deploy"):
             self.assertIn(m, state["modules"])
-        pol = json.load(open(os.path.join(d, ".claude/kata.policy.json")))
+        pol = json.load(open(os.path.join(d, ".claude/kwa.policy.json")))
         self.assertEqual(pol["verify"]["commands"], ["pnpm typecheck", "pnpm lint"])
         self.assertEqual(pol["start"]["install"], ["pnpm install --frozen-lockfile", "pnpm db:generate"])
         self.assertEqual(pol["write"]["no_code_on_main"], ["apps/"])
         self.assertTrue(os.path.exists(os.path.join(d, ".github/pull_request_template.md")))
-        self.assertTrue(os.path.exists(os.path.join(d, ".claude/skills/kata-learn/SKILL.md")))
-        self.assertEqual(self.kata("doctor", d).returncode, 0, self.kata("doctor", d).stdout)
+        self.assertTrue(os.path.exists(os.path.join(d, ".claude/skills/kwa-learn/SKILL.md")))
+        self.assertEqual(self.kwa("doctor", d).returncode, 0, self.kwa("doctor", d).stdout)
 
     def test_detection_proposes_linking_the_local_environment_file(self):
         d = self.project()
         open(os.path.join(d, ".env"), "w").write("A=1\n")
-        self.kata("install", d)
-        pol = json.load(open(os.path.join(d, ".claude/kata.policy.json")))
+        self.kwa("install", d)
+        pol = json.load(open(os.path.join(d, ".claude/kwa.policy.json")))
         self.assertEqual(pol["start"]["link"], [".env"])
         sans = self.project()
-        self.kata("install", sans)
-        self.assertNotIn("link", json.load(open(os.path.join(sans, ".claude/kata.policy.json")))["start"])
+        self.kwa("install", sans)
+        self.assertNotIn("link", json.load(open(os.path.join(sans, ".claude/kwa.policy.json")))["start"])
 
     def test_policy_and_seeds_belong_to_project(self):
         d = self.project()
-        self.kata("install", d)
-        pol_path = os.path.join(d, ".claude/kata.policy.json")
+        self.kwa("install", d)
+        pol_path = os.path.join(d, ".claude/kwa.policy.json")
         pol = json.load(open(pol_path))
         pol["bash"]["deny"].append({"id": "mine", "reason": "r", "any": ["x"]})
         json.dump(pol, open(pol_path, "w"))
         open(os.path.join(d, ".github/pull_request_template.md"), "w").write("mon gabarit\n")
-        r = self.kata("install", d)
+        r = self.kwa("install", d)
         self.assertIn("conservée", r.stdout)
         self.assertIn("mine", [x["id"] for x in json.load(open(pol_path))["bash"]["deny"]])
         self.assertEqual(open(os.path.join(d, ".github/pull_request_template.md")).read(), "mon gabarit\n")
 
     def test_git_exclude_and_no_commit(self):
         d = self.project()
-        self.kata("install", d)
-        self.assertIn(".claude/kata/local/", open(os.path.join(d, ".git/info/exclude")).read())
+        self.kwa("install", d)
+        self.assertIn(".claude/kwa/local/", open(os.path.join(d, ".git/info/exclude")).read())
         self.assertNotEqual(sh("git", "-C", d, "log", "--oneline").returncode, 0)
         self.assertEqual(sh("git", "-C", d, "diff", "--cached", "--name-only").stdout, "")
 
     def test_codex_parity(self):
         d = self.project()
-        self.kata("install", d, "--codex")
-        self.assertTrue(os.path.islink(os.path.join(d, ".agents/skills/kata-commit")))
+        self.kwa("install", d, "--codex")
+        self.assertTrue(os.path.islink(os.path.join(d, ".agents/skills/kwa-commit")))
         hooks = json.load(open(os.path.join(d, ".codex/hooks.json")))
         cmds = [h["command"] for e in hooks["hooks"]["PreToolUse"] for h in e["hooks"]]
-        self.assertTrue(all(c.startswith('cd "$(git rev-parse --show-toplevel)" && python3 .claude/kata/hooks/') for c in cmds))
+        self.assertTrue(all(c.startswith('cd "$(git rev-parse --show-toplevel)" && python3 .claude/kwa/hooks/') for c in cmds))
 
     def test_unknown_module_and_with(self):
         d = self.project()
-        self.assertEqual(self.kata("install", d, "--with", "nope").returncode, 2)
-        self.assertEqual(self.kata("install", d, "--modules", "core", "--with", "client-handover").returncode, 0)
-        self.assertTrue(os.path.exists(os.path.join(d, ".claude/kata/bin/kata-hygiene")))
+        self.assertEqual(self.kwa("install", d, "--with", "nope").returncode, 2)
+        self.assertEqual(self.kwa("install", d, "--modules", "core", "--with", "client-handover").returncode, 0)
+        self.assertTrue(os.path.exists(os.path.join(d, ".claude/kwa/bin/kwa-hygiene")))
 
     def test_doctor_flags_project_overlap(self):
         d = self.project()
         os.makedirs(os.path.join(d, ".claude/hooks"))
         open(os.path.join(d, ".claude/hooks/guard-bash.sh"), "w").write("#!/bin/sh\n")
-        self.kata("install", d)
-        self.assertIn("fait doublon", self.kata("doctor", d).stdout)
+        self.kwa("install", d)
+        self.assertIn("fait doublon", self.kwa("doctor", d).stdout)
 
     def test_recommend_reports_presence(self):
         d = git_repo({"package.json": json.dumps({"dependencies": {"expo": "1"}})})
         home = tempfile.mkdtemp()
         os.makedirs(os.path.join(home, ".claude", "skills", "aso"))
-        r = sh(sys.executable, KATA, "recommend", d, env={"KATA_HOME": home})
+        r = sh(sys.executable, KWA, "recommend", d, env={"KWA_HOME": home})
         self.assertRegex(r.stdout, r"✓ présente\s+aso")
         self.assertRegex(r.stdout, r"✗ à installer\s+eas-app-stores")
 

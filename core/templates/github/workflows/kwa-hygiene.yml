@@ -7,4 +7,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: python3 .claude/kata/bin/kata-hygiene
+      - run: python3 .claude/kwa/bin/kwa-hygiene

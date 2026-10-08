@@ -1,6 +1,6 @@
 ---
-name: kata-review
-description: Faire relire un diff ou une branche par un sous-agent relecteur. À utiliser avant de livrer (/kata-ship), à la fin d'un plan ou d'une fonctionnalité importante, après un correctif délicat, ou quand l'utilisateur dit « relis ça », « review », « regarde mon diff ».
+name: kwa-review
+description: Faire relire un diff ou une branche par un sous-agent relecteur. À utiliser avant de livrer (/kwa-ship), à la fin d'un plan ou d'une fonctionnalité importante, après un correctif délicat, ou quand l'utilisateur dit « relis ça », « review », « regarde mon diff ».
 ---
 
 # Demander une revue de code
@@ -11,7 +11,7 @@ connais déjà les raisons.
 
 ## Quand
 
-- **Obligatoire** : avant `/kata-ship`, à la fin d'un plan exécuté avec `/kata-agents`, sur tout changement touchant
+- **Obligatoire** : avant `/kwa-ship`, à la fin d'un plan exécuté avec `/kwa-agents`, sur tout changement touchant
   l'authentification, l'argent, les migrations ou des données de clients.
 - **Utile** : quand tu bloques, avant un refactor (état de référence), après un bug difficile.
 - **Inutile** : une coquille ou un changement de texte sans effet sur le comportement.
@@ -24,7 +24,7 @@ connais déjà les raisons.
    HEAD_REF=$(git rev-parse HEAD)
    git diff --stat $BASE..$HEAD_REF
    ```
-   Si le travail n'est pas committé (cas courant sous Kata, où l'on ne committe que sur demande), le périmètre est
+   Si le travail n'est pas committé (cas courant sous Kwa, où l'on ne committe que sur demande), le périmètre est
    l'état du worktree : `git diff HEAD` plus les fichiers non suivis de `git status --short`. Le dire au relecteur.
    Ne committe pas pour pouvoir relire.
 2. **Rassembler le contexte** : ce que le changement doit faire (issue, tâche du plan ou critères, citer et non
@@ -45,12 +45,12 @@ Le prompt les impose au relecteur :
   autorisations, dépendances ajoutées.
 - **Régressions** : appelants existants, contrats d'API, valeurs par défaut, migrations irréversibles.
 - **Tests manquants** : comportement nouveau non couvert, test qui ne peut pas échouer, tests qui valident un mock.
-- **Sur-ingénierie** (échelle de `/kata-simple`) : code mort, abstraction à usage unique, dépendance évitable,
+- **Sur-ingénierie** (échelle de `/kwa-simple`) : code mort, abstraction à usage unique, dépendance évitable,
   helper qui double un existant, option que personne ne règle, changement hors sujet. Un constat = un lieu, ce
   qu'on coupe, ce qui le remplace. Un test qui protège un comportement n'est pas du superflu.
-- **Hygiène de remise** si le module `client-handover` est actif (le savoir par `.claude/kata.policy.json` ou les
+- **Hygiène de remise** si le module `client-handover` est actif (le savoir par `.claude/kwa.policy.json` ou les
   modules listés dans `AGENTS.md`) : secret, compte personnel, nom de personne, phrase périmable dans un fichier
-  versionné ; voir `.claude/rules/kata-remise-au-client.md`. Ce n'est pas la même chose que la sécurité.
+  versionné ; voir `.claude/rules/kwa-remise-au-client.md`. Ce n'est pas la même chose que la sécurité.
 
 ## Gravité et traitement
 
@@ -60,14 +60,14 @@ Le prompt les impose au relecteur :
 | Important | Défaut de conception, test manquant, régression probable | Corriger avant de continuer ou de livrer |
 | Mineur | Style, optimisation, polish ; sur-ingénierie sans risque | Noter ; corriger si c'est gratuit ; ne bloque pas |
 
-Chaque retour reçu passe par `/kata-review-feedback` avant d'être appliqué : le relecteur peut se tromper. Un retour
+Chaque retour reçu passe par `/kwa-review-feedback` avant d'être appliqué : le relecteur peut se tromper. Un retour
 faux se conteste avec la preuve (code, test), il ne s'applique pas par politesse.
 
 ## Boucle jusqu'au vert
 
 1. Corriger les critiques et les importants (toi-même sur un petit changement, ou par un agent d'implémentation
-   si le correctif est conséquent : l'orchestrateur ne fait pas le travail produit, voir `/kata-agents`).
-2. Relancer `verify.commands` de `.claude/kata.policy.json` ; citer les résultats.
+   si le correctif est conséquent : l'orchestrateur ne fait pas le travail produit, voir `/kwa-agents`).
+2. Relancer `verify.commands` de `.claude/kwa.policy.json` ; citer les résultats.
 3. Nouvelle relecture **ciblée** : donner au relecteur la liste des retours précédents et le diff des seules
    corrections, lui demander si chaque point est réglé et si le correctif introduit un défaut.
 4. Vert = zéro critique et zéro important ouverts, vérifications réussies.
@@ -77,8 +77,8 @@ faux se conteste avec la preuve (code, test), il ne s'applique pas par politesse
 ## Règles de fer
 
 1. **Le relecteur est en lecture seule** : ni édition, ni commit, ni push, ni changement de branche ou d'index.
-2. **Les gardes (`.claude/kata/hooks`) s'appliquent au relecteur.** Un refus se rapporte, il ne se contourne pas.
-3. **Aucun commit ni push** pour faciliter la revue. Le commit vient de `/kata-commit` à la demande de l'utilisateur.
+2. **Les gardes (`.claude/kwa/hooks`) s'appliquent au relecteur.** Un refus se rapporte, il ne se contourne pas.
+3. **Aucun commit ni push** pour faciliter la revue. Le commit vient de `/kwa-commit` à la demande de l'utilisateur.
 4. **Le relecteur ne lance pas d'autre agent.**
 5. **Aucun critique ou important ne reste ouvert au moment de livrer.**
 
@@ -94,8 +94,8 @@ faux se conteste avec la preuve (code, test), il ne s'applique pas par politesse
 
 ## Suite
 
-Retours à traiter : `/kata-review-feedback`. Revue verte : `/kata-verify`, puis `/kata-commit`, puis `/kata-ship`.
+Retours à traiter : `/kwa-review-feedback`. Revue verte : `/kwa-verify`, puis `/kwa-commit`, puis `/kwa-ship`.
 
-> Inspiré de ponytail (DietrichGebert, MIT, commit 552acd5) ; réécrit pour Kata.
+> Inspiré de ponytail (DietrichGebert, MIT, commit 552acd5) ; réécrit pour Kwa.
 
-> Inspiré de superpowers (Jesse Vincent, MIT, v6.4.1) ; réécrit pour Kata.
+> Inspiré de superpowers (Jesse Vincent, MIT, v6.4.1) ; réécrit pour Kwa.

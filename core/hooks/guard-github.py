@@ -16,7 +16,7 @@ import subprocess
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from _kata import decide, guarded, load_payload, load_policy, project_dir, segments, strip_heredocs  # noqa: E402
+from _kwa import decide, guarded, load_payload, load_policy, project_dir, segments, strip_heredocs  # noqa: E402
 
 CLOSES = re.compile(r"(close[sd]?|fix(e[sd])?|resolve[sd]?) +#[0-9]+", re.I)
 IMAGE = re.compile(r"!\[[^\]]*\]\(|<img ")
@@ -83,7 +83,7 @@ def main() -> None:
             if CLOSES.search(raw) or CLOSES.search(body_file(words, root)):
                 return
             decide("deny", "Une PR se rattache à son issue : le corps doit porter « Closes #N ». "
-                           "Pas d'issue ? L'ouvrir d'abord (kata-start-dev).")
+                           "Pas d'issue ? L'ouvrir d'abord (kwa-start-dev).")
         if verb == "merge":
             num = next((w for w in words[3:] if w.isdigit()), "")
             out = gh("pr", "view", *([num] if num else []), "--json", "body,comments,closingIssuesReferences")

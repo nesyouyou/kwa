@@ -1,11 +1,11 @@
-# Tout développement se trace sur GitHub, avec sa preuve (Kata · issue-flow)
+# Tout développement se trace sur GitHub, avec sa preuve (Kwa · issue-flow)
 
 Chaque demande (correctif, fonctionnalité, retouche d'interface, même petite) suit le même circuit, et rien n'est
-déclaré « fait » sans preuve. `/kata-start-dev` le déroule ; `guard-write` et `guard-github` le tiennent.
+déclaré « fait » sans preuve. `/kwa-start-dev` le déroule ; `guard-write` et `guard-github` le tiennent.
 
 1. **Issue d'abord** : le constat, la cause quand elle est connue, les décisions prises, des critères de réussite
    vérifiables (modèles dans `.github/ISSUE_TEMPLATE/`).
-2. **Une branche par issue, dans son worktree** : `.claude/kata/bin/kata-start <fix|feat|chore|docs> <slug> "<titre>"`
+2. **Une branche par issue, dans son worktree** : `.claude/kwa/bin/kwa-start <fix|feat|chore|docs> <slug> "<titre>"`
    ouvre l'issue et crée `<type>/<n°>-<slug>`. Noms de branche en anglais, titres en français. Le garde-fou refuse
    d'écrire du code produit sur `main`.
 3. **Une PR par issue** : le corps commence par `Closes #N` (le garde-fou refuse un `gh pr create` sans lien).

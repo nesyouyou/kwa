@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""PreToolUse Bash — règles propres au projet, lues dans .claude/kata.policy.json (bash.deny / bash.ask).
+"""PreToolUse Bash — règles propres au projet, lues dans .claude/kwa.policy.json (bash.deny / bash.ask).
 
 Une règle : {"id", "reason", "all": [regex…], "any": [regex…]}. Elle s'applique quand TOUS les motifs de
 `all` ET au moins un de `any` trouvent dans la commande (corps de heredoc non exécuté exclu).
@@ -12,7 +12,7 @@ import re
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from _kata import decide, guarded, load_payload, load_policy, strip_heredocs  # noqa: E402
+from _kwa import decide, guarded, load_payload, load_policy, strip_heredocs  # noqa: E402
 
 
 def applies(rule: dict, cmd: str) -> bool:

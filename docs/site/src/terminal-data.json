@@ -1,5 +1,5 @@
 {
-  "kata_version": "0.1.0",
+  "kwa_version": "0.1.0",
   "scenarios": [
     {
       "id": "install",
@@ -9,21 +9,21 @@
       "steps": [
         {
           "cwd": "~",
-          "cmd": "kata detect ./mon-projet",
-          "output": "Stack détectée : expo, monorepo, next, prisma\nModules proposés :\n  ✓ core             Garde-fous (secrets, git, suppression, écriture, politique), règles, /kata-commit, /kata-ship\n  ✓ craft            Méthode de travail (cadrer, faire, prouver, relire) : brainstorm, interview, plan, execute, agents, parallel, tdd, debug, verify, review, simple, audit, architecture, prototype, handoff, questionnaire… + routage des skills au démarrage\n  ✓ memory           Capitalisation des sessions : notes en cours de route, invitation unique en fin de session, /kata-learn range décisions, pièges et règles au bon endroit après accord\n  ✓ issue-flow       Circuit issue → branche/worktree → preuve → PR « Closes #N » → fusion gardée ; /kata-start-dev, gabarits GitHub\n  ✓ verify           Formatage des fichiers nouveaux seulement ; garde Stop opt-in (KATA_STOP_VERIFY=1) qui refuse de finir sur du rouge\n  ✓ stack-prisma     Migrations append-only, pas de reset / db push\n  ✓ stack-expo       /kata-testflight (Release sur simulateur avant build EAS), soumission EAS soumise à confirmation\n  ✓ stack-scaleway   Déploiement Scaleway en direct soumis à confirmation\n  ✓ deploy           /kata-deploy : pré-vol, déploiement et vérification avec preuve, pilotés par les environnements de la politique\n  ? client-handover  Dépôt remis au client : règle des 4 tests, contrôle d'hygiène (secrets, comptes perso, noms, mesures datées) + job CI  (sur demande : --with client-handover)\nPolitique déduite :\n{\n  \"verify\": {\n    \"commands\": [\n      \"pnpm typecheck\",\n      \"pnpm lint\",\n      \"pnpm test\"\n    ]\n  },\n  \"start\": {\n    \"install\": [\n      \"pnpm install --frozen-lockfile\",\n      \"pnpm db:generate\"\n    ]\n  },\n  \"write\": {\n    \"no_code_on_main\": [\n      \"apps/\"\n    ]\n  },\n  \"mobile\": {\n    \"eas_config\": \"apps/mobile/eas.json\",\n    \"profiles\": [\n      \"development\",\n      \"preview\",\n      \"production-testflight\"\n    ],\n    \"testflight_profile\": \"production-testflight\",\n    \"release_check_before_build\": true\n  }\n}",
+          "cmd": "kwa detect ./mon-projet",
+          "output": "Stack détectée : expo, monorepo, next, prisma\nModules proposés :\n  ✓ core             Garde-fous (secrets, git, suppression, écriture, politique), règles, /kwa-commit, /kwa-ship\n  ✓ craft            Méthode de travail (cadrer, faire, prouver, relire) : brainstorm, interview, plan, execute, agents, parallel, tdd, debug, verify, review, simple, audit, architecture, prototype, handoff, questionnaire… + routage des skills au démarrage\n  ✓ memory           Capitalisation des sessions : notes en cours de route, invitation unique en fin de session, /kwa-learn range décisions, pièges et règles au bon endroit après accord\n  ✓ issue-flow       Circuit issue → branche/worktree → preuve → PR « Closes #N » → fusion gardée ; /kwa-start-dev, gabarits GitHub\n  ✓ verify           Formatage des fichiers nouveaux seulement ; garde Stop opt-in (KWA_STOP_VERIFY=1) qui refuse de finir sur du rouge\n  ✓ stack-prisma     Migrations append-only, pas de reset / db push\n  ✓ stack-expo       /kwa-testflight (Release sur simulateur avant build EAS), soumission EAS soumise à confirmation\n  ✓ stack-scaleway   Déploiement Scaleway en direct soumis à confirmation\n  ✓ deploy           /kwa-deploy : pré-vol, déploiement et vérification avec preuve, pilotés par les environnements de la politique\n  ? client-handover  Dépôt remis au client : règle des 4 tests, contrôle d'hygiène (secrets, comptes perso, noms, mesures datées) + job CI  (sur demande : --with client-handover)\nPolitique déduite :\n{\n  \"verify\": {\n    \"commands\": [\n      \"pnpm typecheck\",\n      \"pnpm lint\",\n      \"pnpm test\"\n    ]\n  },\n  \"start\": {\n    \"install\": [\n      \"pnpm install --frozen-lockfile\",\n      \"pnpm db:generate\"\n    ]\n  },\n  \"write\": {\n    \"no_code_on_main\": [\n      \"apps/\"\n    ]\n  },\n  \"mobile\": {\n    \"eas_config\": \"apps/mobile/eas.json\",\n    \"profiles\": [\n      \"development\",\n      \"preview\",\n      \"production-testflight\"\n    ],\n    \"testflight_profile\": \"production-testflight\",\n    \"release_check_before_build\": true\n  }\n}",
           "code": 0,
           "explain": {
             "title": "Lire le projet, **sans rien écrire**",
             "body": [
-              "`kata detect` parcourt le dossier : gestionnaire de paquets (**pnpm**), monorepo, `eas.json`, dossier `prisma/migrations`, workflows GitHub qui parlent de Scaleway.",
+              "`kwa detect` parcourt le dossier : gestionnaire de paquets (**pnpm**), monorepo, `eas.json`, dossier `prisma/migrations`, workflows GitHub qui parlent de Scaleway.",
               "Chaque indice allume un **module** (`verify`, `stack-expo`, `stack-prisma`, `deploy`…) et pré-remplit la **politique** du projet. Le module `client-handover` est seulement proposé : il dépend d'une intention, jamais d'une détection."
             ]
           }
         },
         {
           "cwd": "~",
-          "cmd": "kata install ./mon-projet --dry-run",
-          "output": "[simulation] kata v0.1.0 → ~/mon-projet\n  modules : core, craft, memory, issue-flow, verify, stack-prisma, stack-expo, stack-scaleway, deploy\n  fichiers ajouté : 54\n  fichiers seed : 4\n    - .github/pull_request_template.md\n    - .github/ISSUE_TEMPLATE/bug.md\n    - .github/ISSUE_TEMPLATE/feature.md\n    - .github/ISSUE_TEMPLATE/config.yml\n  AGENTS.md : créé\n  CLAUDE.md : créé\n  politique .claude/kata.policy.json : créée à partir de la détection — à relire et compléter\n  .git/info/exclude : 3 motif(s) ajouté(s)\n  hooks settings.json : 11 ajouté(s)\n    + PreToolUse Bash|Read|Grep: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kata/hooks/guard-secrets.py\n    + PreToolUse Bash: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kata/hooks/guard-git.py\n    + PreToolUse Bash: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kata/hooks/guard-delete.py\n    + PreToolUse Bash: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kata/hooks/guard-policy.py\n    + PreToolUse Edit|Write|MultiEdit|NotebookEdit: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kata/hooks/guard-write.py\n    + PreToolUse Bash: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kata/hooks/guard-github.py\n    + SessionStart startup|clear|compact: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kata/hooks/skills-router.py\n    + SessionStart *: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kata/hooks/memory-context.py\n    + Stop *: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kata/hooks/memory-nudge.py\n    + Stop *: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kata/hooks/verify-stop.py\n    + PostToolUse Edit|Write: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kata/hooks/format-after-edit.py\n  skills recommandées, non installées (voir `kata recommend`) : expo-react-native-typescript, eas-app-stores, app-store-screenshots, aso, impeccable, design-taste-frontend\n  git : rien n'a été ajouté, commité ni poussé.",
+          "cmd": "kwa install ./mon-projet --dry-run",
+          "output": "[simulation] kwa v0.1.0 → ~/mon-projet\n  modules : core, craft, memory, issue-flow, verify, stack-prisma, stack-expo, stack-scaleway, deploy\n  fichiers ajouté : 55\n  fichiers seed : 4\n    - .github/pull_request_template.md\n    - .github/ISSUE_TEMPLATE/bug.md\n    - .github/ISSUE_TEMPLATE/feature.md\n    - .github/ISSUE_TEMPLATE/config.yml\n  AGENTS.md : créé\n  CLAUDE.md : créé\n  politique .claude/kwa.policy.json : créée à partir de la détection — à relire et compléter\n  .git/info/exclude : 3 motif(s) ajouté(s)\n  hooks settings.json : 11 ajouté(s)\n    + PreToolUse Bash|Read|Grep: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kwa/hooks/guard-secrets.py\n    + PreToolUse Bash: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kwa/hooks/guard-git.py\n    + PreToolUse Bash: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kwa/hooks/guard-delete.py\n    + PreToolUse Bash: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kwa/hooks/guard-policy.py\n    + PreToolUse Edit|Write|MultiEdit|NotebookEdit: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kwa/hooks/guard-write.py\n    + PreToolUse Bash: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kwa/hooks/guard-github.py\n    + SessionStart startup|clear|compact: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kwa/hooks/skills-router.py\n    + SessionStart *: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kwa/hooks/memory-context.py\n    + Stop *: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kwa/hooks/memory-nudge.py\n    + Stop *: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kwa/hooks/verify-stop.py\n    + PostToolUse Edit|Write: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kwa/hooks/format-after-edit.py\n  skills recommandées, non installées (voir `kwa recommend`) : expo-react-native-typescript, eas-app-stores, app-store-screenshots, aso, impeccable, design-taste-frontend\n  git : rien n'a été ajouté, commité ni poussé.",
           "code": 0,
           "explain": {
             "title": "**Simuler** avant de toucher",
@@ -35,28 +35,28 @@
         },
         {
           "cwd": "~",
-          "cmd": "kata install ./mon-projet",
-          "output": "kata v0.1.0 → ~/mon-projet\n  modules : core, craft, memory, issue-flow, verify, stack-prisma, stack-expo, stack-scaleway, deploy\n  fichiers ajouté : 54\n  fichiers seed : 4\n    - .github/pull_request_template.md\n    - .github/ISSUE_TEMPLATE/bug.md\n    - .github/ISSUE_TEMPLATE/feature.md\n    - .github/ISSUE_TEMPLATE/config.yml\n  AGENTS.md : créé\n  CLAUDE.md : créé\n  politique .claude/kata.policy.json : créée à partir de la détection — à relire et compléter\n  .git/info/exclude : 3 motif(s) ajouté(s)\n  hooks settings.json : 11 ajouté(s)\n    + PreToolUse Bash|Read|Grep: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kata/hooks/guard-secrets.py\n    + PreToolUse Bash: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kata/hooks/guard-git.py\n    + PreToolUse Bash: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kata/hooks/guard-delete.py\n    + PreToolUse Bash: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kata/hooks/guard-policy.py\n    + PreToolUse Edit|Write|MultiEdit|NotebookEdit: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kata/hooks/guard-write.py\n    + PreToolUse Bash: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kata/hooks/guard-github.py\n    + SessionStart startup|clear|compact: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kata/hooks/skills-router.py\n    + SessionStart *: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kata/hooks/memory-context.py\n    + Stop *: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kata/hooks/memory-nudge.py\n    + Stop *: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kata/hooks/verify-stop.py\n    + PostToolUse Edit|Write: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kata/hooks/format-after-edit.py\n  skills recommandées, non installées (voir `kata recommend`) : expo-react-native-typescript, eas-app-stores, app-store-screenshots, aso, impeccable, design-taste-frontend\n  git : rien n'a été ajouté, commité ni poussé.",
+          "cmd": "kwa install ./mon-projet",
+          "output": "kwa v0.1.0 → ~/mon-projet\n  modules : core, craft, memory, issue-flow, verify, stack-prisma, stack-expo, stack-scaleway, deploy\n  fichiers ajouté : 55\n  fichiers seed : 4\n    - .github/pull_request_template.md\n    - .github/ISSUE_TEMPLATE/bug.md\n    - .github/ISSUE_TEMPLATE/feature.md\n    - .github/ISSUE_TEMPLATE/config.yml\n  AGENTS.md : créé\n  CLAUDE.md : créé\n  politique .claude/kwa.policy.json : créée à partir de la détection — à relire et compléter\n  .git/info/exclude : 3 motif(s) ajouté(s)\n  hooks settings.json : 11 ajouté(s)\n    + PreToolUse Bash|Read|Grep: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kwa/hooks/guard-secrets.py\n    + PreToolUse Bash: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kwa/hooks/guard-git.py\n    + PreToolUse Bash: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kwa/hooks/guard-delete.py\n    + PreToolUse Bash: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kwa/hooks/guard-policy.py\n    + PreToolUse Edit|Write|MultiEdit|NotebookEdit: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kwa/hooks/guard-write.py\n    + PreToolUse Bash: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kwa/hooks/guard-github.py\n    + SessionStart startup|clear|compact: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kwa/hooks/skills-router.py\n    + SessionStart *: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kwa/hooks/memory-context.py\n    + Stop *: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kwa/hooks/memory-nudge.py\n    + Stop *: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kwa/hooks/verify-stop.py\n    + PostToolUse Edit|Write: python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kwa/hooks/format-after-edit.py\n  skills recommandées, non installées (voir `kwa recommend`) : expo-react-native-typescript, eas-app-stores, app-store-screenshots, aso, impeccable, design-taste-frontend\n  git : rien n'a été ajouté, commité ni poussé.",
           "code": 0,
           "explain": {
             "title": "Installer le **socle**",
             "body": [
-              "Les gardes, règles et skills sont copiés dans `.claude/`. `AGENTS.md` reçoit un bloc balisé (`kata:begin` / `kata:end`) : rien en dehors des marqueurs n'est modifié. `CLAUDE.md` devient un pointeur vers `@AGENTS.md`.",
-              "La politique `.claude/kata.policy.json` est **créée une fois** puis appartient au projet : une réinstallation ne l'écrase jamais.",
-              "La dernière ligne le dit : Kata n'ajoute, ne commite et ne pousse rien."
+              "Les gardes, règles et skills sont copiés dans `.claude/`. `AGENTS.md` reçoit un bloc balisé (`kwa:begin` / `kwa:end`) : rien en dehors des marqueurs n'est modifié. `CLAUDE.md` devient un pointeur vers `@AGENTS.md`.",
+              "La politique `.claude/kwa.policy.json` est **créée une fois** puis appartient au projet : une réinstallation ne l'écrase jamais.",
+              "La dernière ligne le dit : Kwa n'ajoute, ne commite et ne pousse rien."
             ]
           }
         },
         {
           "cwd": "~",
-          "cmd": "kata doctor ./mon-projet",
+          "cmd": "kwa doctor ./mon-projet",
           "output": "• .claude/hooks/guard-bash.sh fait doublon avec guard-policy + guard-git : à retirer une fois la politique validée\n✓ cible conforme",
           "code": 0,
           "explain": {
             "title": "Vérifier la **conformité**",
             "body": [
               "`doctor` contrôle le bloc `AGENTS.md`, les hooks, la politique, et signale les **doublons** avec l'outillage maison du projet.",
-              "Ici, le `guard-bash.sh` préexistant fait doublon avec les gardes de Kata : c'est une note, pas une erreur. Code de sortie 0 : la cible est conforme."
+              "Ici, le `guard-bash.sh` préexistant fait doublon avec les gardes de Kwa : c'est une note, pas une erreur. Code de sortie 0 : la cible est conforme."
             ]
           }
         }
@@ -66,12 +66,12 @@
       "id": "guards",
       "title": "Un garde en action",
       "summary": "Les vrais gardes, alimentés par la charge utile que leur envoie Claude Code.",
-      "prep": "Projet jetable sur la branche `main`, avec un `.env` factice, après `kata install --modules core`. La variable `CLAUDE_PROJECT_DIR` (posée par Claude Code) désigne le projet ; elle n'apparaît pas à l'écran. La sortie passe par `json.tool` pour rester lisible.",
+      "prep": "Projet jetable sur la branche `main`, avec un `.env` factice, après `kwa install --modules core`. La variable `CLAUDE_PROJECT_DIR` (posée par Claude Code) désigne le projet ; elle n'apparaît pas à l'écran. La sortie passe par `json.tool` pour rester lisible.",
       "steps": [
         {
           "cwd": "~/mon-projet",
-          "cmd": "echo '{\"tool_name\": \"Bash\", \"tool_input\": {\"command\": \"cat .env\"}, \"cwd\": \"~/mon-projet\"}' | python3 .claude/kata/hooks/guard-secrets.py | python3 -m json.tool --no-ensure-ascii",
-          "output": "{\n    \"hookSpecificOutput\": {\n        \"hookEventName\": \"PreToolUse\",\n        \"permissionDecision\": \"deny\",\n        \"permissionDecisionReason\": \"Kata — commande refusée : touche un fichier de secrets (.env)\"\n    }\n}",
+          "cmd": "echo '{\"tool_name\": \"Bash\", \"tool_input\": {\"command\": \"cat .env\"}, \"cwd\": \"~/mon-projet\"}' | python3 .claude/kwa/hooks/guard-secrets.py | python3 -m json.tool --no-ensure-ascii",
+          "output": "{\n    \"hookSpecificOutput\": {\n        \"hookEventName\": \"PreToolUse\",\n        \"permissionDecision\": \"deny\",\n        \"permissionDecisionReason\": \"Kwa — commande refusée : touche un fichier de secrets (.env)\"\n    }\n}",
           "code": 0,
           "explain": {
             "title": "Un fichier de secrets : **refusé**",
@@ -83,21 +83,21 @@
         },
         {
           "cwd": "~/mon-projet",
-          "cmd": "echo '{\"tool_name\": \"Bash\", \"tool_input\": {\"command\": \"git push origin main\"}, \"cwd\": \"~/mon-projet\"}' | python3 .claude/kata/hooks/guard-git.py | python3 -m json.tool --no-ensure-ascii",
-          "output": "{\n    \"hookSpecificOutput\": {\n        \"hookEventName\": \"PreToolUse\",\n        \"permissionDecision\": \"deny\",\n        \"permissionDecisionReason\": \"Kata — push direct vers main refusé : pousser la branche de travail et ouvrir une PR\"\n    }\n}",
+          "cmd": "echo '{\"tool_name\": \"Bash\", \"tool_input\": {\"command\": \"git push origin main\"}, \"cwd\": \"~/mon-projet\"}' | python3 .claude/kwa/hooks/guard-git.py | python3 -m json.tool --no-ensure-ascii",
+          "output": "{\n    \"hookSpecificOutput\": {\n        \"hookEventName\": \"PreToolUse\",\n        \"permissionDecision\": \"deny\",\n        \"permissionDecisionReason\": \"Kwa — push direct vers main refusé : pousser la branche de travail et ouvrir une PR\"\n    }\n}",
           "code": 0,
           "explain": {
             "title": "Pousser sur main : **refusé**",
             "body": [
               "`guard-git` lit la branche courante et la liste des branches protégées. Un push dont la cible est `main` est **`deny`** : le travail passe par une branche et une PR.",
-              "L'exception existe (`KATA_ALLOW_MAIN=1`), mais elle doit être assumée par un humain."
+              "L'exception existe (`KWA_ALLOW_MAIN=1`), mais elle doit être assumée par un humain."
             ]
           }
         },
         {
           "cwd": "~/mon-projet",
-          "cmd": "echo '{\"tool_name\": \"Bash\", \"tool_input\": {\"command\": \"git push origin feat/ma-branche\"}, \"cwd\": \"~/mon-projet\"}' | python3 .claude/kata/hooks/guard-git.py | python3 -m json.tool --no-ensure-ascii",
-          "output": "{\n    \"hookSpecificOutput\": {\n        \"hookEventName\": \"PreToolUse\",\n        \"permissionDecision\": \"ask\",\n        \"permissionDecisionReason\": \"Kata — git push publie la branche : confirmer.\"\n    }\n}",
+          "cmd": "echo '{\"tool_name\": \"Bash\", \"tool_input\": {\"command\": \"git push origin feat/ma-branche\"}, \"cwd\": \"~/mon-projet\"}' | python3 .claude/kwa/hooks/guard-git.py | python3 -m json.tool --no-ensure-ascii",
+          "output": "{\n    \"hookSpecificOutput\": {\n        \"hookEventName\": \"PreToolUse\",\n        \"permissionDecision\": \"ask\",\n        \"permissionDecisionReason\": \"Kwa — git push publie la branche : confirmer.\"\n    }\n}",
           "code": 0,
           "explain": {
             "title": "Pousser une branche : **on demande**",
@@ -109,19 +109,19 @@
         },
         {
           "cwd": "~/mon-projet",
-          "cmd": "echo '{\"tool_name\": \"Bash\", \"tool_input\": {\"command\": \"rm -rf /usr/local/x\"}, \"cwd\": \"~/mon-projet\"}' | python3 .claude/kata/hooks/guard-delete.py | python3 -m json.tool --no-ensure-ascii",
-          "output": "{\n    \"hookSpecificOutput\": {\n        \"hookEventName\": \"PreToolUse\",\n        \"permissionDecision\": \"deny\",\n        \"permissionDecisionReason\": \"Kata — suppression hors du projet refusée : /usr/local/x\"\n    }\n}",
+          "cmd": "echo '{\"tool_name\": \"Bash\", \"tool_input\": {\"command\": \"rm -rf /usr/local/x\"}, \"cwd\": \"~/mon-projet\"}' | python3 .claude/kwa/hooks/guard-delete.py | python3 -m json.tool --no-ensure-ascii",
+          "output": "{\n    \"hookSpecificOutput\": {\n        \"hookEventName\": \"PreToolUse\",\n        \"permissionDecision\": \"deny\",\n        \"permissionDecisionReason\": \"Kwa — suppression hors du projet refusée : /usr/local/x\"\n    }\n}",
           "code": 0,
           "explain": {
             "title": "Supprimer hors du projet : **refusé**",
             "body": [
-              "`guard-delete` résout le chemin réel de chaque cible de `rm`. Hors du projet et hors des dossiers temporaires, c'est **`deny`**. Même verdict pour `/`, `~`, `.git` ou `.claude/kata`."
+              "`guard-delete` résout le chemin réel de chaque cible de `rm`. Hors du projet et hors des dossiers temporaires, c'est **`deny`**. Même verdict pour `/`, `~`, `.git` ou `.claude/kwa`."
             ]
           }
         },
         {
           "cwd": "~/mon-projet",
-          "cmd": "echo '{\"tool_name\": \"Bash\", \"tool_input\": {\"command\": \"cat .env.example\"}, \"cwd\": \"~/mon-projet\"}' | python3 .claude/kata/hooks/guard-secrets.py",
+          "cmd": "echo '{\"tool_name\": \"Bash\", \"tool_input\": {\"command\": \"cat .env.example\"}, \"cwd\": \"~/mon-projet\"}' | python3 .claude/kwa/hooks/guard-secrets.py",
           "output": "",
           "code": 0,
           "explain": {
@@ -139,24 +139,24 @@
       "id": "memory",
       "title": "Mémoire de session",
       "summary": "Capturer les apprentissages en passant, les trier à la fin.",
-      "prep": "Dépôt git jetable avec un commit, sur la branche `feat/export`, un fichier non commité. Le dossier de notes est exclu de git, comme après `kata install`.",
+      "prep": "Dépôt git jetable avec un commit, sur la branche `feat/export`, un fichier non commité. Le dossier de notes est exclu de git, comme après `kwa install`.",
       "steps": [
         {
           "cwd": "~/mon-projet",
-          "cmd": "kata-memory capture gotcha \"Le seed Prisma échoue si la base n'est pas migrée\"",
+          "cmd": "kwa-memory capture gotcha \"Le seed Prisma échoue si la base n'est pas migrée\"",
           "output": "noté.",
           "code": 0,
           "explain": {
             "title": "Noter un **piège**, sans quitter le travail",
             "body": [
-              "Une note rapide, rangée par type : `gotcha` (piège), `decision`, `rule`, `pref` ou `vault`. Elle est datée et ajoutée à `.claude/kata/local/inbox.md`.",
-              "Ce dossier est **local** : exclu de git par `kata install`. Rien n'est écrit dans la documentation du projet à ce stade."
+              "Une note rapide, rangée par type : `gotcha` (piège), `decision`, `rule`, `pref` ou `vault`. Elle est datée et ajoutée à `.claude/kwa/local/inbox.md`.",
+              "Ce dossier est **local** : exclu de git par `kwa install`. Rien n'est écrit dans la documentation du projet à ce stade."
             ]
           }
         },
         {
           "cwd": "~/mon-projet",
-          "cmd": "kata-memory capture decision \"Pagination par curseur plutôt que par offset\"",
+          "cmd": "kwa-memory capture decision \"Pagination par curseur plutôt que par offset\"",
           "output": "noté.",
           "code": 0,
           "explain": {
@@ -168,7 +168,7 @@
         },
         {
           "cwd": "~/mon-projet",
-          "cmd": "kata-memory pending",
+          "cmd": "kwa-memory pending",
           "output": "2 note(s) en attente\n- [2026-10-07] [gotcha] Le seed Prisma échoue si la base n'est pas migrée\n- [2026-10-07] [decision] Pagination par curseur plutôt que par offset",
           "code": 0,
           "explain": {
@@ -180,20 +180,20 @@
         },
         {
           "cwd": "~/mon-projet",
-          "cmd": "kata-memory digest",
-          "output": "## Notes en attente\n- [2026-10-07] [gotcha] Le seed Prisma échoue si la base n'est pas migrée\n- [2026-10-07] [decision] Pagination par curseur plutôt que par offset\n\n## Branche : feat/export\n## Commits depuis la base\n(aucun)\n## Fichiers modifiés (non commités)\n?? src/export.ts\n## Fichiers modifiés (commités sur la branche)\n(aucun)\n\n## Destinations\n- décisions : docs/decisions\n- pièges : docs/gotchas.md\n- règles / garde-fous : .claude/kata.policy.json\n- base de connaissance de l'équipe (capture seulement) : (KATA_VAULT_INBOX non défini → ne pas écrire dans la base de connaissance)",
+          "cmd": "kwa-memory digest",
+          "output": "## Notes en attente\n- [2026-10-07] [gotcha] Le seed Prisma échoue si la base n'est pas migrée\n- [2026-10-07] [decision] Pagination par curseur plutôt que par offset\n\n## Branche : feat/export\n## Commits depuis la base\n(aucun)\n## Fichiers modifiés (non commités)\n?? src/export.ts\n## Fichiers modifiés (commités sur la branche)\n(aucun)\n\n## Destinations\n- décisions : docs/decisions\n- pièges : docs/gotchas.md\n- règles / garde-fous : .claude/kwa.policy.json\n- base de connaissance de l'équipe (capture seulement) : (KWA_VAULT_INBOX non défini → ne pas écrire dans la base de connaissance)",
           "code": 0,
           "explain": {
-            "title": "Tout pour **/kata-learn**",
+            "title": "Tout pour **/kwa-learn**",
             "body": [
               "Le digest réunit les notes, la branche, les commits et les fichiers modifiés, puis rappelle les **destinations** : décisions, pièges, politique.",
-              "C'est `/kata-learn` qui propose les écritures et l'humain qui valide. La base de connaissance de l'équipe n'est touchée que si `KATA_VAULT_INBOX` est défini."
+              "C'est `/kwa-learn` qui propose les écritures et l'humain qui valide. La base de connaissance de l'équipe n'est touchée que si `KWA_VAULT_INBOX` est défini."
             ]
           }
         },
         {
           "cwd": "~/mon-projet",
-          "cmd": "kata-memory clear",
+          "cmd": "kwa-memory clear",
           "output": "notes archivées.",
           "code": 0,
           "explain": {
@@ -205,7 +205,7 @@
         },
         {
           "cwd": "~/mon-projet",
-          "cmd": "kata-memory pending",
+          "cmd": "kwa-memory pending",
           "output": "0 note(s) en attente",
           "code": 0,
           "explain": {
@@ -225,13 +225,13 @@
       "steps": [
         {
           "cwd": "~/mon-projet",
-          "cmd": "kata-hygiene",
+          "cmd": "kwa-hygiene",
           "output": "Hygiène de remise — périmètre produit (hors tests, hors docs/)\n\n  SECRET      identifiant en dur                       1\n      src/config.ts:1:export const apiKey = \"demo_0123456789abcdefghij\"\n  PERSONNEL   compte personnel ou prestataire          2\n      src/admin.ts:1:export const admin = 'jea***@gmail.com'\n      src/legacy.ts:1:export const contact = 'sup***@gmail.com'\n  NOMINATIF   personne nommée (préférer un rôle)       aucun\n  PÉRISSABLE  mesure datée dans une instruction        aucun\n\nBLOQUANT : 3 occurrence(s) à traiter.",
           "code": 1,
           "explain": {
             "title": "Contrôler **avant** de remettre au client",
             "body": [
-              "Le contrôle porte sur les fichiers **produit** suivis par git (hors tests, hors `docs/`, hors Kata). Quatre familles : `SECRET`, `PERSONNEL`, `NOMINATIF`, `PÉRISSABLE`.",
+              "Le contrôle porte sur les fichiers **produit** suivis par git (hors tests, hors `docs/`, hors Kwa). Quatre familles : `SECRET`, `PERSONNEL`, `NOMINATIF`, `PÉRISSABLE`.",
               "Les deux premières sont **bloquantes** : un identifiant en dur, deux comptes gmail. Les adresses sont masquées dans le rapport lui-même. Code de sortie 1."
             ]
           }
@@ -250,20 +250,20 @@
         },
         {
           "cwd": "~/mon-projet",
-          "cmd": "mkdir -p .claude && printf \"PERSONNEL\\tsrc/legacy.ts\\tà passer en variable d'env avant la remise\\n\" > .claude/kata.hygiene.allow",
+          "cmd": "mkdir -p .claude && printf \"PERSONNEL\\tsrc/legacy.ts\\tà passer en variable d'env avant la remise\\n\" > .claude/kwa.hygiene.allow",
           "output": "",
           "code": 0,
           "explain": {
             "title": "Assumer une **exception**, par écrit",
             "body": [
-              "Un cas que l'on ne peut pas régler tout de suite va dans `.claude/kata.hygiene.allow` : famille, fichier, raison. Ce n'est pas un silence : la liste est **réaffichée à chaque exécution**."
+              "Un cas que l'on ne peut pas régler tout de suite va dans `.claude/kwa.hygiene.allow` : famille, fichier, raison. Ce n'est pas un silence : la liste est **réaffichée à chaque exécution**."
             ]
           }
         },
         {
           "cwd": "~/mon-projet",
-          "cmd": "kata-hygiene",
-          "output": "Hygiène de remise — périmètre produit (hors tests, hors docs/)\n\n  SECRET      identifiant en dur                       aucun\n  PERSONNEL   compte personnel ou prestataire          1 (+1 reporté(s))\n      src/admin.ts:1:export const admin = 'jea***@gmail.com'\n  NOMINATIF   personne nommée (préférer un rôle)       aucun\n  PÉRISSABLE  mesure datée dans une instruction        aucun\n\nExceptions assumées — 1 occurrence(s) écartée(s), cf. .claude/kata.hygiene.allow :\n      PERSONNEL src/legacy.ts à passer en variable d'env avant la remise\n\nBLOQUANT : 1 occurrence(s) à traiter.",
+          "cmd": "kwa-hygiene",
+          "output": "Hygiène de remise — périmètre produit (hors tests, hors docs/)\n\n  SECRET      identifiant en dur                       aucun\n  PERSONNEL   compte personnel ou prestataire          1 (+1 reporté(s))\n      src/admin.ts:1:export const admin = 'jea***@gmail.com'\n  NOMINATIF   personne nommée (préférer un rôle)       aucun\n  PÉRISSABLE  mesure datée dans une instruction        aucun\n\nExceptions assumées — 1 occurrence(s) écartée(s), cf. .claude/kwa.hygiene.allow :\n      PERSONNEL src/legacy.ts à passer en variable d'env avant la remise\n\nBLOQUANT : 1 occurrence(s) à traiter.",
           "code": 1,
           "explain": {
             "title": "**Relancer**",
@@ -275,8 +275,8 @@
         },
         {
           "cwd": "~/mon-projet",
-          "cmd": "echo \"export const admin = 'admin@exemple-client.fr'\" > src/admin.ts && git add -A && kata-hygiene",
-          "output": "Hygiène de remise — périmètre produit (hors tests, hors docs/)\n\n  SECRET      identifiant en dur                       aucun\n  PERSONNEL   compte personnel ou prestataire          aucun (+1 reporté(s))\n  NOMINATIF   personne nommée (préférer un rôle)       aucun\n  PÉRISSABLE  mesure datée dans une instruction        aucun\n\nExceptions assumées — 1 occurrence(s) écartée(s), cf. .claude/kata.hygiene.allow :\n      PERSONNEL src/legacy.ts à passer en variable d'env avant la remise\n\nRien à signaler dans le périmètre produit.",
+          "cmd": "echo \"export const admin = 'admin@exemple-client.fr'\" > src/admin.ts && git add -A && kwa-hygiene",
+          "output": "Hygiène de remise — périmètre produit (hors tests, hors docs/)\n\n  SECRET      identifiant en dur                       aucun\n  PERSONNEL   compte personnel ou prestataire          aucun (+1 reporté(s))\n  NOMINATIF   personne nommée (préférer un rôle)       aucun\n  PÉRISSABLE  mesure datée dans une instruction        aucun\n\nExceptions assumées — 1 occurrence(s) écartée(s), cf. .claude/kwa.hygiene.allow :\n      PERSONNEL src/legacy.ts à passer en variable d'env avant la remise\n\nRien à signaler dans le périmètre produit.",
           "code": 0,
           "explain": {
             "title": "Remplacer le compte par une adresse **du client**",
@@ -292,19 +292,19 @@
       "id": "recommend",
       "title": "Recommander des skills",
       "summary": "Des skills tierces utiles pour la stack, sans en installer aucune.",
-      "prep": "Le monorepo du premier scénario. `KATA_HOME` désigne un dossier jetable où seules `aso` et `impeccable` sont déjà présentes : cela contrôle ce qui s'affiche comme déjà installé.",
+      "prep": "Le monorepo du premier scénario. `KWA_HOME` désigne un dossier jetable où seules `aso` et `impeccable` sont déjà présentes : cela contrôle ce qui s'affiche comme déjà installé.",
       "steps": [
         {
           "cwd": "~",
-          "cmd": "kata recommend ./mon-projet",
-          "output": "Stack : expo, monorepo, next, prisma\n  ✗ à installer  expo-react-native-typescript   conventions Expo / React Native TypeScript\n  ✗ à installer  eas-app-stores                 builds EAS, signature, soumission TestFlight / Play, métadonnées de fiche\n  ✗ à installer  app-store-screenshots          captures App Store / Play aux dimensions exactes\n  ✓ présente     aso                            audit de fiche App Store / Play\n  ✓ présente     impeccable                     revue et polish d'interface (hiérarchie, accessibilité, états, responsive)\n  ✗ à installer  design-taste-frontend          garde-fou anti-gabarit pour les pages publiques\nKata n'installe aucune skill tierce : relire la source, puis l'installer à la main.",
+          "cmd": "kwa recommend ./mon-projet",
+          "output": "Stack : expo, monorepo, next, prisma\n  ✗ à installer  expo-react-native-typescript   conventions Expo / React Native TypeScript\n  ✗ à installer  eas-app-stores                 builds EAS, signature, soumission TestFlight / Play, métadonnées de fiche\n  ✗ à installer  app-store-screenshots          captures App Store / Play aux dimensions exactes\n  ✓ présente     aso                            audit de fiche App Store / Play\n  ✓ présente     impeccable                     revue et polish d'interface (hiérarchie, accessibilité, états, responsive)\n  ✗ à installer  design-taste-frontend          garde-fou anti-gabarit pour les pages publiques\nKwa n'installe aucune skill tierce : relire la source, puis l'installer à la main.",
           "code": 0,
           "explain": {
             "title": "Quelles **skills** tierces pour cette stack ?",
             "body": [
               "La stack détectée (Expo, Next…) fait remonter une courte liste de skills utiles, avec la raison. `✓ présente` : déjà trouvée dans le dossier de skills de l'utilisateur, du projet ou dans un plugin. `✗ à installer` : absente.",
-              "Dans cette démonstration, `KATA_HOME` pointe vers un dossier jetable qui contient seulement `aso` et `impeccable`.",
-              "Kata **n'installe rien** : relire la source d'une skill, puis l'installer à la main."
+              "Dans cette démonstration, `KWA_HOME` pointe vers un dossier jetable qui contient seulement `aso` et `impeccable`.",
+              "Kwa **n'installe rien** : relire la source d'une skill, puis l'installer à la main."
             ]
           }
         }

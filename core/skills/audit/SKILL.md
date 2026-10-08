@@ -1,5 +1,5 @@
 ---
-name: kata-audit
+name: kwa-audit
 description: À utiliser pour passer un dépôt ou un dossier au crible de la sur-ingénierie et de la dette — « audite ce code », « qu'est-ce qu'on peut supprimer », « trouve le code mort », « on a trop de dépendances », « ce dossier est devenu illisible », avant un gros refactor ou une reprise de projet. Produit un rapport, ne modifie rien.
 allowed-tools: Read Grep Glob Agent Bash(git log *) Bash(git status *) Bash(wc *)
 ---
@@ -7,7 +7,7 @@ allowed-tools: Read Grep Glob Agent Bash(git log *) Bash(git status *) Bash(wc *
 # Auditer la sur-ingénierie et la dette
 
 Un audit liste ce qui peut disparaître ou se simplifier, avec la preuve et le gain. Il n'applique rien.
-Les corrections passent ensuite par `/kata-plan` et `/kata-execute`, sur accord.
+Les corrections passent ensuite par `/kwa-plan` et `/kwa-execute`, sur accord.
 
 ## Loi de fer
 
@@ -23,7 +23,7 @@ Seule exception : écrire `docs/dette.md`, et uniquement si l'utilisateur l'a de
    `package.json` (ou équivalent) et la structure de premier niveau pour connaître la stack.
 2. **Balayer en parallèle.** Pour un périmètre de plus de quelques dizaines de fichiers, lancer des sous-agents
    `Explore` en lecture seule, un message, plusieurs appels : un par axe ou par sous-dossier (voir la grille).
-   Leur demander des candidats avec `fichier:ligne`, pas des conclusions. Voir `/kata-parallel` pour le découpage.
+   Leur demander des candidats avec `fichier:ligne`, pas des conclusions. Voir `/kwa-parallel` pour le découpage.
 3. **Vérifier chaque candidat soi-même** avant de le retenir. Un sous-agent signale, il ne tranche pas.
 4. **Classer** par gain décroissant, puis rédiger le rapport.
 5. **Proposer** la suite : lesquels corriger, lesquels consigner comme dette.
@@ -60,7 +60,7 @@ puis les zones non regardées et pourquoi. Rien à couper : le dire, c'est un r�
 ## Hors périmètre
 
 Bugs de correction, failles de sécurité et performance : les signaler en une ligne à part si on les croise, puis
-les router vers `/kata-review` ou `/kata-debug`. Ne pas ouvrir de chantier ici. Les tests ne se comptent pas
+les router vers `/kwa-review` ou `/kwa-debug`. Ne pas ouvrir de chantier ici. Les tests ne se comptent pas
 comme du bloat : un test qui protège un comportement reste.
 
 ## Consigner la dette retenue
@@ -76,8 +76,8 @@ Créer le fichier s'il manque, ajouter sinon, sans réécrire l'existant. Une en
 - Déclencheur de reprise : <événement qui fait basculer>
 ```
 
-Pas de nom de personne ni d'hypothèse de financement dans ce fichier (voir les règles de confidentialité du bloc Kata).
-Une dette sans déclencheur de reprise pourrit : en exiger un. Aucun commit sans demande : `/kata-commit`.
+Pas de nom de personne ni d'hypothèse de financement dans ce fichier (voir les règles de confidentialité du bloc Kwa).
+Une dette sans déclencheur de reprise pourrit : en exiger un. Aucun commit sans demande : `/kwa-commit`.
 
 ## Rationalisations
 
@@ -91,7 +91,7 @@ Une dette sans déclencheur de reprise pourrit : en exiger un. Aucun commit sans
 
 ## Suite
 
-Constats approuvés : `/kata-plan`, puis `/kata-execute` avec `/kata-tdd` ; chaque suppression est vérifiée par
-`/kata-verify`. Le critère de choix de chaque simplification vient de `/kata-simple`.
+Constats approuvés : `/kwa-plan`, puis `/kwa-execute` avec `/kwa-tdd` ; chaque suppression est vérifiée par
+`/kwa-verify`. Le critère de choix de chaque simplification vient de `/kwa-simple`.
 
-> Inspiré de ponytail (DietrichGebert, MIT, commit 552acd5) ; réécrit pour Kata.
+> Inspiré de ponytail (DietrichGebert, MIT, commit 552acd5) ; réécrit pour Kwa.

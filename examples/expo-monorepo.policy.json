@@ -1,5 +1,5 @@
 {
-  "kata": 1,
+  "kwa": 1,
   "protected_branches": [
     "main"
   ],
@@ -64,7 +64,7 @@
       },
       {
         "id": "prod-namespace",
-        "reason": "Registry / namespace PROD ciblé en direct. Le seul chemin prod est le workflow Deploy (/kata-deploy).",
+        "reason": "Registry / namespace PROD ciblé en direct. Le seul chemin prod est le workflow Deploy (/kwa-deploy).",
         "all": [
           "myapp-prod",
           "docker +(push|build)|scw +|--password|registry"
@@ -82,7 +82,7 @@
     "ask": [
       {
         "id": "deploy-prod-workflow",
-        "reason": "Déploiement PRODUCTION. Pré-vol /kata-deploy fait ? (jobs de fond en cours tués par le redeploy, migrations au boot, mails réels)",
+        "reason": "Déploiement PRODUCTION. Pré-vol /kwa-deploy fait ? (jobs de fond en cours tués par le redeploy, migrations au boot, mails réels)",
         "all": [
           "workflow run.*deploy",
           "target=prod"
@@ -97,7 +97,7 @@
       },
       {
         "id": "eas-submit",
-        "reason": "Soumission TestFlight (visible par le client). Build validé en Release sur simulateur ? Voir /kata-testflight.",
+        "reason": "Soumission TestFlight (visible par le client). Build validé en Release sur simulateur ? Voir /kwa-testflight.",
         "any": [
           "eas submit",
           "eas-cli submit"

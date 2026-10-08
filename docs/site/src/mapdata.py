@@ -1,6 +1,6 @@
 """Données de la carte interactive : nœuds, vues, arêtes. Tout vient du contenu réel du pack.
 
-- skills : frontmatter + sections `##` de chaque SKILL.md ; renvois /kata-* extraits du texte ;
+- skills : frontmatter + sections `##` de chaque SKILL.md ; renvois /kwa-* extraits du texte ;
 - origines : credits.json (auteur, licence, avatar) ;
 - gardes / hooks : manifeste et fichiers de core/hooks ;
 - vues de workflow : positions et arêtes déclarées ici (le seul contenu écrit à la main), avec les textes de WF.
@@ -20,7 +20,7 @@ AVATARS = {  # id de source (credits.json) -> avatar vendorisé
     "ponytail": ("assets/avatars/DietrichGebert.png", "@DietrichGebert"),
     "humanizer": ("assets/avatars/blader.jpg", "@blader"),
     "super-board": ("assets/avatars/EricTechPro.jpg", "@EricTechPro"),
-    "kata": ("assets/avatars/kata.svg", "Kata"),
+    "kwa": ("assets/avatars/kwa.svg", "Kwa"),
 }
 
 KINDS = {
@@ -45,16 +45,16 @@ FAMILY_LABEL = {"cadrer": "Cadrer", "faire": "Faire", "prouver": "Prouver", "liv
 
 DETAILS = {  # comment ça se comporte, par garde / hook
     "guard-secrets": "Analyse par segments de commande : bash -c, env, nice, .e''nv et sauts de ligne sont couverts. .env.example reste lisible.",
-    "guard-git": "KATA_ALLOW_MAIN=1 pour une exception assumée. Les push de branche demandent confirmation selon git.push_branch de la politique.",
+    "guard-git": "KWA_ALLOW_MAIN=1 pour une exception assumée. Les push de branche demandent confirmation selon git.push_branch de la politique.",
     "guard-delete": "Une cible calculée à l'exécution ($(…), variable) déclenche une demande plutôt qu'un passage.",
     "guard-policy": "Le refus l'emporte sur la demande. Un corps de heredoc non exécuté est une donnée, pas une commande.",
     "guard-github": "Lit la PR et ses issues via gh. Preuve = une image, ou une section « Preuve » réellement remplie.",
-    "guard-write": "Demande aussi confirmation avant de toucher à .claude/kata/ ou settings.json.",
+    "guard-write": "Demande aussi confirmation avant de toucher à .claude/kwa/ ou settings.json.",
     "skills-router": "Court et calibré : une conversation simple n'appelle aucune skill. Les lignes dont la skill n'est pas installée sont retirées.",
-    "memory-context": "Silencieux s'il n'y a rien. Propose de lancer /kata-learn, n'applique jamais rien seul.",
+    "memory-context": "Silencieux s'il n'y a rien. Propose de lancer /kwa-learn, n'applique jamais rien seul.",
     "format-after-edit": "Un formatage global appartient à un lot dédié, pas à chaque sauvegarde.",
     "verify-stop": "Claude Code reprend la main après 8 blocages consécutifs : pas de boucle infinie.",
-    "memory-nudge": "Seulement si 3 fichiers de code ou plus ont changé et qu'aucune note n'a été captée. Désactivable : KATA_MEMORY_NUDGE=0.",
+    "memory-nudge": "Seulement si 3 fichiers de code ou plus ont changé et qu'aucune note n'a été captée. Désactivable : KWA_MEMORY_NUDGE=0.",
 }
 
 
@@ -117,11 +117,11 @@ def parse_skill(skill_id: str, credits: dict) -> dict:
             in_code = not in_code
         if not in_code and l.startswith("## "):
             sections.append({"title": l[3:].strip(), "text": first_sentence(paragraph(lines, i + 1), 320)})
-    refs = sorted({m for m in re.findall(r"(?<![\w./-])/kata-([a-z]+(?:-[a-z]+)*)(?![\w/])", body) if m != skill_id})
-    origins = [s["id"] for s in credits["sources"] if skill_id in s["skills"]] or ["kata"]
+    refs = sorted({m for m in re.findall(r"(?<![\w./-])/kwa-([a-z]+(?:-[a-z]+)*)(?![\w/])", body) if m != skill_id})
+    origins = [s["id"] for s in credits["sources"] if skill_id in s["skills"]] or ["kwa"]
     annex = sorted(f for f in os.listdir(os.path.join(SKILLS, skill_id)) if f != "SKILL.md")
     return {
-        "id": f"s:{skill_id}", "kind": "skill", "label": f"/kata-{skill_id}", "skill": skill_id,
+        "id": f"s:{skill_id}", "kind": "skill", "label": f"/kwa-{skill_id}", "skill": skill_id,
         "what": first_sentence(intro or meta.get("description", "")),
         "when": meta.get("description", "").strip('"'),
         "how": " → ".join(s["title"] for s in sections[:7]),
@@ -137,13 +137,13 @@ def build(catalog_ids: list[str], credits: dict, wf_text: dict) -> dict:
 
     def add(nid, kind, label, what, when="", how="", source=None, origin=None):
         nodes[nid] = {"id": nid, "kind": kind, "label": label, "what": what, "when": when, "how": how,
-                      "source": source or [], "origin": origin or ["kata"], "refs": []}
+                      "source": source or [], "origin": origin or ["kwa"], "refs": []}
 
     # gardes
     G = {
         "secrets": ("guard-secrets", "Refuse .env, clés SSH, jetons CLI, trousseau.", "PreToolUse · Bash, Read, Grep"),
         "git": ("guard-git", "Pas de commit ni de push sur main ; force refusé ; push de branche confirmé.", "PreToolUse · Bash"),
-        "delete": ("guard-delete", "Refuse rm, find -delete, rsync --delete hors du projet, et .git / .claude/kata.", "PreToolUse · Bash"),
+        "delete": ("guard-delete", "Refuse rm, find -delete, rsync --delete hors du projet, et .git / .claude/kwa.", "PreToolUse · Bash"),
         "policy": ("guard-policy", "Applique bash.deny et bash.ask de la politique du projet.", "PreToolUse · Bash"),
         "github": ("guard-github", "« Closes #N » à la création d'une PR ; issue et preuve avant fusion.", "PreToolUse · Bash · module issue-flow"),
         "write": ("guard-write", "Secrets en clair, .env, migrations appliquées, pas de code sur main.", "PreToolUse · Edit, Write"),
@@ -154,31 +154,31 @@ def build(catalog_ids: list[str], credits: dict, wf_text: dict) -> dict:
         "router": ("skills-router", "Injecte la table « quand → skill », filtrée sur les skills installées.", "SessionStart · startup, clear, compact"),
         "memctx": ("memory-context", "Rappelle les notes d'apprentissage restées en attente.", "SessionStart"),
         "format": ("format-after-edit", "Formate seulement les fichiers nouveaux, signale les autres.", "PostToolUse · Edit, Write"),
-        "verify": ("verify-stop", "Refuse de rendre la main sur du rouge (typecheck, lint).", "Stop · opt-in KATA_STOP_VERIFY=1"),
+        "verify": ("verify-stop", "Refuse de rendre la main sur du rouge (typecheck, lint).", "Stop · opt-in KWA_STOP_VERIFY=1"),
         "nudge": ("memory-nudge", "Une invitation à capitaliser, une seule par session.", "Stop · module memory"),
     }
     for k, (label, what, when) in H.items():
         add(f"h:{k}", "hook", label, what, when, DETAILS.get(label, ""), [f"core/hooks/{label}.py"])
     A = {
-        "impl": ("Implémenteur", "Un agent frais par tâche, modèle choisi selon la difficulté.", "/kata-agents · outil Agent", "haiku pour le mécanique, sonnet pour l'intégration, opus pour la conception. Il ne commite pas et remonte tout refus de garde en BLOCKED.", ["core/skills/agents/implementer-prompt.md"]),
+        "impl": ("Implémenteur", "Un agent frais par tâche, modèle choisi selon la difficulté.", "/kwa-agents · outil Agent", "haiku pour le mécanique, sonnet pour l'intégration, opus pour la conception. Il ne commite pas et remonte tout refus de garde en BLOCKED.", ["core/skills/agents/implementer-prompt.md"]),
         "spec": ("Relecteur de conformité", "Le code fait-il exactement ce que la tâche demande, ni plus ni moins ?", "Après chaque tâche", "Agent neuf, jamais l'implémenteur. Passe avant la qualité.", ["core/skills/agents/spec-reviewer-prompt.md"]),
         "qual": ("Relecteur de qualité", "Lisibilité, tests, sécurité, simplicité, sur-ingénierie.", "Quand la conformité est verte", "Les retours critiques repartent vers l'implémenteur.", ["core/skills/agents/quality-reviewer-prompt.md"]),
-        "rev": ("Relecteur de branche", "Revue de toute la branche : correction, sécurité, régressions, tests manquants.", "/kata-review · fin de plan", "Sortie de boucle : zéro critique et zéro important ouverts, sinon remontée après 3 tours.", ["core/skills/review/reviewer-prompt.md"]),
+        "rev": ("Relecteur de branche", "Revue de toute la branche : correction, sécurité, régressions, tests manquants.", "/kwa-review · fin de plan", "Sortie de boucle : zéro critique et zéro important ouverts, sinon remontée après 3 tours.", ["core/skills/review/reviewer-prompt.md"]),
         "explore": ("Explore (lecture seule)", "Cartographie large du code concerné.", "Si le périmètre est vaste", "Sous-agent Explore : ne peut rien écrire.", []),
     }
     for k, (label, what, when, how, src) in A.items():
-        add(f"a:{k}", "agent", label, what, when, how, src, ["superpowers"] if k in ("impl", "spec", "qual", "rev") else ["kata"])
+        add(f"a:{k}", "agent", label, what, when, how, src, ["superpowers"] if k in ("impl", "spec", "qual", "rev") else ["kwa"])
     U = {
-        "spec": ("Tu approuves la spec", "Porte d'approbation avant tout plan.", "", "Sans accord, on ne passe pas à /kata-plan."),
-        "commit": ("Tu décides du commit", "/kata-commit puis /kata-ship, jamais sans ta demande.", "", "Un commit par changement logique ; push de branche confirmé ; fusion = décision séparée."),
-        "go": ("Tu donnes le GO", "La fusion est une décision séparée.", "", "Kata annonce si elle déclenche un déploiement."),
+        "spec": ("Tu approuves la spec", "Porte d'approbation avant tout plan.", "", "Sans accord, on ne passe pas à /kwa-plan."),
+        "commit": ("Tu décides du commit", "/kwa-commit puis /kwa-ship, jamais sans ta demande.", "", "Un commit par changement logique ; push de branche confirmé ; fusion = décision séparée."),
+        "go": ("Tu donnes le GO", "La fusion est une décision séparée.", "", "Kwa annonce si elle déclenche un déploiement."),
         "preflight": ("Tu valides le pré-vol", "Chaque point du pré-vol est coché avec preuve, puis tu autorises le déploiement.", "", "Un point non vérifiable reste non coché : on n'avance pas."),
         "learn": ("Tu valides ce qu'on retient", "Tableau de 7 lignes maximum ; rien n'est appliqué sans « tout », « 1 et 3 » ou « rien ».", "", "« Rien à capitaliser » est une réponse valable."),
     }
     for k, (label, what, when, how) in U.items():
         add(f"u:{k}", "humain", label, what, when, how)
-    add("p:policy", "policy", ".claude/kata.policy.json", "La politique du projet : commandes interdites, chemins protégés, vérifications, environnements.",
-        "Créée une fois à partir de la détection, puis propriété du projet", "Lue par guard-policy, guard-write, /kata-verify, /kata-deploy, /kata-start-dev. Jamais écrasée par kata install.",
+    add("p:policy", "policy", ".claude/kwa.policy.json", "La politique du projet : commandes interdites, chemins protégés, vérifications, environnements.",
+        "Créée une fois à partir de la détection, puis propriété du projet", "Lue par guard-policy, guard-write, /kwa-verify, /kwa-deploy, /kwa-start-dev. Jamais écrasée par kwa install.",
         ["examples/expo-monorepo.policy.json"])
     add("r:request", "humain", "Ta demande", "Tu écris. L'agent choisit la skill qui correspond.", "", "Les consignes d'AGENTS.md et les tiennes priment toujours sur une skill.")
 
@@ -222,7 +222,7 @@ def build(catalog_ids: list[str], credits: dict, wf_text: dict) -> dict:
                        ("commit", "ship", "calls"), ("ship", "deploy", "calls"), ("deploy", "learn", "calls"), ("learn", "handoff", "feeds")]:
         edges.append({"from": f"s:{a}", "to": f"s:{b}", "kind": kind})
     edges.append({"from": "s:learn", "to": "s:brainstorm", "kind": "loop", "label": "la connaissance revient au cadrage"})
-    views["pack"] = {"title": "Le pack Kata", "nodes": items, "groups": groups, "edges": edges,
+    views["pack"] = {"title": "Le pack Kwa", "nodes": items, "groups": groups, "edges": edges,
                      "intro": f"{len(catalog_ids)} skills en 5 familles, gardes et hooks, politique du projet. Cliquer un nœud ; double-clic sur une skill pour ses étapes."}
 
     def flow(view_id, title, intro, seq, per_row=4, extra=None, loop=None):
@@ -257,18 +257,18 @@ def build(catalog_ids: list[str], credits: dict, wf_text: dict) -> dict:
         for i, s in enumerate(secs):
             cid = f"t:{sid}:{i}"
             nodes[cid] = {"id": cid, "kind": "step", "label": s["title"], "what": s["text"] or "Détail dans la skill (tableau ou liste).", "when": "", "how": "",
-                          "source": [f"core/skills/{sid}/SKILL.md"], "origin": ["kata"], "refs": []}
+                          "source": [f"core/skills/{sid}/SKILL.md"], "origin": ["kwa"], "refs": []}
             its.append({"id": cid, **pos(i % 4, i // 4, 0, 0)})
             if i:
                 eds.append({"from": f"t:{sid}:{i - 1}", "to": cid, "kind": "calls"})
-        views[f"skill:{sid}"] = {"title": f"/kata-{sid}", "intro": n["what"], "nodes": its, "groups": [], "edges": eds, "parent": "pack"}
+        views[f"skill:{sid}"] = {"title": f"/kwa-{sid}", "intro": n["what"], "nodes": its, "groups": [], "edges": eds, "parent": "pack"}
         n["child"] = f"skill:{sid}"
     for n in nodes.values():
         n.pop("sections", None)
 
     origins = {}
     for s in credits["sources"]:
-        path, handle = AVATARS.get(s["id"], AVATARS["kata"])
+        path, handle = AVATARS.get(s["id"], AVATARS["kwa"])
         origins[s["id"]] = {"avatar": path, "handle": handle, "name": s["author"], "license": s["license"], "ref": s["ref"], "url": s["url"]}
-    origins["kata"] = {"avatar": AVATARS["kata"][0], "handle": "Kata", "name": "Kata", "license": "interne", "ref": "", "url": ""}
+    origins["kwa"] = {"avatar": AVATARS["kwa"][0], "handle": "Kwa", "name": "Kwa", "license": "interne", "ref": "", "url": ""}
     return {"kinds": KINDS, "nodes": nodes, "views": views, "origins": origins, "start": "pack", "grid": {"w": 224, "h": 92}}

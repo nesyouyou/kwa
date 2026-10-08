@@ -17,10 +17,10 @@ from helpers import BASH_GUARDS, HOOKS, RANK, make_repo  # noqa: E402
 POLICY = os.path.join(PACK, "examples", "expo-monorepo.policy.json")
 
 import importlib.machinery, importlib.util  # noqa: E402
-_loader = importlib.machinery.SourceFileLoader("kata_cli", os.path.join(PACK, "bin", "kata"))
-_spec = importlib.util.spec_from_loader("kata_cli", _loader)
-kata = importlib.util.module_from_spec(_spec)
-_loader.exec_module(kata)
+_loader = importlib.machinery.SourceFileLoader("kwa_cli", os.path.join(PACK, "bin", "kwa"))
+_spec = importlib.util.spec_from_loader("kwa_cli", _loader)
+kwa = importlib.util.module_from_spec(_spec)
+_loader.exec_module(kwa)
 
 
 def verdict(guard, tool, tool_input, cwd, env=None):
@@ -30,7 +30,7 @@ def verdict(guard, tool, tool_input, cwd, env=None):
     if not p.stdout.strip():
         return "allow", ""
     o = json.loads(p.stdout)["hookSpecificOutput"]
-    return o["permissionDecision"], o["permissionDecisionReason"].replace("Kata — ", "")
+    return o["permissionDecision"], o["permissionDecisionReason"].replace("Kwa — ", "")
 
 
 def worst(cmd, cwd, env=None):
@@ -104,14 +104,14 @@ def main():
     mods = []
     for name, m in man.items():
         mods.append({"name": name, "about": m["about"], "always": bool(m.get("always")),
-                     "files": [s["dest"] for _, s in kata.module_files(m)],
-                     "seeds": [s["dest"] for _, s in kata.module_files(m) if s.get("seed")],
+                     "files": [s["dest"] for _, s in kwa.module_files(m)],
+                     "seeds": [s["dest"] for _, s in kwa.module_files(m) if s.get("seed")],
                      "hooks": [f"{ev}{' ' + e['matcher'] if e.get('matcher') else ''}" for ev, es in m.get("hooks", {}).items() for e in es],
                      "policy": list(m.get("policy", {}).keys())})
     n_tests, ok = tests_count()
     term = json.load(open(os.path.join(HERE, "src", "terminal-data.json"), encoding="utf-8"))
     detect = term["scenarios"][0]["steps"][0]["output"] if isinstance(term, dict) and "scenarios" in term else ""
-    skills = sorted({s["dest"].split("/")[2] for m in man.values() for _, s in kata.module_files(m)
+    skills = sorted({s["dest"].split("/")[2] for m in man.values() for _, s in kwa.module_files(m)
                      if s["dest"].startswith(".claude/skills/")})
     catalog = []
     for d in sorted(os.listdir(os.path.join(PACK, "core", "skills"))):
@@ -130,7 +130,7 @@ def main():
     data["map"] = mapdata.build(sorted(os.listdir(os.path.join(PACK, "core", "skills"))) and
                                 [d for d in sorted(os.listdir(os.path.join(PACK, "core", "skills")))
                                  if os.path.isfile(os.path.join(PACK, "core", "skills", d, "SKILL.md"))], data["credits"], {})
-    open(os.path.join(HERE, "data.js"), "w", encoding="utf-8").write("window.KATA=" + json.dumps(data, ensure_ascii=False) + ";")
+    open(os.path.join(HERE, "data.js"), "w", encoding="utf-8").write("window.KWA=" + json.dumps(data, ensure_ascii=False) + ";")
 
     def assets(names):
         css = "".join(f'<link rel="stylesheet" href="src/{n}.css">' for n in names if os.path.exists(os.path.join(src, n + ".css")))
@@ -148,9 +148,9 @@ def main():
     theme_js = re.search(r"/\* thème : clair par défaut.*?/\* fin du bloc thème \*/\n", tpl, re.S).group(0)
     pages = {
         "skill-map.html": ("Carte des skills", "Carte interactive", "map", '<div id="map" data-deeplink></div>',
-                           "DATA.map && KataMap.mount($('#map'), DATA.map);"),
-        "board.html": ("Le board", "Une demande, de bout en bout", "board", '<div id="board-root"></div>', "KataBoard.mount($('#board-root'));"),
-        "terminal.html": ("Le terminal", "Comment on l'utilise", "terminal", '<div id="term-root"></div>', "KataTerminal.mount($('#term-root'), DATA.terminal);"),
+                           "DATA.map && KwaMap.mount($('#map'), DATA.map);"),
+        "board.html": ("Le board", "Une demande, de bout en bout", "board", '<div id="board-root"></div>', "KwaBoard.mount($('#board-root'));"),
+        "terminal.html": ("Le terminal", "Comment on l'utilise", "terminal", '<div id="term-root"></div>', "KwaTerminal.mount($('#term-root'), DATA.terminal);"),
     }
     sys.path.insert(0, src)
     import parcours  # noqa: E402
@@ -166,8 +166,8 @@ def main():
         bar_p = re.sub(r'<nav class="kd-nav".*?</nav>', '<nav class="kd-nav" aria-label="Pages"><a href="index.html">Accueil</a><a href="skill-map.html">Carte</a><a href="board.html">Board</a><a href="terminal.html">Terminal</a><a href="parcours.html">Parcours</a></nav>', bar_p, flags=re.S)
         html = f"""<!doctype html>
 <html lang="fr" data-nkui-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{title} | Kata</title>
-<script>try{{if(localStorage.getItem('kata-docs-theme')==='light')document.documentElement.dataset.nkuiTheme='light'}}catch(e){{}}</script>
+<title>{title} | Kwa</title>
+<script>try{{if(localStorage.getItem('kwa-docs-theme')==='light')document.documentElement.dataset.nkuiTheme='light'}}catch(e){{}}</script>
 <link rel="stylesheet" href="ds/fonts.css"><link rel="stylesheet" href="ds/tokens.css"><link rel="stylesheet" href="ds/base.css">{wcss}
 {head}</head>
 <body class="nkds">
@@ -180,7 +180,7 @@ def main():
 {foot}
 <script src="data.js"></script>{wjs}
 <script>
-const DATA = window.KATA;
+const DATA = window.KWA;
 const $ = (s, r=document) => r.querySelector(s);
 {theme_js}
 $('#ver2').textContent = DATA.version; $('#tests').textContent = `${{DATA.tests}} tests ${{DATA.tests_ok ? 'au vert' : 'en échec'}}`;

@@ -14,7 +14,7 @@ import subprocess
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from _kata import load_payload, load_policy, project_dir  # noqa: E402
+from _kwa import load_payload, load_policy, project_dir  # noqa: E402
 
 DEFAULT_EXT = [".ts", ".tsx", ".js", ".jsx", ".json", ".md"]
 

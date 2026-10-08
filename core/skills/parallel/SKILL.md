@@ -1,5 +1,5 @@
 ---
-name: kata-parallel
+name: kwa-parallel
 description: Lancer plusieurs sous-agents en même temps sur des problèmes indépendants. À utiliser quand 2 problèmes ou plus n'ont ni fichier ni état en commun (plusieurs suites de tests en échec pour des causes distinctes, plusieurs modules à auditer, plusieurs recherches), jamais pour des échecs liés ni pour du travail exploratoire.
 ---
 
@@ -7,7 +7,7 @@ description: Lancer plusieurs sous-agents en même temps sur des problèmes ind�
 
 Plusieurs problèmes indépendants traités l'un après l'autre gaspillent du temps. Chacun va à un agent, tous
 démarrent ensemble, tu intègres ensuite. Cette skill est le mode « parallèle » ; l'exécution d'un plan par tâches
-séquentielles est `/kata-agents`.
+séquentielles est `/kwa-agents`.
 
 ## Quand l'utiliser
 
@@ -24,7 +24,7 @@ recherche de trois bibliothèques candidates ; des correctifs dans des modules s
 
 ## Quand NE PAS l'utiliser
 
-- Les échecs sont liés : une cause commune se cherche d'abord, seul, avec `/kata-debug`.
+- Les échecs sont liés : une cause commune se cherche d'abord, seul, avec `/kwa-debug`.
 - Tu ne sais pas encore ce qui est cassé : explore d'abord, découpe ensuite.
 - Deux agents devraient écrire dans le même fichier, le même schéma ou la même config.
 - La tâche suivante a besoin du résultat de la précédente : c'est un enchaînement, pas du parallèle.
@@ -50,8 +50,8 @@ recherche de trois bibliothèques candidates ; des correctifs dans des modules s
 ## Règles de fer
 
 1. **Aucun agent ne committe ni ne pousse**, et toi non plus sans demande explicite. Jamais sur `main` : le travail
-   se fait sur la branche de `/kata-start-dev`.
-2. **Les gardes (`.claude/kata/hooks`) s'appliquent aux sous-agents.** Un refus se remonte dans le rapport, il ne se
+   se fait sur la branche de `/kwa-start-dev`.
+2. **Les gardes (`.claude/kwa/hooks`) s'appliquent aux sous-agents.** Un refus se remonte dans le rapport, il ne se
    contourne pas, ni par l'agent ni par toi.
 3. **Périmètre fermé.** Chaque prompt liste ce que l'agent peut modifier et ce qu'il ne doit jamais toucher.
 4. **Un agent n'en lance pas d'autres.**
@@ -74,7 +74,7 @@ recherche de trois bibliothèques candidates ; des correctifs dans des modules s
    individuellement verts peuvent casser ensemble.
 5. **Contrôle par sondage** : relire le diff d'au moins un agent. Ils font des erreurs systématiques
    (test affaibli plutôt que bug corrigé, timeout allongé, mock qui masque le défaut).
-6. Passer ensuite à `/kata-review` sur l'ensemble si le changement est de taille, puis `/kata-commit` à la demande.
+6. Passer ensuite à `/kwa-review` sur l'ensemble si le changement est de taille, puis `/kwa-commit` à la demande.
 
 ## Rationalisations
 
@@ -91,4 +91,4 @@ recherche de trois bibliothèques candidates ; des correctifs dans des modules s
 Un prompt qui dit « corrige tout ». Deux agents sur le même fichier. Aucun `model` précisé. Des rapports acceptés
 sans lecture. Pas de vérification sur l'état intégré. Un agent qui a commité.
 
-> Inspiré de superpowers (Jesse Vincent, MIT, v6.4.1) ; réécrit pour Kata.
+> Inspiré de superpowers (Jesse Vincent, MIT, v6.4.1) ; réécrit pour Kwa.

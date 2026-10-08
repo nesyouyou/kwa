@@ -1,4 +1,4 @@
-/* Carte interactive de Kata. Sans dépendance : SVG + JS vanilla. Expose window.KataMap.mount(root, data).
+/* Carte interactive de Kwa. Sans dépendance : SVG + JS vanilla. Expose window.KwaMap.mount(root, data).
    Fonctions : zoom/déplacement, minimap, recherche (Ctrl/Cmd+K), panneau de détail, plongée dans une skill (double-clic),
    fil d'Ariane, liens profonds #view=…&node=…, export SVG/PNG, clavier. */
 (function () {
@@ -55,7 +55,7 @@
     root.appendChild(el.crumbs);
 
     var stage = h('div', { class: 'km-stage' });
-    el.svg = s('svg', { class: 'km-svg', role: 'img', 'aria-label': 'Carte des skills Kata', tabindex: '0' });
+    el.svg = s('svg', { class: 'km-svg', role: 'img', 'aria-label': 'Carte des skills Kwa', tabindex: '0' });
     var defs = s('defs', {}, el.svg);
     ['calls', 'loop', 'feeds'].forEach(function (k) {
       var m = s('marker', { id: 'kma-' + k, viewBox: '0 0 10 10', refX: '9', refY: '5', markerWidth: '7', markerHeight: '7', orient: 'auto-start-reverse' }, defs);
@@ -149,7 +149,7 @@
       var l = s('text', { class: 'km-label', x: padX, y: 41 }, g); l.textContent = lab;
       var lines = wrap(n.what, n.kind === 'humain' ? 30 : 34, 2);
       lines.forEach(function (ln, i) { var sub = s('text', { class: 'km-sub', x: padX, y: 59 + i * 14 }, g); sub.textContent = ln; });
-      var origins = (n.origin || []).filter(function (o) { return o !== 'kata'; });
+      var origins = (n.origin || []).filter(function (o) { return o !== 'kwa'; });
       origins.slice(0, 3).forEach(function (o, i) {
         var od = data.origins[o]; if (!od) return;
         var cx = W - 20 - i * 15, cy = 18;
@@ -187,7 +187,7 @@
           if (t.getComputedTextLength() > max) { t.setAttribute('textLength', max); t.setAttribute('lengthAdjust', 'spacingAndGlyphs'); }
         } catch (e) { /* texte non rendu */ }
       });
-      var crumbs = '<button type="button" data-v="pack">Le pack Kata</button>';
+      var crumbs = '<button type="button" data-v="pack">Le pack Kwa</button>';
       if (state.view !== 'pack') crumbs += '<span>›</span><b>' + esc(v.title) + '</b>';
       el.crumbs.innerHTML = crumbs + '<p class="km-intro">' + esc(v.intro || '') + '</p>';
       el.title.innerHTML = '<i class="km-dot"></i><b>' + esc(v.title) + '</b><span class="km-pill">' + v.nodes.length + ' nœuds</span>';
@@ -284,13 +284,13 @@
     function select(id) {
       state.sel = id; applySel();
       if (!id) { el.panel.hidden = true; hash(); return; }
-      var n = node(id), rel = related(id), od = (n.origin || []).filter(function (o) { return o !== 'kata'; });
+      var n = node(id), rel = related(id), od = (n.origin || []).filter(function (o) { return o !== 'kwa'; });
       var html = '<button type="button" class="km-x" aria-label="Fermer">×</button><div class="km-kindtag">' + KIND_LABEL[n.kind] + '</div><h3>' + esc(n.label) + '</h3>';
       if (n.what) html += '<h4>Quoi</h4><p>' + esc(n.what) + '</p>';
       if (n.when) html += '<h4>Quand</h4><p>' + esc(n.when) + '</p>';
       if (n.how) html += '<h4>Comment</h4><p>' + esc(n.how) + '</p>';
-      if (od.length) html += '<h4>Origine</h4>' + od.map(function (o) { var d = data.origins[o]; return '<a class="km-origin" href="' + esc(d.url) + '" target="_blank" rel="noopener noreferrer"><img src="' + esc(d.avatar) + '" alt="" width="28" height="28"><span><b>' + esc(d.name) + '</b><small>' + esc(d.handle) + ' · ' + esc(d.license) + (d.ref ? ' · ' + esc(d.ref) : '') + '</small></span></a>'; }).join('') + '<p class="km-note">Idées reprises, textes réécrits pour Kata.</p>';
-      else if (n.kind === 'skill') html += '<h4>Origine</h4><p>Conception propre à Kata.</p>';
+      if (od.length) html += '<h4>Origine</h4>' + od.map(function (o) { var d = data.origins[o]; return '<a class="km-origin" href="' + esc(d.url) + '" target="_blank" rel="noopener noreferrer"><img src="' + esc(d.avatar) + '" alt="" width="28" height="28"><span><b>' + esc(d.name) + '</b><small>' + esc(d.handle) + ' · ' + esc(d.license) + (d.ref ? ' · ' + esc(d.ref) : '') + '</small></span></a>'; }).join('') + '<p class="km-note">Idées reprises, textes réécrits pour Kwa.</p>';
+      else if (n.kind === 'skill') html += '<h4>Origine</h4><p>Conception propre à Kwa.</p>';
       if (n.source && n.source.length) html += '<h4>Source</h4><ul class="km-src">' + n.source.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>';
       if (rel.up.length) html += '<h4>En amont</h4><div class="km-chips">' + rel.up.map(chip).join('') + '</div>';
       if (rel.down.length) html += '<h4>En aval</h4><div class="km-chips">' + rel.down.map(chip).join('') + '</div>';
@@ -379,7 +379,7 @@
       var bg = s('rect', { x: b.x - pad, y: b.y - pad, width: b.w + pad * 2, height: b.h + pad * 2, fill: getComputedStyle(root).getPropertyValue('--nkui-bg').trim() || '#fff' });
       clone.insertBefore(bg, clone.firstChild);
       var st = s('style'); st.textContent = cssText() + '\ntext{font-family:Geist,Arial,sans-serif}'; clone.insertBefore(st, clone.firstChild);
-      var xml = new XMLSerializer().serializeToString(clone), name = 'kata-' + state.view.replace(':', '-');
+      var xml = new XMLSerializer().serializeToString(clone), name = 'kwa-' + state.view.replace(':', '-');
       function dl(blob, fn) { var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = fn; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000); }
       if (kind === 'svg') { dl(new Blob([xml], { type: 'image/svg+xml' }), name + '.svg'); return; }
       var img = new Image(), url = URL.createObjectURL(new Blob([xml], { type: 'image/svg+xml' }));
@@ -414,5 +414,5 @@
     return { openView: openView, focusNode: focusNode, fit: fit };
   }
 
-  window.KataMap = { mount: mount };
+  window.KwaMap = { mount: mount };
 })();

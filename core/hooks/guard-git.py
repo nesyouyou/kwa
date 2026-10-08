@@ -9,9 +9,9 @@ import subprocess
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from _kata import decide, guarded, load_payload, load_policy, segments  # noqa: E402
+from _kwa import decide, guarded, load_payload, load_policy, segments  # noqa: E402
 
-PROTECTED = {"main", "master"} | {b for b in os.environ.get("KATA_PROTECTED_BRANCHES", "").split(",") if b}
+PROTECTED = {"main", "master"} | {b for b in os.environ.get("KWA_PROTECTED_BRANCHES", "").split(",") if b}
 
 
 def current_branch(cwd: str) -> str:
@@ -38,7 +38,7 @@ def main() -> None:
     git_pol = load_policy(d).get("git", {})
     protected = PROTECTED | set(load_policy(d).get("protected_branches", []))
     push_branch = git_pol.get("push_branch", "ask")  # "ask" | "allow"
-    direct_main_ok = os.environ.get("KATA_ALLOW_MAIN") == "1"
+    direct_main_ok = os.environ.get("KWA_ALLOW_MAIN") == "1"
     for words in segments((d.get("tool_input") or {}).get("command", "")):
         prog = os.path.basename(words[0])
         if prog == "git":
@@ -48,7 +48,7 @@ def main() -> None:
             if args[0] in {"commit", "merge", "cherry-pick", "revert", "rebase"} and not direct_main_ok \
                     and current_branch(cwd) in protected:
                 decide("deny", f"git {args[0]} sur {current_branch(cwd)} refusé : travailler sur une branche "
-                               "dédiée et ouvrir une PR (KATA_ALLOW_MAIN=1 pour une exception assumée)")
+                               "dédiée et ouvrir une PR (KWA_ALLOW_MAIN=1 pour une exception assumée)")
             if args[0] == "push":
                 rest = args[1:]
                 lease = any(a == "--force-with-lease" or a.startswith("--force-with-lease=") for a in rest)
