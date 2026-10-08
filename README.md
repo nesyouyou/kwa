@@ -1,7 +1,7 @@
 # Kwa
 
 Un socle de harness pour agents de code : mêmes règles, mêmes garde-fous, mêmes skills, partout.
-Kwa se lit **K**nowledge · **W**orkflow · **A**gents : la connaissance qui s'enrichit, le circuit de travail, les agents qu'on encadre.
+Kwa se lit **K**it · **W**orkflow · **A**gents (le K est aussi *Knowledge* : la connaissance qui s'enrichit) : un kit de process de développement pour travailler avec des agents de code.
 
 **Parcours d'apprentissage** : `docs/site/parcours.html`, trois parcours qui s'enchaînent. 1) Culture IA générative (modèle, jetons, fenêtre de contexte, hallucinations, prompt engineering). 2) Context engineering (AGENTS.md et CLAUDE.md, skills, sous-agents, MCP et ses fichiers de configuration, permissions). 3) Harness (de l'histoire du processus de développement à Kwa, avec huit étapes pratiques sur un dépôt jetable dont les sorties viennent de l'exécution réelle).
 

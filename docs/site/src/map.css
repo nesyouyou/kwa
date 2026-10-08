@@ -89,7 +89,7 @@
 .km-legend b{color:var(--nkui-fg);font-weight:500}
 .km-legend span{display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
 .km-sw{width:22px;height:13px;border:1.25px solid var(--nkui-fg);border-radius:3px;display:inline-block;flex:0 0 auto}
-.km-sw--hook{border-style:dashed}.km-sw--agent{border-width:4px;border-style:double}.km-sw--garde{border-color:var(--nkui-rule);border-left:4px solid var(--nkui-fg)}
+.km-sw--hook{border-style:dashed}.km-sw--agent{border-width:4px;border-style:double}.km-sw--garde{border:2px solid var(--nkui-fg)}
 .km-sw--humain{background:var(--nkui-invert-bg);border-color:transparent;border-radius:8px}.km-sw--policy{border-style:dotted;background:var(--nkui-tint)}
 .km-sw--step{border-color:var(--nkui-rule)}.km-sw--av{width:13px;border-radius:50%;background:var(--nkui-raise)}
 .km-lg-line i{width:22px;height:0;border-top:1.5px solid var(--nkui-body);display:inline-block}.km-lg-line--loop i{border-top-style:dashed;border-color:var(--nkui-mut)}

@@ -47,3 +47,11 @@
 .pc-big{font:500 18px Geist,sans-serif;color:var(--nkui-fg) !important;margin:12px 0 4px !important}
 @media(max-width:900px){.pc-cards{grid-template-columns:minmax(0,1fr)}}
 @media(prefers-reduced-motion:reduce){.pc-bar>div{transition:none}}
+
+/* ---------- animations ---------- */
+@keyframes pc-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+.pc-reveal[open] > div { animation: pc-in .28s cubic-bezier(.22, 1, .36, 1) both; }
+.pc-reveal { transition: background-color .2s ease; }
+.pc-card, .pc-nav a { transition: background-color .2s ease, transform .2s ease; }
+@media (hover: hover) { .pc-card:hover { transform: translateY(-2px); } }
+@media (prefers-reduced-motion: reduce) { .pc-reveal[open] > div { animation: none; } .pc-card, .pc-nav a, .pc-reveal { transition: none; } .pc-card:hover { transform: none; } }

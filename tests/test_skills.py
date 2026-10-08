@@ -182,5 +182,81 @@ class Neutral(unittest.TestCase):
         self.assertEqual(hits, [])
 
 
+class ThemeIcon(unittest.TestCase):
+    def test_every_page_uses_an_icon_button_without_visible_label(self):
+        site = os.path.join(PACK, "docs", "site")
+        pages = [f for f in os.listdir(site) if f.endswith(".html")]
+        self.assertGreaterEqual(len(pages), 7)
+        for name in pages:
+            text = open(os.path.join(site, name), encoding="utf-8").read()
+            button = re.search(r'<button[^>]*id="theme".*?</button>', text, re.S)
+            self.assertIsNotNone(button, name)
+            html = button.group(0)
+            self.assertIn("i-sun", html, name)
+            self.assertIn("i-moon", html, name)
+            self.assertIn("aria-label", html, name)
+            self.assertNotRegex(re.sub(r"<[^>]+>", "", html).strip(), r"\S", f"{name} : le bouton ne porte aucun texte visible")
+            self.assertNotIn("Thème sombre</button>", text, name)
+
+
+class Circuit(unittest.TestCase):
+    SITE = os.path.join(PACK, "docs", "site")
+
+    def read(self, *p):
+        return open(os.path.join(self.SITE, *p), encoding="utf-8").read()
+
+    def test_pages_mount_the_circuit_not_the_animated_board(self):
+        for name in ("board.html", "index.html"):
+            text = self.read(name)
+            self.assertIn("circuit.js", text, name)
+            self.assertIn("KwaCircuit.mount", text, name)
+            self.assertNotIn("KwaBoard.mount", text, name)
+
+    def test_no_autoplay_and_every_step_has_a_label(self):
+        js = self.read("src", "circuit.js")
+        for banned in ("setInterval", "setTimeout", "Pause", "Vitesse", "Rejouer"):
+            self.assertNotIn(banned, js, "le circuit ne se lit pas tout seul : rien ne doit bouger hors de l'action de la personne")
+        data = self.read("src", "board.js")
+        for sid, count in (("feature", 12), ("bug", 8), ("delivery", 10)):
+            labels = re.search(sid + r": \[(.*?)\]", js, re.S).group(1)
+            self.assertEqual(len(re.findall(r"'(?:[^'\\]|\\.)*'", labels)), count, sid)
+        self.assertIn("data: { COLS: COLS", data)
+        self.assertIn("Étape précédente", js)
+        self.assertIn("Étape suivante", js)
+
+
+class BorderStyle(unittest.TestCase):
+    """Choix de style : un trait épais d'un seul côté est permis sur un rectangle, jamais sur un coin arrondi."""
+
+    def test_no_thick_one_sided_border_on_rounded_box(self):
+        site = os.path.join(PACK, "docs", "site")
+        files = [os.path.join(site, "template.html")] + [os.path.join(site, "src", f) for f in os.listdir(os.path.join(site, "src")) if f.endswith(".css")]
+        bad = []
+        for path in files:
+            text = open(path, encoding="utf-8").read()
+            for rule in re.findall(r"[^{}]+\{[^{}]*\}", text):
+                one_side = re.search(r"border-(?:left|right|top|bottom)\s*:\s*([2-9]|\d{2,})px", rule)
+                radius = re.search(r"border-radius\s*:\s*([1-9]\d*)px", rule)
+                if one_side and radius and int(radius.group(1)) >= 6:
+                    bad.append(os.path.basename(path) + " : " + rule.strip()[:90])
+        self.assertEqual(bad, [])
+
+
+class MotionRespect(unittest.TestCase):
+    """Toute animation du site doit se couper quand la personne demande de réduire les animations."""
+
+    def test_reduced_motion_is_honoured_wherever_there_is_animation(self):
+        site = os.path.join(PACK, "docs", "site")
+        for rel in ("src/circuit.css", "src/parcours.css"):
+            text = open(os.path.join(site, rel), encoding="utf-8").read()
+            if "@keyframes" in text or "transition:" in text:
+                self.assertIn("prefers-reduced-motion", text, rel)
+        js = open(os.path.join(site, "src", "circuit.js"), encoding="utf-8").read()
+        self.assertIn("prefers-reduced-motion", js)
+        tpl = open(os.path.join(site, "template.html"), encoding="utf-8").read()
+        self.assertIn("prefers-reduced-motion: reduce", tpl)
+        self.assertIn("startViewTransition", tpl)
+
+
 if __name__ == "__main__":
     unittest.main()

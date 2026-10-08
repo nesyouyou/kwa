@@ -138,7 +138,7 @@ def main():
         return css, js
 
     tpl = open(os.path.join(HERE, "template.html"), encoding="utf-8").read()
-    css, js = assets(["map", "board", "terminal"])
+    css, js = assets(["map", "board", "circuit", "terminal"])
     open(os.path.join(HERE, "index.html"), "w", encoding="utf-8").write(tpl.replace("<!--EXTRA_CSS-->", css).replace("<!--EXTRA_JS-->", js))
 
     # pages plein écran : même coquille (barre, thème, logo, pied) autour d'un seul widget
@@ -149,7 +149,7 @@ def main():
     pages = {
         "skill-map.html": ("Carte des skills", "Carte interactive", "map", '<div id="map" data-deeplink></div>',
                            "DATA.map && KwaMap.mount($('#map'), DATA.map);"),
-        "board.html": ("Le board", "Une demande, de bout en bout", "board", '<div id="board-root"></div>', "KwaBoard.mount($('#board-root'));"),
+        "board.html": ("Le circuit", "Une demande, de bout en bout", "board+circuit", '<div id="board-root"></div>', "KwaCircuit.mount($('#board-root'));"),
         "terminal.html": ("Le terminal", "Comment on l'utilise", "terminal", '<div id="term-root"></div>', "KwaTerminal.mount($('#term-root'), DATA.terminal);"),
     }
     sys.path.insert(0, src)
@@ -161,9 +161,9 @@ def main():
     pages["parcours-contexte.html"] = ("Parcours 2 : Context engineering", "Donner le bon contexte", "parcours", parcours_pages.contexte(), "")
     pages["parcours-harness.html"] = ("Parcours 3 : Harness", "Encadrer l'agent", "parcours", parcours_pages.harness(parcours.render(stages) + PARCOURS_TAIL), "")
     for fname, (title, eyebrow, widget, mount_html, mount_js) in pages.items():
-        wcss, wjs = assets([widget])
+        wcss, wjs = assets(widget.split('+'))
         bar_p = bar.replace('href="#top"', 'href="index.html"').replace('<nav class="kd-nav" aria-label="Sections">', '<nav class="kd-nav" aria-label="Pages">')
-        bar_p = re.sub(r'<nav class="kd-nav".*?</nav>', '<nav class="kd-nav" aria-label="Pages"><a href="index.html">Accueil</a><a href="skill-map.html">Carte</a><a href="board.html">Board</a><a href="terminal.html">Terminal</a><a href="parcours.html">Parcours</a></nav>', bar_p, flags=re.S)
+        bar_p = re.sub(r'<nav class="kd-nav".*?</nav>', '<nav class="kd-nav" aria-label="Pages"><a href="index.html">Accueil</a><a href="skill-map.html">Carte</a><a href="board.html">Circuit</a><a href="terminal.html">Terminal</a><a href="parcours.html">Parcours</a></nav>', bar_p, flags=re.S)
         html = f"""<!doctype html>
 <html lang="fr" data-nkui-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title} | Kwa</title>
@@ -172,9 +172,9 @@ def main():
 {head}</head>
 <body class="nkds">
 {bar_p}
-<main class="nkds-container" style="padding-top:48px">
+<main class="nkds-container" style="padding-top:32px">
   <div class="kd-eyebrow">{eyebrow}</div>
-  <h1 class="nkds-section-title" style="margin-bottom:32px">{title}<strong>.</strong></h1>
+  <h1 class="nkds-section-title" style="margin-bottom:16px;font-size:clamp(30px,3.4vw,44px)">{title}<strong>.</strong></h1>
   {mount_html}
 </main>
 {foot}

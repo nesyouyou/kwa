@@ -7,7 +7,7 @@
 <meta name="description" content="Mêmes règles, mêmes garde-fous, mêmes skills sur tous vos projets avec un agent de code.">
 <script>try{if(localStorage.getItem('kwa-docs-theme')==='light')document.documentElement.dataset.nkuiTheme='light'}catch(e){}</script>
 <link rel="stylesheet" href="ds/fonts.css"><link rel="stylesheet" href="ds/tokens.css"><link rel="stylesheet" href="ds/base.css">
-<link rel="stylesheet" href="src/map.css"><link rel="stylesheet" href="src/board.css"><link rel="stylesheet" href="src/terminal.css">
+<link rel="stylesheet" href="src/map.css"><link rel="stylesheet" href="src/circuit.css"><link rel="stylesheet" href="src/terminal.css">
 <style>
 /* Extensions propres à la documentation Kwa. Uniquement les tokens du design system : aucune couleur ajoutée. */
 html{scroll-behavior:smooth;overflow-x:clip}
@@ -21,6 +21,9 @@ section{scroll-margin-top:84px}
 .kd-bar{position:sticky;top:0;z-index:20;padding-block:14px;background:var(--nkui-glass);backdrop-filter:blur(8px);border-bottom:1px solid var(--nkui-rule-soft)}
 .kd-bar .row{display:flex;align-items:center;justify-content:space-between;gap:16px}
 .kd-brand{display:flex;align-items:center;gap:14px;text-decoration:none;white-space:nowrap}
+.kd-theming, .kd-theming *, .kd-theming *::before, .kd-theming *::after{transition:background-color .35s ease,color .35s ease,border-color .35s ease,fill .35s ease,stroke .35s ease !important}
+.kd-theme{width:40px;height:40px;flex:none;border-radius:50%;border:1px solid var(--nkui-rule);background:transparent;color:var(--nkui-fg);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0}.kd-theme:hover{background:var(--nkui-raise)}.kd-theme svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}.kd-theme .i-sun{display:none}html[data-nkui-theme="dark"] .kd-theme .i-sun{display:block}html[data-nkui-theme="dark"] .kd-theme .i-moon{display:none}
+.nkds-hero .nkds-title{font-size:clamp(34px,4.6vw,60px);letter-spacing:-.04em}@media(max-width:1023px){.nkds-hero .nkds-title{font-size:clamp(32px,9vw,46px)}}
 .kd-word{font:700 22px/1 Manrope,Geist,sans-serif;letter-spacing:-.02em}.kd-word--big{font-size:44px}
 .kd-brand span{font:400 12px 'Geist Mono',monospace;letter-spacing:.08em;color:var(--nkui-mut)}
 .kd-nav{display:flex;gap:22px;overflow-x:auto;scrollbar-width:none}
@@ -34,7 +37,7 @@ section{scroll-margin-top:84px}
 .kd-copy{font:400 11px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;background:transparent;color:var(--nkui-body);border:1px solid var(--nkui-rule);border-radius:999px;padding:6px 12px;min-height:30px}
 .kd-copy:hover{background:var(--nkui-raise)}
 code{font:.9em 'Geist Mono',monospace;background:var(--nkui-tint);border:1px solid var(--nkui-rule-soft);border-radius:6px;padding:1px 6px}
-.kd-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.kd-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
 .kd-stat{padding:24px;border:1px solid var(--nkui-rule);border-radius:20px}
 .kd-stat .n{font:300 clamp(40px,5vw,64px)/1 Manrope,sans-serif;letter-spacing:-.045em}
 .kd-stat .l{margin-top:10px;color:var(--nkui-body);font-size:14px}
@@ -76,7 +79,7 @@ code{font:.9em 'Geist Mono',monospace;background:var(--nkui-tint);border:1px sol
 .kd-legend{display:flex;flex-wrap:wrap;gap:10px 22px;margin:0 0 26px;font:400 11px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--nkui-body)}
 .kd-legend span{display:inline-flex;align-items:center;gap:9px}
 .sw{width:24px;height:14px;display:inline-block;border:1px solid var(--nkui-fg);border-radius:3px}
-.sw.hook{border-style:dashed}.sw.agent{border-style:double;border-width:4px}.sw.garde{border-color:var(--nkui-rule);border-left:4px solid var(--nkui-fg)}.sw.humain{background:var(--nkui-invert-bg);border-radius:10px;border-color:transparent}
+.sw.hook{border-style:dashed}.sw.agent{border-style:double;border-width:4px}.sw.garde{border:2px solid var(--nkui-fg)}.sw.humain{background:var(--nkui-invert-bg);border-radius:10px;border-color:transparent}
 .kd-track{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:34px 36px}
 .kd-brick{position:relative;text-align:left;font:inherit;color:inherit;background:transparent;border:1px solid var(--nkui-fg);border-radius:12px;padding:16px 18px;transition:translate .2s ease,background .2s ease}
 .kd-brick:hover{translate:0 -2px;background:var(--nkui-tint)}
@@ -87,7 +90,7 @@ code{font:.9em 'Geist Mono',monospace;background:var(--nkui-tint);border:1px sol
 .kd-brick .when{display:block;margin-top:10px;font:400 11px/1.5 'Geist Mono',monospace;letter-spacing:.04em;color:var(--nkui-mut)}
 .kd-brick.hook{border:1px dashed var(--nkui-fg)}
 .kd-brick.agent{border:4px double var(--nkui-fg);padding:13px 15px}
-.kd-brick.garde{border-color:var(--nkui-rule);border-left:4px solid var(--nkui-fg)}
+.kd-brick.garde{border:2px solid var(--nkui-fg)}
 .kd-brick.humain{background:var(--nkui-invert-bg);color:var(--nkui-invert-fg);border-color:transparent;border-radius:28px;padding:18px 22px}
 .kd-brick.humain .ty,.kd-brick.humain .d,.kd-brick.humain .when{color:var(--nkui-invert-fg);opacity:.75}
 .kd-brick:not(:last-child)::after{content:"→";position:absolute;right:-28px;top:50%;translate:0 -50%;font:16px 'Geist Mono',monospace;color:var(--nkui-mut)}
@@ -129,7 +132,7 @@ details p{margin:10px 0 0;color:var(--nkui-body);max-width:68ch}
 footer.nkds-footer{margin-top:128px}
 @media (max-width:1023px){.kd-g4{grid-template-columns:repeat(2,minmax(0,1fr))}.kd-nav{display:none}}
 @media (max-width:900px){
-  .kd-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.kd-g2,.kd-g3{grid-template-columns:minmax(0,1fr)}
+  .kd-stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.kd-g2,.kd-g3{grid-template-columns:minmax(0,1fr)}
   .kd-flow{grid-template-columns:minmax(0,1fr)}.kd-steps{grid-template-columns:repeat(2,minmax(0,1fr))}.kd-panel{padding:22px;min-height:0}.kd-panel .cols{grid-template-columns:minmax(0,1fr)}
   .kd-loop{grid-template-columns:minmax(0,1fr)}.kd-node:not(:last-child)::after{content:"↓";right:auto;left:50%;top:auto;bottom:-30px;translate:-50% 0}
   .kd-track{grid-template-columns:minmax(0,1fr);gap:34px}.kd-brick:not(:last-child)::after{content:"↓";right:auto;left:50%;top:auto;bottom:-30px;translate:-50% 0}
@@ -144,19 +147,19 @@ footer.nkds-footer{margin-top:128px}
 <div class="kd-bar"><div class="nkds-container row">
   <a class="kd-brand" href="#top" aria-label="Kwa, accueil"><b class="kd-word">kwa</b><span>/ harness</span></a>
   <nav class="kd-nav" aria-label="Sections">
-    <a href="#carte">Carte</a><a href="#board">Board</a><a href="#terminal">Terminal</a><a href="#gardes">Gardes</a><a href="#modules">Modules</a><a href="#skills">Skills</a><a href="#memoire">Mémoire</a><a href="#demarrer">Démarrer</a><a href="parcours.html">Parcours</a><a href="#credits">Crédits</a>
+    <a href="#carte">Carte</a><a href="#board">Circuit</a><a href="#terminal">Terminal</a><a href="#gardes">Gardes</a><a href="#modules">Modules</a><a href="#skills">Skills</a><a href="#memoire">Mémoire</a><a href="#demarrer">Démarrer</a><a href="parcours.html">Parcours</a><a href="#credits">Crédits</a>
   </nav>
-  <button type="button" class="nkds-btn nkds-btn--small" id="theme" aria-pressed="false">Thème sombre</button>
+  <button type="button" class="kd-theme" id="theme" aria-label="Passer en thème clair" title="Changer de thème"><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></svg><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 14.6A8.4 8.4 0 0 1 9.4 3.8a8.4 8.4 0 1 0 10.8 10.8z"/></svg></button>
 </div></div>
 
 <main>
 <header class="nkds-container nkds-hero" id="top">
-  <div class="kd-eyebrow">Kwa · Knowledge · Workflow · Agents · v<span id="ver"></span></div>
-  <h1 class="nkds-title">Une seule façon<br>de <strong>travailler.</strong></h1>
-  <p class="nkds-lead">Mêmes règles, mêmes garde-fous et mêmes skills sur chaque projet, du site vitrine à l'application mobile. Ce qui change d'un projet à l'autre tient dans un fichier de politique, pas dans cinq jeux de scripts à maintenir.</p>
+  <div class="kd-eyebrow">Kwa · Kit · Workflow · Agents · v<span id="ver"></span></div>
+  <h1 class="nkds-title">Un kit de workflow<br>et d'<strong>agents.</strong></h1>
+  <p class="nkds-lead">Un socle de process de développement pour travailler avec des agents de code : règles, garde-fous, skills, mémoire et circuit de travail, les mêmes sur chaque projet. Ce qui change d'un projet à l'autre tient dans un fichier de politique.</p>
   <div class="nkds-actions">
     <a class="nkds-btn nkds-btn--primary" href="#carte">Voir la carte <span aria-hidden="true">↗</span></a>
-    <a class="nkds-btn" href="#board">Regarder le board</a>
+    <a class="nkds-btn" href="#board">Suivre une demande</a>
     <a class="nkds-link" href="#terminal">Ouvrir le terminal <span aria-hidden="true">→</span></a>
   </div>
   <div class="kd-term">
@@ -188,10 +191,10 @@ footer.nkds-footer{margin-top:128px}
 </section>
 
 <section class="nkds-container kd-section kd-rv" id="board">
-  <div class="kd-head"><div class="kd-eyebrow">Le board</div><h2 class="nkds-section-title">Une demande,<br>de bout en <strong>bout.</strong></h2>
-    <p class="kd-lead">Une carte traverse le flux et déclenche, à chaque étape, des skills, des hooks, des sous-agents et des gardes. À toi de décider aux portes. Choisir un scénario puis lancer la lecture.</p></div>
+  <div class="kd-head"><div class="kd-eyebrow">Le circuit</div><h2 class="nkds-section-title">Une demande,<br>de bout en <strong>bout.</strong></h2>
+    <p class="kd-lead">Chaque étape dit ce qui se passe, pourquoi, quelles briques se déclenchent, et qui décide. Choisis un scénario, puis avance avec les boutons ou les flèches du clavier : la fiche reste au même endroit.</p></div>
   <div id="board-root" style="margin-top:40px"></div>
-  <p class="kd-note"><a href="board.html">Ouvrir le board en plein écran ↗</a></p>
+  <p class="kd-note"><a href="board.html">Ouvrir le circuit en plein écran ↗</a></p>
 </section>
 
 <section class="nkds-container kd-section kd-rv" id="terminal">
@@ -299,7 +302,7 @@ footer.nkds-footer{margin-top:128px}
 </div></footer>
 
 <script src="data.js"></script>
-<script src="src/map.js"></script><script src="src/board.js"></script><script src="src/terminal.js"></script>
+<script src="src/map.js"></script><script src="src/board.js"></script><script src="src/circuit.js"></script><script src="src/terminal.js"></script>
 <script>
 const DATA = window.KWA;
 document.documentElement.classList.add('js');
@@ -309,8 +312,14 @@ const esc = s => String(s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'
 
 /* thème : clair par défaut, seul un choix explicite est enregistré */
 const root = document.documentElement, tbtn = $('#theme');
-function syncTheme(){ const dark = root.dataset.nkuiTheme==='dark'; tbtn.textContent = dark ? 'Thème clair' : 'Thème sombre'; tbtn.setAttribute('aria-pressed', String(dark)); }
-tbtn.onclick = () => { root.dataset.nkuiTheme = root.dataset.nkuiTheme==='dark' ? 'light' : 'dark'; try{ localStorage.setItem('kwa-docs-theme', root.dataset.nkuiTheme); }catch(e){} syncTheme(); };
+function syncTheme(){ const dark = root.dataset.nkuiTheme==='dark'; tbtn.setAttribute('aria-label', dark ? 'Passer en thème clair' : 'Passer en thème sombre'); }
+tbtn.onclick = () => {
+  const next = root.dataset.nkuiTheme==='dark' ? 'light' : 'dark';
+  const write = () => { root.dataset.nkuiTheme = next; try{ localStorage.setItem('kwa-docs-theme', next); }catch(e){} syncTheme(); };
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return write();
+  if (document.startViewTransition) return document.startViewTransition(write);
+  root.classList.add('kd-theming'); write(); setTimeout(() => root.classList.remove('kd-theming'), 420);
+};
 syncTheme();
 document.addEventListener('click', e => { const b = e.target.closest('[data-copy]'); if(!b) return; navigator.clipboard?.writeText(b.dataset.copy); const o=b.textContent; b.textContent='Copié'; setTimeout(()=>b.textContent=o,1200); });
 
@@ -327,11 +336,11 @@ $('#tests').textContent = `${DATA.tests} tests ${DATA.tests_ok ? 'au vert' : 'en
 
 /* chiffres */
 const nHooks = DATA.modules.reduce((n,m)=>n+m.files.filter(f=>f.includes('/hooks/')&&!f.includes('_kwa')).length,0);
-[[DATA.modules.length,'modules'],[nHooks,'hooks'],[DATA.catalog.length,'skills'],[DATA.tests,'tests, dont des cas de harnais réel']].forEach(([n,l]) => $('#stats').append(el('div',{class:'kd-stat'},`<div class="n">${n}</div><div class="l">${l}</div>`)));
+[[DATA.modules.length,'modules'],[nHooks,'hooks'],[DATA.catalog.length,'skills']].forEach(([n,l]) => $('#stats').append(el('div',{class:'kd-stat'},`<div class="n">${n}</div><div class="l">${l}</div>`)));
 
 /* widgets */
 DATA.map && window.KwaMap && KwaMap.mount($('#map'), DATA.map);
-window.KwaBoard && KwaBoard.mount($('#board-root'));
+window.KwaCircuit && KwaCircuit.mount($('#board-root'));
 DATA.terminal && window.KwaTerminal && KwaTerminal.mount($('#term-root'), DATA.terminal);
 
 /* gardes */
