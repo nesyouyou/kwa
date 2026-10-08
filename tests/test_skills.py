@@ -198,6 +198,29 @@ class ParcoursVisuals(unittest.TestCase):
         self.assertIn("prefers-reduced-motion", self.read("src", "parcours.js"))
 
 
+class Pictos(unittest.TestCase):
+    """Pictogrammes des concepts (garde, skill, agent) et mots importants en gras : générés, sans résidu de gabarit."""
+    SITE = os.path.join(PACK, "docs", "site")
+
+    def index(self):
+        with open(os.path.join(self.SITE, "index.html"), encoding="utf-8") as f:
+            return f.read()
+
+    def test_concept_pictos_are_in_the_page(self):
+        text = self.index()
+        self.assertNotIn("{{pic:", text)
+        for name in ("shield", "sword", "agent"):
+            self.assertIn(f"p-{name}", text, name)
+
+    def test_credits_markup_is_rendered_not_shown(self):
+        with open(os.path.join(PACK, "credits.json"), encoding="utf-8") as f:
+            sources = json.load(f)["sources"]
+        for src in sources:
+            self.assertEqual(src["took"].count("**") % 2, 0, src["id"])
+            self.assertIn("**", src["took"], src["id"])
+        self.assertIn("<strong>$1</strong>", self.index())
+
+
 class Shell(unittest.TestCase):
     """Barre latérale de navigation et arborescence : générées, identiques partout, avec de vrais liens."""
     SITE = os.path.join(PACK, "docs", "site")

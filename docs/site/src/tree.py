@@ -10,6 +10,8 @@ import html
 import os
 import re
 
+import pictos
+
 REPO = "https://github.com/nesyouyou/kwa"
 
 HOOK_NODE = {  # fichier de hook ou de garde -> nœud de la carte
@@ -160,7 +162,8 @@ def _render(name: str, node: dict, depth: int) -> str:
         f = node["__file__"]
         mods = " ".join(sorted(f["modules"]))
         chips = "".join(f'<i class="tr-m">{html.escape(m)}</i>' for m in sorted(f["modules"]))
-        return (f'<div class="tr-row tr-file tr-k-{f["kind"]}" data-mod="{mods}">{ICONS["file"]}'
+        icon = pictos.svg("agent") if name == "AGENTS.md" else pictos.svg({"skill": "sword", "guard": "shield", "hook": "hook"}[f["kind"]]) if f["kind"] in ("skill", "guard", "hook") else ICONS["file"]
+        return (f'<div class="tr-row tr-file tr-k-{f["kind"]}" data-mod="{mods}">{icon}'
                 f'<span class="tr-n">{html.escape(name)}</span><span class="tr-d">{html.escape(f["desc"])}</span>'
                 f'<span class="tr-r">{chips}{_link(f)}</span></div>')
     kids = sorted((k for k in node if k != "__dir__"), key=lambda k: (ORDER.get(k, 9) if depth == 0 else 0, "__file__" in node[k], k))

@@ -141,9 +141,10 @@ def main():
     tpl = open(os.path.join(HERE, "template.html"), encoding="utf-8").read()
     css, js = assets(["map", "board", "circuit", "terminal"])
     sys.path.insert(0, src)
-    import shell, tree  # noqa: E402
+    import shell, tree, pictos  # noqa: E402
     files = tree.project_files(man, kwa.module_files, {c["id"]: c["description"] for c in catalog})
     shown = [m for m in man if any(m in f["modules"] for f in files)]
+    tpl = pictos.fill_placeholders(tpl).replace("/*PICTOS*/{}", pictos.as_json())
     index_html = (tpl.replace("<!--EXTRA_CSS-->", css).replace("<!--EXTRA_JS-->", js).replace("<!--TOPBAR-->", shell.topbar())
                   .replace("<!--SIDEBAR-->", shell.sidebar("index.html")).replace("<!--TREE-->", tree.section(files, shown, {m: man[m]["about"] for m in shown})))
     open(os.path.join(HERE, "index.html"), "w", encoding="utf-8").write(index_html)

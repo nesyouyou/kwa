@@ -88,3 +88,5 @@ html { scroll-padding-top: calc(var(--kd-top-h) + 16px); }
 .tr-modnote { margin: 0 0 12px; min-height: 20px; font-size: 13px; color: var(--kw-mut); }
 
 .kd-ico { width: 16px; height: 16px; margin-right: 8px; flex: none; fill: none; stroke: var(--dot, var(--kw-mut)); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.tr-row .kd-pic { margin: 0; vertical-align: 0; stroke: currentColor; stroke-width: 1.8; }
+.tr-row .kd-pic.pic-fill { fill: currentColor; stroke: none; }
