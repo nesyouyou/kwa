@@ -2,7 +2,7 @@
 <html lang="fr" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Parcours 1 : Culture IA générative | Kwa</title>
 <script>try{if(localStorage.getItem('kwa-docs-theme')==='light')document.documentElement.dataset.theme='light'}catch(e){}</script>
-<link rel="stylesheet" href="style/fonts.css"><link rel="stylesheet" href="style/tokens.css"><link rel="stylesheet" href="style/base.css"><link rel="stylesheet" href="src/parcours.css">
+<link rel="stylesheet" href="style/fonts.css"><link rel="stylesheet" href="style/tokens.css"><link rel="stylesheet" href="style/base.css"><link rel="stylesheet" href="src/shell.css"><link rel="stylesheet" href="src/parcours.css">
 <style>
 /* Extensions propres à la documentation Kwa. Uniquement les tokens du design system : aucune couleur ajoutée. */
 html{scroll-behavior:smooth;overflow-x:clip}
@@ -13,17 +13,11 @@ section{scroll-margin-top:84px}
 .kd-lead{max-width:68ch;color:var(--kw-body);font-size:clamp(15px,1.4vw,17px);margin:0}
 .kd-head .kw-section-title{margin-bottom:20px}
 .kd-section{padding-top:128px}
-.kd-bar{position:sticky;top:0;z-index:20;padding-block:14px;background:var(--kw-glass);backdrop-filter:blur(8px);border-bottom:1px solid var(--kw-rule-soft)}
-.kd-bar .row{display:flex;align-items:center;justify-content:space-between;gap:16px}
 .kd-brand{display:flex;align-items:center;gap:14px;text-decoration:none;white-space:nowrap}
 .kd-theming, .kd-theming *, .kd-theming *::before, .kd-theming *::after{transition:background-color .35s ease,color .35s ease,border-color .35s ease,fill .35s ease,stroke .35s ease !important}
 .kd-theme{width:40px;height:40px;flex:none;border-radius:50%;border:1px solid var(--kw-rule);background:transparent;color:var(--kw-fg);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0}.kd-theme:hover{background:var(--kw-raise)}.kd-theme svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}.kd-theme .i-sun{display:none}html[data-theme="dark"] .kd-theme .i-sun{display:block}html[data-theme="dark"] .kd-theme .i-moon{display:none}
 .kd-word{font:700 20px/1 Geist,system-ui,sans-serif;letter-spacing:-.02em}.kd-word--big{font-size:30px}
 .kd-brand span{font:400 12px 'Geist Mono',monospace;letter-spacing:.08em;color:var(--kw-mut)}
-.kd-nav{display:flex;gap:22px;overflow-x:auto;scrollbar-width:none}
-.kd-nav a{font:400 12px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;color:var(--kw-body);white-space:nowrap}
-.kd-nav a:hover{color:var(--kw-fg)}
-.kd-nav::-webkit-scrollbar{display:none}
 .kd-code{margin:0;background:var(--kw-brick);border:1px solid var(--kw-rule);border-radius:12px;padding:16px 18px;overflow-x:auto;font:13px/1.7 'Geist Mono',monospace;color:var(--kw-fg)}
 .kd-code .p{color:var(--kw-mut)} .kd-code .s{color:var(--kw-green)}
 .kd-term{margin-top:40px;max-width:760px}
@@ -55,14 +49,14 @@ code{font:.9em 'Geist Mono',monospace;background:var(--kw-tint);border:1px solid
 .kd-panel ul{margin:0;padding-left:18px;color:var(--kw-body);font-size:14px;line-height:1.7}
 .kd-panel p.v{font:14px/1.6 'Geist Mono',monospace;margin:0}
 .kd-tools{display:flex;flex-wrap:wrap;gap:8px;margin:32px 0 20px;align-items:center}
-.kd-chip{font:400 12px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;background:transparent;color:var(--kw-body);border:1px solid var(--kw-rule);border-radius:999px;padding:9px 14px;min-height:36px;transition:background .2s ease}
-.kd-chip:hover{background:var(--kw-raise)}
-.kd-chip[aria-pressed="true"]{background:var(--kw-invert-bg);color:var(--kw-invert-fg);border-color:transparent}
-.kd-search{flex:1;min-width:200px;min-height:36px;background:transparent;border:1px solid var(--kw-rule);border-radius:999px;color:var(--kw-fg);padding:8px 16px;font:13px 'Geist Mono',monospace}
+.kw .kd-chip{font:500 13px/1.2 Geist,system-ui,sans-serif;background:transparent;color:var(--kw-body);border:1px solid var(--kw-rule);border-radius:6px;padding:6px 10px;transition:background .2s ease}
+.kw .kd-chip:hover{background:var(--kw-raise)}
+.kw .kd-chip[aria-pressed="true"]{background:var(--kw-invert-bg);color:var(--kw-invert-fg);border-color:transparent}
+.kd-search{flex:1;min-width:200px;background:transparent;border:1px solid var(--kw-rule);border-radius:6px;color:var(--kw-fg);padding:6px 10px;font:13px 'Geist Mono',monospace}
 .kd-table{border:1px solid var(--kw-rule);border-radius:20px;overflow:hidden}
 .kd-row{display:grid;grid-template-columns:110px minmax(0,1fr);gap:4px 20px;padding:16px 20px;border-top:1px solid var(--kw-rule-soft);align-items:start}
 .kd-row:first-child{border-top:0}
-.kd-pill{display:inline-flex;align-items:center;gap:8px;padding:3px 10px;border-radius:999px;border:1px solid var(--kw-rule);font:400 11px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase}
+.kd-pill{display:inline-flex;align-items:center;gap:8px;padding:2px 8px;border-radius:6px;border:1px solid var(--kw-rule);font:500 12px/1.4 Geist,system-ui,sans-serif}
 .kd-pill.deny{background:var(--kw-invert-bg);color:var(--kw-invert-fg);border-color:transparent}
 .kd-pill.ask{border-color:var(--kw-fg)}
 .kd-pill.allow{color:var(--kw-green);border-color:currentColor}
@@ -96,12 +90,16 @@ code{font:.9em 'Geist Mono',monospace;background:var(--kw-tint);border:1px solid
 .kd-origin{display:inline-flex;align-items:center;gap:8px;margin:14px 6px 0 0;padding:3px 12px 3px 3px;border-radius:999px;background:var(--kw-invert-bg);color:var(--kw-invert-fg);font:10px/1.7 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase}
 .kd-origin img{width:22px;height:22px;border-radius:50%;object-fit:cover}
 .kd-origin.kwa{padding:3px 12px}
-.kd-av{width:56px;height:56px;border-radius:50%;object-fit:cover;border:1px solid var(--kw-rule);margin-bottom:14px;display:block}
+.kd-av{width:24px;height:24px;border-radius:50%;object-fit:cover;border:1px solid var(--kw-rule);flex:none}
 .kd-origin.kwa{background:transparent;color:var(--kw-fg);border:1px solid var(--kw-fg)}
-.kd-src{display:grid;gap:12px}
-.kd-src .kd-card{display:grid;grid-template-columns:230px minmax(0,1fr);gap:8px 32px}
-.kd-src a{display:inline-block;margin-top:8px;font:12px 'Geist Mono',monospace;color:var(--kw-body);word-break:break-all}
-.kd-tag{display:inline-block;margin:10px 6px 0 0;padding:3px 9px;border:1px solid var(--kw-rule);border-radius:999px;font:11px 'Geist Mono',monospace;color:var(--kw-body)}
+.kd-src{border:1px solid var(--kw-rule);border-radius:10px}
+.kd-src .kd-card{display:grid;grid-template-columns:260px minmax(0,1fr);gap:4px 32px;padding:14px 18px;border:0;border-radius:0;border-top:1px solid var(--kw-rule)}
+.kd-src .kd-card:first-child{border-top:0}
+.kd-src .who{display:flex;align-items:center;gap:10px}
+.kd-src h3{font:500 15px Geist,sans-serif;margin:0}
+.kd-src .sub{margin-top:4px;font-size:12px;color:var(--kw-mut)}
+.kd-src a{color:var(--kw-body);text-decoration:underline;text-underline-offset:2px}
+.kd-tag{display:inline-block;margin:6px 6px 0 0;padding:2px 7px;border:1px solid var(--kw-rule);border-radius:6px;font:12px 'Geist Mono',monospace;color:var(--kw-body)}
 .kd-loop{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:34px}
 .kd-node{position:relative;padding:20px;border:1px solid var(--kw-rule);border-radius:20px}
 .kd-node:not(:last-child)::after{content:"→";position:absolute;right:-28px;top:50%;translate:0 -50%;font:16px 'Geist Mono',monospace;color:var(--kw-mut)}
@@ -117,15 +115,14 @@ code{font:.9em 'Geist Mono',monospace;background:var(--kw-tint);border:1px solid
 .kd-wrap th{font:400 11px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--kw-mut);text-align:left;padding:14px 20px;border-bottom:1px solid var(--kw-rule)}
 .kd-wrap td{padding:14px 20px;border-top:1px solid var(--kw-rule-soft);vertical-align:top;color:var(--kw-body);line-height:1.6}
 .kd-wrap td:first-child{color:var(--kw-fg);font-weight:500}
-details{border-top:1px solid var(--kw-rule);padding:20px 0}
-details summary{cursor:pointer;font:500 18px Geist,sans-serif;min-height:44px;display:flex;align-items:center}
-details p{margin:10px 0 0;color:var(--kw-body);max-width:68ch}
+#limites details{border-top:1px solid var(--kw-rule);padding:20px 0}
+#limites details summary{cursor:pointer;font:500 18px Geist,sans-serif;min-height:44px;display:flex;align-items:center}
+#limites details p{margin:10px 0 0;color:var(--kw-body);max-width:68ch}
 .kd-rv{opacity:1;transform:none}
 .js .kd-rv{opacity:0;transform:translateY(18px);transition:opacity .88s var(--kw-ease),transform .88s var(--kw-ease)}
 .js .kd-rv.in{opacity:1;transform:none}
 footer.kw-footer{margin-top:128px}
-@media (max-width:1023px){.kd-g4{grid-template-columns:repeat(2,minmax(0,1fr))}.kd-nav{display:none}}
-@media (max-width:900px){
+@media (max-width:1023px){.kd-g4{grid-template-columns:repeat(2,minmax(0,1fr))}@media (max-width:900px){
   .kd-stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.kd-g2,.kd-g3{grid-template-columns:minmax(0,1fr)}
   .kd-flow{grid-template-columns:minmax(0,1fr)}.kd-steps{grid-template-columns:repeat(2,minmax(0,1fr))}.kd-panel{padding:22px;min-height:0}.kd-panel .cols{grid-template-columns:minmax(0,1fr)}
   .kd-loop{grid-template-columns:minmax(0,1fr)}.kd-node:not(:last-child)::after{content:"↓";right:auto;left:50%;top:auto;bottom:-30px;translate:-50% 0}
@@ -134,16 +131,11 @@ footer.kw-footer{margin-top:128px}
   .kd-ob .item{grid-template-columns:minmax(0,1fr);padding:18px}.kd-ob .num{display:none}.kd-section{padding-top:88px}.kd-brand span{display:none}
 }
 @media (prefers-reduced-motion:reduce){.js .kd-rv{opacity:1;transform:none;transition:none}}
-@media print{.kd-bar{display:none}.js .kd-rv{opacity:1;transform:none}}
-</style></head>
+@media print{</style></head>
 <body class="kw">
-<div class="kd-bar"><div class="kw-container row">
-  <a class="kd-brand" href="index.html" aria-label="Kwa, accueil"><b class="kd-word">kwa</b><span>/ harness</span></a>
-  <nav class="kd-nav" aria-label="Pages"><a href="index.html">Accueil</a><a href="skill-map.html">Carte</a><a href="board.html">Circuit</a><a href="terminal.html">Terminal</a><a href="parcours.html">Parcours</a></nav>
-  <button type="button" class="kd-theme" id="theme" aria-label="Passer en thème clair" title="Changer de thème"><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></svg><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 14.6A8.4 8.4 0 0 1 9.4 3.8a8.4 8.4 0 1 0 10.8 10.8z"/></svg></button>
-</div></div>
-
-<main class="kw-container" style="padding-top:32px">
+<header class="kd-top"><button type="button" class="kd-menu" id="menu" aria-label="Ouvrir la navigation" aria-expanded="false" aria-controls="side"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><a class="kd-brand" href="index.html" aria-label="Kwa, accueil"><b class="kd-word">kwa</b><span>/ harness</span></a><span class="kd-spacer"></span><button type="button" class="kd-theme" id="theme" aria-label="Passer en thème clair" title="Changer de thème"><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></svg><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 14.6A8.4 8.4 0 0 1 9.4 3.8a8.4 8.4 0 1 0 10.8 10.8z"/></svg></button></header>
+<div class="kd-layout"><aside class="kd-side" id="side" aria-label="Navigation"><nav><div class="kd-sg"><h2><i class="kd-dot" style="--dot:var(--kd-blue)"></i>Kwa</h2><ul><li><a href="index.html#top">Présentation</a></li><li><a href="index.html#pourquoi">Pourquoi ce projet</a></li><li><a href="index.html#arborescence">Arborescence</a></li></ul></div><div class="kd-sg"><h2><i class="kd-dot" style="--dot:var(--kd-violet)"></i>Explorer</h2><ul><li><a href="skill-map.html">Carte des skills</a></li><li><a href="board.html">Circuit d&#x27;une demande</a></li><li><a href="terminal.html">Terminal</a></li></ul></div><div class="kd-sg"><h2><i class="kd-dot" style="--dot:var(--kd-green)"></i>Apprendre</h2><ul><li><a href="parcours.html">Les trois parcours</a></li><li><a href="parcours-culture.html" aria-current="page">1 · Culture IA générative</a><ul class="kd-toc"><li><a href="#etape-1" data-spy="etape-1">1 · Le modèle</a></li><li><a href="#etape-2" data-spy="etape-2">2 · Les jetons</a></li><li><a href="#etape-3" data-spy="etape-3">3 · Le contexte</a></li><li><a href="#etape-4" data-spy="etape-4">4 · Les hallucinations</a></li><li><a href="#etape-5" data-spy="etape-5">5 · Le prompt</a></li><li><a href="#etape-6" data-spy="etape-6">6 · Usages</a></li></ul></li><li><a href="parcours-contexte.html">2 · Context engineering</a></li><li><a href="parcours-harness.html">3 · Harness</a></li></ul></div><div class="kd-sg"><h2><i class="kd-dot" style="--dot:var(--kd-amber)"></i>Référence</h2><ul><li><a href="index.html#demarrer">Démarrer</a></li><li><a href="index.html#skills">Skills</a></li><li><a href="index.html#gardes">Gardes en action</a></li><li><a href="index.html#memoire">Mémoire</a></li><li><a href="index.html#superpowers">Méthode</a></li><li><a href="index.html#migrer">Remplacer l&#x27;existant</a></li><li><a href="index.html#limites">Limites et suite</a></li><li><a href="index.html#credits">Crédits</a></li></ul></div></nav></aside><div class="kd-scrim" id="scrim"></div><div class="kd-main">
+<main class="kw-container pc-wrap" data-acc="culture" style="padding-top:32px">
   <div class="kd-eyebrow">Comprendre le modèle</div>
   <h1 class="kw-page-title">Parcours 1 : Culture IA générative</h1>
   <p class="pc-intro">Six étapes pour comprendre ce que fait vraiment un modèle de langage : le texte, les jetons, la fenêtre de contexte, les erreurs, la manière de demander. Aucun outil à installer ; un outil d'IA au choix suffit pour les exercices. Environ deux heures, à calibrer en séance.</p><ol class="pc-nav"><li style="list-style:none"><a href="#etape-1">1 · Le modèle</a></li><li style="list-style:none"><a href="#etape-2">2 · Les jetons</a></li><li style="list-style:none"><a href="#etape-3">3 · Le contexte</a></li><li style="list-style:none"><a href="#etape-4">4 · Les hallucinations</a></li><li style="list-style:none"><a href="#etape-5">5 · Le prompt</a></li><li style="list-style:none"><a href="#etape-6">6 · Usages</a></li></ol><section class="pc-stage" id="etape-1"><div class="pc-num">1</div><div class="pc-main"><h2 class="pc-h">Ce qu'est un modèle de langage</h2><p class="pc-tag">Un outil qui prolonge un texte, pas une base de connaissances.</p><p>Un modèle de langage a lu une très grande quantité de textes et calcule, mot après mot, la suite la plus plausible de ce qu'on lui donne. Il ne consulte pas une base de faits : il produit du texte vraisemblable. De là viennent ses deux forces (rédiger, reformuler, transformer) et ses deux faiblesses (inventer, ignorer ce qui s'est passé après son entraînement).</p>
@@ -152,6 +144,9 @@ footer.kw-footer{margin-top:128px}
 <section class="pc-stage" id="etape-2"><div class="pc-num">2</div><div class="pc-main"><h2 class="pc-h">Les jetons</h2><p class="pc-tag">L'unité de texte que le modèle lit, écrit, et que l'on compte.</p><p>Le modèle ne lit pas des lettres ni des mots entiers : il découpe le texte en morceaux appelés <strong>jetons</strong> (tokens). Tout se mesure en jetons : la longueur de ce qu'il peut lire, la longueur de sa réponse, les limites d'usage et le coût d'un appel à l'API. Un texte plus long, ou une langue découpée plus finement, consomme plus de jetons.</p>
 <p>Estimez les jetons d'un de vos textes. Le résultat est un <strong>ordre de grandeur</strong> : le vrai compte dépend du modèle, et l'API propose un compteur exact (voir les sources).</p><div class="pc-widget"><label class="pc-lbl" for="tok-input">Collez un texte de votre travail (il reste dans votre navigateur)</label>
 <textarea id="tok-input" rows="5" placeholder="Un paragraphe d'un rapport, un e-mail, une page de documentation..."></textarea>
+<p class="pc-hint">Découpage illustratif : un vrai modèle coupe autrement.</p>
+<div id="tok-chips" class="pc-chips" aria-hidden="true"></div>
+<div class="pc-actions"><button type="button" class="kd-copy" id="tok-replay">Rejouer l'animation</button></div>
 <div id="tok-out" class="pc-out"></div></div><div class="pc-proof"><div><b>Preuve attendue</b><p>Donner l'ordre de grandeur d'un document de votre travail en jetons, et dire ce qui le rend plus ou moins gros.</p></div><div><b>Piège</b><p>Compter en pages ou en mots donne une idée, jamais le chiffre : deux textes de même longueur peuvent coûter des jetons différents.</p></div></div></div></section>
 <section class="pc-stage" id="etape-3"><div class="pc-num">3</div><div class="pc-main"><h2 class="pc-h">La fenêtre de contexte</h2><p class="pc-tag">Tout ce que le modèle peut voir à un instant donné, et rien d'autre.</p><p>La fenêtre de contexte est la « mémoire de travail » du modèle : <strong>tout</strong> ce qu'il peut consulter pour répondre, sa réponse comprise. Elle contient bien plus que votre dernier message : consignes du système, fichiers d'instructions, définitions des outils, historique de la conversation, fichiers lus, résultats des outils. Le modèle n'a pas de mémoire en dehors de cette fenêtre : une nouvelle session repart de zéro.</p>
 <p>Plus grande ne veut pas dire meilleure. À mesure que le contexte grossit, la précision et le rappel peuvent baisser : c'est ce que la documentation appelle <em>context rot</em>. Choisir ce qui entre compte autant que la place disponible.</p>
@@ -169,7 +164,11 @@ footer.kw-footer{margin-top:128px}
 <label>Résultats d'outils<input id="ctx-res" type="number" min="0" step="1000" value="25000"></label>
 <label>Taille de la fenêtre<select id="ctx-win"><option value="200000">200 000</option><option value="1000000">1 000 000</option></select></label>
 </div>
-<div class="pc-bar"><div id="ctx-bar"></div></div><p id="ctx-txt" class="pc-big"></p><p id="ctx-msg"></p></div><div class="pc-proof"><div><b>Preuve attendue</b><p>Citer ce qui occupe une fenêtre en dehors de votre message, et dire pourquoi la remplir n'est pas un but.</p></div><div><b>Piège</b><p>Les valeurs de la jauge sont des exemples pour comprendre, pas des mesures. Une interface de chat peut aussi faire glisser la conversation en oubliant les débuts.</p></div></div></div></section>
+<div class="pc-actions"><button type="button" class="kd-copy" data-ctx-play>Simuler une session d'agent</button>
+<button type="button" class="kd-copy" data-ctx-compact>Compacter</button></div>
+<div class="pc-stack" id="ctx-stack"><i id="seg-sys"></i><i id="seg-rules"></i><i id="seg-tools"></i><i id="seg-hist"></i><i id="seg-files"></i><i id="seg-res"></i></div>
+<ul class="pc-legend"><li><i class="pc-k0"></i>Consignes</li><li><i class="pc-k1"></i>Instructions</li><li><i class="pc-k2"></i>Outils</li><li><i class="pc-k3"></i>Historique</li><li><i class="pc-k4"></i>Fichiers lus</li><li><i class="pc-k5"></i>Résultats</li></ul>
+<p id="ctx-txt" class="pc-big"></p><p id="ctx-msg"></p></div><div class="pc-proof"><div><b>Preuve attendue</b><p>Citer ce qui occupe une fenêtre en dehors de votre message, et dire pourquoi la remplir n'est pas un but.</p></div><div><b>Piège</b><p>Les valeurs de la jauge sont des exemples pour comprendre, pas des mesures. Une interface de chat peut aussi faire glisser la conversation en oubliant les débuts.</p></div></div></div></section>
 <section class="pc-stage" id="etape-4"><div class="pc-num">4</div><div class="pc-main"><h2 class="pc-h">Les hallucinations</h2><p class="pc-tag">Un texte faux dit avec assurance.</p><p>Un modèle peut produire une affirmation fausse ou une source qui n'existe pas, avec le même ton que le vrai. On parle d'<strong>hallucination</strong>. Elle ne se règle pas par une phrase magique : on la réduit par la manière de demander, puis on la contrôle.</p>
 <p>Quatre leviers documentés :</p>
 <ul class="pc-list">
@@ -203,15 +202,16 @@ Bonjour, je reviens vers vous au sujet de la proposition du 3. Avez-vous pu la r
 <li><strong>Responsabilité</strong> : la décision et la signature restent humaines. Le modèle propose, la personne répond du résultat.</li>
 <li><strong>Calcul</strong> : un montant, un total ou un contrôle s'obtiennent par un tableur ou un script vérifiable. Le modèle lit et rédige autour.</li>
 </ul>
-<p>Prochaine étape : passer d'un prompt isolé à un <strong>contexte entretenu</strong>, avec des fichiers, des skills et des outils. C'est le parcours suivant.</p><div class="pc-proof"><div><b>Preuve attendue</b><p>Dire ce qu'on ne colle jamais dans un outil d'IA et qui répond du résultat.</p></div><div><b>Piège</b><p>« C'est l'IA qui l'a dit » ne tient devant personne. La personne qui diffuse un texte en répond.</p></div></div></div></section><div class="pc-check"><h2>Vous avez compris si vous savez</h2><ul><li>dire pourquoi un modèle produit du texte plausible sans consulter une base de faits ;</li><li>estimer les jetons d'un texte et lister ce qui occupe une fenêtre de contexte ;</li><li>expliquer pourquoi remplir la fenêtre ne rend pas la réponse meilleure ;</li><li>réécrire une demande pour réduire le risque d'hallucination, puis vérifier à la source ;</li><li>écrire une consigne qu'un collègue sans contexte pourrait exécuter.</li></ul></div><div class="pc-check"><h2>Sources</h2><p class="kd-note" style="margin:0 0 12px">Les documentations officielles font foi. Les noms de réglages et les limites évoluent avec les versions : vérifiez avant une séance.</p><ul><li><a href="https://platform.claude.com/docs/en/build-with-claude/context-windows">Fenêtres de contexte (jetons, context rot, compaction)</a></li><li><a href="https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations">Réduire les hallucinations</a></li><li><a href="https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices">Bonnes pratiques de prompting</a></li><li><a href="https://platform.claude.com/docs/en/build-with-claude/token-counting">Compter les jetons (API)</a></li></ul></div><script src="src/parcours-widgets.js"></script>
+<p>Prochaine étape : passer d'un prompt isolé à un <strong>contexte entretenu</strong>, avec des fichiers, des skills et des outils. C'est le parcours suivant.</p><div class="pc-proof"><div><b>Preuve attendue</b><p>Dire ce qu'on ne colle jamais dans un outil d'IA et qui répond du résultat.</p></div><div><b>Piège</b><p>« C'est l'IA qui l'a dit » ne tient devant personne. La personne qui diffuse un texte en répond.</p></div></div></div></section><div class="pc-check"><h2>Vous avez compris si vous savez</h2><ul><li>dire pourquoi un modèle produit du texte plausible sans consulter une base de faits ;</li><li>estimer les jetons d'un texte et lister ce qui occupe une fenêtre de contexte ;</li><li>expliquer pourquoi remplir la fenêtre ne rend pas la réponse meilleure ;</li><li>réécrire une demande pour réduire le risque d'hallucination, puis vérifier à la source ;</li><li>écrire une consigne qu'un collègue sans contexte pourrait exécuter.</li></ul></div><div class="pc-check"><h2>Sources</h2><p class="kd-note" style="margin:0 0 12px">Les documentations officielles font foi. Les noms de réglages et les limites évoluent avec les versions : vérifiez avant une séance.</p><ul><li><a href="https://platform.claude.com/docs/en/build-with-claude/context-windows">Fenêtres de contexte (jetons, context rot, compaction)</a></li><li><a href="https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations">Réduire les hallucinations</a></li><li><a href="https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices">Bonnes pratiques de prompting</a></li><li><a href="https://platform.claude.com/docs/en/build-with-claude/token-counting">Compter les jetons (API)</a></li></ul></div><script src="src/parcours.js"></script>
 </main>
+</div></div>
 <footer class="kw-footer"><div class="kw-container kw-footer-grid">
   <div><b class="kd-word kd-word--big">kwa</b></div>
   <div><h3>Kwa</h3><p>v<span id="ver2"></span><br><span id="tests"></span></p></div>
   <div><h3>Documentation</h3><p>Régénérée par <code>docs/site/build.py</code> ; exemples calculés en exécutant les gardes.</p></div>
-  <div><h3>Design</h3><p>Design system du site, fichiers vendorisés dans <code>docs/site/ds/</code>.</p></div>
+  <div><h3>Style</h3><p>Feuille de style écrite pour ce site ; polices Geist, licence SIL OFL.</p></div>
 </div></footer>
-<script src="data.js"></script>
+<script src="data.js"></script><script src="src/parcours.js"></script><script src="src/shell.js"></script>
 <script>
 const DATA = window.KWA;
 const $ = (s, r=document) => r.querySelector(s);

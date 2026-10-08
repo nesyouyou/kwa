@@ -11,6 +11,15 @@ import sys
 
 from parcours import code, cmd, esc, pill, reveal, stage
 
+CULTURE_NAV = [("1", "Le modèle"), ("2", "Les jetons"), ("3", "Le contexte"), ("4", "Les hallucinations"), ("5", "Le prompt"), ("6", "Usages")]
+CONTEXTE_NAV = [("1", "Le contexte"), ("2", "AGENTS.md"), ("3", "Skills"), ("4", "Agents"), ("5", "MCP"), ("6", "Permissions")]
+HARNESS_NAV = [("0", "L'histoire"), ("1", "Instructions"), ("2", "Un garde"), ("3", "Branchement"), ("4", "Politique"), ("5", "Une skill"), ("6", "Mémoire"), ("7", "Circuit"), ("8", "Limites")]
+TOC = {  # barre latérale : (ancre, libellé) sous la page courante
+    "parcours-culture.html": [(f"etape-{n}", f"{n} · {t}") for n, t in CULTURE_NAV],
+    "parcours-contexte.html": [(f"etape-{n}", f"{n} · {t}") for n, t in CONTEXTE_NAV],
+    "parcours-harness.html": [(f"etape-{n}", f"{n} · {t}" if n != "0" else t) for n, t in HARNESS_NAV],
+}
+
 DOC = "https://code.claude.com/docs/en/"
 API = "https://platform.claude.com/docs/en/"
 
@@ -62,9 +71,16 @@ def culture() -> str:
 <label>Résultats d'outils<input id="ctx-res" type="number" min="0" step="1000" value="25000"></label>
 <label>Taille de la fenêtre<select id="ctx-win"><option value="200000">200 000</option><option value="1000000">1 000 000</option></select></label>
 </div>
-<div class="pc-bar"><div id="ctx-bar"></div></div><p id="ctx-txt" class="pc-big"></p><p id="ctx-msg"></p></div>"""
+<div class="pc-actions"><button type="button" class="kd-copy" data-ctx-play>Simuler une session d'agent</button>
+<button type="button" class="kd-copy" data-ctx-compact>Compacter</button></div>
+<div class="pc-stack" id="ctx-stack"><i id="seg-sys"></i><i id="seg-rules"></i><i id="seg-tools"></i><i id="seg-hist"></i><i id="seg-files"></i><i id="seg-res"></i></div>
+<ul class="pc-legend"><li><i class="pc-k0"></i>Consignes</li><li><i class="pc-k1"></i>Instructions</li><li><i class="pc-k2"></i>Outils</li><li><i class="pc-k3"></i>Historique</li><li><i class="pc-k4"></i>Fichiers lus</li><li><i class="pc-k5"></i>Résultats</li></ul>
+<p id="ctx-txt" class="pc-big"></p><p id="ctx-msg"></p></div>"""
     tok = """<div class="pc-widget"><label class="pc-lbl" for="tok-input">Collez un texte de votre travail (il reste dans votre navigateur)</label>
 <textarea id="tok-input" rows="5" placeholder="Un paragraphe d'un rapport, un e-mail, une page de documentation..."></textarea>
+<p class="pc-hint">Découpage illustratif : un vrai modèle coupe autrement.</p>
+<div id="tok-chips" class="pc-chips" aria-hidden="true"></div>
+<div class="pc-actions"><button type="button" class="kd-copy" id="tok-replay">Rejouer l'animation</button></div>
 <div id="tok-out" class="pc-out"></div></div>"""
     s = [
         ("1", "Ce qu'est un modèle de langage", "Un outil qui prolonge un texte, pas une base de connaissances.",
@@ -127,7 +143,7 @@ def culture() -> str:
     ]
     out = "\n".join(stage(*x) for x in s)
     return (intro("Six étapes pour comprendre ce que fait vraiment un modèle de langage : le texte, les jetons, la fenêtre de contexte, les erreurs, la manière de demander. Aucun outil à installer ; un outil d'IA au choix suffit pour les exercices. Environ deux heures, à calibrer en séance.") +
-            nav([("1", "Le modèle"), ("2", "Les jetons"), ("3", "Le contexte"), ("4", "Les hallucinations"), ("5", "Le prompt"), ("6", "Usages")]) + out +
+            nav(CULTURE_NAV) + out +
             checklist("Vous avez compris si vous savez", [
                 "dire pourquoi un modèle produit du texte plausible sans consulter une base de faits ;",
                 "estimer les jetons d'un texte et lister ce qui occupe une fenêtre de contexte ;",
@@ -138,7 +154,7 @@ def culture() -> str:
                      (API + "test-and-evaluate/strengthen-guardrails/reduce-hallucinations", "Réduire les hallucinations"),
                      (API + "build-with-claude/prompt-engineering/claude-prompting-best-practices", "Bonnes pratiques de prompting"),
                      (API + "build-with-claude/token-counting", "Compter les jetons (API)")]) +
-            '<script src="src/parcours-widgets.js"></script>')
+            '<script src="src/parcours.js"></script>')
 
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -308,7 +324,7 @@ def contexte() -> str:
     ]
     out = "\n".join(stage(*x) for x in s)
     return (intro("Du prompt isolé à un contexte entretenu : fichiers d'instructions, skills, agents, serveurs MCP et permissions, avec les vrais fichiers de configuration. Les exemples sont des configurations valides, vérifiées à la génération de la page. Prérequis : le parcours Culture, ou une bonne pratique d'un assistant d'IA. Environ trois heures, à calibrer en séance.") +
-            nav([("1", "Le contexte"), ("2", "AGENTS.md"), ("3", "Skills"), ("4", "Agents"), ("5", "MCP"), ("6", "Permissions")]) + out +
+            nav(CONTEXTE_NAV) + out +
             checklist("Vous avez compris si vous savez", [
                 "lister ce qui remplit la fenêtre d'une session d'agent, et la technique qui répond à chaque problème ;",
                 "écrire des instructions vérifiables et dire pourquoi elles ne contraignent pas ;",
@@ -356,7 +372,7 @@ def history() -> str:
 
 def harness(practice_html: str) -> str:
     return (intro("De l'histoire du processus de développement jusqu'à un harness complet, puis huit étapes pratiques sur un dépôt jetable, avec les vrais gardes : les sorties affichées sont celles de l'exécution, recalculées à chaque génération du site. Prérequis : les parcours Culture et Contexte, Python 3, git, un terminal. Aucun compte, aucune clé. Environ trois heures et demie, à calibrer en séance.") +
-            nav([("0", "L'histoire"), ("1", "Instructions"), ("2", "Un garde"), ("3", "Branchement"), ("4", "Politique"), ("5", "Une skill"), ("6", "Mémoire"), ("7", "Circuit"), ("8", "Limites")]) +
+            nav(HARNESS_NAV) +
             history() + practice_html)
 
 
@@ -377,7 +393,7 @@ def hub() -> str:
          "Les parcours 1 et 2, Python 3, git, un terminal."),
     ]
     c = "".join(
-        f'<a class="pc-card" href="{u}"><div class="pc-num">{n}</div><h2>{esc(t)}</h2><p class="pc-tag">{esc(d)}</p><p>{esc(txt)}</p><p class="kd-note">{esc(pre)}</p></a>'
+        f'<a class="pc-card" data-acc="{u[9:-5]}" href="{u}"><div class="pc-num">{n}</div><h2>{esc(t)}</h2><p class="pc-tag">{esc(d)}</p><p>{esc(txt)}</p><p class="kd-note">{esc(pre)}</p></a>'
         for n, t, u, d, txt, pre in cards)
     return (intro("Trois parcours qui s'enchaînent : comprendre le modèle, apprendre à lui donner le bon contexte, puis l'encadrer avec un harness. Chacun se lit seul, mais l'ordre est celui d'une progression. Les durées sont des estimations de conception, à ajuster après une première séance.") +
             f'<div class="pc-cards">{c}</div>' +

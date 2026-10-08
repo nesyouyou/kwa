@@ -140,10 +140,15 @@ def main():
 
     tpl = open(os.path.join(HERE, "template.html"), encoding="utf-8").read()
     css, js = assets(["map", "board", "circuit", "terminal"])
-    open(os.path.join(HERE, "index.html"), "w", encoding="utf-8").write(tpl.replace("<!--EXTRA_CSS-->", css).replace("<!--EXTRA_JS-->", js))
+    sys.path.insert(0, src)
+    import shell, tree  # noqa: E402
+    files = tree.project_files(man, kwa.module_files, {c["id"]: c["description"] for c in catalog})
+    shown = [m for m in man if any(m in f["modules"] for f in files)]
+    index_html = (tpl.replace("<!--EXTRA_CSS-->", css).replace("<!--EXTRA_JS-->", js).replace("<!--TOPBAR-->", shell.topbar())
+                  .replace("<!--SIDEBAR-->", shell.sidebar("index.html")).replace("<!--TREE-->", tree.section(files, shown, {m: man[m]["about"] for m in shown})))
+    open(os.path.join(HERE, "index.html"), "w", encoding="utf-8").write(index_html)
 
     # pages plein écran : même coquille (barre, thème, logo, pied) autour d'un seul widget
-    bar = re.search(r'<div class="kd-bar">.*?</div></div>\n', tpl, re.S).group(0)
     head = re.search(r"<style>.*?</style>", tpl, re.S).group(0)
     foot = re.search(r"<footer.*?</footer>", tpl, re.S).group(0)
     theme_js = re.search(r"/\* thème : clair par défaut.*?/\* fin du bloc thème \*/\n", tpl, re.S).group(0)
@@ -163,23 +168,23 @@ def main():
     pages["parcours-harness.html"] = ("Parcours 3 : Harness", "Encadrer l'agent", "parcours", parcours_pages.harness(parcours.render(stages) + PARCOURS_TAIL), "")
     for fname, (title, eyebrow, widget, mount_html, mount_js) in pages.items():
         wcss, wjs = assets(widget.split('+'))
-        bar_p = bar.replace('href="#top"', 'href="index.html"').replace('<nav class="kd-nav" aria-label="Sections">', '<nav class="kd-nav" aria-label="Pages">')
-        bar_p = re.sub(r'<nav class="kd-nav".*?</nav>', '<nav class="kd-nav" aria-label="Pages"><a href="index.html">Accueil</a><a href="skill-map.html">Carte</a><a href="board.html">Circuit</a><a href="terminal.html">Terminal</a><a href="parcours.html">Parcours</a></nav>', bar_p, flags=re.S)
         html = f"""<!doctype html>
 <html lang="fr" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title} | Kwa</title>
 <script>try{{if(localStorage.getItem('kwa-docs-theme')==='light')document.documentElement.dataset.theme='light'}}catch(e){{}}</script>
-<link rel="stylesheet" href="style/fonts.css"><link rel="stylesheet" href="style/tokens.css"><link rel="stylesheet" href="style/base.css">{wcss}
+<link rel="stylesheet" href="style/fonts.css"><link rel="stylesheet" href="style/tokens.css"><link rel="stylesheet" href="style/base.css"><link rel="stylesheet" href="src/shell.css">{wcss}
 {head}</head>
 <body class="kw">
-{bar_p}
-<main class="kw-container" style="padding-top:32px">
+{shell.topbar()}
+<div class="kd-layout">{shell.sidebar(fname, parcours_pages.TOC.get(fname))}<div class="kd-main">
+<main class="kw-container pc-wrap" data-acc="{fname.replace('parcours-','').replace('.html','')}" style="padding-top:32px">
   <div class="kd-eyebrow">{eyebrow}</div>
   <h1 class="kw-page-title">{title}</h1>
   {mount_html}
 </main>
+</div></div>
 {foot}
-<script src="data.js"></script>{wjs}
+<script src="data.js"></script>{wjs}<script src="src/shell.js"></script>
 <script>
 const DATA = window.KWA;
 const $ = (s, r=document) => r.querySelector(s);

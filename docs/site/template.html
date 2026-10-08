@@ -6,7 +6,7 @@
 <title>Kwa, un socle de harness pour agents de code</title>
 <meta name="description" content="Mêmes règles, mêmes garde-fous, mêmes skills sur tous vos projets avec un agent de code.">
 <script>try{if(localStorage.getItem('kwa-docs-theme')==='light')document.documentElement.dataset.theme='light'}catch(e){}</script>
-<link rel="stylesheet" href="style/fonts.css"><link rel="stylesheet" href="style/tokens.css"><link rel="stylesheet" href="style/base.css">
+<link rel="stylesheet" href="style/fonts.css"><link rel="stylesheet" href="style/tokens.css"><link rel="stylesheet" href="style/base.css"><link rel="stylesheet" href="src/shell.css">
 <!--EXTRA_CSS-->
 <style>
 /* Extensions propres à la documentation Kwa. Uniquement les tokens du design system : aucune couleur ajoutée. */
@@ -18,17 +18,11 @@ section{scroll-margin-top:84px}
 .kd-lead{max-width:68ch;color:var(--kw-body);font-size:clamp(15px,1.4vw,17px);margin:0}
 .kd-head .kw-section-title{margin-bottom:20px}
 .kd-section{padding-top:128px}
-.kd-bar{position:sticky;top:0;z-index:20;padding-block:14px;background:var(--kw-glass);backdrop-filter:blur(8px);border-bottom:1px solid var(--kw-rule-soft)}
-.kd-bar .row{display:flex;align-items:center;justify-content:space-between;gap:16px}
 .kd-brand{display:flex;align-items:center;gap:14px;text-decoration:none;white-space:nowrap}
 .kd-theming, .kd-theming *, .kd-theming *::before, .kd-theming *::after{transition:background-color .35s ease,color .35s ease,border-color .35s ease,fill .35s ease,stroke .35s ease !important}
 .kd-theme{width:40px;height:40px;flex:none;border-radius:50%;border:1px solid var(--kw-rule);background:transparent;color:var(--kw-fg);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0}.kd-theme:hover{background:var(--kw-raise)}.kd-theme svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}.kd-theme .i-sun{display:none}html[data-theme="dark"] .kd-theme .i-sun{display:block}html[data-theme="dark"] .kd-theme .i-moon{display:none}
 .kd-word{font:700 20px/1 Geist,system-ui,sans-serif;letter-spacing:-.02em}.kd-word--big{font-size:30px}
 .kd-brand span{font:400 12px 'Geist Mono',monospace;letter-spacing:.08em;color:var(--kw-mut)}
-.kd-nav{display:flex;gap:22px;overflow-x:auto;scrollbar-width:none}
-.kd-nav a{font:400 12px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;color:var(--kw-body);white-space:nowrap}
-.kd-nav a:hover{color:var(--kw-fg)}
-.kd-nav::-webkit-scrollbar{display:none}
 .kd-code{margin:0;background:var(--kw-brick);border:1px solid var(--kw-rule);border-radius:12px;padding:16px 18px;overflow-x:auto;font:13px/1.7 'Geist Mono',monospace;color:var(--kw-fg)}
 .kd-code .p{color:var(--kw-mut)} .kd-code .s{color:var(--kw-green)}
 .kd-term{margin-top:40px;max-width:760px}
@@ -60,14 +54,14 @@ code{font:.9em 'Geist Mono',monospace;background:var(--kw-tint);border:1px solid
 .kd-panel ul{margin:0;padding-left:18px;color:var(--kw-body);font-size:14px;line-height:1.7}
 .kd-panel p.v{font:14px/1.6 'Geist Mono',monospace;margin:0}
 .kd-tools{display:flex;flex-wrap:wrap;gap:8px;margin:32px 0 20px;align-items:center}
-.kd-chip{font:400 12px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;background:transparent;color:var(--kw-body);border:1px solid var(--kw-rule);border-radius:999px;padding:9px 14px;min-height:36px;transition:background .2s ease}
-.kd-chip:hover{background:var(--kw-raise)}
-.kd-chip[aria-pressed="true"]{background:var(--kw-invert-bg);color:var(--kw-invert-fg);border-color:transparent}
-.kd-search{flex:1;min-width:200px;min-height:36px;background:transparent;border:1px solid var(--kw-rule);border-radius:999px;color:var(--kw-fg);padding:8px 16px;font:13px 'Geist Mono',monospace}
+.kw .kd-chip{font:500 13px/1.2 Geist,system-ui,sans-serif;background:transparent;color:var(--kw-body);border:1px solid var(--kw-rule);border-radius:6px;padding:6px 10px;transition:background .2s ease}
+.kw .kd-chip:hover{background:var(--kw-raise)}
+.kw .kd-chip[aria-pressed="true"]{background:var(--kw-invert-bg);color:var(--kw-invert-fg);border-color:transparent}
+.kd-search{flex:1;min-width:200px;background:transparent;border:1px solid var(--kw-rule);border-radius:6px;color:var(--kw-fg);padding:6px 10px;font:13px 'Geist Mono',monospace}
 .kd-table{border:1px solid var(--kw-rule);border-radius:20px;overflow:hidden}
 .kd-row{display:grid;grid-template-columns:110px minmax(0,1fr);gap:4px 20px;padding:16px 20px;border-top:1px solid var(--kw-rule-soft);align-items:start}
 .kd-row:first-child{border-top:0}
-.kd-pill{display:inline-flex;align-items:center;gap:8px;padding:3px 10px;border-radius:999px;border:1px solid var(--kw-rule);font:400 11px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase}
+.kd-pill{display:inline-flex;align-items:center;gap:8px;padding:2px 8px;border-radius:6px;border:1px solid var(--kw-rule);font:500 12px/1.4 Geist,system-ui,sans-serif}
 .kd-pill.deny{background:var(--kw-invert-bg);color:var(--kw-invert-fg);border-color:transparent}
 .kd-pill.ask{border-color:var(--kw-fg)}
 .kd-pill.allow{color:var(--kw-green);border-color:currentColor}
@@ -101,12 +95,16 @@ code{font:.9em 'Geist Mono',monospace;background:var(--kw-tint);border:1px solid
 .kd-origin{display:inline-flex;align-items:center;gap:8px;margin:14px 6px 0 0;padding:3px 12px 3px 3px;border-radius:999px;background:var(--kw-invert-bg);color:var(--kw-invert-fg);font:10px/1.7 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase}
 .kd-origin img{width:22px;height:22px;border-radius:50%;object-fit:cover}
 .kd-origin.kwa{padding:3px 12px}
-.kd-av{width:56px;height:56px;border-radius:50%;object-fit:cover;border:1px solid var(--kw-rule);margin-bottom:14px;display:block}
+.kd-av{width:24px;height:24px;border-radius:50%;object-fit:cover;border:1px solid var(--kw-rule);flex:none}
 .kd-origin.kwa{background:transparent;color:var(--kw-fg);border:1px solid var(--kw-fg)}
-.kd-src{display:grid;gap:12px}
-.kd-src .kd-card{display:grid;grid-template-columns:230px minmax(0,1fr);gap:8px 32px}
-.kd-src a{display:inline-block;margin-top:8px;font:12px 'Geist Mono',monospace;color:var(--kw-body);word-break:break-all}
-.kd-tag{display:inline-block;margin:10px 6px 0 0;padding:3px 9px;border:1px solid var(--kw-rule);border-radius:999px;font:11px 'Geist Mono',monospace;color:var(--kw-body)}
+.kd-src{border:1px solid var(--kw-rule);border-radius:10px}
+.kd-src .kd-card{display:grid;grid-template-columns:260px minmax(0,1fr);gap:4px 32px;padding:14px 18px;border:0;border-radius:0;border-top:1px solid var(--kw-rule)}
+.kd-src .kd-card:first-child{border-top:0}
+.kd-src .who{display:flex;align-items:center;gap:10px}
+.kd-src h3{font:500 15px Geist,sans-serif;margin:0}
+.kd-src .sub{margin-top:4px;font-size:12px;color:var(--kw-mut)}
+.kd-src a{color:var(--kw-body);text-decoration:underline;text-underline-offset:2px}
+.kd-tag{display:inline-block;margin:6px 6px 0 0;padding:2px 7px;border:1px solid var(--kw-rule);border-radius:6px;font:12px 'Geist Mono',monospace;color:var(--kw-body)}
 .kd-loop{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:34px}
 .kd-node{position:relative;padding:20px;border:1px solid var(--kw-rule);border-radius:20px}
 .kd-node:not(:last-child)::after{content:"→";position:absolute;right:-28px;top:50%;translate:0 -50%;font:16px 'Geist Mono',monospace;color:var(--kw-mut)}
@@ -122,15 +120,14 @@ code{font:.9em 'Geist Mono',monospace;background:var(--kw-tint);border:1px solid
 .kd-wrap th{font:400 11px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--kw-mut);text-align:left;padding:14px 20px;border-bottom:1px solid var(--kw-rule)}
 .kd-wrap td{padding:14px 20px;border-top:1px solid var(--kw-rule-soft);vertical-align:top;color:var(--kw-body);line-height:1.6}
 .kd-wrap td:first-child{color:var(--kw-fg);font-weight:500}
-details{border-top:1px solid var(--kw-rule);padding:20px 0}
-details summary{cursor:pointer;font:500 18px Geist,sans-serif;min-height:44px;display:flex;align-items:center}
-details p{margin:10px 0 0;color:var(--kw-body);max-width:68ch}
+#limites details{border-top:1px solid var(--kw-rule);padding:20px 0}
+#limites details summary{cursor:pointer;font:500 18px Geist,sans-serif;min-height:44px;display:flex;align-items:center}
+#limites details p{margin:10px 0 0;color:var(--kw-body);max-width:68ch}
 .kd-rv{opacity:1;transform:none}
 .js .kd-rv{opacity:0;transform:translateY(18px);transition:opacity .88s var(--kw-ease),transform .88s var(--kw-ease)}
 .js .kd-rv.in{opacity:1;transform:none}
 footer.kw-footer{margin-top:128px}
-@media (max-width:1023px){.kd-g4{grid-template-columns:repeat(2,minmax(0,1fr))}.kd-nav{display:none}}
-@media (max-width:900px){
+@media (max-width:1023px){.kd-g4{grid-template-columns:repeat(2,minmax(0,1fr))}@media (max-width:900px){
   .kd-stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.kd-g2,.kd-g3{grid-template-columns:minmax(0,1fr)}
   .kd-flow{grid-template-columns:minmax(0,1fr)}.kd-steps{grid-template-columns:repeat(2,minmax(0,1fr))}.kd-panel{padding:22px;min-height:0}.kd-panel .cols{grid-template-columns:minmax(0,1fr)}
   .kd-loop{grid-template-columns:minmax(0,1fr)}.kd-node:not(:last-child)::after{content:"↓";right:auto;left:50%;top:auto;bottom:-30px;translate:-50% 0}
@@ -139,18 +136,11 @@ footer.kw-footer{margin-top:128px}
   .kd-ob .item{grid-template-columns:minmax(0,1fr);padding:18px}.kd-ob .num{display:none}.kd-section{padding-top:88px}.kd-brand span{display:none}
 }
 @media (prefers-reduced-motion:reduce){.js .kd-rv{opacity:1;transform:none;transition:none}}
-@media print{.kd-bar{display:none}.js .kd-rv{opacity:1;transform:none}}
-</style>
+@media print{</style>
 </head>
 <body class="kw">
-<div class="kd-bar"><div class="kw-container row">
-  <a class="kd-brand" href="#top" aria-label="Kwa, accueil"><b class="kd-word">kwa</b><span>/ harness</span></a>
-  <nav class="kd-nav" aria-label="Sections">
-    <a href="#carte">Carte</a><a href="#board">Circuit</a><a href="#terminal">Terminal</a><a href="#gardes">Gardes</a><a href="#modules">Modules</a><a href="#skills">Skills</a><a href="#memoire">Mémoire</a><a href="#demarrer">Démarrer</a><a href="parcours.html">Parcours</a><a href="#credits">Crédits</a>
-  </nav>
-  <button type="button" class="kd-theme" id="theme" aria-label="Passer en thème clair" title="Changer de thème"><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></svg><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 14.6A8.4 8.4 0 0 1 9.4 3.8a8.4 8.4 0 1 0 10.8 10.8z"/></svg></button>
-</div></div>
-
+<!--TOPBAR-->
+<div class="kd-layout"><!--SIDEBAR--><div class="kd-main">
 <main>
 <header class="kw-container kw-hero" id="top">
   <div class="kd-eyebrow">Kwa · Kit · Workflow · Agents · v<span id="ver"></span></div>
@@ -182,15 +172,14 @@ footer.kw-footer{margin-top:128px}
   </div>
 </section>
 
-<section class="kw-container kd-section kd-rv" id="principes">
-  <div class="kd-head"><div class="kd-eyebrow">Principes</div><h2 class="kw-section-title">Quatre idées, pas plus</h2></div>
-  <div class="kd-grid kd-g2" style="margin-top:40px">
-    <div class="kd-card"><h3>Un noyau, des modules, une politique</h3><p>Le noyau est commun. Les modules s'activent selon la stack détectée (monorepo, Prisma, Expo, Scaleway…). Tout le spécifique d'un projet vit dans <code>.claude/kwa.policy.json</code>, qui appartient au projet et n'est jamais écrasé.</p></div>
-    <div class="kd-card"><h3>Une source unique</h3><p><code>AGENTS.md</code> fait foi. <code>CLAUDE.md</code> n'est qu'un pointeur <code>@AGENTS.md</code>. Kwa n'écrit que dans son bloc balisé ; le reste du fichier reste au projet, octet pour octet.</p></div>
-    <div class="kd-card"><h3>Des filets, pas une prison</h3><p>Les gardes attrapent la bévue : un <code>cat .env</code>, un push sur main, un <code>rm</code> hors du projet. Ils ne protègent pas contre un agent hostile ; pour cela, protection de branche GitHub et <code>permissions.deny</code>. Une erreur interne d'un garde demande à l'humain, jamais un passage silencieux.</p></div>
-    <div class="kd-card"><h3>Kwa ne touche jamais à git</h3><p>Il n'ajoute, ne commite, ne pousse rien. Un fichier modifié à la main est sauvegardé avant d'être remplacé. Les gabarits GitHub sont copiés une fois, puis laissés au projet.</p></div>
-  </div>
+<!--TREE-->
+
+<section class="kw-container kd-section kd-rv" id="demarrer">
+  <div class="kd-head"><div class="kd-eyebrow">Démarrer</div><h2 class="kw-section-title">Quatre commandes</h2>
+    <p class="kd-lead">Aucune ne modifie git. Les deux premières n'écrivent rien du tout.</p></div>
+  <div class="kd-ob" id="ob" style="margin-top:40px"></div>
 </section>
+
 
 <section class="kw-container kd-section kd-rv" id="carte">
   <div class="kd-head"><div class="kd-eyebrow">Carte des skills</div><h2 class="kw-section-title">Chaque skill, chaque garde, et comment ils s'enchaînent</h2>
@@ -213,25 +202,19 @@ footer.kw-footer{margin-top:128px}
   <p class="kd-note"><a href="terminal.html">Ouvrir le terminal en plein écran ↗</a></p>
 </section>
 
+<section class="kw-container kd-section kd-rv" id="skills">
+  <div class="kd-head"><div class="kd-eyebrow">Skills</div><h2 class="kw-section-title"><span id="nskills"></span> skills, classées par famille</h2>
+    <p class="kd-lead">Chaque skill dit quand l'utiliser. L'étiquette indique ce dont elle s'inspire ; « Kwa » signifie une conception propre. Aucun texte n'est recopié : tout est réécrit en français et branché sur la politique du projet.</p></div>
+  <div class="kd-tools" id="sk-tools"></div>
+  <div class="kd-sk" id="sk"></div>
+</section>
+
 <section class="kw-container kd-section kd-rv" id="gardes">
   <div class="kd-head"><div class="kd-eyebrow">Gardes en action</div><h2 class="kw-section-title">Ce que Kwa refuse, demande ou laisse passer</h2>
     <p class="kd-lead">Chaque ligne a été calculée en exécutant réellement les gardes sur un dépôt de test avec une politique d'exemple (monorepo web, API et mobile Expo). Rien n'est écrit à la main.</p></div>
   <div class="kd-tools" id="tools"></div>
   <div class="kd-table" id="table"></div>
   <p class="kd-note" id="gnote"></p>
-</section>
-
-<section class="kw-container kd-section kd-rv" id="modules">
-  <div class="kd-head"><div class="kd-eyebrow">Modules</div><h2 class="kw-section-title">On n'installe que ce qui sert</h2>
-    <p class="kd-lead">Kwa propose les modules selon la stack détectée. Le noyau est toujours là. Cliquer une carte pour voir ce qu'elle installe.</p></div>
-  <div class="kd-grid kd-g3" id="mods" style="margin-top:40px"></div>
-</section>
-
-<section class="kw-container kd-section kd-rv" id="skills">
-  <div class="kd-head"><div class="kd-eyebrow">Skills</div><h2 class="kw-section-title"><span id="nskills"></span> skills, classées par famille</h2>
-    <p class="kd-lead">Chaque skill dit quand l'utiliser. L'étiquette indique ce dont elle s'inspire ; « Kwa » signifie une conception propre. Aucun texte n'est recopié : tout est réécrit en français et branché sur la politique du projet.</p></div>
-  <div class="kd-tools" id="sk-tools"></div>
-  <div class="kd-sk" id="sk"></div>
 </section>
 
 <section class="kw-container kd-section kd-rv" id="memoire">
@@ -251,12 +234,6 @@ footer.kw-footer{margin-top:128px}
     <div class="kd-card"><h3>Base de connaissance</h3><p>Transverse aux projets : capture rapide dans la boîte de réception de l'équipe (<code>KWA_VAULT_INBOX</code>), jamais dans un fichier protégé.</p></div>
   </div>
   <div class="kd-gate"><b>Accord requis</b><span>Un tableau de sept lignes maximum est présenté avec les diffs. Rien n'est appliqué sans « tout », « 1 et 3 » ou « rien ». « Rien à capitaliser » est une réponse valable.</span></div>
-</section>
-
-<section class="kw-container kd-section kd-rv" id="demarrer">
-  <div class="kd-head"><div class="kd-eyebrow">Démarrer</div><h2 class="kw-section-title">Quatre commandes</h2>
-    <p class="kd-lead">Aucune ne modifie git. Les deux premières n'écrivent rien du tout.</p></div>
-  <div class="kd-ob" id="ob" style="margin-top:40px"></div>
 </section>
 
 <section class="kw-container kd-section kd-rv" id="superpowers">
@@ -286,12 +263,6 @@ footer.kw-footer{margin-top:128px}
   <pre class="kd-code" id="detect"></pre>
 </section>
 
-<section class="kw-container kd-section kd-rv" id="credits">
-  <div class="kd-head"><div class="kd-eyebrow">Crédits</div><h2 class="kw-section-title">Ce que Kwa doit aux autres projets</h2>
-    <p class="kd-lead">Kwa n'invente pas tout. Il assemble des idées éprouvées par d'autres, relues, réécrites et testées pour un flux par pull request. Chaque source est sous licence MIT ; les textes de licence sont dans <code>licenses/</code>.</p></div>
-  <div class="kd-src" id="src" style="margin-top:40px"></div>
-</section>
-
 <section class="kw-container kd-section kd-rv" id="limites">
   <div class="kd-head"><div class="kd-eyebrow">Limites et suite</div><h2 class="kw-section-title">Ce qui reste à faire</h2></div>
   <div style="margin-top:40px">
@@ -301,13 +272,21 @@ footer.kw-footer{margin-top:128px}
   <details><summary>Ce que Kwa ne décide pas pour toi</summary><p>Le contenu de la politique d'un projet (commandes interdites, environnements, pré-vols) vient de tes incidents. Kwa pré-remplit ce qu'il peut déduire et te laisse le reste. Le module <code>client-handover</code> n'est jamais déduit : il dépend de l'intention.</p></details>
   </div>
 </section>
+
+<section class="kw-container kd-section kd-rv" id="credits">
+  <div class="kd-head"><div class="kd-eyebrow">Crédits</div><h2 class="kw-section-title">Ce que Kwa doit aux autres projets</h2>
+    <p class="kd-lead">Kwa reprend des idées éprouvées ailleurs, réécrites et testées pour un flux par pull request. Sources sous licence MIT, textes dans <code>licenses/</code>.</p></div>
+  <div class="kd-src" id="src" style="margin-top:24px"></div>
+</section>
+
 </main>
+</div></div>
 
 <footer class="kw-footer"><div class="kw-container kw-footer-grid">
   <div><b class="kd-word kd-word--big">kwa</b></div>
   <div><h3>Kwa</h3><p>v<span id="ver2"></span><br><span id="tests"></span></p></div>
   <div><h3>Documentation</h3><p>Régénérée par <code>docs/site/build.py</code> ; exemples calculés en exécutant les gardes.</p></div>
-  <div><h3>Design</h3><p>Design system du site, fichiers vendorisés dans <code>docs/site/ds/</code>.</p></div>
+  <div><h3>Style</h3><p>Feuille de style écrite pour ce site ; polices Geist, licence SIL OFL.</p></div>
 </div></footer>
 
 <script src="data.js"></script>
@@ -367,17 +346,6 @@ function renderTable(){
 }
 renderTools(); renderTable();
 
-/* modules */
-DATA.modules.forEach(m=>{
-  const files = m.files.filter(f=>!m.seeds.includes(f));
-  const sub = t => `<div style="margin-top:10px;color:var(--kw-fg)">${t}</div>`;
-  const b = el('button',{class:'kd-card',type:'button','aria-expanded':'false'},
-   `<div style="display:flex;justify-content:space-between;gap:12px;align-items:start"><h3>${m.name}</h3>${m.always?'<span class="kd-fam">toujours</span>':''}</div><p>${esc(m.about)}</p>
-    <div class="det" hidden style="margin-top:16px;padding-top:16px;border-top:1px solid var(--kw-rule-soft);font:12px/1.8 'Geist Mono',monospace;color:var(--kw-body);word-break:break-all">${files.map(f=>`<div>${esc(f)}</div>`).join('')}${m.seeds.length?sub('gabarits (copiés une fois, au projet ensuite)')+m.seeds.map(f=>`<div>${esc(f)}</div>`).join(''):''}${m.hooks.length?sub('hooks branchés')+m.hooks.map(h=>`<div>${esc(h)}</div>`).join(''):''}${m.policy.length?sub('clés de politique')+`<div>${m.policy.join(', ')}</div>`:''}${(!files.length&&!m.seeds.length&&!m.hooks.length)?'<div>Règles de politique uniquement : aucun fichier installé.</div>':''}</div>`);
-  b.onclick=()=>{ const open = b.getAttribute('aria-expanded')!=='true'; b.setAttribute('aria-expanded',open); $('.det',b).hidden=!open; };
-  $('#mods').append(b);
-});
-
 /* skills */
 const FAMILIES = {cadrage:['interview','brainstorm','plan','tickets','questionnaire','prototype','architecture','rephrase'], faire:['execute','agents','parallel','tdd','simple','start-dev'], prouver:['debug','verify','review','review-feedback','audit'], livrer:['commit','ship','deploy','testflight','humanize'], memoire:['learn','handoff','agent-docs']};
 const FLAB = {cadrage:'Cadrer', faire:'Faire', prouver:'Prouver', livrer:'Livrer', memoire:'Mémoire'};
@@ -420,7 +388,8 @@ $('#maptable').innerHTML = '<tr><th>Outillage maison</th><th>Dans Kwa</th></tr>'
 $('#detect').textContent = DATA.detect.trim();
 
 /* crédits */
-$('#src').innerHTML = DATA.credits.sources.map(s=>`<div class="kd-card"><div><img class="kd-av" src="${esc((DATA.map.origins[s.id]||{}).avatar)}" alt="Avatar de ${esc(s.author)}" width="56" height="56"><h3>${esc(s.author)}</h3><p>${esc(s.name)} · ${esc(s.license)} · ${esc(s.ref)}</p><a href="${esc(s.url)}">${esc(s.url)}</a></div><div><p>${esc(s.took)}</p><div>${s.skills.map(k=>`<span class="kd-tag">/kwa-${k}</span>`).join('')}</div></div></div>`).join('') + '<p class="kd-note">Kwa ne copie aucun fichier de ces projets : les textes sont réécrits, les mécanismes réimplémentés et testés. La ligne d\'origine figure à la fin de chaque skill concernée.</p>';
+$('#src').innerHTML = DATA.credits.sources.map(s=>`<div class="kd-card"><div><div class="who"><img class="kd-av" src="${esc((DATA.map.origins[s.id]||{}).avatar)}" alt="" width="24" height="24"><h3>${esc(s.author)}</h3></div><p class="sub"><a href="${esc(s.url)}">${esc(s.name)}</a> · ${esc(s.license)}</p></div><div><p>${esc(s.took)}</p><div>${s.skills.map(k=>`<span class="kd-tag">/kwa-${k}</span>`).join('')}</div></div></div>`).join('') + '<p class="kd-note">Kwa ne copie aucun fichier de ces projets : les textes sont réécrits, les mécanismes réimplémentés et testés. La ligne d\'origine figure à la fin de chaque skill concernée.</p>';
 </script>
+<script src="src/shell.js"></script>
 </body>
 </html>

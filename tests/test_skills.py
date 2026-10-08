@@ -136,8 +136,8 @@ class Parcours(unittest.TestCase):
             text = self.page(name)
             for n in range(1, count + 1):
                 self.assertIn(f'id="etape-{n}"', text, name)
-        self.assertIn("parcours-widgets.js", self.page("parcours-culture.html"))
-        self.assertTrue(os.path.isfile(os.path.join(self.SITE, "src", "parcours-widgets.js")))
+        self.assertIn("parcours.js", self.page("parcours-culture.html"))
+        self.assertTrue(os.path.isfile(os.path.join(self.SITE, "src", "parcours.js")))
 
     def test_hub_links_the_three_parcours(self):
         text = self.page("parcours.html")
@@ -164,7 +164,108 @@ class Parcours(unittest.TestCase):
 
     def test_linked_from_home_and_readme(self):
         self.assertIn("parcours.html", open(os.path.join(PACK, "README.md"), encoding="utf-8").read())
-        self.assertIn("parcours.html", open(os.path.join(self.SITE, "template.html"), encoding="utf-8").read())
+        self.assertIn("parcours.html", self.page("index.html"))
+
+
+class ParcoursVisuals(unittest.TestCase):
+    """Explications visuelles des parcours : éléments présents, couleurs par parcours, mouvement réduit respecté."""
+    SITE = os.path.join(PACK, "docs", "site")
+
+    def read(self, *parts):
+        return open(os.path.join(self.SITE, *parts), encoding="utf-8").read()
+
+    def test_token_and_context_widgets_have_their_elements(self):
+        page = self.read("parcours-culture.html")
+        for needle in ("tok-chips", "tok-replay", "ctx-stack", "data-ctx-play", "data-ctx-compact", "Découpage illustratif"):
+            self.assertIn(needle, page, needle)
+        for seg in ("sys", "rules", "tools", "hist", "files", "res"):
+            self.assertIn(f'id="seg-{seg}"', page, seg)
+
+    def test_script_ids_exist_in_the_page(self):
+        js = self.read("src", "parcours.js")
+        page = self.read("parcours-culture.html")
+        for ident in set(re.findall(r"\$\('#([a-z-]+)'\)", js)):
+            self.assertIn(f'id="{ident}"', page, ident)
+
+    def test_each_parcours_has_its_own_accent(self):
+        css = self.read("src", "parcours.css")
+        for name in ("culture", "contexte", "harness"):
+            self.assertIn(f'data-acc="{name}"', self.read(f"parcours-{name}.html"), name)
+            self.assertIn(f'[data-acc="{name}"]', css, name)
+
+    def test_motion_is_skipped_when_reduced(self):
+        self.assertIn("prefers-reduced-motion", self.read("src", "parcours.css"))
+        self.assertIn("prefers-reduced-motion", self.read("src", "parcours.js"))
+
+
+class Shell(unittest.TestCase):
+    """Barre latérale de navigation et arborescence : générées, identiques partout, avec de vrais liens."""
+    SITE = os.path.join(PACK, "docs", "site")
+
+    def pages(self):
+        return [f for f in sorted(os.listdir(self.SITE)) if f.endswith(".html") and f != "template.html"]
+
+    def read(self, name):
+        return open(os.path.join(self.SITE, name), encoding="utf-8").read()
+
+    def test_every_page_has_the_same_sidebar_with_its_own_entry_marked(self):
+        self.assertGreaterEqual(len(self.pages()), 8)
+        for name in self.pages():
+            text = self.read(name)
+            self.assertIn('class="kd-side"', text, name)
+            self.assertIn('class="kd-top"', text, name)
+            current = re.findall(r'<a href="([^"]+)" aria-current="page"', text)
+            self.assertEqual(current, [name] if name != "index.html" else ["index.html#top"] if "index.html#top" in current else current, name)
+            self.assertIn("src/shell.js", text, name)
+
+    def test_every_sidebar_target_exists(self):
+        sys.path.insert(0, os.path.join(self.SITE, "src"))
+        import shell
+
+        for page in sorted(set(shell.PAGES)):
+            self.assertTrue(os.path.isfile(os.path.join(self.SITE, page)), page)
+        home = self.read("index.html")
+        for _, _, items in shell.SIDE:
+            for _, target in items:
+                page, _, frag = target.partition("#")
+                if page == "index.html" and frag:
+                    self.assertIn(f'id="{frag}"', home, target)
+
+    def test_tree_is_generated_from_the_manifest_and_every_file_is_described(self):
+        sys.path.insert(0, os.path.join(self.SITE, "src"))
+        import importlib.machinery, importlib.util
+        import tree
+
+        loader = importlib.machinery.SourceFileLoader("kwa_cli_t", os.path.join(PACK, "bin", "kwa"))
+        spec = importlib.util.spec_from_loader("kwa_cli_t", loader)
+        kwa = importlib.util.module_from_spec(spec)
+        loader.exec_module(kwa)
+        man = json.load(open(os.path.join(PACK, "manifest.json"), encoding="utf-8"))["modules"]
+        catalog = {}
+        for d in os.listdir(os.path.join(PACK, "core", "skills")):
+            f = os.path.join(PACK, "core", "skills", d, "SKILL.md")
+            if os.path.isfile(f):
+                m = re.search(r"^description:\s*(.+)$", open(f, encoding="utf-8").read(), re.M)
+                catalog[d] = m.group(1) if m else ""
+        files = tree.project_files(man, kwa.module_files, catalog)
+        installed = {spec["dest"] for m in man.values() for _, spec in kwa.module_files(m)}
+        self.assertTrue(installed <= {f["dest"] for f in files}, "tout ce que le manifeste installe figure dans l'arborescence")
+        for f in files:
+            self.assertTrue(f["desc"].strip(), f"{f['dest']} n'a pas de description")
+            if f["src"]:
+                self.assertTrue(os.path.isfile(os.path.join(PACK, f["src"])), f["src"])
+        home = self.read("index.html")
+        self.assertIn('id="arborescence"', home)
+        self.assertIn(".claude/", home)
+        self.assertNotIn('id="principes"', home)
+
+    def test_tree_links_to_the_map_point_at_real_nodes(self):
+        data = json.loads(self.read("data.js").split("window.KWA=", 1)[1].rstrip().rstrip(";"))
+        nodes = set(data["map"]["nodes"])
+        home = self.read("index.html")
+        targets = set(re.findall(r"skill-map\.html#view=pack&amp;node=([^\"]+)", home))
+        self.assertGreater(len(targets), 20)
+        self.assertEqual(sorted(t for t in targets if t not in nodes), [])
 
 
 class OwnStyle(unittest.TestCase):
@@ -207,7 +308,7 @@ class Neutral(unittest.TestCase):
 class ThemeIcon(unittest.TestCase):
     def test_every_page_uses_an_icon_button_without_visible_label(self):
         site = os.path.join(PACK, "docs", "site")
-        pages = [f for f in os.listdir(site) if f.endswith(".html")]
+        pages = [f for f in os.listdir(site) if f.endswith(".html") and f != "template.html"]
         self.assertGreaterEqual(len(pages), 7)
         for name in pages:
             text = open(os.path.join(site, name), encoding="utf-8").read()
