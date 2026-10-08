@@ -51,12 +51,17 @@
       h('li', null, [h('i', { class: 'kc-key kc-key--deny', 'aria-hidden': 'true' }), 'Refus : un garde bloque'])
     ]);
     var fiche = h('article', { class: 'kc-fiche', 'aria-live': 'polite' });
-    var prev = h('button', { class: 'kc-btn', type: 'button', text: '← Précédent' });
-    var next = h('button', { class: 'kc-btn kc-btn--primary', type: 'button', text: 'Suivant →' });
+    var ICON_PREV = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5 8 12l6.5 6.5"/></svg>';
+    var ICON_NEXT = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 5.5 16 12l-6.5 6.5"/></svg>';
+    var ICON_AGAIN = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12a7 7 0 1 0 2.2-5.1"/><path d="M5 4.5v4.2h4.2"/></svg>';
+    var prev = h('button', { class: 'kc-arrow', type: 'button', 'aria-label': 'Étape précédente', title: 'Étape précédente' });
+    var next = h('button', { class: 'kc-arrow kc-arrow--next', type: 'button', 'aria-label': 'Étape suivante', title: 'Étape suivante' });
+    prev.innerHTML = ICON_PREV; next.innerHTML = ICON_NEXT;
     prev.addEventListener('click', function () { go(st.i - 1); });
     next.addEventListener('click', function () { go(st.i === sc().steps.length - 1 ? 0 : st.i + 1); });
-    var bar = h('div', { class: 'kc-bar' }, [legend, h('div', { class: 'kc-ctrl' }, [prev, next])]);
-    [scen, intro, h('div', { class: 'kc-trackwrap' }, [track]), fiche, bar].forEach(function (e) { root.appendChild(e); });
+    var railrow = h('div', { class: 'kc-railrow' }, [h('div', { class: 'kc-trackwrap' }, [track]), h('div', { class: 'kc-ctrl', role: 'group', 'aria-label': 'Changer d’étape' }, [prev, next])]);
+    var bar = h('div', { class: 'kc-bar' }, [legend]);
+    [scen, intro, railrow, fiche, bar].forEach(function (e) { root.appendChild(e); });
 
     D.SCENARIOS.forEach(function (sc, idx) {
       var b = h('button', { class: 'kc-sc kc-sc--' + sc.id, type: 'button', 'aria-pressed': idx === 0 ? 'true' : 'false' }, [
@@ -112,11 +117,10 @@
       var S = sc(), s = S.steps[st.i], k = kind(s), parts = split(s.caption);
       fiche.textContent = '';
       fiche.className = 'kc-fiche kc-fiche--' + k;
-      var badge = k === 'gate' ? 'Porte : c’est toi qui décides' : (k === 'deny' ? 'Un garde refuse' : 'Automatique, sous les gardes');
+      var spoken = 'Étape ' + (st.i + 1) + ' sur ' + S.steps.length + ', ' + D.COLS[s.col] + (k === 'gate' ? ', porte : c’est toi qui décides' : (k === 'deny' ? ', un garde refuse' : '')) + '. ';
 
       var left = h('div', { class: 'kc-left' });
-      left.appendChild(h('p', { class: 'kc-meta' }, [h('span', { text: 'Étape ' + (st.i + 1) + ' sur ' + S.steps.length + ' · ' + D.COLS[s.col] }), h('span', { class: 'kc-badge kc-badge--' + k, text: badge })]));
-      left.appendChild(h('h3', { class: 'kc-title', text: plain(st.i) }));
+      left.appendChild(h('h3', { class: 'kc-title' }, [h('span', { class: 'kc-sr', text: spoken }), plain(st.i)]));
       left.appendChild(block('Ce qui se passe', [h('p', { text: parts.what })]));
       if (parts.why) left.appendChild(block('Pourquoi', [h('p', { text: cap(parts.why) })]));
       if (s.deny) left.appendChild(block(s.deny.by + ' répond', [h('code', { text: s.deny.msg })], 'kc-block--deny'));
@@ -144,7 +148,7 @@
     function animateIn(dir) {
       if (!st.ready || rm.matches) return;
       fiche.style.setProperty('--kc-dx', (dir * 16) + 'px');
-      Array.prototype.forEach.call(fiche.querySelectorAll('.kc-meta, .kc-title, .kc-block, .kc-rt, .kc-brick, .kc-none'), function (el, k) {
+      Array.prototype.forEach.call(fiche.querySelectorAll('.kc-title, .kc-block, .kc-rt, .kc-brick, .kc-none'), function (el, k) {
         el.style.animationDelay = (k * 35) + 'ms';
         el.classList.add('kc-in');
       });
@@ -160,7 +164,10 @@
         b.classList.toggle('is-done', n < st.i);
       });
       prev.disabled = st.i === 0;
-      next.textContent = st.i === sc().steps.length - 1 ? 'Recommencer' : 'Suivant →';
+      var last = st.i === sc().steps.length - 1;
+      next.innerHTML = last ? ICON_AGAIN : ICON_NEXT;
+      next.setAttribute('aria-label', last ? 'Recommencer le scénario' : 'Étape suivante');
+      next.setAttribute('title', last ? 'Recommencer le scénario' : 'Étape suivante');
       renderFiche();
       animateIn(dir);
       var to = fiche.offsetHeight;

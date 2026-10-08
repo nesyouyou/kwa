@@ -221,6 +221,8 @@ class Circuit(unittest.TestCase):
             labels = re.search(sid + r": \[(.*?)\]", js, re.S).group(1)
             self.assertEqual(len(re.findall(r"'(?:[^'\\]|\\.)*'", labels)), count, sid)
         self.assertIn("data: { COLS: COLS", data)
+        self.assertIn("Étape précédente", js)
+        self.assertIn("Étape suivante", js)
 
 
 class BorderStyle(unittest.TestCase):
