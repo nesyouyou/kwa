@@ -233,8 +233,8 @@ FAILED (failures=2)</pre>
 branche : feat/status-filter
 worktree : mon-projet-wt-status-filter
 
-Travailler dans : mon-projet-wt-status-filter</pre><pre class="kd-code">mon-projet                   98dbf36 [main]
-mon-projet-wt-status-filter  98dbf36 [feat/status-filter]</pre>
+Travailler dans : mon-projet-wt-status-filter</pre><pre class="kd-code">mon-projet                   aea51da [main]
+mon-projet-wt-status-filter  aea51da [feat/status-filter]</pre>
 <p>La suite se joue avec les skills : <code>/kwa-brainstorm</code>, <code>/kwa-plan</code>, <code>/kwa-tdd</code>, <code>/kwa-verify</code>, <code>/kwa-review</code>, <code>/kwa-ship</code>. La page <a href="board.html">Board</a> déroule ce circuit sur une demande réelle, et le <a href="terminal.html">Terminal</a> montre les commandes.</p><div class="pc-proof"><div><b>Preuve attendue</b><p>Conduire un petit changement jusqu'à une PR, avec une preuve que quelqu'un d'autre peut rejouer.</p></div><div><b>Piège</b><p>Versionner n'est pas publier, et un commit n'est pas un déploiement. Chaque étape reste une décision.</p></div></div></div></section>
 <section class="pc-stage" id="etape-8"><div class="pc-num">8</div><div class="pc-main"><h2 class="pc-h">Les limites, sans maquillage</h2><p class="pc-tag">Un garde est un filet contre la bévue, pas une frontière de sécurité.</p><p>Essayez de contourner le garde des secrets. Ces trois commandes lisent le même fichier d'environnement ; seule la forme change :</p>
 <table class="pc-table"><thead><tr><th>Commande</th><th>Verdict réel</th></tr></thead><tbody><tr><td><code>cat $(echo .e)nv</code></td><td><span class="kd-pill allow">passe</span></td></tr><tr><td><code>cat .e*</code></td><td><span class="kd-pill allow">passe</span></td></tr><tr><td><code>python3 -c "print(open('.env').read())"</code></td><td><span class="kd-pill allow">passe</span></td></tr></tbody></table>
