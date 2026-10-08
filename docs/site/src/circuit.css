@@ -56,9 +56,9 @@ html[data-nkui-theme="dark"] .kc { --kc-feature: #7aa7ff; --kc-bug: #b79bff; --k
 .kc-key--deny { border: 2px dashed var(--kc-deny); }
 
 /* ---------- fiche ---------- */
-.kc-fiche { margin-top: 18px; padding: 32px 40px 36px; border: 1px solid var(--nkui-rule); border-top: 4px solid var(--acc); border-radius: 24px; }
-.kc-fiche--gate { border-top-color: var(--kc-gate); background: color-mix(in srgb, var(--kc-gate) 6%, transparent); }
-.kc-fiche--deny { border-top-color: var(--kc-deny); background: color-mix(in srgb, var(--kc-deny) 5%, transparent); }
+.kc-fiche { margin-top: 18px; padding: 32px 40px 36px; border: 1.5px solid color-mix(in srgb, var(--acc) 60%, var(--nkui-rule)); border-radius: 24px; background: color-mix(in srgb, var(--acc) 4%, transparent); }
+.kc-fiche--gate { border-color: var(--kc-gate); background: color-mix(in srgb, var(--kc-gate) 6%, transparent); }
+.kc-fiche--deny { border-color: var(--kc-deny); background: color-mix(in srgb, var(--kc-deny) 5%, transparent); }
 .kc-cols { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 56px; }
 .kc-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; font-size: 14px; color: var(--nkui-mut); }
 .kc-badge { padding: 4px 14px; border-radius: 999px; border: 1px solid var(--nkui-rule); font: 500 12px/1.5 Geist, sans-serif; color: var(--nkui-body); }
@@ -89,8 +89,6 @@ html[data-nkui-theme="dark"] .kc { --kc-feature: #7aa7ff; --kc-bug: #b79bff; --k
 .kc-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 22px; background: transparent; border: 1px solid var(--nkui-rule); border-radius: 999px; font-size: 15px; }
 .kc-btn:disabled { opacity: .4; cursor: not-allowed; }
 .kc-btn--primary { background: var(--acc); border-color: transparent; color: var(--kc-ink); font-weight: 600; }
-.kc-fiche--gate .kc-btn--primary { background: var(--kc-gate); }
-.kc-fiche--deny .kc-btn--primary { background: var(--kc-deny); }
 @media (hover: hover) { .kc-btn:not(.kc-btn--primary):not(:disabled):hover { background: var(--nkui-tint); } .kc-btn--primary:hover { filter: brightness(1.08); } }
 
 @media (max-width: 899px) {

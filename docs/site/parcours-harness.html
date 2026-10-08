@@ -73,7 +73,7 @@ code{font:.9em 'Geist Mono',monospace;background:var(--nkui-tint);border:1px sol
 .kd-legend{display:flex;flex-wrap:wrap;gap:10px 22px;margin:0 0 26px;font:400 11px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--nkui-body)}
 .kd-legend span{display:inline-flex;align-items:center;gap:9px}
 .sw{width:24px;height:14px;display:inline-block;border:1px solid var(--nkui-fg);border-radius:3px}
-.sw.hook{border-style:dashed}.sw.agent{border-style:double;border-width:4px}.sw.garde{border-color:var(--nkui-rule);border-left:4px solid var(--nkui-fg)}.sw.humain{background:var(--nkui-invert-bg);border-radius:10px;border-color:transparent}
+.sw.hook{border-style:dashed}.sw.agent{border-style:double;border-width:4px}.sw.garde{border:2px solid var(--nkui-fg)}.sw.humain{background:var(--nkui-invert-bg);border-radius:10px;border-color:transparent}
 .kd-track{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:34px 36px}
 .kd-brick{position:relative;text-align:left;font:inherit;color:inherit;background:transparent;border:1px solid var(--nkui-fg);border-radius:12px;padding:16px 18px;transition:translate .2s ease,background .2s ease}
 .kd-brick:hover{translate:0 -2px;background:var(--nkui-tint)}
@@ -84,7 +84,7 @@ code{font:.9em 'Geist Mono',monospace;background:var(--nkui-tint);border:1px sol
 .kd-brick .when{display:block;margin-top:10px;font:400 11px/1.5 'Geist Mono',monospace;letter-spacing:.04em;color:var(--nkui-mut)}
 .kd-brick.hook{border:1px dashed var(--nkui-fg)}
 .kd-brick.agent{border:4px double var(--nkui-fg);padding:13px 15px}
-.kd-brick.garde{border-color:var(--nkui-rule);border-left:4px solid var(--nkui-fg)}
+.kd-brick.garde{border:2px solid var(--nkui-fg)}
 .kd-brick.humain{background:var(--nkui-invert-bg);color:var(--nkui-invert-fg);border-color:transparent;border-radius:28px;padding:18px 22px}
 .kd-brick.humain .ty,.kd-brick.humain .d,.kd-brick.humain .when{color:var(--nkui-invert-fg);opacity:.75}
 .kd-brick:not(:last-child)::after{content:"→";position:absolute;right:-28px;top:50%;translate:0 -50%;font:16px 'Geist Mono',monospace;color:var(--nkui-mut)}
@@ -232,8 +232,8 @@ FAILED (failures=2)</pre>
 branche : feat/status-filter
 worktree : mon-projet-wt-status-filter
 
-Travailler dans : mon-projet-wt-status-filter</pre><pre class="kd-code">mon-projet                   bd33ca8 [main]
-mon-projet-wt-status-filter  bd33ca8 [feat/status-filter]</pre>
+Travailler dans : mon-projet-wt-status-filter</pre><pre class="kd-code">mon-projet                   d509766 [main]
+mon-projet-wt-status-filter  d509766 [feat/status-filter]</pre>
 <p>La suite se joue avec les skills : <code>/kwa-brainstorm</code>, <code>/kwa-plan</code>, <code>/kwa-tdd</code>, <code>/kwa-verify</code>, <code>/kwa-review</code>, <code>/kwa-ship</code>. La page <a href="board.html">Board</a> déroule ce circuit sur une demande réelle, et le <a href="terminal.html">Terminal</a> montre les commandes.</p><div class="pc-proof"><div><b>Preuve attendue</b><p>Conduire un petit changement jusqu'à une PR, avec une preuve que quelqu'un d'autre peut rejouer.</p></div><div><b>Piège</b><p>Versionner n'est pas publier, et un commit n'est pas un déploiement. Chaque étape reste une décision.</p></div></div></div></section>
 <section class="pc-stage" id="etape-8"><div class="pc-num">8</div><div class="pc-main"><h2 class="pc-h">Les limites, sans maquillage</h2><p class="pc-tag">Un garde est un filet contre la bévue, pas une frontière de sécurité.</p><p>Essayez de contourner le garde des secrets. Ces trois commandes lisent le même fichier d'environnement ; seule la forme change :</p>
 <table class="pc-table"><thead><tr><th>Commande</th><th>Verdict réel</th></tr></thead><tbody><tr><td><code>cat $(echo .e)nv</code></td><td><span class="kd-pill allow">passe</span></td></tr><tr><td><code>cat .e*</code></td><td><span class="kd-pill allow">passe</span></td></tr><tr><td><code>python3 -c "print(open('.env').read())"</code></td><td><span class="kd-pill allow">passe</span></td></tr></tbody></table>

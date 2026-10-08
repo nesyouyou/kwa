@@ -223,5 +223,22 @@ class Circuit(unittest.TestCase):
         self.assertIn("data: { COLS: COLS", data)
 
 
+class BorderStyle(unittest.TestCase):
+    """Choix de style : un trait épais d'un seul côté est permis sur un rectangle, jamais sur un coin arrondi."""
+
+    def test_no_thick_one_sided_border_on_rounded_box(self):
+        site = os.path.join(PACK, "docs", "site")
+        files = [os.path.join(site, "template.html")] + [os.path.join(site, "src", f) for f in os.listdir(os.path.join(site, "src")) if f.endswith(".css")]
+        bad = []
+        for path in files:
+            text = open(path, encoding="utf-8").read()
+            for rule in re.findall(r"[^{}]+\{[^{}]*\}", text):
+                one_side = re.search(r"border-(?:left|right|top|bottom)\s*:\s*([2-9]|\d{2,})px", rule)
+                radius = re.search(r"border-radius\s*:\s*([1-9]\d*)px", rule)
+                if one_side and radius and int(radius.group(1)) >= 6:
+                    bad.append(os.path.basename(path) + " : " + rule.strip()[:90])
+        self.assertEqual(bad, [])
+
+
 if __name__ == "__main__":
     unittest.main()
