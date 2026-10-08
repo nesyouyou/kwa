@@ -463,5 +463,5 @@
     return root.__kwaBoard;
   }
 
-  window.KwaBoard = { mount: mount };
+  window.KwaBoard = { mount: mount, data: { COLS: COLS, TYPES: TYPES, SCENARIOS: SCENARIOS } };
 })();

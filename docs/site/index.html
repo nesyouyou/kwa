@@ -7,7 +7,7 @@
 <meta name="description" content="Mêmes règles, mêmes garde-fous, mêmes skills sur tous vos projets avec un agent de code.">
 <script>try{if(localStorage.getItem('kwa-docs-theme')==='light')document.documentElement.dataset.nkuiTheme='light'}catch(e){}</script>
 <link rel="stylesheet" href="ds/fonts.css"><link rel="stylesheet" href="ds/tokens.css"><link rel="stylesheet" href="ds/base.css">
-<link rel="stylesheet" href="src/map.css"><link rel="stylesheet" href="src/board.css"><link rel="stylesheet" href="src/terminal.css">
+<link rel="stylesheet" href="src/map.css"><link rel="stylesheet" href="src/board.css"><link rel="stylesheet" href="src/circuit.css"><link rel="stylesheet" href="src/terminal.css">
 <style>
 /* Extensions propres à la documentation Kwa. Uniquement les tokens du design system : aucune couleur ajoutée. */
 html{scroll-behavior:smooth;overflow-x:clip}
@@ -146,7 +146,7 @@ footer.nkds-footer{margin-top:128px}
 <div class="kd-bar"><div class="nkds-container row">
   <a class="kd-brand" href="#top" aria-label="Kwa, accueil"><b class="kd-word">kwa</b><span>/ harness</span></a>
   <nav class="kd-nav" aria-label="Sections">
-    <a href="#carte">Carte</a><a href="#board">Board</a><a href="#terminal">Terminal</a><a href="#gardes">Gardes</a><a href="#modules">Modules</a><a href="#skills">Skills</a><a href="#memoire">Mémoire</a><a href="#demarrer">Démarrer</a><a href="parcours.html">Parcours</a><a href="#credits">Crédits</a>
+    <a href="#carte">Carte</a><a href="#board">Circuit</a><a href="#terminal">Terminal</a><a href="#gardes">Gardes</a><a href="#modules">Modules</a><a href="#skills">Skills</a><a href="#memoire">Mémoire</a><a href="#demarrer">Démarrer</a><a href="parcours.html">Parcours</a><a href="#credits">Crédits</a>
   </nav>
   <button type="button" class="kd-theme" id="theme" aria-label="Passer en thème clair" title="Changer de thème"><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></svg><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 14.6A8.4 8.4 0 0 1 9.4 3.8a8.4 8.4 0 1 0 10.8 10.8z"/></svg></button>
 </div></div>
@@ -158,7 +158,7 @@ footer.nkds-footer{margin-top:128px}
   <p class="nkds-lead">Un socle de process de développement pour travailler avec des agents de code : règles, garde-fous, skills, mémoire et circuit de travail, les mêmes sur chaque projet. Ce qui change d'un projet à l'autre tient dans un fichier de politique.</p>
   <div class="nkds-actions">
     <a class="nkds-btn nkds-btn--primary" href="#carte">Voir la carte <span aria-hidden="true">↗</span></a>
-    <a class="nkds-btn" href="#board">Regarder le board</a>
+    <a class="nkds-btn" href="#board">Suivre une demande</a>
     <a class="nkds-link" href="#terminal">Ouvrir le terminal <span aria-hidden="true">→</span></a>
   </div>
   <div class="kd-term">
@@ -190,10 +190,10 @@ footer.nkds-footer{margin-top:128px}
 </section>
 
 <section class="nkds-container kd-section kd-rv" id="board">
-  <div class="kd-head"><div class="kd-eyebrow">Le board</div><h2 class="nkds-section-title">Une demande,<br>de bout en <strong>bout.</strong></h2>
-    <p class="kd-lead">Une carte traverse le flux et déclenche, à chaque étape, des skills, des hooks, des sous-agents et des gardes. À toi de décider aux portes. Choisir un scénario puis lancer la lecture.</p></div>
+  <div class="kd-head"><div class="kd-eyebrow">Le circuit</div><h2 class="nkds-section-title">Une demande,<br>de bout en <strong>bout.</strong></h2>
+    <p class="kd-lead">Chaque étape dit ce qui se passe, pourquoi, quelles briques se déclenchent, et qui décide. Choisis un scénario, puis avance avec les boutons ou les flèches du clavier : la fiche reste au même endroit.</p></div>
   <div id="board-root" style="margin-top:40px"></div>
-  <p class="kd-note"><a href="board.html">Ouvrir le board en plein écran ↗</a></p>
+  <p class="kd-note"><a href="board.html">Ouvrir le circuit en plein écran ↗</a></p>
 </section>
 
 <section class="nkds-container kd-section kd-rv" id="terminal">
@@ -301,7 +301,7 @@ footer.nkds-footer{margin-top:128px}
 </div></footer>
 
 <script src="data.js"></script>
-<script src="src/map.js"></script><script src="src/board.js"></script><script src="src/terminal.js"></script>
+<script src="src/map.js"></script><script src="src/board.js"></script><script src="src/circuit.js"></script><script src="src/terminal.js"></script>
 <script>
 const DATA = window.KWA;
 document.documentElement.classList.add('js');
@@ -333,7 +333,7 @@ const nHooks = DATA.modules.reduce((n,m)=>n+m.files.filter(f=>f.includes('/hooks
 
 /* widgets */
 DATA.map && window.KwaMap && KwaMap.mount($('#map'), DATA.map);
-window.KwaBoard && KwaBoard.mount($('#board-root'));
+window.KwaCircuit && KwaCircuit.mount($('#board-root'));
 DATA.terminal && window.KwaTerminal && KwaTerminal.mount($('#term-root'), DATA.terminal);
 
 /* gardes */

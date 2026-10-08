@@ -199,5 +199,29 @@ class ThemeIcon(unittest.TestCase):
             self.assertNotIn("Thème sombre</button>", text, name)
 
 
+class Circuit(unittest.TestCase):
+    SITE = os.path.join(PACK, "docs", "site")
+
+    def read(self, *p):
+        return open(os.path.join(self.SITE, *p), encoding="utf-8").read()
+
+    def test_pages_mount_the_circuit_not_the_animated_board(self):
+        for name in ("board.html", "index.html"):
+            text = self.read(name)
+            self.assertIn("circuit.js", text, name)
+            self.assertIn("KwaCircuit.mount", text, name)
+            self.assertNotIn("KwaBoard.mount", text, name)
+
+    def test_no_autoplay_and_every_step_has_a_label(self):
+        js = self.read("src", "circuit.js")
+        for banned in ("setInterval", "setTimeout", "Pause", "Vitesse", "Rejouer"):
+            self.assertNotIn(banned, js, "le circuit ne se lit pas tout seul : rien ne doit bouger hors de l'action de la personne")
+        data = self.read("src", "board.js")
+        for sid, count in (("feature", 12), ("bug", 8), ("delivery", 10)):
+            labels = re.search(sid + r": \[(.*?)\]", js, re.S).group(1)
+            self.assertEqual(len(re.findall(r"'(?:[^'\\]|\\.)*'", labels)), count, sid)
+        self.assertIn("data: { COLS: COLS", data)
+
+
 if __name__ == "__main__":
     unittest.main()
