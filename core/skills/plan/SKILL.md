@@ -1,6 +1,6 @@
 ---
-name: kata-plan
-description: Transformer une spec approuvée (ou des exigences claires) en plan d'implémentation avant de toucher au code. À utiliser quand une tâche demande plusieurs étapes ou plusieurs fichiers, après /kata-brainstorm, ou quand l'utilisateur dit « fais-moi le plan », « découpe en tâches », « prépare l'implémentation ».
+name: kwa-plan
+description: Transformer une spec approuvée (ou des exigences claires) en plan d'implémentation avant de toucher au code. À utiliser quand une tâche demande plusieurs étapes ou plusieurs fichiers, après /kwa-brainstorm, ou quand l'utilisateur dit « fais-moi le plan », « découpe en tâches », « prépare l'implémentation ».
 allowed-tools: Read Grep Glob Write Edit Bash(git log *) Bash(git status *)
 ---
 
@@ -19,9 +19,9 @@ CHAQUE ÉTAPE MONTRE LE CODE OU LA COMMANDE EXACTE.
 ## Prérequis
 
 - Une spec approuvée par l'humain (`docs/specs/…` ou le dossier de la politique). Sans spec, demander si on cadre
-  d'abord avec `/kata-brainstorm`. Pour un changement trivial et net, les exigences écrites dans la conversation
+  d'abord avec `/kwa-brainstorm`. Pour un changement trivial et net, les exigences écrites dans la conversation
   tiennent lieu de spec : le dire, et les recopier dans l'en-tête du plan.
-- Lire `.claude/kata.policy.json`. Les commandes du plan viennent de là, jamais de ta mémoire :
+- Lire `.claude/kwa.policy.json`. Les commandes du plan viennent de là, jamais de ta mémoire :
   - `verify.commands` : les vérifications finales de chaque tâche, recopiées telles quelles ;
   - `start.install` : l'installation, à mentionner dans la préparation, pas à réinventer ;
   - `write.deny` et `write.no_code_on_main` : chemins interdits ou dossiers protégés, à ne jamais planifier en écriture.
@@ -42,7 +42,7 @@ rejeter seule. Intégrer dans la tâche qui en a besoin la configuration, l'éch
 finit sur un résultat testable.
 
 Chaque étape est une action de 2 à 5 minutes : écrire le test qui échoue, le lancer et le voir échouer, écrire le
-code minimal, le relancer, vérifier. Méthode de test : `/kata-tdd`.
+code minimal, le relancer, vérifier. Méthode de test : `/kwa-tdd`.
 
 ## Fichier du plan
 
@@ -56,7 +56,7 @@ En-tête obligatoire :
 **But :** une phrase.
 **Approche :** 2-3 phrases.
 **Spec :** chemin du fichier. Le plan en découle ; l'exécutant lit les deux.
-**Préparation :** commandes de `start.install` ; branche et worktree via /kata-start-dev.
+**Préparation :** commandes de `start.install` ; branche et worktree via /kwa-start-dev.
 **Vérification :** les `verify.commands` de la politique, copiées mot pour mot.
 
 ## Contraintes globales
@@ -84,7 +84,7 @@ Structure d'une tâche :
 ````
 
 Les étapes de commit ne figurent pas dans le plan. Le plan se termine tâche par tâche sur une vérification ;
-le commit se fait sur demande (`/kata-commit`). Le plan peut marquer des « points de lot » où il serait logique
+le commit se fait sur demande (`/kwa-commit`). Le plan peut marquer des « points de lot » où il serait logique
 de le proposer.
 
 ## Échecs de plan
@@ -122,9 +122,9 @@ non relu ne s'exécute pas.
 Puis proposer le mode d'exécution, avec une recommandation d'une phrase tirée du plan (nombre de tâches,
 dépendance entre interfaces, coût d'une erreur livrée) :
 
-- `/kata-execute` : je déroule le plan ici, tâche par tâche, avec des arrêts humains ;
-- `/kata-agents` : un agent par tâche, relecture entre les tâches ; pour un plan long ou aux tâches indépendantes
-  (voir aussi `/kata-parallel`).
+- `/kwa-execute` : je déroule le plan ici, tâche par tâche, avec des arrêts humains ;
+- `/kwa-agents` : un agent par tâche, relecture entre les tâches ; pour un plan long ou aux tâches indépendantes
+  (voir aussi `/kwa-parallel`).
 
 ## Signaux d'alerte
 
@@ -137,4 +137,4 @@ dépendance entre interfaces, coût d'une erreur livrée) :
 | « Tâche similaire à la 3, je renvoie » | Recopier. Elle sera lue seule. |
 | « Je relis plus tard » | La relecture est le moment où la tâche 7 contredit la tâche 3. Elle se fait maintenant. |
 
-> Inspiré de superpowers (Jesse Vincent, MIT, v6.4.1) ; réécrit pour Kata.
+> Inspiré de superpowers (Jesse Vincent, MIT, v6.4.1) ; réécrit pour Kwa.

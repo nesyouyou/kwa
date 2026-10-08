@@ -7,7 +7,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from _kata import decide, guarded, load_payload, project_dir, segments  # noqa: E402
+from _kwa import decide, guarded, load_payload, project_dir, segments  # noqa: E402
 
 TMP = ("/tmp", "/private/tmp", "/var/folders", "/private/var/folders")
 
@@ -24,7 +24,7 @@ def judge(path: str, cwd: str, root: str) -> None:
         decide("deny", "suppression de / ou ~ refusée")
     if inside(real, root):
         rel = os.path.relpath(real, root)
-        if rel == ".git" or rel.startswith(".git/") or rel == ".claude" or rel.startswith(".claude/hooks") or rel.startswith(".claude/kata"):
+        if rel == ".git" or rel.startswith(".git/") or rel == ".claude" or rel.startswith(".claude/hooks") or rel.startswith(".claude/kwa"):
             decide("deny", f"suppression de {rel} refusée (garde-fous du projet)")
         return
     if any(inside(real, t) for t in TMP):

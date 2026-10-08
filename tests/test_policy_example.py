@@ -1,5 +1,5 @@
 """Politique d'exemple (monorepo web + API + mobile Expo) : cas représentatifs d'un harnais de garde-fous réel,
-rejoués contre Kata. Un push direct sur main est refusé (un outillage maison se contentait de demander)."""
+rejoués contre Kwa. Un push direct sur main est refusé (un outillage maison se contentait de demander)."""
 import json
 import os
 import stat

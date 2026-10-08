@@ -1,5 +1,5 @@
-/* Kata — terminal simulé (documentation). Script classique, sans dépendance.
- * Usage : KataTerminal.mount(document.getElementById('kata-terminal'), data)   // data = terminal-data.json
+/* Kwa — terminal simulé (documentation). Script classique, sans dépendance.
+ * Usage : KwaTerminal.mount(document.getElementById('kwa-terminal'), data)   // data = terminal-data.json
  * Les textes passent par textContent / nœuds DOM : aucune injection HTML possible. */
 (function () {
   'use strict';
@@ -530,5 +530,5 @@
     };
   }
 
-  window.KataTerminal = { mount: mount };
+  window.KwaTerminal = { mount: mount };
 })();

@@ -2,7 +2,7 @@
 
 Second temps, uniquement quand la conformité est verte. Agent NEUF : `subagent_type: "general-purpose"`,
 `model: "sonnet"` (ou `opus` si le diff est subtil). Pour la relecture finale de branche, utiliser plutôt
-`/kata-review`.
+`/kwa-review`.
 
 ````
 Tu relis la qualité d'un changement dont la conformité à la spec est déjà établie. Tu es en lecture seule.

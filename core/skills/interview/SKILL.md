@@ -1,6 +1,6 @@
 ---
-name: kata-interview
-description: Interroger sans relâche l'utilisateur sur un plan, une conception ou une décision pour l'éprouver avant d'agir. À utiliser quand il dit « challenge-moi », « interviewe-moi », « grille-moi », « teste mon idée », « /kata-interview », ou quand un plan paraît flou, que des termes du domaine se contredisent ou que /kata-brainstorm bute sur une décision à fort enjeu.
+name: kwa-interview
+description: Interroger sans relâche l'utilisateur sur un plan, une conception ou une décision pour l'éprouver avant d'agir. À utiliser quand il dit « challenge-moi », « interviewe-moi », « grille-moi », « teste mon idée », « /kwa-interview », ou quand un plan paraît flou, que des termes du domaine se contredisent ou que /kwa-brainstorm bute sur une décision à fort enjeu.
 allowed-tools: Read Grep Glob Bash(git log *) Bash(git status *) Write Edit
 ---
 
@@ -55,10 +55,10 @@ Ne rien écrire sans demander. Quand un point cristallise, proposer l'écriture 
 - Glossaire : une entrée par terme, **Terme** puis définition, puis « À éviter : ... ». Inscrire au fil de l'eau,
   pas en lot final. Un glossaire n'est ni une spec ni un brouillon.
 - ADR : numéro suivant, Contexte, Décision, Conséquences, alternatives écartées et pourquoi. Même format que
-  `/kata-learn`.
+  `/kwa-learn`.
 - Respecter `write.deny` et `write.no_code_on_main` de la politique : pas d'écriture sur `main` si elle couvre
   ces dossiers. Pas de nom de personne, de financement ni de lien privé dans ces fichiers.
-- Rien n'est committé. `/kata-commit` sur demande.
+- Rien n'est committé. `/kwa-commit` sur demande.
 
 ## Terminer
 
@@ -66,9 +66,9 @@ L'interrogatoire est fini quand toutes les branches de l'arbre sont visitées et
 silence. Le dire : « Plus de branche ouverte. » Puis résumer en un court tableau : décision, raison, ce qui reste
 à faire. Attendre la confirmation de l'humain avant d'agir.
 
-Suite possible, au choix de l'humain : `/kata-brainstorm` pour écrire la spec, `/kata-plan` pour le plan,
-`/kata-architecture` si l'enjeu est la structure du code, `/kata-learn` pour capitaliser le reste.
-`/kata-brainstorm` peut appeler cette skill pour une décision difficile ; la reprise se fait là où il s'était arrêté.
+Suite possible, au choix de l'humain : `/kwa-brainstorm` pour écrire la spec, `/kwa-plan` pour le plan,
+`/kwa-architecture` si l'enjeu est la structure du code, `/kwa-learn` pour capitaliser le reste.
+`/kwa-brainstorm` peut appeler cette skill pour une décision difficile ; la reprise se fait là où il s'était arrêté.
 
 ## Signaux d'alerte
 
@@ -80,4 +80,4 @@ Suite possible, au choix de l'humain : `/kata-brainstorm` pour écrire la spec, 
 | « J'écris l'ADR, c'est évident » | Écrire sur accord. Et si l'un des trois critères manque, pas d'ADR. |
 | « Il a compris, je passe au code » | Cette skill s'arrête à la compréhension. Le code attend l'accord explicite. |
 
-> Inspiré des skills de Matt Pocock (mattpocock/skills, MIT, commit f3fc563) ; réécrit pour Kata.
+> Inspiré des skills de Matt Pocock (mattpocock/skills, MIT, commit f3fc563) ; réécrit pour Kwa.

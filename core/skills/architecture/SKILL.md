@@ -1,6 +1,6 @@
 ---
-name: kata-architecture
-description: Repérer où approfondir les modules d'un dépôt quand le code est dur à comprendre, à tester ou à modifier sans tout casser — interfaces larges sur peu de logique, couplages, fuites d'implémentation, tests qui visent l'intérieur. À utiliser pour un audit d'architecture, avant une refonte, ou quand un même secteur du code revient sans cesse dans les correctifs ("l'architecture est bancale", "où refactorer", "/kata-architecture").
+name: kwa-architecture
+description: Repérer où approfondir les modules d'un dépôt quand le code est dur à comprendre, à tester ou à modifier sans tout casser — interfaces larges sur peu de logique, couplages, fuites d'implémentation, tests qui visent l'intérieur. À utiliser pour un audit d'architecture, avant une refonte, ou quand un même secteur du code revient sans cesse dans les correctifs ("l'architecture est bancale", "où refactorer", "/kwa-architecture").
 allowed-tools: Bash(git log *) Bash(git diff *) Read Grep Glob
 ---
 
@@ -9,8 +9,8 @@ allowed-tools: Bash(git log *) Bash(git diff *) Read Grep Glob
 Un module profond cache beaucoup de comportement derrière une petite interface. Un module superficiel fait
 l'inverse : il expose presque autant qu'il contient. Cette skill cherche les modules superficiels qui coûtent cher
 et propose de les approfondir. **Lecture seule : aucune modification sans l'accord de l'utilisateur.**
-Elle s'enchaîne avec `/kata-interview` (creuser l'option choisie), `/kata-plan` (planifier la refonte), `/kata-tickets`
-(la découper), `/kata-simple` (nettoyage local) et `/kata-audit` (revue plus large).
+Elle s'enchaîne avec `/kwa-interview` (creuser l'option choisie), `/kwa-plan` (planifier la refonte), `/kwa-tickets`
+(la découper), `/kwa-simple` (nettoyage local) et `/kwa-audit` (revue plus large).
 
 ## Vocabulaire commun
 
@@ -77,14 +77,14 @@ Un rapport écrit dans `docs/architecture/AAAA-MM-JJ-<sujet>.md` n'est créé **
 
 ## Étape 4 : creuser le candidat choisi
 
-Lancer `/kata-interview` sur l'option retenue : contraintes, dépendances, forme du module approfondi, ce qui se trouve
+Lancer `/kwa-interview` sur l'option retenue : contraintes, dépendances, forme du module approfondi, ce qui se trouve
 derrière la couture, quels tests survivent. Règles de la discussion :
 
 - Une fois le nouveau module en place, les anciens tests sur les modules superficiels deviennent du bruit : on les
   remplace par des tests à l'interface, on ne les empile pas.
 - Un terme du domaine encore flou se tranche pendant la discussion, et se note dans la doc du projet avec accord.
 - Si l'utilisateur refuse pour une raison durable (contrainte, choix assumé), proposer de la consigner en décision
-  (`/kata-learn`) pour que le prochain audit ne la repropose pas. Pas pour une raison passagère.
+  (`/kwa-learn`) pour que le prochain audit ne la repropose pas. Pas pour une raison passagère.
 - Pour comparer plusieurs formes d'interface, en dessiner deux ou trois très différentes et les juger sur la
   profondeur, la localité et l'emplacement de la couture.
 
@@ -93,6 +93,6 @@ derrière la couture, quels tests survivent. Règles de la discussion :
 - Modifier du code, renommer, déplacer, sans accord explicite.
 - Proposer une refonte « parce que c'est plus propre » sans friction observée ni preuve.
 - Lister toutes les refontes théoriques : un classement court vaut mieux qu'un inventaire.
-- Committer ou pousser (`/kata-commit`, `/kata-ship` sur demande seulement).
+- Committer ou pousser (`/kwa-commit`, `/kwa-ship` sur demande seulement).
 
-> Inspiré des skills de Matt Pocock (mattpocock/skills, MIT, commit f3fc563) ; réécrit pour Kata.
+> Inspiré des skills de Matt Pocock (mattpocock/skills, MIT, commit f3fc563) ; réécrit pour Kwa.

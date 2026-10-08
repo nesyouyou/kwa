@@ -1,6 +1,6 @@
 ---
-name: kata-prototype
-description: Construire un prototype jetable pour répondre à une question de conception. À utiliser quand l'utilisateur doute qu'un modèle d'état ou une logique tienne, ou veut voir plusieurs formes d'interface avant de choisir ("fais un proto", "est-ce que ça tient ?", "montre-moi des variantes", "/kata-prototype"). Pas pour du code destiné à la production.
+name: kwa-prototype
+description: Construire un prototype jetable pour répondre à une question de conception. À utiliser quand l'utilisateur doute qu'un modèle d'état ou une logique tienne, ou veut voir plusieurs formes d'interface avant de choisir ("fais un proto", "est-ce que ça tient ?", "montre-moi des variantes", "/kwa-prototype"). Pas pour du code destiné à la production.
 allowed-tools: Read Grep Glob Write Edit Bash
 ---
 
@@ -15,8 +15,8 @@ LE PROTOTYPE N'EST JAMAIS FUSIONNÉ TEL QUEL. ON GARDE LA RÉPONSE, PAS LE CODE.
 ```
 
 Le code d'un prototype saute les tests, les erreurs et les limites : il ne sert que ce qu'il a prouvé.
-Si l'utilisateur veut le garder, c'est une nouvelle demande : la cadrer avec `/kata-brainstorm` puis la refaire
-proprement avec `/kata-tdd`.
+Si l'utilisateur veut le garder, c'est une nouvelle demande : la cadrer avec `/kwa-brainstorm` puis la refaire
+proprement avec `/kwa-tdd`.
 
 ## 1. Écrire la question d'abord
 
@@ -25,8 +25,8 @@ Avant la moindre ligne : une phrase qui commence par un verbe de décision, et u
 - « Le modèle d'état couvre-t-il l'annulation après paiement partiel ? »
 - « Quelle forme de tableau de bord lit-on le plus vite : liste, grille ou résumé ? »
 
-Une question sans critère donne un prototype sans fin. Si elle est floue, `/kata-interview` d'abord. La voie
-« sonde » de `/kata-brainstorm` mène ici.
+Une question sans critère donne un prototype sans fin. Si elle est floue, `/kwa-interview` d'abord. La voie
+« sonde » de `/kwa-brainstorm` mène ici.
 
 ## 2. Choisir la forme selon la question
 
@@ -44,7 +44,7 @@ page : interface) et écrire l'hypothèse en tête du prototype.
 2. **Dossier isolé et marqué jetable** : `prototypes/<sujet>/` ou un nom contenant `prototype`. Une ligne d'en-tête
    « PROTOTYPE JETABLE, à supprimer » dans chaque fichier. Suivre le routage du projet si une page est requise.
    Respecter `write.deny` et `write.no_code_on_main` : travailler sur une branche ou un worktree
-   (`/kata-start-dev`), jamais sur `main`.
+   (`/kwa-start-dev`), jamais sur `main`.
 3. **Sans persistance** : état en mémoire. Si la persistance est la question, une base ou un fichier de
    brouillon nommé « jetable ».
 4. **Sans test ni finition** : aucune abstraction, gestion d'erreur minimale pour que ça tourne. Pas de dépendance
@@ -61,8 +61,8 @@ ce qu'on ignore encore, ce qu'on décide de faire. Puis, au choix de l'humain :
 - **Supprimer** le dossier. C'est le défaut.
 - **Archiver** sur une branche à part, hors `main`, avec un pointeur dans l'issue ou la spec.
 
-La décision validée se reporte dans la spec ou l'ADR (`/kata-learn`), jamais le code du prototype. Rien n'est
-committé sans demande (`/kata-commit`).
+La décision validée se reporte dans la spec ou l'ADR (`/kwa-learn`), jamais le code du prototype. Rien n'est
+committé sans demande (`/kwa-commit`).
 
 ## Signaux d'alerte
 
@@ -73,4 +73,4 @@ committé sans demande (`/kata-commit`).
 | « Je rajoute un cas, ça coûte peu » | Chaque cas hors question retarde la réponse. Le noter, ne pas le construire. |
 | « Je n'ai pas écrit la question, mais je vois ce qu'il veut » | Sans question écrite, impossible de savoir quand s'arrêter. |
 
-> Inspiré des skills de Matt Pocock (mattpocock/skills, MIT, commit f3fc563) ; réécrit pour Kata.
+> Inspiré des skills de Matt Pocock (mattpocock/skills, MIT, commit f3fc563) ; réécrit pour Kwa.

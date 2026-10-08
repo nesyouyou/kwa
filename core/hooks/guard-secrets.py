@@ -7,7 +7,7 @@ import re
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from _kata import decide, guarded, is_secret_path as is_secret, load_payload, segments  # noqa: E402
+from _kwa import decide, guarded, is_secret_path as is_secret, load_payload, segments  # noqa: E402
 
 CMD_DENY = [
     (("printenv",), "affiche tout l'environnement"),

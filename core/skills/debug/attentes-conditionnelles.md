@@ -1,6 +1,6 @@
 # Attentes conditionnelles
 
-Complément de `/kata-debug`. Les tests instables devinent souvent un délai. Sur une machine rapide, ils passent ;
+Complément de `/kwa-debug`. Les tests instables devinent souvent un délai. Sur une machine rapide, ils passent ;
 en CI ou sous charge, ils échouent. On attend **la condition**, pas une durée.
 
 ## Quand l'appliquer
@@ -46,4 +46,4 @@ condition est vraie, lever une erreur au délai maximal qui nomme la condition a
 ## Après le correctif
 
 Relancer le test plusieurs fois et en parallèle ; un test qui ne passe qu'une fois sur trois n'est pas corrigé.
-Un test dont l'instabilité reste inexpliquée n'est pas ignoré en silence : voir `/kata-verify`.
+Un test dont l'instabilité reste inexpliquée n'est pas ignoré en silence : voir `/kwa-verify`.

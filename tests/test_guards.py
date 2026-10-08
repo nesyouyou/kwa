@@ -1,4 +1,4 @@
-"""Gardes Kata : cas nominaux + contournements confirmés par l'audit de super-board."""
+"""Gardes Kwa : cas nominaux + contournements confirmés par l'audit de super-board."""
 import json
 import os
 import subprocess
@@ -107,7 +107,7 @@ class Git(unittest.TestCase):
         self.assertEqual(bash("guard-git.py", "git status", cwd=self.repo), "allow")
 
     def test_escape_hatch(self):
-        self.assertEqual(bash("guard-git.py", "git commit -m x", cwd=self.repo, env={"KATA_ALLOW_MAIN": "1"}), "allow")
+        self.assertEqual(bash("guard-git.py", "git commit -m x", cwd=self.repo, env={"KWA_ALLOW_MAIN": "1"}), "allow")
 
 
 class Delete(unittest.TestCase):
@@ -118,7 +118,7 @@ class Delete(unittest.TestCase):
 
     def test_denied(self):
         for cmd in ["rm -rf /", "rm -rf ~", "rm -rf ../../../../../../../usr/x", "rm -rf /usr/local/x", "bash -c 'rm -rf /usr/x'",
-                    "env rm -rf /usr/x", "nice -n 1 rm -rf /usr/x", "rm -rf .git", "rm -rf .claude/kata",
+                    "env rm -rf /usr/x", "nice -n 1 rm -rf /usr/x", "rm -rf .git", "rm -rf .claude/kwa",
                     "rm -rf link/x", "true && rm -rf /usr/x", "find / -delete", "(cd /tmp && rm -rf /usr/x)", "echo $(rm -rf /usr/x)"]:
             with self.subTest(cmd=cmd):
                 self.assertEqual(bash("guard-delete.py", cmd, cwd=self.root), "deny")
@@ -128,7 +128,7 @@ class Delete(unittest.TestCase):
         self.assertEqual(bash("guard-delete.py", "git clean -fd", cwd=self.root), "ask")
         self.assertEqual(bash("guard-delete.py", "rsync -a --delete a/ b/", cwd=self.root), "ask")
         self.assertEqual(bash("guard-delete.py", "rm -rf build", cwd=self.root), "allow")
-        self.assertEqual(bash("guard-delete.py", "rm -rf /tmp/kata-x", cwd=self.root), "allow")
+        self.assertEqual(bash("guard-delete.py", "rm -rf /tmp/kwa-x", cwd=self.root), "allow")
 
 
 class Write(unittest.TestCase):
@@ -143,7 +143,7 @@ class Write(unittest.TestCase):
     def test_clean_and_marked(self):
         self.assertEqual(run("guard-write.py", "Write", {"file_path": "/tmp/x.ts", "content": "const a = process.env.KEY"}), "allow")
         self.assertEqual(run("guard-write.py", "Write", {"file_path": "/tmp/x.ts",
-                            "content": "k = 'sk_live_" + "a" * 24 + "' // kata:allow-secret"}), "allow")
+                            "content": "k = 'sk_live_" + "a" * 24 + "' // kwa:allow-secret"}), "allow")
 
     def test_config_protected(self):
         root = os.path.realpath(tempfile.mkdtemp())

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Stop — refuse de rendre la main sur du rouge. OPT-IN : KATA_STOP_VERIFY=1.
+"""Stop — refuse de rendre la main sur du rouge. OPT-IN : KWA_STOP_VERIFY=1.
 
 Sur une session courte, typecheck + lint à chaque tour coûtent plus qu'ils ne rapportent ; sur une session longue et
 autonome, c'est ce qui empêche « ça a l'air fini » de passer pour une vérification. Commandes : verify.commands de la
@@ -12,11 +12,11 @@ import subprocess
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from _kata import load_payload, load_policy, project_dir  # noqa: E402
+from _kwa import load_payload, load_policy, project_dir  # noqa: E402
 
 
 def main() -> int:
-    if os.environ.get("KATA_STOP_VERIFY") != "1":
+    if os.environ.get("KWA_STOP_VERIFY") != "1":
         return 0
     d = load_payload()
     root = project_dir(d)

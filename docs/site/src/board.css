@@ -1,4 +1,4 @@
-/* KataBoard : tableau animé « Une demande, de bout en bout ».
+/* KwaBoard : tableau animé « Une demande, de bout en bout ».
    Design system du site : uniquement les variables --nkui-*, aucune couleur ajoutée.
    Les types de briques se distinguent par le trait, pas par la couleur. */
 .kb { --kb-sp: 1; --kb-ease: cubic-bezier(.22, 1, .36, 1); position: relative; display: block; width: 100%; max-width: 100%; color: var(--nkui-fg); font: 400 15px/1.6 Geist, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }

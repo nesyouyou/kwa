@@ -1,6 +1,6 @@
 ---
-name: kata-questionnaire
-description: Transformer une décision qu'on ne peut pas trancher seul en questionnaire pour quelqu'un d'autre. À utiliser quand une réponse dépend du client ou d'un tiers (périmètre, données, droits d'accès, contraintes, intégrations), quand l'utilisateur dit « il faut que je demande au client », « prépare des questions pour... », « /kata-questionnaire ».
+name: kwa-questionnaire
+description: Transformer une décision qu'on ne peut pas trancher seul en questionnaire pour quelqu'un d'autre. À utiliser quand une réponse dépend du client ou d'un tiers (périmètre, données, droits d'accès, contraintes, intégrations), quand l'utilisateur dit « il faut que je demande au client », « prépare des questions pour... », « /kwa-questionnaire ».
 allowed-tools: Read Grep Glob Write
 ---
 
@@ -76,7 +76,7 @@ Tout ce que nous n'avons pas demandé et qu'il faudrait savoir.
 ## Fin
 
 Livrer : chemin du fichier, nombre de questions, quelles sont les trois qui bloquent le plus. Rappeler que l'envoi
-est à faire par l'humain. Une fois les réponses reçues : `/kata-brainstorm` ou `/kata-plan` pour continuer,
-`/kata-learn` pour capitaliser les décisions de périmètre.
+est à faire par l'humain. Une fois les réponses reçues : `/kwa-brainstorm` ou `/kwa-plan` pour continuer,
+`/kwa-learn` pour capitaliser les décisions de périmètre.
 
-> Inspiré des skills de Matt Pocock (mattpocock/skills, MIT, commit f3fc563) ; réécrit pour Kata.
+> Inspiré des skills de Matt Pocock (mattpocock/skills, MIT, commit f3fc563) ; réécrit pour Kwa.

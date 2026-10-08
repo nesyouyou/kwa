@@ -1,7 +1,7 @@
 ---
-name: kata-learn
-description: Capitaliser ce que la session a appris — décisions, pièges, commandes, règles à automatiser — en le rangeant au bon endroit (docs du projet, garde-fous, mémoire de l'agent, base de connaissance de l'équipe) après accord de l'utilisateur. À lancer en fin de session substantielle, quand un piège a coûté du temps, ou quand l'invitation Kata mémoire le propose ("/kata-learn", "capitalise", "qu'est-ce qu'on retient ?").
-allowed-tools: Bash(python3 .claude/kata/bin/kata-memory *) Bash(git *) Read Grep Glob
+name: kwa-learn
+description: Capitaliser ce que la session a appris — décisions, pièges, commandes, règles à automatiser — en le rangeant au bon endroit (docs du projet, garde-fous, mémoire de l'agent, base de connaissance de l'équipe) après accord de l'utilisateur. À lancer en fin de session substantielle, quand un piège a coûté du temps, ou quand l'invitation Kwa mémoire le propose ("/kwa-learn", "capitalise", "qu'est-ce qu'on retient ?").
+allowed-tools: Bash(python3 .claude/kwa/bin/kwa-memory *) Bash(git *) Read Grep Glob
 ---
 
 # Capitaliser une session
@@ -13,10 +13,10 @@ celle-ci a coûté à apprendre. **Rien n'est écrit sans l'accord de l'utilisat
 ## 1. Rassembler
 
 ```bash
-python3 .claude/kata/bin/kata-memory digest
+python3 .claude/kwa/bin/kwa-memory digest
 ```
 
-Relire aussi la conversation et le diff. Une note déjà captée (`kata-memory capture …`) est un candidat de plus.
+Relire aussi la conversation et le diff. Une note déjà captée (`kwa-memory capture …`) est un candidat de plus.
 
 ## 2. Filtrer — ne garder que le non-dérivable
 
@@ -36,7 +36,7 @@ Pas de nom de personne (un rôle), pas de secret, pas de donnée client réelle.
 Se demander aussi, au-delà de ce qu'on retient : **qu'est-ce qui a fait perdre du temps dans la façon de travailler
 avec l'agent ?** Une consigne absente ou ambiguë, un garde-fou qui n'existait pas, une skill qui n'a pas été invoquée,
 un fichier introuvable, une information inaccessible. Chaque perte devient un candidat : règle (`AGENTS.md`),
-garde-fou (`kata.policy.json`), skill ou pointeur de navigation. Préférer un contrôle automatique à une consigne en
+garde-fou (`kwa.policy.json`), skill ou pointeur de navigation. Préférer un contrôle automatique à une consigne en
 prose quand l'erreur est mécanique. Le même tableau de l'étape 4 les accueille.
 
 ## 3. Router chaque candidat
@@ -45,13 +45,13 @@ prose quand l'erreur est mécanique. Le même tableau de l'étape 4 les accueill
 |---|---|---|
 | Décision d'architecture ou de produit | `memory.decisions_dir` (défaut `docs/decisions/`) | ADR numéroté : Contexte · Décision · Conséquences |
 | Piège, gotcha, procédure | `memory.gotchas_file` (défaut `docs/gotchas.md`) ou la doc concernée | entrée datée : symptôme · cause · correctif |
-| Convention ou commande valable pour tout agent | `AGENTS.md`, **hors** du bloc `kata:begin…end` | une ligne, au bon chapitre |
-| Erreur répétable | `.claude/kata.policy.json` (`bash.deny/ask`, `write.deny`) | règle `{id, reason, all/any}` + cas de test si possible |
+| Convention ou commande valable pour tout agent | `AGENTS.md`, **hors** du bloc `kwa:begin…end` | une ligne, au bon chapitre |
+| Erreur répétable | `.claude/kwa.policy.json` (`bash.deny/ask`, `write.deny`) | règle `{id, reason, all/any}` + cas de test si possible |
 | Préférence de collaboration, retour sur ta façon de faire | mémoire de l'agent (fichier mémoire, selon la configuration de la session) | une idée par fichier, avec *Pourquoi* et *Comment l'appliquer* |
-| Client, mission, décision métier, transverse aux projets | base de connaissance de l'équipe via `$KATA_VAULT_INBOX` (capture rapide **seulement**) | une ligne datée ; jamais un fichier marqué immuable ; données financières ou RH : ne pas y écrire |
-| Amélioration générale de Kata lui-même | boîte de réception de l'équipe, étiquette `#kata` | une ligne : problème rencontré, idée |
+| Client, mission, décision métier, transverse aux projets | base de connaissance de l'équipe via `$KWA_VAULT_INBOX` (capture rapide **seulement**) | une ligne datée ; jamais un fichier marqué immuable ; données financières ou RH : ne pas y écrire |
+| Amélioration générale de Kwa lui-même | boîte de réception de l'équipe, étiquette `#kwa` | une ligne : problème rencontré, idée |
 
-Si `KATA_VAULT_INBOX` n'est pas défini, ne rien écrire dans la base de connaissance : le dire.
+Si `KWA_VAULT_INBOX` n'est pas défini, ne rien écrire dans la base de connaissance : le dire.
 
 ## 4. Proposer
 
@@ -64,7 +64,7 @@ appliquer (« tout », « 1 et 3 », « rien »).
 - Appliquer **seulement** les lignes validées, par lot ; relire le résultat.
 - Une règle de garde-fou ajoutée à la politique : la tester (`bash tests/run-safety.sh` du pack si disponible, ou un
   cas manuel) avant de dire qu'elle marche.
-- `python3 .claude/kata/bin/kata-memory clear` pour archiver les notes traitées.
-- Ne pas committer : rappeler que `/kata-commit` existe, sur la branche de travail.
+- `python3 .claude/kwa/bin/kwa-memory clear` pour archiver les notes traitées.
+- Ne pas committer : rappeler que `/kwa-commit` existe, sur la branche de travail.
 
-> Inspiré des skills de Matt Pocock (mattpocock/skills, MIT, commit f3fc563) ; réécrit pour Kata.
+> Inspiré des skills de Matt Pocock (mattpocock/skills, MIT, commit f3fc563) ; réécrit pour Kwa.

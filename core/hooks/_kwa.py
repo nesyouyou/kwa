@@ -1,4 +1,4 @@
-"""Briques communes des gardes Kata. Bibliothèque standard uniquement.
+"""Briques communes des gardes Kwa. Bibliothèque standard uniquement.
 
 Doctrine : ce sont des filets contre la bévue, pas une frontière de sécurité contre
 un agent compromis. Ils échouent vers l'humain (« ask »), jamais en silence.
@@ -29,7 +29,7 @@ def decide(decision: str, reason: str) -> None:
     print(json.dumps({"hookSpecificOutput": {
         "hookEventName": "PreToolUse",
         "permissionDecision": decision,
-        "permissionDecisionReason": f"Kata — {reason}",
+        "permissionDecisionReason": f"Kwa — {reason}",
     }}, ensure_ascii=False))
     sys.exit(0)
 
@@ -119,9 +119,9 @@ def heredoc_is_executed(line: str, m: "re.Match") -> bool:
     return bool(INTERP_RE.search(own) or PIPED_INTERP.search(line[m.end():]))
 
 
-# --- politique projet : .claude/kata.policy.json, propriété du projet (jamais écrasée par kata)
+# --- politique projet : .claude/kwa.policy.json, propriété du projet (jamais écrasée par kwa)
 def load_policy(payload: dict) -> dict:
-    path = os.path.join(project_dir(payload), ".claude", "kata.policy.json")
+    path = os.path.join(project_dir(payload), ".claude", "kwa.policy.json")
     try:
         with open(path, encoding="utf-8") as f:
             data = json.load(f)

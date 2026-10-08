@@ -1,5 +1,5 @@
 ---
-name: kata-simple
+name: kwa-simple
 description: À utiliser avant d'écrire du code neuf, et dès qu'une solution prévoit une abstraction, une dépendance, une option de configuration ou un « au cas où ». Déclencheurs — ajouter une fonctionnalité, un helper, un wrapper, une lib, un cache, un service ; ou quand l'utilisateur dit « le plus simple », « sans sur-ingénierie », « YAGNI », « on a vraiment besoin de ça ? ».
 ---
 
@@ -89,16 +89,16 @@ la construire sans rediscuter.
 
 ## Articulation avec les autres skills
 
-- `/kata-brainstorm` et `/kata-plan` : parcourir l'échelle avant de figer l'approche ; une tâche du plan qui n'a pas
+- `/kwa-brainstorm` et `/kwa-plan` : parcourir l'échelle avant de figer l'approche ; une tâche du plan qui n'a pas
   passé les barreaux 1 à 6 est à supprimer ou à justifier.
-- `/kata-tdd` : le test dit le comportement minimal ; le code vert minimal s'arrête là, sans anticiper le test suivant.
-- `/kata-execute` : un écart de simplicité par rapport au plan se signale, il ne se corrige pas en silence.
-- `/kata-review` : l'axe « simplicité » juge le diff avec les mêmes barreaux.
-- `/kata-audit` : applique cette échelle à un dépôt existant, pour trouver ce qui peut disparaître.
+- `/kwa-tdd` : le test dit le comportement minimal ; le code vert minimal s'arrête là, sans anticiper le test suivant.
+- `/kwa-execute` : un écart de simplicité par rapport au plan se signale, il ne se corrige pas en silence.
+- `/kwa-review` : l'axe « simplicité » juge le diff avec les mêmes barreaux.
+- `/kwa-audit` : applique cette échelle à un dépôt existant, pour trouver ce qui peut disparaître.
 
 ## Rendu
 
 Le code d'abord. Puis trois lignes au plus : ce qui a été écarté et à quel déclencheur le reprendre.
 Pas de plaidoyer : une explication plus longue que le code est de la complexité déguisée.
 
-> Inspiré de ponytail (DietrichGebert, MIT, commit 552acd5) ; réécrit pour Kata.
+> Inspiré de ponytail (DietrichGebert, MIT, commit 552acd5) ; réécrit pour Kwa.

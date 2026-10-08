@@ -1,13 +1,13 @@
 ---
-name: kata-tdd
-description: Écrire du code produit en test d'abord (rouge, vert, refactor). À utiliser avant d'écrire la moindre ligne de code de fonctionnalité, de correctif ou de comportement modifié, côté API, web ou mobile, et dès qu'on touche ou écrit un test ("TDD", "test d'abord", "ajoute un test", "/kata-tdd").
+name: kwa-tdd
+description: Écrire du code produit en test d'abord (rouge, vert, refactor). À utiliser avant d'écrire la moindre ligne de code de fonctionnalité, de correctif ou de comportement modifié, côté API, web ou mobile, et dès qu'on touche ou écrit un test ("TDD", "test d'abord", "ajoute un test", "/kwa-tdd").
 ---
 
 # Test d'abord
 
 Un test qu'on n'a jamais vu échouer ne prouve rien : il peut passer pour une mauvaise raison, ou ne rien tester.
 Cette skill s'applique à tout code produit : fonctionnalité, correctif, changement de comportement, refactor.
-Elle s'emboîte dans `/kata-start-dev` (circuit) et se complète de `/kata-debug` (cause racine) et `/kata-verify` (preuve finale).
+Elle s'emboîte dans `/kwa-start-dev` (circuit) et se complète de `/kwa-debug` (cause racine) et `/kwa-verify` (preuve finale).
 
 ## La loi
 
@@ -38,7 +38,7 @@ Il passe du premier coup ? Il teste un comportement qui existe déjà. Réécrir
 ### 3. Vert : le code minimal
 
 Le plus simple qui fasse passer ce test. Pas d'option, pas de paramètre « au cas où », pas de refactor voisin
-(règles « simplicité d'abord » et « changements chirurgicaux » du bloc Kata de `AGENTS.md`).
+(règles « simplicité d'abord » et « changements chirurgicaux » du bloc Kwa de `AGENTS.md`).
 
 ### 4. Vérifier le vert : obligatoire
 
@@ -95,7 +95,7 @@ Règles détaillées et exemples : `tests-fiables.md` (même dossier). À lire d
 ## Cas particuliers
 
 **Bug.** Le test de non-régression vient d'abord : il reproduit le bug, on le voit échouer pour la bonne raison,
-puis on corrige. La cause racine se cherche avec `/kata-debug` *avant* d'écrire le correctif. Preuve rouge-vert :
+puis on corrige. La cause racine se cherche avec `/kwa-debug` *avant* d'écrire le correctif. Preuve rouge-vert :
 corrige, test vert ; retire le correctif, le test redevient rouge ; remets-le.
 
 **Code d'interface (web, mobile).** Tester le comportement visible : ce que l'utilisateur lit, clique, voit
@@ -108,14 +108,14 @@ et les données résultants (colonne présente, ligne migrée, retour à l'état
 doubler seulement les services tiers. Cas d'erreur et validation d'entrée inclus.
 
 **Mobile Expo (Jest).** Jest pour la logique et les composants. Un module natif ajouté ou mis à jour ne se prouve
-pas en Jest : `/kata-testflight` impose un test Release sur simulateur.
+pas en Jest : `/kwa-testflight` impose un test Release sur simulateur.
 
 **Web (Playwright).** Un test par parcours utilisateur qui compte. Attendre une condition, jamais un délai fixe
-(voir `/kata-debug`, section attentes). Le test échoue d'abord sur la fonctionnalité absente, pas sur un sélecteur erroné.
+(voir `/kwa-debug`, section attentes). Le test échoue d'abord sur la fonctionnalité absente, pas sur un sélecteur erroné.
 
 ## Commandes
 
-Ne rien coder en dur. Lire `.claude/kata.policy.json` : `verify.commands` pour la vérification globale, et le
+Ne rien coder en dur. Lire `.claude/kwa.policy.json` : `verify.commands` pour la vérification globale, et le
 `package.json` (ou l'équivalent) de la stack détectée pour lancer **un seul test**. Commande introuvable : le dire à l'utilisateur, ne pas deviner.
 
 ## Exceptions : à valider avec l'utilisateur
@@ -132,9 +132,9 @@ Se dire « on saute le test pour cette fois » est de la rationalisation, pas un
 
 - [ ] Chaque comportement nouveau a un test, vu en rouge avant le code, pour la bonne raison.
 - [ ] Code minimal pour chacun ; rien d'extra.
-- [ ] Suite concernée et `verify.commands` verts, sortie propre (`/kata-verify`).
+- [ ] Suite concernée et `verify.commands` verts, sortie propre (`/kwa-verify`).
 - [ ] Tests sur du vrai comportement ; cas limites et erreurs couverts.
 
-Une case décochée : le cycle a été sauté, reprendre. Ne jamais committer sans demande explicite : `/kata-commit`.
+Une case décochée : le cycle a été sauté, reprendre. Ne jamais committer sans demande explicite : `/kwa-commit`.
 
-> Inspiré de superpowers (Jesse Vincent, MIT, v6.4.1) ; réécrit pour Kata.
+> Inspiré de superpowers (Jesse Vincent, MIT, v6.4.1) ; réécrit pour Kwa.

@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""kata-memory — capture et tri des apprentissages de session (module memory).
+"""kwa-memory — capture et tri des apprentissages de session (module memory).
 
-    kata-memory capture <gotcha|decision|rule|pref|vault> "<texte>"   note rapide, pendant la session
-    kata-memory pending                                                notes en attente
-    kata-memory digest                                                 tout ce qu'il faut pour /kata-learn
-    kata-memory clear                                                  archive les notes traitées
+    kwa-memory capture <gotcha|decision|rule|pref|vault> "<texte>"   note rapide, pendant la session
+    kwa-memory pending                                                notes en attente
+    kwa-memory digest                                                 tout ce qu'il faut pour /kwa-learn
+    kwa-memory clear                                                  archive les notes traitées
 
-Les notes vivent dans .claude/kata/local/ (non versionné : exclu via .git/info/exclude par `kata install`).
-Rien n'est écrit dans la documentation d'ici : c'est /kata-learn qui propose, et l'utilisateur qui valide.
+Les notes vivent dans .claude/kwa/local/ (non versionné : exclu via .git/info/exclude par `kwa install`).
+Rien n'est écrit dans la documentation d'ici : c'est /kwa-learn qui propose, et l'utilisateur qui valide.
 """
 from __future__ import annotations
 
@@ -26,7 +26,7 @@ def root() -> str:
 
 
 def local(r: str) -> str:
-    d = os.path.join(r, ".claude", "kata", "local")
+    d = os.path.join(r, ".claude", "kwa", "local")
     os.makedirs(d, exist_ok=True)
     return d
 
@@ -49,7 +49,7 @@ def main(argv: list[str]) -> int:
     r, cmd = root(), argv[0]
     if cmd == "capture":
         if len(argv) < 3 or argv[1] not in KINDS:
-            print(f"usage : kata-memory capture <{'|'.join(sorted(KINDS))}> \"<texte>\"", file=sys.stderr)
+            print(f"usage : kwa-memory capture <{'|'.join(sorted(KINDS))}> \"<texte>\"", file=sys.stderr)
             return 2
         with open(os.path.join(local(r), "inbox.md"), "a", encoding="utf-8") as f:
             f.write(f"- [{time.strftime('%Y-%m-%d')}] [{argv[1]}] {' '.join(argv[2:])}\n")
@@ -69,11 +69,11 @@ def main(argv: list[str]) -> int:
         return 0
     if cmd == "digest":
         try:
-            pol = json.load(open(os.path.join(r, ".claude", "kata.policy.json"), encoding="utf-8")).get("memory", {})
+            pol = json.load(open(os.path.join(r, ".claude", "kwa.policy.json"), encoding="utf-8")).get("memory", {})
         except (OSError, ValueError):
             pol = {}
-        base = (json.load(open(os.path.join(r, ".claude", "kata.policy.json"))).get("base_branch", "main")
-                if os.path.exists(os.path.join(r, ".claude", "kata.policy.json")) else "main")
+        base = (json.load(open(os.path.join(r, ".claude", "kwa.policy.json"))).get("base_branch", "main")
+                if os.path.exists(os.path.join(r, ".claude", "kwa.policy.json")) else "main")
         print("## Notes en attente\n" + ("\n".join(inbox_lines(r)) or "(aucune)"))
         print(f"\n## Branche : {git(r, 'symbolic-ref', '--short', '-q', 'HEAD') or '(détachée)'}")
         print("## Commits depuis la base\n" + (git(r, "log", "--oneline", f"origin/{base}..HEAD") or "(aucun)"))
@@ -82,9 +82,9 @@ def main(argv: list[str]) -> int:
         print("\n## Destinations")
         print(f"- décisions : {pol.get('decisions_dir', 'docs/decisions')}")
         print(f"- pièges : {pol.get('gotchas_file', 'docs/gotchas.md')}")
-        print("- règles / garde-fous : .claude/kata.policy.json")
-        vault = os.environ.get("KATA_VAULT_INBOX", "")
-        print(f"- base de connaissance de l'équipe (capture seulement) : {vault or '(KATA_VAULT_INBOX non défini → ne pas écrire dans la base de connaissance)'}")
+        print("- règles / garde-fous : .claude/kwa.policy.json")
+        vault = os.environ.get("KWA_VAULT_INBOX", "")
+        print(f"- base de connaissance de l'équipe (capture seulement) : {vault or '(KWA_VAULT_INBOX non défini → ne pas écrire dans la base de connaissance)'}")
         return 0
     print(__doc__, file=sys.stderr)
     return 2

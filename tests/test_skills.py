@@ -27,7 +27,7 @@ class Lint(unittest.TestCase):
         for d in self.skills():
             with self.subTest(skill=d):
                 fm, text = frontmatter(os.path.join(SKILLS, d, "SKILL.md"))
-                self.assertEqual(fm["name"], f"kata-{d}")
+                self.assertEqual(fm["name"], f"kwa-{d}")
                 self.assertGreater(len(fm["description"]), 40, "description trop courte")
                 self.assertLessEqual(len(fm["description"]), 700)
                 self.assertLessEqual(len(text.splitlines()), 220, "SKILL.md trop long : déplacer le détail en annexe")
@@ -55,10 +55,10 @@ class Lint(unittest.TestCase):
                         self.assertNotIn("EXTREMELY", text)
 
     def test_cross_references_exist(self):
-        names = {f"kata-{d}" for d in self.skills()}
+        names = {f"kwa-{d}" for d in self.skills()}
         for d in self.skills():
             text = open(os.path.join(SKILLS, d, "SKILL.md"), encoding="utf-8").read()
-            for ref in set(re.findall(r"(?<![\w./-])/(kata-[a-z]+(?:-[a-z]+)*)(?![\w/])", text)):
+            for ref in set(re.findall(r"(?<![\w./-])/(kwa-[a-z]+(?:-[a-z]+)*)(?![\w/])", text)):
                 with self.subTest(skill=d, ref=ref):
                     self.assertIn(ref, names, f"{d} renvoie vers {ref}, qui n'existe pas")
 
@@ -66,14 +66,14 @@ class Lint(unittest.TestCase):
         man = json.load(open(os.path.join(PACK, "manifest.json")))["modules"]
         dests = " ".join(s["dest"] for m in man.values() for s in m.get("files", {}).values())
         for d in self.skills():
-            self.assertIn(f".claude/skills/kata-{d}", dests, f"kata-{d} n'est dans aucun module")
+            self.assertIn(f".claude/skills/kwa-{d}", dests, f"kwa-{d} n'est dans aucun module")
 
 
 class Router(unittest.TestCase):
     def run_router(self, installed):
         root = os.path.realpath(tempfile.mkdtemp())
-        os.makedirs(os.path.join(root, ".claude", "kata"))
-        open(os.path.join(root, ".claude", "kata", "router.md"), "w").write(
+        os.makedirs(os.path.join(root, ".claude", "kwa"))
+        open(os.path.join(root, ".claude", "kwa", "router.md"), "w").write(
             open(os.path.join(PACK, "core", "templates", "skills-router.md")).read())
         for s in installed:
             os.makedirs(os.path.join(root, ".claude", "skills", s))
@@ -82,10 +82,10 @@ class Router(unittest.TestCase):
         return json.loads(p.stdout)["hookSpecificOutput"]["additionalContext"] if p.stdout.strip() else ""
 
     def test_only_installed_skills_are_listed(self):
-        out = self.run_router(["kata-debug", "kata-commit"])
-        self.assertIn("/kata-debug", out)
-        self.assertIn("/kata-commit", out)
-        self.assertNotIn("/kata-deploy", out)
+        out = self.run_router(["kwa-debug", "kwa-commit"])
+        self.assertIn("/kwa-debug", out)
+        self.assertIn("/kwa-commit", out)
+        self.assertNotIn("/kwa-deploy", out)
 
     def test_silent_when_nothing_installed(self):
         self.assertEqual(self.run_router([]), "")
@@ -108,13 +108,13 @@ class Humanize(unittest.TestCase):
 
     def test_wired_into_commit_ship_and_router(self):
         for skill in ("commit", "ship"):
-            self.assertIn("/kata-humanize", self.read("core", "skills", skill, "SKILL.md"))
-        self.assertIn("/kata-humanize", self.read("core", "templates", "skills-router.md"))
+            self.assertIn("/kwa-humanize", self.read("core", "skills", skill, "SKILL.md"))
+        self.assertIn("/kwa-humanize", self.read("core", "templates", "skills-router.md"))
 
     def test_module_ships_it(self):
         manifest = json.loads(self.read("manifest.json"))
         dests = [d.get("dest") for m in manifest["modules"].values() for d in (m.get("files") or {}).values()]
-        self.assertIn(".claude/skills/kata-humanize", dests)
+        self.assertIn(".claude/skills/kwa-humanize", dests)
 
 
 class Parcours(unittest.TestCase):
@@ -128,7 +128,7 @@ class Parcours(unittest.TestCase):
         text = self.page("parcours-harness.html")
         for n in range(0, 9):
             self.assertIn(f'id="etape-{n}"', text)
-        self.assertIn("non branchés dans settings.json", text)  # sortie réelle de kata doctor
+        self.assertIn("non branchés dans settings.json", text)  # sortie réelle de kwa doctor
         self.assertIn("permissionDecision", text)               # sortie réelle d'un garde
 
     def test_culture_and_context_stages(self):
@@ -152,12 +152,12 @@ class Parcours(unittest.TestCase):
     def test_no_temp_path_or_private_term(self):
         for name in self.PAGES:
             text = self.page(name)
-            for bad in ("/var/folders", "/private/", "kata-parcours-", "/Users/"):
+            for bad in ("/var/folders", "/private/", "kwa-parcours-", "/Users/"):
                 self.assertNotIn(bad, text, name)
             self.assertIsNone(re.search(r"(?i)mycecca|cecca|\\bvault\\b", text), name)
 
     def test_prose_has_no_em_dash_outside_real_output(self):
-        # la prose écrite à la main applique /kata-humanize ; seules les sorties réelles d'un garde portent « Kata — »
+        # la prose écrite à la main applique /kwa-humanize ; seules les sorties réelles d'un garde portent « Kwa — »
         for name in ("parcours.html", "parcours-culture.html", "parcours-contexte.html"):
             body = re.search(r"<main.*?</main>", self.page(name), re.S).group(0)
             self.assertNotIn("\u2014", body, name)

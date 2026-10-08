@@ -31,7 +31,7 @@ Vérification : {{verify.commands pertinentes + tests ciblés}}. Cite la sortie 
 
 ## Interdits
 - Aucun `git commit`, `git push`, `git stash`, `git reset`, création ou changement de branche.
-- Ne contourne jamais un garde-fou (hooks `.claude/kata/hooks`, refus de permission) : arrête-toi et remonte le
+- Ne contourne jamais un garde-fou (hooks `.claude/kwa/hooks`, refus de permission) : arrête-toi et remonte le
   message exact avec le statut BLOCKED.
 - Ne lance pas d'autre agent. N'écris aucun secret dans le code ou les rapports.
 

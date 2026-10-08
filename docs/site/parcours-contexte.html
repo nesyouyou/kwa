@@ -1,10 +1,10 @@
 <!doctype html>
 <html lang="fr" data-nkui-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Parcours 2 : Context engineering | Kata</title>
-<script>try{if(localStorage.getItem('kata-docs-theme')==='light')document.documentElement.dataset.nkuiTheme='light'}catch(e){}</script>
+<title>Parcours 2 : Context engineering | Kwa</title>
+<script>try{if(localStorage.getItem('kwa-docs-theme')==='light')document.documentElement.dataset.nkuiTheme='light'}catch(e){}</script>
 <link rel="stylesheet" href="ds/fonts.css"><link rel="stylesheet" href="ds/tokens.css"><link rel="stylesheet" href="ds/base.css"><link rel="stylesheet" href="src/parcours.css">
 <style>
-/* Extensions propres à la documentation Kata. Uniquement les tokens du design system : aucune couleur ajoutée. */
+/* Extensions propres à la documentation Kwa. Uniquement les tokens du design system : aucune couleur ajoutée. */
 html{scroll-behavior:smooth;overflow-x:clip}
 section{scroll-margin-top:84px}
 .nkds-hero{grid-template-columns:minmax(0,1fr)}
@@ -93,9 +93,9 @@ code{font:.9em 'Geist Mono',monospace;background:var(--nkui-tint);border:1px sol
 .kd-fam{font:400 11px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--nkui-mut)}
 .kd-origin{display:inline-flex;align-items:center;gap:8px;margin:14px 6px 0 0;padding:3px 12px 3px 3px;border-radius:999px;background:var(--nkui-invert-bg);color:var(--nkui-invert-fg);font:10px/1.7 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase}
 .kd-origin img{width:22px;height:22px;border-radius:50%;object-fit:cover}
-.kd-origin.kata{padding:3px 12px}
+.kd-origin.kwa{padding:3px 12px}
 .kd-av{width:56px;height:56px;border-radius:50%;object-fit:cover;border:1px solid var(--nkui-rule);margin-bottom:14px;display:block}
-.kd-origin.kata{background:transparent;color:var(--nkui-fg);border:1px solid var(--nkui-fg)}
+.kd-origin.kwa{background:transparent;color:var(--nkui-fg);border:1px solid var(--nkui-fg)}
 .kd-src{display:grid;gap:12px}
 .kd-src .kd-card{display:grid;grid-template-columns:230px minmax(0,1fr);gap:8px 32px}
 .kd-src a{display:inline-block;margin-top:8px;font:12px 'Geist Mono',monospace;color:var(--nkui-body);word-break:break-all}
@@ -136,7 +136,7 @@ footer.nkds-footer{margin-top:128px}
 </style></head>
 <body class="nkds">
 <div class="kd-bar"><div class="nkds-container row">
-  <a class="kd-brand" href="index.html" aria-label="Kata, accueil"><b class="kd-word">kata</b><span>/ harness</span></a>
+  <a class="kd-brand" href="index.html" aria-label="Kwa, accueil"><b class="kd-word">kwa</b><span>/ harness</span></a>
   <nav class="kd-nav" aria-label="Pages"><a href="index.html">Accueil</a><a href="skill-map.html">Carte</a><a href="board.html">Board</a><a href="terminal.html">Terminal</a><a href="parcours.html">Parcours</a></nav>
   <button type="button" class="nkds-btn nkds-btn--small" id="theme" aria-pressed="false">Thème sombre</button>
 </div></div>
@@ -259,19 +259,19 @@ importance. N'affirme pas avoir exécuté une commande que tu ne peux pas lancer
 <p>Ce que les règles ne savent pas dire (« pas de commit sur main », « une PR doit être liée à une issue ») se règle avec des <strong>hooks</strong> : c'est l'objet du parcours Harness.</p><div class="pc-proof"><div><b>Preuve attendue</b><p>Prédire le résultat d'un jeu de règles deny, ask et allow, et dire ce qu'elles ne couvrent pas.</p></div><div><b>Piège</b><p>Mettre le mode le plus permissif « pour aller vite » retire justement la couche qui rattrape les erreurs. Il se réserve aux environnements jetables.</p></div></div></div></section><div class="pc-check"><h2>Vous avez compris si vous savez</h2><ul><li>lister ce qui remplit la fenêtre d'une session d'agent, et la technique qui répond à chaque problème ;</li><li>écrire des instructions vérifiables et dire pourquoi elles ne contraignent pas ;</li><li>écrire une skill, un sous-agent, et choisir leur emplacement ;</li><li>configurer un serveur MCP sans secret en clair, avec la bonne portée ;</li><li>prédire le résultat de règles deny, ask et allow, et nommer ce qu'elles ne garantissent pas.</li></ul></div><div class="pc-check"><h2>Sources</h2><p class="kd-note" style="margin:0 0 12px">Les documentations officielles font foi. Les noms de réglages et les limites évoluent avec les versions : vérifiez avant une séance.</p><ul><li><a href="https://code.claude.com/docs/en/memory">Instructions et mémoire (CLAUDE.md, AGENTS.md)</a></li><li><a href="https://code.claude.com/docs/en/skills">Skills</a></li><li><a href="https://code.claude.com/docs/en/sub-agents">Sous-agents</a></li><li><a href="https://code.claude.com/docs/en/mcp">MCP : portées et configuration</a></li><li><a href="https://code.claude.com/docs/en/permissions">Permissions</a></li><li><a href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents">Effective context engineering for AI agents</a></li></ul></div>
 </main>
 <footer class="nkds-footer nkds-invert"><div class="nkds-container nkds-footer-grid">
-  <div><b class="kd-word kd-word--big">kata</b></div>
-  <div><h3>Kata</h3><p>v<span id="ver2"></span><br><span id="tests"></span></p></div>
+  <div><b class="kd-word kd-word--big">kwa</b></div>
+  <div><h3>Kwa</h3><p>v<span id="ver2"></span><br><span id="tests"></span></p></div>
   <div><h3>Documentation</h3><p>Régénérée par <code>docs/site/build.py</code> ; exemples calculés en exécutant les gardes.</p></div>
   <div><h3>Design</h3><p>Design system du site, fichiers vendorisés dans <code>docs/site/ds/</code>.</p></div>
 </div></footer>
 <script src="data.js"></script>
 <script>
-const DATA = window.KATA;
+const DATA = window.KWA;
 const $ = (s, r=document) => r.querySelector(s);
 /* thème : clair par défaut, seul un choix explicite est enregistré */
 const root = document.documentElement, tbtn = $('#theme');
 function syncTheme(){ const dark = root.dataset.nkuiTheme==='dark'; tbtn.textContent = dark ? 'Thème clair' : 'Thème sombre'; tbtn.setAttribute('aria-pressed', String(dark)); }
-tbtn.onclick = () => { root.dataset.nkuiTheme = root.dataset.nkuiTheme==='dark' ? 'light' : 'dark'; try{ localStorage.setItem('kata-docs-theme', root.dataset.nkuiTheme); }catch(e){} syncTheme(); };
+tbtn.onclick = () => { root.dataset.nkuiTheme = root.dataset.nkuiTheme==='dark' ? 'light' : 'dark'; try{ localStorage.setItem('kwa-docs-theme', root.dataset.nkuiTheme); }catch(e){} syncTheme(); };
 syncTheme();
 document.addEventListener('click', e => { const b = e.target.closest('[data-copy]'); if(!b) return; navigator.clipboard?.writeText(b.dataset.copy); const o=b.textContent; b.textContent='Copié'; setTimeout(()=>b.textContent=o,1200); });
 

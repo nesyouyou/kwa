@@ -1,4 +1,4 @@
-# Standard d'écriture (Kata)
+# Standard d'écriture (Kwa)
 
 | Objet | Format |
 |---|---|

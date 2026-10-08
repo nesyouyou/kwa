@@ -1,6 +1,6 @@
 # Écrire des tests fiables
 
-Complément de `/kata-tdd`. Un test peut être vert et inutile : voici les quatre façons les plus courantes.
+Complément de `/kwa-tdd`. Un test peut être vert et inutile : voici les quatre façons les plus courantes.
 
 ## 1. Tester le comportement, pas le mock
 

@@ -68,6 +68,6 @@ jamais « tout journaliser puis chercher ». Préfixer chaque journal temporaire
 ## Nettoyage avant de conclure
 
 - La boucle d'origine ne reproduit plus le symptôme.
-- Le test de non-régression passe (ou l'absence de couture est notée : c'est un constat d'architecture, voir `/kata-architecture`).
+- Le test de non-régression passe (ou l'absence de couture est notée : c'est un constat d'architecture, voir `/kwa-architecture`).
 - Plus aucune sonde étiquetée dans le code ; les bancs jetables sont supprimés.
 - L'hypothèse qui s'est avérée est écrite dans le message de commit ou de PR.

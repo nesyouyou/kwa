@@ -1,17 +1,17 @@
-## Kata — socle commun
+## Kwa — socle commun
 
-Ce bloc est géré par Kata (`kata install`) : ne pas l'éditer ici, le modifier dans le pack.
-Tout ce qui est propre au projet va **au-dessus ou en dessous** des marqueurs, ou dans `.claude/kata.policy.json`.
+Ce bloc est géré par Kwa (`kwa install`) : ne pas l'éditer ici, le modifier dans le pack.
+Tout ce qui est propre au projet va **au-dessus ou en dessous** des marqueurs, ou dans `.claude/kwa.policy.json`.
 
 - `AGENTS.md` est la source unique. `CLAUDE.md` n'est qu'un pointeur `@AGENTS.md`.
 - Modules actifs : {{MODULES}}.
-- Règles communes : `.claude/rules/kata-*.md`. Garde-fous automatiques : `.claude/kata/hooks/` ; ce sont des
+- Règles communes : `.claude/rules/kwa-*.md`. Garde-fous automatiques : `.claude/kwa/hooks/` ; ce sont des
   filets contre la bévue, pas une frontière de sécurité : ne jamais les contourner ni les éditer sans accord.
 - Règles propres au projet (commandes interdites, chemins protégés, vérifications, environnements) :
-  `.claude/kata.policy.json`, propriété du projet.
-- Skills : `/kata-commit`, `/kata-ship` ; selon les modules : méthode (`/kata-brainstorm`, `/kata-plan`, `/kata-execute`,
-  `/kata-agents`, `/kata-parallel`, `/kata-tdd`, `/kata-debug`, `/kata-verify`, `/kata-review`), circuit (`/kata-start-dev`),
-  livraison (`/kata-deploy`, `/kata-testflight`), mémoire (`/kata-learn`). Un rappel de routage est injecté à chaque session.
+  `.claude/kwa.policy.json`, propriété du projet.
+- Skills : `/kwa-commit`, `/kwa-ship` ; selon les modules : méthode (`/kwa-brainstorm`, `/kwa-plan`, `/kwa-execute`,
+  `/kwa-agents`, `/kwa-parallel`, `/kwa-tdd`, `/kwa-debug`, `/kwa-verify`, `/kwa-review`), circuit (`/kwa-start-dev`),
+  livraison (`/kwa-deploy`, `/kwa-testflight`), mémoire (`/kwa-learn`). Un rappel de routage est injecté à chaque session.
 {{KNOWLEDGE_LINE}}
 
 ### Façon de travailler

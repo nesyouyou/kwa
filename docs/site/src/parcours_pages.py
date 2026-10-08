@@ -339,18 +339,18 @@ def history() -> str:
 <h2 class="pc-h">D'où vient le harness</h2><p class="pc-tag">Le processus protégeait la qualité. L'agent l'a contourné par vitesse.</p>
 <p>Pendant cinquante ans, la qualité d'un logiciel ne dépendait pas que du talent de chacun : elle venait d'un <strong>processus</strong> (spécifier, tester, relire, intégrer, déployer). Chaque époque a ajouté une couche de vérification. Un agent de code écrit et exécute plus vite que ce processus ne peut suivre : sans cadre, il décide et agit seul. Le <strong>harness</strong> est ce cadre : tout ce qui entoure le modèle pour qu'il travaille dans le processus, et non à côté.</p>
 <table class="pc-table"><thead><tr><th>Époque</th><th>Pratique</th><th>Qui écrit</th><th>Ce qui protège la qualité</th></tr></thead><tbody>{tr}</tbody></table>
-<p class="kd-note">Dates : repères généraux de l'histoire du génie logiciel (article de Royce en 1970, Manifeste agile en 2001, GitHub en 2008, GitHub Copilot en 2021, ChatGPT fin 2022, MCP fin 2024). La lecture « le harness rebranche le processus » est celle de Kata, pas un consensus.</p>
+<p class="kd-note">Dates : repères généraux de l'histoire du génie logiciel (article de Royce en 1970, Manifeste agile en 2001, GitHub en 2008, GitHub Copilot en 2021, ChatGPT fin 2022, MCP fin 2024). La lecture « le harness rebranche le processus » est celle de Kwa, pas un consensus.</p>
 <p>Chaque étape du processus d'équipe a donc son équivalent autour de l'agent :</p>
-<table class="pc-table"><thead><tr><th>Étape du processus</th><th>Dans le harness (Kata)</th></tr></thead><tbody>
-<tr><td>Cadrer le besoin</td><td><code>/kata-brainstorm</code>, <code>/kata-plan</code></td></tr>
-<tr><td>Ticket et branche dédiée</td><td><code>/kata-start-dev</code> et <code>kata-start</code></td></tr>
-<tr><td>Tests d'abord</td><td><code>/kata-tdd</code></td></tr>
-<tr><td>Revue de code</td><td><code>/kata-review</code>, retours traités par <code>/kata-review-feedback</code></td></tr>
+<table class="pc-table"><thead><tr><th>Étape du processus</th><th>Dans le harness (Kwa)</th></tr></thead><tbody>
+<tr><td>Cadrer le besoin</td><td><code>/kwa-brainstorm</code>, <code>/kwa-plan</code></td></tr>
+<tr><td>Ticket et branche dédiée</td><td><code>/kwa-start-dev</code> et <code>kwa-start</code></td></tr>
+<tr><td>Tests d'abord</td><td><code>/kwa-tdd</code></td></tr>
+<tr><td>Revue de code</td><td><code>/kwa-review</code>, retours traités par <code>/kwa-review-feedback</code></td></tr>
 <tr><td>Branches protégées, pas de force-push</td><td>Gardes <code>guard-git</code>, <code>guard-write</code></td></tr>
-<tr><td>Intégration continue</td><td><code>/kata-verify</code>, vérifications de la politique</td></tr>
-<tr><td>Pull request avec preuve</td><td><code>/kata-ship</code>, <code>guard-github</code></td></tr>
-<tr><td>Déploiement vérifié</td><td><code>/kata-deploy</code></td></tr>
-<tr><td>Rétrospective</td><td><code>/kata-learn</code>, mémoire de session</td></tr></tbody></table>
+<tr><td>Intégration continue</td><td><code>/kwa-verify</code>, vérifications de la politique</td></tr>
+<tr><td>Pull request avec preuve</td><td><code>/kwa-ship</code>, <code>guard-github</code></td></tr>
+<tr><td>Déploiement vérifié</td><td><code>/kwa-deploy</code></td></tr>
+<tr><td>Rétrospective</td><td><code>/kwa-learn</code>, mémoire de session</td></tr></tbody></table>
 <div class="pc-proof"><div><b>Preuve attendue</b><p>Placer cinq étapes de votre processus actuel et dire ce qui les remplace quand un agent travaille.</p></div><div><b>Piège</b><p>Un harness n'ajoute pas de la bureaucratie : il rend vérifiables par une machine des contrôles que l'équipe faisait déjà.</p></div></div></div></section>"""
 
 
@@ -373,7 +373,7 @@ def hub() -> str:
          "Le contexte d'un agent, AGENTS.md et CLAUDE.md, les skills, les sous-agents, MCP avec ses fichiers de configuration, les permissions.",
          "Avoir utilisé un assistant d'IA. Un terminal est un plus."),
         ("3", "Harness", "parcours-harness.html", "Environ 3 h 30",
-         "De l'histoire du processus de développement jusqu'à Kata : gardes, branchement, politique, skills, mémoire, circuit, limites.",
+         "De l'histoire du processus de développement jusqu'à Kwa : gardes, branchement, politique, skills, mémoire, circuit, limites.",
          "Les parcours 1 et 2, Python 3, git, un terminal."),
     ]
     c = "".join(

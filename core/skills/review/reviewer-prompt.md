@@ -46,7 +46,7 @@ utilisateur raisonnable : un silence n'est pas une permission.
 ## Interdits
 - Lecture seule : n'édite rien. Aucun `git commit`, `git push`, `git checkout`, `git stash`, `git reset`, pas de
   modification de l'index ni de HEAD. Pour voir une autre révision, utilise `git show` ou un répertoire temporaire.
-- Ne contourne aucun garde-fou (hooks `.claude/kata/hooks`, refus de permission) : rapporte-le tel quel.
+- Ne contourne aucun garde-fou (hooks `.claude/kwa/hooks`, refus de permission) : rapporte-le tel quel.
 - Ne lance pas d'autre agent ; fais toute la relecture toi-même, en plusieurs passes si le diff est gros.
 
 ## Format de retour

@@ -1,12 +1,12 @@
 ---
-name: kata-verify
-description: Prouver qu'un travail est terminé avant de dire "fait", "corrigé", "ça passe", de committer, d'ouvrir une PR ou de passer à la tâche suivante. À utiliser dès qu'on s'apprête à affirmer un succès, y compris après une tâche déléguée à un sous-agent ("c'est bon ?", "vérifie", "/kata-verify").
+name: kwa-verify
+description: Prouver qu'un travail est terminé avant de dire "fait", "corrigé", "ça passe", de committer, d'ouvrir une PR ou de passer à la tâche suivante. À utiliser dès qu'on s'apprête à affirmer un succès, y compris après une tâche déléguée à un sous-agent ("c'est bon ?", "vérifie", "/kwa-verify").
 ---
 
 # Vérifier avant de déclarer « fait »
 
 « Fait » veut dire vérifié. Dire qu'un travail marche sans l'avoir prouvé, ce n'est pas être optimiste : c'est
-affirmer une chose qu'on ignore. Cette skill est la dernière marche avant `/kata-commit`, `/kata-ship` et `/kata-deploy`.
+affirmer une chose qu'on ignore. Cette skill est la dernière marche avant `/kwa-commit`, `/kwa-ship` et `/kwa-deploy`.
 
 ## La loi
 
@@ -30,10 +30,10 @@ Sauter une étape, c'est affirmer sans savoir.
 
 ## D'où viennent les commandes
 
-Ne rien coder en dur. Lire `.claude/kata.policy.json` :
+Ne rien coder en dur. Lire `.claude/kwa.policy.json` :
 
 - `verify.commands` : la liste de vérification du projet (types, lint, tests, build…). Les lancer **toutes**, dans l'ordre, telles quelles.
-- Les **tests ciblés** du changement : le test écrit avec `/kata-tdd`, et les tests voisins du code touché, via la commande de test de la stack détectée.
+- Les **tests ciblés** du changement : le test écrit avec `/kwa-tdd`, et les tests voisins du code touché, via la commande de test de la stack détectée.
 - Les parcours touchés si l'interface a changé (plus bas).
 
 `verify.commands` vide ou absent : le dire, déduire les commandes du `package.json` (ou équivalent), les annoncer
@@ -48,10 +48,10 @@ service injoignable) est une vérification **non faite** : l'écrire comme telle
 | Le typage / lint est propre | Sortie de la commande : 0 erreur | Un test vert |
 | Le build réussit | La commande de build, code 0 | Le lint, ou « les logs ont l'air bons » |
 | Le bug est corrigé | Le test de non-régression passe ; **et** rouge si on retire le correctif | Le code a changé, donc c'est réglé |
-| Le test de non-régression est valide | Cycle rouge-vert constaté (`/kata-tdd`) | Il passe une fois |
+| Le test de non-régression est valide | Cycle rouge-vert constaté (`/kwa-tdd`) | Il passe une fois |
 | La fonctionnalité répond au besoin | Relecture des critères de l'issue, un par un | Les tests passent |
 | Un sous-agent a terminé | `git diff` et relancer les vérifications soi-même | Son rapport dit « succès » |
-| Le déploiement est en ligne | Révision servie constatée (`/kata-deploy`) | Le workflow est vert |
+| Le déploiement est en ligne | Révision servie constatée (`/kwa-deploy`) | Le workflow est vert |
 
 ## Effet visible : capture quand il y a une interface
 
@@ -59,7 +59,7 @@ Quand le changement touche une interface (web ou mobile), les tests ne suffisent
 
 1. Lancer l'application avec la commande du projet, ouvrir le parcours touché.
 2. Prendre une capture de l'état attendu, et des états limites utiles (vide, erreur, petit écran).
-3. Comparer à ce qui est demandé ; la joindre au compte rendu et à la PR (captures avant/après, `/kata-ship`).
+3. Comparer à ce qui est demandé ; la joindre au compte rendu et à la PR (captures avant/après, `/kwa-ship`).
 
 Une capture qu'on n'a pas regardée ne compte pas. Impossible de lancer l'interface ici : le dire, ne pas le déduire.
 
@@ -67,7 +67,7 @@ Une capture qu'on n'a pas regardée ne compte pas. Impossible de lancer l'interf
 
 - Un test sauté (`skip`, `todo`, `xit`) ou ignoré n'est **pas** un test vert. Le nommer dans le compte rendu.
 - Un test qui échoue par intermittence est un échec non expliqué, pas du bruit : un seul passage vert ne le
-  réhabilite pas. Le relancer plusieurs fois, chercher la cause avec `/kata-debug` (souvent un délai fixe : attentes conditionnelles).
+  réhabilite pas. Le relancer plusieurs fois, chercher la cause avec `/kwa-debug` (souvent un délai fixe : attentes conditionnelles).
 - Ne jamais désactiver, supprimer ou assouplir un test pour obtenir du vert, sauf accord explicite de l'utilisateur.
 - Un échec présent avant ton changement reste un échec : le signaler par son nom, ne pas le passer sous silence.
 
@@ -106,7 +106,7 @@ Se fier à une exécution ancienne ou à un rapport d'agent. Une vérification p
 ## Quand l'appliquer
 
 Avant tout compte rendu de réussite, toute expression de satisfaction, tout passage à la tâche suivante,
-toute délégation conclue. Avant `/kata-commit`, `/kata-ship`, `/kata-deploy`. La règle vaut aussi pour les
+toute délégation conclue. Avant `/kwa-commit`, `/kwa-ship`, `/kwa-deploy`. La règle vaut aussi pour les
 paraphrases et les sous-entendus de réussite. Les commits et poussées restent soumis à la demande explicite de l'utilisateur, et jamais sur `main`.
 
-> Inspiré de superpowers (Jesse Vincent, MIT, v6.4.1) ; réécrit pour Kata.
+> Inspiré de superpowers (Jesse Vincent, MIT, v6.4.1) ; réécrit pour Kwa.

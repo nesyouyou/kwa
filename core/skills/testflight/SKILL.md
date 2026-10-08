@@ -1,6 +1,6 @@
 ---
-name: kata-testflight
-description: Construire et soumettre l'app mobile Expo sur TestFlight via EAS, avec vérification Release sur simulateur avant tout build quand des modules natifs ont bougé. À lancer seulement sur demande explicite ("TestFlight", "build iOS", "/kata-testflight").
+name: kwa-testflight
+description: Construire et soumettre l'app mobile Expo sur TestFlight via EAS, avec vérification Release sur simulateur avant tout build quand des modules natifs ont bougé. À lancer seulement sur demande explicite ("TestFlight", "build iOS", "/kwa-testflight").
 disable-model-invocation: true
 allowed-tools: Bash(npx eas-cli *) Bash(git *)
 ---
@@ -8,7 +8,7 @@ allowed-tools: Bash(npx eas-cli *) Bash(git *)
 # Livrer sur TestFlight
 
 TestFlight est vu par le client. Un build qui crashe au lancement coûte plus qu'un build en retard.
-Les profils viennent de `.claude/kata.policy.json` → `mobile` (et du `eas.json` qu'il désigne).
+Les profils viennent de `.claude/kwa.policy.json` → `mobile` (et du `eas.json` qu'il désigne).
 
 ## La loi
 
@@ -59,4 +59,4 @@ npx eas-cli submit --platform ios --latest --non-interactive   # le garde-fou de
 | « Je testerai sur device après la démo » | La démo *est* le test, et c'est le client qui le fait. Installe avant. |
 | « J'écris les notes plus tard » | Sans notes, le client teste au hasard et remonte des faux bugs. |
 
-Pour les captures de fiche et l'audit ASO : skills `app-store-screenshots` et `aso` (voir `kata recommend`).
+Pour les captures de fiche et l'audit ASO : skills `app-store-screenshots` et `aso` (voir `kwa recommend`).

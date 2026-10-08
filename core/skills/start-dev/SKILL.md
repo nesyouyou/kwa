@@ -1,29 +1,29 @@
 ---
-name: kata-start-dev
+name: kwa-start-dev
 description: Démarrer puis livrer tout développement selon le circuit issue → branche dédiée dans un worktree → preuve → PR liée à son issue (« Closes »). À utiliser DÈS qu'une demande implique de modifier le produit (correctif, fonctionnalité, retouche d'interface, web, mobile ou API), avant d'écrire la moindre ligne de code, même pour un petit changement.
-allowed-tools: Bash(gh *) Bash(git *) Bash(python3 .claude/kata/bin/kata-start *) Bash(pnpm *)
+allowed-tools: Bash(gh *) Bash(git *) Bash(python3 .claude/kwa/bin/kwa-start *) Bash(pnpm *)
 ---
 
 # Démarrer et livrer un développement
 
-Le circuit est décrit dans `.claude/rules/kata-github-workflow.md`. Cette skill le déroule. Deux garde-fous le
+Le circuit est décrit dans `.claude/rules/kwa-github-workflow.md`. Cette skill le déroule. Deux garde-fous le
 tiennent : `guard-write` refuse d'écrire du code produit sur `main`, `guard-github` refuse une PR sans `Closes #N`
 et une fusion sans preuve. Les commandes de vérification, d'installation et les dossiers de code viennent de
-`.claude/kata.policy.json` (`verify.commands`, `start.install`, `write.no_code_on_main`).
+`.claude/kwa.policy.json` (`verify.commands`, `start.install`, `write.no_code_on_main`).
 
-## Avec les skills de méthode Kata (module craft)
+## Avec les skills de méthode Kwa (module craft)
 
 Cette skill porte ce qui est propre au circuit : issue, branche, preuve, PR. Pour le travail lui-même :
 
 | Étape | Skill |
 |---|---|
-| Cadrer une fonctionnalité non triviale | `/kata-brainstorm`, puis `/kata-plan` |
-| Cadrer un bug | `/kata-debug` |
-| Développer | `/kata-tdd` ; `/kata-execute` ou `/kata-agents` si un plan existe |
-| Avant de dire « fait » | `/kata-verify` |
-| Relire avant la PR | `/kata-review` |
+| Cadrer une fonctionnalité non triviale | `/kwa-brainstorm`, puis `/kwa-plan` |
+| Cadrer un bug | `/kwa-debug` |
+| Développer | `/kwa-tdd` ; `/kwa-execute` ou `/kwa-agents` si un plan existe |
+| Avant de dire « fait » | `/kwa-verify` |
+| Relire avant la PR | `/kwa-review` |
 
-Le worktree est celui de `kata-start`, à côté du dépôt. Seule l'option « pousser la branche et ouvrir une PR »
+Le worktree est celui de `kwa-start`, à côté du dépôt. Seule l'option « pousser la branche et ouvrir une PR »
 est valable : jamais de fusion locale dans `main`.
 
 ## 1. Cadrer
@@ -38,9 +38,9 @@ Corps de l'issue dans un fichier temporaire (modèles : `.github/ISSUE_TEMPLATE/
 connue, décisions, critères de réussite vérifiables. Puis :
 
 ```bash
-python3 .claude/kata/bin/kata-start <fix|feat|chore|docs> <slug> "<titre>" --body-file <fichier>
+python3 .claude/kwa/bin/kwa-start <fix|feat|chore|docs> <slug> "<titre>" --body-file <fichier>
 # ou, pour une issue existante :
-python3 .claude/kata/bin/kata-start <type> <slug> "<titre>" --issue <n°>
+python3 .claude/kwa/bin/kwa-start <type> <slug> "<titre>" --issue <n°>
 ```
 
 `<slug>` : anglais, kebab-case. Titre de l'issue : français. **L'issue est ouverte automatiquement** à partir de la demande, sans la redemander, sauf si la politique a `flow.auto_issue: false` ou si tu passes `--no-issue` : on a alors juste la branche `<type>/<slug>`. Le script ouvre l'issue, crée `<type>/<n°>-<slug>` dans
@@ -48,7 +48,7 @@ un worktree à côté du dépôt, relie les fichiers locaux de `start.link` (un 
 
 ## 3. Développer
 
-- Tests d'abord (`/kata-tdd`) : le test échoue, puis passe.
+- Tests d'abord (`/kwa-tdd`) : le test échoue, puis passe.
 - Changements chirurgicaux, dans le style du code existant.
 - Avant de livrer : les `verify.commands` de la politique, plus les tests concernés. Citer les résultats.
 
@@ -75,4 +75,4 @@ gh pr create --base <base> --head <branche> --title "<type>(<portée>): <titre>"
 ```
 
 **Ne pas fusionner sans le GO du demandeur** ; dire si la fusion déclenche un déploiement. Une fois la PR fusionnée,
-retirer le worktree (`git worktree remove <chemin>`). Pour capitaliser ce qui a été appris : `/kata-learn`.
+retirer le worktree (`git worktree remove <chemin>`). Pour capitaliser ce qui a été appris : `/kwa-learn`.

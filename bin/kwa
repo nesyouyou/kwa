@@ -1,21 +1,21 @@
 #!/usr/bin/env python3
-"""kata — uniformise les projets : AGENTS.md, garde-fous, règles, skills, politique projet.
+"""kwa — uniformise les projets : AGENTS.md, garde-fous, règles, skills, politique projet.
 
-    kata detect    <cible>                         stack détectée, modules proposés, politique déduite
-    kata install   <cible> [--modules auto|a,b] [--with m ...] [--codex] [--dry-run]
-    kata status    <cible>                         version, modules, dérive locale
-    kata doctor    <cible>                         conformité (bloc, hooks, politique, doublons projet)
-    kata recommend <cible>                         skills tierces utiles pour cette stack (rien n'est installé)
+    kwa detect    <cible>                         stack détectée, modules proposés, politique déduite
+    kwa install   <cible> [--modules auto|a,b] [--with m ...] [--codex] [--dry-run]
+    kwa status    <cible>                         version, modules, dérive locale
+    kwa doctor    <cible>                         conformité (bloc, hooks, politique, doublons projet)
+    kwa recommend <cible>                         skills tierces utiles pour cette stack (rien n'est installé)
 
 Principes :
-  - Noyau + modules ; ce qui dépend du projet vit dans .claude/kata.policy.json (propriété du projet,
+  - Noyau + modules ; ce qui dépend du projet vit dans .claude/kwa.policy.json (propriété du projet,
     créée une fois, jamais écrasée).
   - AGENTS.md est la source unique ; CLAUDE.md devient un pointeur « @AGENTS.md ».
-  - Rien hors des marqueurs <!-- kata:begin … --> / <!-- kata:end --> n'est modifié.
+  - Rien hors des marqueurs <!-- kwa:begin … --> / <!-- kwa:end --> n'est modifié.
   - settings.json est fusionné sans doublon, sauvegardé, écrit de façon atomique.
   - Une retouche locale d'un fichier géré est sauvegardée avant d'être écrasée ; un fichier « seed »
     (gabarits GitHub, liste d'exceptions) n'est copié que s'il n'existe pas.
-  - Aucune action git : kata n'ajoute, ne commite, ne pousse jamais.
+  - Aucune action git : kwa n'ajoute, ne commite, ne pousse jamais.
 
 Codes de sortie : 0 ok, 1 vérification échouée, 2 refusé / entrée invalide.
 Python 3.9+, bibliothèque standard uniquement.
@@ -35,22 +35,37 @@ import time
 from pathlib import Path
 
 PACK = Path(__file__).resolve().parent.parent
-BEGIN_RE = re.compile(r"^<!-- kata:begin\b.*-->\s*$")
-END_RE = re.compile(r"^<!-- kata:end -->\s*$")
+BEGIN_RE = re.compile(r"^<!-- (?:kwa|kata):begin\b.*-->\s*$")  # « kata » : ancien nom, reconnu pour migrer
+END_RE = re.compile(r"^<!-- (?:kwa|kata):end -->\s*$")
 POINTER = "@AGENTS.md"
-POLICY_REL = ".claude/kata.policy.json"
+POLICY_REL = ".claude/kwa.policy.json"
+LEGACY_POLICY_REL = ".claude/kata.policy.json"
+LEGACY_HOOKS = ".claude/kata/hooks/"
 SKIP_DIRS = {"node_modules", ".git", ".next", ".turbo", "dist", "build", ".expo", "ios", "android", "Pods", ".venv", "coverage"}
-OVERLAP = {  # fichiers du projet que Kata remplace, une fois sa politique validée
+OVERLAP = {  # fichiers du projet que Kwa remplace, une fois sa politique validée
     "hooks": {"guard-bash.sh": "guard-policy + guard-git", "guard-github.sh": "guard-github (issue-flow)",
               "guard-write.sh": "guard-write", "format-after-edit.sh": "format-after-edit (verify)",
               "verify-stop.sh": "verify-stop (verify)"},
-    "skills": {"start-dev": "kata-start-dev", "deploy-recette": "kata-deploy", "deploy-prod": "kata-deploy",
-               "testflight": "kata-testflight"},
+    "skills": {"start-dev": "kwa-start-dev", "deploy-recette": "kwa-deploy", "deploy-prod": "kwa-deploy",
+               "testflight": "kwa-testflight"},
 }
 
 
+def state_path(target: Path) -> Path:
+    return target / ".claude" / "kwa" / "state.json"
+
+
+def legacy_state_path(target: Path) -> Path:
+    return target / ".claude" / "kata" / "state.json"
+
+
+def is_legacy(target: Path) -> bool:
+    """Installation faite sous l'ancien nom (dossier .claude/kata) et pas encore migrée."""
+    return legacy_state_path(target).exists() and not state_path(target).exists()
+
+
 def die(msg: str, code: int = 2) -> None:
-    print(f"kata: {msg}", file=sys.stderr)
+    print(f"kwa: {msg}", file=sys.stderr)
     sys.exit(code)
 
 
@@ -231,7 +246,7 @@ def merge_policy(base: dict, extra: dict) -> dict:
 
 def build_policy(modules: list[str], inferred: dict) -> dict:
     man = manifest()
-    pol: dict = {"kata": 1, "protected_branches": ["main"], "git": {"push_branch": "ask"}}
+    pol: dict = {"kwa": 1, "protected_branches": ["main"], "git": {"push_branch": "ask"}}
     for m in modules:
         pol = merge_policy(pol, man[m].get("policy", {}))
     return merge_policy(pol, inferred)
@@ -250,7 +265,7 @@ def apply_policy(target: Path, modules: list[str], inferred: dict, dry: bool) ->
     if path.exists():
         current = read_json(path, {})
         missing = sorted(rule_ids(build_policy(modules, {})) - rule_ids(current))
-        return "conservée (propriété du projet)" + (f" — règles Kata absentes : {', '.join(missing)}" if missing else "")
+        return "conservée (propriété du projet)" + (f" — règles Kwa absentes : {', '.join(missing)}" if missing else "")
     if not dry:
         atomic_write(path, json.dumps(build_policy(modules, inferred), indent=2, ensure_ascii=False) + "\n")
     return "créée à partir de la détection — à relire et compléter"
@@ -276,8 +291,8 @@ def render_block(profile: str, modules: list[str], target: Path | None = None) -
     kb = ((read_json(target / POLICY_REL, {}) if target else {}) or {}).get("knowledge_base")
     line = f"- Contexte de l'entreprise (clients, décisions) : `{kb}` fait foi ; s'il est muet, le dire, ne pas inventer." if kb else ""
     body = body.replace("{{KNOWLEDGE_LINE}}\n", line + "\n" if line else "").replace("{{KNOWLEDGE_LINE}}", line)
-    head = f"<!-- kata:begin v{version()} profile={profile} (géré ; toute retouche ici est écrasée à la mise à jour) -->"
-    return [head] + body.splitlines() + ["<!-- kata:end -->"]
+    head = f"<!-- kwa:begin v{version()} profile={profile} (géré ; toute retouche ici est écrasée à la mise à jour) -->"
+    return [head] + body.splitlines() + ["<!-- kwa:end -->"]
 
 
 def split_keep(text: str) -> list[str]:
@@ -303,9 +318,9 @@ def apply_block(target: Path, profile: str, modules: list[str], dry: bool) -> st
     probe = [x.rstrip("\r\n") for x in raw]
     pairs = markers(probe)
     if len(pairs) > 1:
-        die(f"{path} contient {len(pairs)} blocs kata ; n'en garder qu'un puis relancer")
+        die(f"{path} contient {len(pairs)} blocs kwa ; n'en garder qu'un puis relancer")
     if any(BEGIN_RE.match(x) for x in probe) and not pairs:
-        die(f"{path} : marqueur kata:begin sans kata:end ; corriger à la main")
+        die(f"{path} : marqueur kwa:begin sans kwa:end ; corriger à la main")
     new_block = eol.join(block) + eol
     if pairs:
         bgn, end = pairs[0]
@@ -336,7 +351,7 @@ def apply_pointer(target: Path, dry: bool) -> str:
     if path.exists():
         if is_pointer(path.read_text(encoding="utf-8")):
             return "inchangé"
-        return "À FUSIONNER : CLAUDE.md porte ses propres règles (kata ne l'écrase pas)"
+        return "À FUSIONNER : CLAUDE.md porte ses propres règles (kwa ne l'écrase pas)"
     if not dry:
         atomic_write(path, POINTER + "\n")
     return "créé"
@@ -422,12 +437,12 @@ def apply_codex(target: Path, modules: list[str], dry: bool) -> list[str]:
 def sync_files(target: Path, modules: list[str], dry: bool) -> dict:
     """Copie les fichiers des modules. Géré : retouche locale sauvegardée avant écrasement.
     Seed : copié seulement s'il n'existe pas, puis laissé au projet."""
-    kata_dir = target / ".claude" / "kata"
-    state_path = kata_dir / "state.json"
-    old = read_json(state_path, {"files": {}})
+    kwa_dir = target / ".claude" / "kwa"
+    state_file = state_path(target)
+    old = read_json(legacy_state_path(target) if is_legacy(target) else state_file, {"files": {}})
     report = {"ajouté": [], "mis à jour": [], "sauvegardé": [], "inchangé": [], "retiré": [], "seed": []}
     new_files = {}
-    backup_dir = kata_dir / "backup" / time.strftime("%Y%m%d-%H%M%S")
+    backup_dir = kwa_dir / "backup" / time.strftime("%Y%m%d-%H%M%S")
     for m in modules:
         for src_rel, spec in module_files(manifest()[m]):
             src, dest_rel = PACK / src_rel, spec["dest"]
@@ -435,7 +450,7 @@ def sync_files(target: Path, modules: list[str], dry: bool) -> dict:
             if src.is_symlink() or not src.is_file():
                 die(f"manifeste : {src_rel} absent ou lien symbolique")
             if dst.is_symlink():
-                die(f"{dest_rel} est un lien symbolique ; kata refuse d'écrire à travers")
+                die(f"{dest_rel} est un lien symbolique ; kwa refuse d'écrire à travers")
             if spec.get("seed"):
                 if not dst.exists():
                     report["seed"].append(dest_rel)
@@ -466,7 +481,7 @@ def sync_files(target: Path, modules: list[str], dry: bool) -> dict:
         if not dry and (target / rel).exists():
             (target / rel).unlink()
     if not dry:
-        atomic_write(state_path, json.dumps({"version": version(), "modules": modules, "files": new_files},
+        atomic_write(state_file, json.dumps({"version": version(), "modules": modules, "files": new_files},
                                             indent=2, sort_keys=True) + "\n")
     return report
 
@@ -477,14 +492,104 @@ def apply_local_excludes(target: Path, dry: bool) -> str:
     if not git.is_dir():
         return "pas de dépôt git"
     path = git / "info" / "exclude"
-    wanted = [".claude/kata/local/", ".claude/kata/backup/", ".claude/settings.json.bak-*"]
+    wanted = [".claude/kwa/local/", ".claude/kwa/backup/", ".claude/settings.json.bak-*"]
     have = path.read_text(encoding="utf-8").splitlines() if path.exists() else []
     missing = [w for w in wanted if w not in have]
     if missing and not dry:
         path.parent.mkdir(parents=True, exist_ok=True)
         with open(path, "a", encoding="utf-8") as f:
-            f.write(("\n" if have and have[-1] else "") + "# kata\n" + "\n".join(missing) + "\n")
+            f.write(("\n" if have and have[-1] else "") + "# kwa\n" + "\n".join(missing) + "\n")
     return f"{len(missing)} motif(s) ajouté(s)" if missing else "à jour"
+
+
+# --------------------------------------------------------------------------- migration depuis l'ancien nom
+
+def strip_legacy_hooks(settings: dict) -> int:
+    """Retire de settings.json les hooks de l'ancien dossier .claude/kata/hooks ; garde les hooks du projet."""
+    removed = 0
+    for event in list(settings.get("hooks", {})):
+        kept = []
+        for entry in settings["hooks"][event]:
+            hooks = [h for h in entry.get("hooks", []) if LEGACY_HOOKS not in h.get("command", "")]
+            removed += len(entry.get("hooks", [])) - len(hooks)
+            if hooks:
+                kept.append({**entry, "hooks": hooks})
+        if kept:
+            settings["hooks"][event] = kept
+        else:
+            del settings["hooks"][event]
+    return removed
+
+
+def migrate_legacy(target: Path, dry: bool) -> list[str]:
+    """Installation faite sous l'ancien nom : sauvegarde les retouches locales, déplace notes et sauvegardes,
+    renomme la politique, retire les anciens hooks. Les anciens fichiers gérés sont retirés par sync_files."""
+    if not is_legacy(target):
+        return []
+    notes = []
+    claude = target / ".claude"
+    old = read_json(legacy_state_path(target), {"files": {}})
+    stamp = time.strftime("%Y%m%d-%H%M%S")
+    modified = [r for r, h in old.get("files", {}).items() if (target / r).is_file() and sha(target / r) != h]
+    for rel in modified:
+        notes.append(f"retouche locale sauvegardée : {rel}")
+        if not dry:
+            dest = claude / "kwa" / "backup" / stamp / "legacy" / rel
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(target / rel, dest)
+    for folder in ("local", "backup"):
+        src, dst = claude / "kata" / folder, claude / "kwa" / folder
+        if src.is_dir() and not dst.exists():
+            notes.append(f"déplacé : .claude/kata/{folder} → .claude/kwa/{folder}")
+            if not dry:
+                dst.parent.mkdir(parents=True, exist_ok=True)
+                shutil.move(str(src), str(dst))
+    old_pol, new_pol = target / LEGACY_POLICY_REL, target / POLICY_REL
+    if old_pol.is_file() and not new_pol.exists():
+        notes.append(f"politique renommée : {LEGACY_POLICY_REL} → {POLICY_REL}")
+        if not dry:
+            text = old_pol.read_text(encoding="utf-8")
+            new_pol.write_text(re.sub(r'^(\s*)"kata"(\s*:)', r'\1"kwa"\2', text, count=1, flags=re.M), encoding="utf-8")
+            old_pol.unlink()
+    elif old_pol.is_file():
+        notes.append(f"À FUSIONNER : {LEGACY_POLICY_REL} et {POLICY_REL} existent tous les deux")
+    for rel in (".claude/settings.json", ".codex/hooks.json"):
+        path = target / rel
+        data = read_json(path, None)
+        if data and any(LEGACY_HOOKS in h.get("command", "") for ev in data.get("hooks", {}).values()
+                        for e in ev for h in e.get("hooks", [])):
+            removed = strip_legacy_hooks(data)
+            notes.append(f"{rel} : {removed} ancien(s) hook(s) retiré(s)")
+            if not dry:
+                save_settings(path, data)
+    agents_skills = target / ".agents" / "skills"
+    if agents_skills.is_dir():
+        for link in sorted(agents_skills.glob("kata-*")):
+            if link.is_symlink():
+                notes.append(f"ancien lien retiré : .agents/skills/{link.name}")
+                if not dry:
+                    link.unlink()
+    return notes
+
+
+def finish_legacy(target: Path, dry: bool) -> list[str]:
+    """Après sync_files : retire l'ancien état et les dossiers vides laissés par l'ancien nom."""
+    notes = []
+    claude = target / ".claude"
+    if dry or not legacy_state_path(target).exists():
+        return notes
+    legacy_state_path(target).unlink()
+    for root in (claude / "skills", claude / "rules", claude / "kata"):
+        if not root.is_dir():
+            continue
+        for d in sorted((x for x in root.rglob("*") if x.is_dir()), key=lambda x: len(x.parts), reverse=True):
+            if (root != claude / "skills" or d.name.startswith("kata-")) and not any(d.iterdir()):
+                d.rmdir()
+        if root == claude / "kata" and root.is_dir() and not any(root.iterdir()):
+            root.rmdir()
+    if (claude / "kata").is_dir():
+        notes.append("À VÉRIFIER : .claude/kata contient encore des fichiers qui ne sont pas à Kwa ; à supprimer à la main si inutiles")
+    return notes
 
 
 # --------------------------------------------------------------------------- recommandations
@@ -502,7 +607,7 @@ def recommendations(tags: list[str], modules: list[str]) -> list[dict]:
 
 
 def skill_present(name: str, target: Path) -> bool:
-    home = Path(os.environ.get("KATA_HOME") or Path.home()) / ".claude"
+    home = Path(os.environ.get("KWA_HOME") or Path.home()) / ".claude"
     if any((p / name).exists() for p in (home / "skills", target / ".claude" / "skills", target / ".agents" / "skills")):
         return True
     plugins = read_json(home / "plugins" / "installed_plugins.json", {}) or {}
@@ -513,7 +618,7 @@ def skill_present(name: str, target: Path) -> bool:
 
 def resolve_modules(a, target: Path) -> list[str]:
     man = manifest()
-    state = read_json(target / ".claude" / "kata" / "state.json", {})
+    state = read_json(legacy_state_path(target) if is_legacy(target) else state_path(target), {})
     spec = a.modules or ("auto" if not state.get("modules") else ",".join(state["modules"]))
     chosen = ["core"] + [m for m in (detect(target)["modules"] if spec == "auto" else spec.split(",")) if m != "core"]
     chosen += list(a.with_ or [])
@@ -548,15 +653,22 @@ def cmd_install(a) -> int:
     profile = "pr-flow"
     found = detect(target)
     tag = "[simulation] " if a.dry_run else ""
-    print(f"{tag}kata v{version()} → {target}")
+    print(f"{tag}kwa v{version()} → {target}")
     print(f"  modules : {', '.join(modules)}")
+    for note in migrate_legacy(target, a.dry_run):
+        print(f"  migration : {note}")
     rep = sync_files(target, modules, a.dry_run)
     for k, v in rep.items():
         if v:
             print(f"  fichiers {k} : {len(v)}" + ("".join(f"\n    - {x}" for x in v) if k in ("sauvegardé", "retiré", "seed") else ""))
+    for note in finish_legacy(target, a.dry_run):
+        print(f"  migration : {note}")
     print(f"  AGENTS.md : {apply_block(target, profile, modules, a.dry_run)}")
     print(f"  CLAUDE.md : {apply_pointer(target, a.dry_run)}")
-    print(f"  politique {POLICY_REL} : {apply_policy(target, modules, found['inferred'], a.dry_run)}")
+    pol_note = apply_policy(target, modules, found["inferred"], a.dry_run)
+    if a.dry_run and (target / LEGACY_POLICY_REL).is_file() and not (target / POLICY_REL).exists():
+        pol_note = "conservée (propriété du projet, renommée par la migration)"
+    print(f"  politique {POLICY_REL} : {pol_note}")
     print(f"  .git/info/exclude : {apply_local_excludes(target, a.dry_run)}")
     added = apply_settings(target, modules, a.dry_run)
     print(f"  hooks settings.json : {len(added)} ajouté(s)" + "".join(f"\n    + {x}" for x in added))
@@ -564,16 +676,19 @@ def cmd_install(a) -> int:
         print("  codex : " + "; ".join(apply_codex(target, modules, a.dry_run)))
     recs = [r for r in recommendations(found["tags"], modules) if not skill_present(r["name"], target)]
     if recs:
-        print("  skills recommandées, non installées (voir `kata recommend`) : " + ", ".join(r["name"] for r in recs))
+        print("  skills recommandées, non installées (voir `kwa recommend`) : " + ", ".join(r["name"] for r in recs))
     print("  git : rien n'a été ajouté, commité ni poussé.")
     return 0
 
 
 def cmd_status(a) -> int:
     target = Path(a.target).resolve()
-    state = read_json(target / ".claude" / "kata" / "state.json", {})
+    if is_legacy(target):
+        print("installation faite sous l'ancien nom (kata) : lancer `kwa install` pour migrer")
+        return 1
+    state = read_json(state_path(target), {})
     if not state:
-        print("kata n'est pas installé ici")
+        print("kwa n'est pas installé ici")
         return 1
     drift = [r for r, h in state["files"].items() if not (target / r).exists() or sha(target / r) != h]
     print(f"installé : v{state['version']} (pack : v{version()}) — modules : {', '.join(state.get('modules', []))}")
@@ -583,16 +698,19 @@ def cmd_status(a) -> int:
 
 def cmd_doctor(a) -> int:
     target = Path(a.target).resolve()
-    state = read_json(target / ".claude" / "kata" / "state.json", {})
+    legacy = is_legacy(target)
+    state = read_json(legacy_state_path(target) if legacy else state_path(target), {})
     modules = state.get("modules", ["core"])
     problems, notes = [], []
+    if legacy:
+        problems.append("installation faite sous l'ancien nom (kata) : lancer `kwa install` pour migrer")
     agents = target / "AGENTS.md"
     if not agents.exists():
         problems.append("AGENTS.md absent")
     else:
         lines = agents.read_text(encoding="utf-8").splitlines()
         if len(markers(lines)) != 1:
-            problems.append(f"AGENTS.md : {len(markers(lines))} bloc(s) kata (attendu : 1)")
+            problems.append(f"AGENTS.md : {len(markers(lines))} bloc(s) kwa (attendu : 1)")
         if len(lines) > 300:
             problems.append(f"AGENTS.md : {len(lines)} lignes (> 300), déplacer le détail dans docs/")
     claude = target / "CLAUDE.md"
@@ -601,26 +719,26 @@ def cmd_doctor(a) -> int:
     settings = read_json(target / ".claude" / "settings.json", {})
     missing_hooks = merge_hooks(json.loads(json.dumps(settings)), module_hooks(modules))
     if missing_hooks:
-        problems.append(f"{len(missing_hooks)} hook(s) kata non branchés dans settings.json")
+        problems.append(f"{len(missing_hooks)} hook(s) kwa non branchés dans settings.json")
     pol_path = target / POLICY_REL
     if not pol_path.exists():
         problems.append(f"{POLICY_REL} absent")
     else:
         missing = sorted(rule_ids(build_policy(modules, {})) - rule_ids(read_json(pol_path, {})))
         if missing:
-            problems.append(f"politique : règles Kata absentes ({', '.join(missing)})")
+            problems.append(f"politique : règles Kwa absentes ({', '.join(missing)})")
     for kind, table in OVERLAP.items():
         folder = target / ".claude" / kind
         if folder.is_dir():
             for name, by in table.items():
                 if (folder / name).exists():
                     notes.append(f".claude/{kind}/{name} fait doublon avec {by} : à retirer une fois la politique validée")
-    home_settings = read_json(Path(os.environ.get("KATA_HOME") or Path.home()) / ".claude" / "settings.json", {}) or {}
+    home_settings = read_json(Path(os.environ.get("KWA_HOME") or Path.home()) / ".claude" / "settings.json", {}) or {}
     if "craft" in modules and any(k.startswith("superpowers@") and v for k, v in home_settings.get("enabledPlugins", {}).items()):
         notes.append("le plugin superpowers est actif au niveau utilisateur : il fait doublon avec le module craft "
-                     "(deux routeurs de skills) ; le désactiver une fois Kata validé")
+                     "(deux routeurs de skills) ; le désactiver une fois Kwa validé")
     foreign = [h["command"] for ev in settings.get("hooks", {}).values() for e in ev for h in e.get("hooks", [])
-               if "/.claude/kata/" not in h.get("command", "")]
+               if "/.claude/kwa/" not in h.get("command", "")]
     if foreign:
         notes.append(f"{len(foreign)} hook(s) propres au projet dans settings.json (conservés)")
     for n in notes:
@@ -634,14 +752,14 @@ def cmd_doctor(a) -> int:
 
 def cmd_recommend(a) -> int:
     target = Path(a.target).resolve()
-    state = read_json(target / ".claude" / "kata" / "state.json", {})
+    state = read_json(legacy_state_path(target) if is_legacy(target) else state_path(target), {})
     d = detect(target)
     recs = recommendations(d["tags"], state.get("modules", d["modules"]))
     print(f"Stack : {', '.join(d['tags']) or '—'}")
     for r in recs:
         mark = "✓ présente" if skill_present(r["name"], target) else "✗ à installer"
         print(f"  {mark:14} {r['name']:30} {r['why']}")
-    print("Kata n'installe aucune skill tierce : relire la source, puis l'installer à la main.")
+    print("Kwa n'installe aucune skill tierce : relire la source, puis l'installer à la main.")
     return 0
 
 

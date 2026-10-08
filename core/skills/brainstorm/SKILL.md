@@ -1,5 +1,5 @@
 ---
-name: kata-brainstorm
+name: kwa-brainstorm
 description: Cadrer avant de coder une fonctionnalité ou un changement non trivial. À utiliser quand la demande crée un comportement, touche plusieurs fichiers ou une interface dont d'autres dépendent, laisse plusieurs lectures possibles, ou quand l'utilisateur dit « on pourrait », « je voudrais ajouter », « comment faire pour », « réfléchissons à ».
 allowed-tools: Read Grep Glob Bash(git log *) Bash(git status *) Bash(gh issue *) Write Edit
 ---
@@ -25,15 +25,15 @@ Annoncer la voie avant la première question, pour que l'humain puisse la corrig
 | Voie | Quand | Livrable |
 |---|---|---|
 | Sonde | « est-ce faisable ? », la sortie est une réponse, pas du code à garder | 2-3 phrases : question et essai prévu. Un feu vert, puis résultat en recommandation. Tout ce qui a été construit est étiqueté jetable. |
-| Bornée | Changement net dans un flux qui existe déjà et qu'on peut lire dans le dépôt | Design court dans la conversation. Stop. Pas de fichier. Le code suit le « oui » (`/kata-tdd`). |
-| Structurante | Nouveau module, interface dont d'autres dépendent, changement de modèle de données, plusieurs sous-systèmes | Parcours complet ci-dessous, spec écrite, puis `/kata-plan`. |
+| Bornée | Changement net dans un flux qui existe déjà et qu'on peut lire dans le dépôt | Design court dans la conversation. Stop. Pas de fichier. Le code suit le « oui » (`/kwa-tdd`). |
+| Structurante | Nouveau module, interface dont d'autres dépendent, changement de modèle de données, plusieurs sous-systèmes | Parcours complet ci-dessous, spec écrite, puis `/kwa-plan`. |
 
 En cas d'hésitation entre deux voies, prendre la plus lourde. Le cliquet ne descend jamais : une complexité
 découverte en route fait remonter la voie, on s'arrête et on le dit.
 
 ## 2. Parcours structurant
 
-1. **Explorer le contexte.** `AGENTS.md`, `.claude/kata.policy.json`, code voisin, `git log` récent, issues
+1. **Explorer le contexte.** `AGENTS.md`, `.claude/kwa.policy.json`, code voisin, `git log` récent, issues
    ouvertes (`gh issue list --search`). Lire les décisions déjà prises (`memory.decisions_dir`, défaut
    `docs/decisions/`). Si la politique désigne une base de connaissance (`knowledge_base`), elle fait foi ; si elle est muette, le dire.
 2. **Évaluer l'ampleur.** Si la demande couvre plusieurs sous-systèmes indépendants, le signaler tout de suite et
@@ -60,7 +60,7 @@ Dans du code existant, suivre les motifs en place ; ne proposer un nettoyage que
 Chemin : `docs/specs/AAAA-MM-JJ-<sujet>.md`. Si la politique définit `memory.specs_dir`, ou un dossier de
 documentation désigné pour les specs, l'utiliser à la place. Dossier absent : le créer. Pas d'écriture sur
 `main` si `write.no_code_on_main` couvre ce dossier ; en cas de doute, travailler dans le worktree de
-`/kata-start-dev`.
+`/kwa-start-dev`.
 
 Une page ou deux. Fonctionnel et technique seulement : aucun nom de personne, hypothèse de financement ni lien
 privé.
@@ -97,8 +97,8 @@ Relire la spec comme un étranger, puis corriger sur place. Ne pas relancer de b
 Annoncer : « Spec écrite dans `<chemin>`. Relis-la et dis-moi ce qui change. Je ne passe au plan qu'après ton
 accord. » Puis attendre. Une demande de modification relance l'auto-relecture. Un silence n'est pas un accord.
 
-Après l'accord seulement : proposer `/kata-plan`. Aucune autre skill d'implémentation à ce stade. Commit de la
-spec : seulement sur demande, via `/kata-commit`. Issue, branche, worktree : `/kata-start-dev`.
+Après l'accord seulement : proposer `/kwa-plan`. Aucune autre skill d'implémentation à ce stade. Commit de la
+spec : seulement sur demande, via `/kwa-commit`. Issue, branche, worktree : `/kwa-start-dev`.
 
 ## Signaux d'alerte
 
@@ -116,7 +116,7 @@ spec : seulement sur demande, via `/kata-commit`. Issue, branche, worktree : `/k
 
 ## Fin
 
-Voie sonde : recommandation rendue. Voie bornée : design approuvé, puis `/kata-tdd`. Voie structurante : spec
-approuvée, puis `/kata-plan`. Pour capitaliser une décision durable : `/kata-learn`.
+Voie sonde : recommandation rendue. Voie bornée : design approuvé, puis `/kwa-tdd`. Voie structurante : spec
+approuvée, puis `/kwa-plan`. Pour capitaliser une décision durable : `/kwa-learn`.
 
-> Inspiré de superpowers (Jesse Vincent, MIT, v6.4.1) ; réécrit pour Kata.
+> Inspiré de superpowers (Jesse Vincent, MIT, v6.4.1) ; réécrit pour Kwa.

@@ -1,6 +1,6 @@
 # Remonter la chaîne causale
 
-Complément de `/kata-debug`. Le bug se manifeste en bas de la pile ; la cause est presque toujours plus haut.
+Complément de `/kwa-debug`. Le bug se manifeste en bas de la pile ; la cause est presque toujours plus haut.
 Corriger là où ça casse traite le symptôme.
 
 ## Technique

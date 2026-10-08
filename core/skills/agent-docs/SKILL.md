@@ -1,6 +1,6 @@
 ---
-name: kata-agent-docs
-description: Écrire ou modifier un document destiné aux agents — skill, AGENTS.md, règle, gabarit, note de politique. À utiliser dès qu'on crée ou édite un fichier dans .claude/skills, .claude/rules, core/skills ou AGENTS.md, quand une skill ne se déclenche pas comme prévu, ou quand l'utilisateur dit « écris une skill », « ajoute une règle », « /kata-agent-docs ».
+name: kwa-agent-docs
+description: Écrire ou modifier un document destiné aux agents — skill, AGENTS.md, règle, gabarit, note de politique. À utiliser dès qu'on crée ou édite un fichier dans .claude/skills, .claude/rules, core/skills ou AGENTS.md, quand une skill ne se déclenche pas comme prévu, ou quand l'utilisateur dit « écris une skill », « ajoute une règle », « /kwa-agent-docs ».
 allowed-tools: Read Grep Glob Edit Write
 ---
 
@@ -15,12 +15,12 @@ comportement.
 | Vous voulez... | Destination |
 |---|---|
 | Une procédure déclenchée par une situation | une skill (`.claude/skills/<nom>/SKILL.md`, ou `core/skills/` dans le pack) |
-| Une convention valable pour tout agent du projet | `AGENTS.md`, **au-dessus ou en dessous** du bloc `<!-- kata:begin ... -->` jamais dedans |
-| Une règle commune à tous les projets qui installent Kata | `.claude/rules/kata-*.md` : ce sont des fichiers gérés, à modifier dans le pack, pas localement |
-| Un garde-fou qui doit **empêcher** (commande, chemin) | `.claude/kata.policy.json`, pas un texte : un texte se contourne, une garde non |
-| Une connaissance durable (décision, piège) | `/kata-learn` : docs du projet, pas un document d'agent |
+| Une convention valable pour tout agent du projet | `AGENTS.md`, **au-dessus ou en dessous** du bloc `<!-- kwa:begin ... -->` jamais dedans |
+| Une règle commune à tous les projets qui installent Kwa | `.claude/rules/kwa-*.md` : ce sont des fichiers gérés, à modifier dans le pack, pas localement |
+| Un garde-fou qui doit **empêcher** (commande, chemin) | `.claude/kwa.policy.json`, pas un texte : un texte se contourne, une garde non |
+| Une connaissance durable (décision, piège) | `/kwa-learn` : docs du projet, pas un document d'agent |
 
-Le bloc géré de `AGENTS.md` et les fichiers `kata-*` sont réécrits à la mise à jour : toute retouche locale s'y
+Le bloc géré de `AGENTS.md` et les fichiers `kwa-*` sont réécrits à la mise à jour : toute retouche locale s'y
 perd (elle est sauvegardée, mais pas conservée). `CLAUDE.md` reste un pointeur `@AGENTS.md`.
 
 ## 1. Ce qui va dans le document
@@ -62,7 +62,7 @@ La description est toujours chargée. Elle décide si la skill est choisie ; ell
 - **Ne jamais y mettre le déroulé.** Un agent qui lit les étapes dans la description saute le corps.
 - Ne pas répéter ce que le nom porte déjà.
 - Skill qu'on ne lance que par commande : `disable-model-invocation: true`, description courte pour l'humain.
-- Frontmatter Kata : `name: kata-<nom>`, `description:`, `allowed-tools:` au plus juste.
+- Frontmatter Kwa : `name: kwa-<nom>`, `description:`, `allowed-tools:` au plus juste.
 
 ## 5. Éviter la dérive
 
@@ -72,13 +72,13 @@ La description est toujours chargée. Elle décide si la skill est choisie ; ell
 - **Tester par l'usage** : lancer le scénario dont le document dépend, avec un agent sans contexte, et observer
   s'il prend le bon chemin. Une divergence se règle par un mot plus fort ou une branche explicite, pas par un
   paragraphe de plus.
-- Renvoyer vers les skills existantes plutôt que recopier leur contenu (`/kata-commit`, `/kata-review`...).
+- Renvoyer vers les skills existantes plutôt que recopier leur contenu (`/kwa-commit`, `/kwa-review`...).
 - Pas de compatibilité de façade : on supprime proprement ce qui est remplacé.
-- Rien n'est committé sans demande (`/kata-commit`).
+- Rien n'est committé sans demande (`/kwa-commit`).
 
 ## 6. Relire avant de rendre
 
 Cochez : où va ce texte (§0) ? chaque ligne change-t-elle un comportement ? la description dit-elle quand, pas
 comment ? un critère de fin vérifiable ? rien de dupliqué ni de dérivable ? sous 180 lignes ?
 
-> Inspiré des skills de Matt Pocock (mattpocock/skills, MIT, commit f3fc563) ; réécrit pour Kata.
+> Inspiré des skills de Matt Pocock (mattpocock/skills, MIT, commit f3fc563) ; réécrit pour Kwa.
