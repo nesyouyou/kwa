@@ -12,6 +12,12 @@ SIDE = [  # (groupe, couleur du repère, [(libellé, cible)])
                             ("Mémoire", "index.html#memoire"), ("Méthode", "index.html#superpowers"), ("Remplacer l'existant", "index.html#migrer"),
                             ("Limites et suite", "index.html#limites"), ("Crédits", "index.html#credits")]),
 ]
+ICONS = {  # tracés Lucide-like, 24x24, trait seul
+    "Kwa": '<path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>',
+    "Explorer": '<circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/>',
+    "Apprendre": '<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11.5V16c0 1.2 2.7 3 6 3s6-1.8 6-3v-4.5"/>',
+    "Référence": '<path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/>',
+}
 PAGES = [t.split("#")[0] for _, _, items in SIDE for _, t in items]
 
 # bouton de thème : icône seule (lune en clair, soleil en sombre, choisie en CSS)
@@ -30,7 +36,7 @@ def sidebar(current: str, toc: list[tuple[str, str]] | None = None) -> str:
     """current : nom du fichier de la page (index.html, board.html…). toc : (ancre, libellé) affichés sous l'entrée courante."""
     out = ['<aside class="kd-side" id="side" aria-label="Navigation"><nav>']
     for group, color, items in SIDE:
-        out.append(f'<div class="kd-sg"><h2><i class="kd-dot" style="--dot:var(--kd-{color})"></i>{html.escape(group)}</h2><ul>')
+        out.append(f'<div class="kd-sg"><h2><svg class="kd-ico" style="--dot:var(--kd-{color})" viewBox="0 0 24 24" aria-hidden="true">{ICONS[group]}</svg>{html.escape(group)}</h2><ul>')
         for label, target in items:
             page, _, frag = target.partition("#")
             same = page == current
