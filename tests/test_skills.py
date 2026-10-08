@@ -167,5 +167,20 @@ class Parcours(unittest.TestCase):
         self.assertIn("parcours.html", open(os.path.join(self.SITE, "template.html"), encoding="utf-8").read())
 
 
+class Neutral(unittest.TestCase):
+    def test_no_organisation_name_in_tracked_files(self):
+        # le dépôt est personnel pour l'instant : aucun nom d'organisation, y compris dans les pages générées
+        files = subprocess.run(["git", "ls-files"], cwd=PACK, capture_output=True, text=True).stdout.split("\n")
+        needle = "naka" + "ma"
+        hits = []
+        for f in files:
+            path = os.path.join(PACK, f)
+            if not f or not os.path.isfile(path) or f.endswith((".woff2", ".ttf", ".png", ".jpg", ".svg")):
+                continue
+            if needle in open(path, encoding="utf-8", errors="ignore").read().lower() or needle in f.lower():
+                hits.append(f)
+        self.assertEqual(hits, [])
+
+
 if __name__ == "__main__":
     unittest.main()

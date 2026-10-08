@@ -1,4 +1,4 @@
-/* Carte interactive de Kata — design system Nakama 1.0.0 : uniquement les variables --nkui-*, aucune couleur ajoutée. */
+/* Carte interactive de Kata — design system du site : uniquement les variables --nkui-*, aucune couleur ajoutée. */
 .km{position:relative;font:14px/1.5 Geist,system-ui,sans-serif;color:var(--nkui-fg)}
 .km *,.km *::before,.km *::after{box-sizing:border-box}
 .km-bar{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--nkui-rule);border-bottom:0;border-radius:20px 20px 0 0;background:var(--nkui-brick)}

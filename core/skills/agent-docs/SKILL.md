@@ -16,7 +16,7 @@ comportement.
 |---|---|
 | Une procédure déclenchée par une situation | une skill (`.claude/skills/<nom>/SKILL.md`, ou `core/skills/` dans le pack) |
 | Une convention valable pour tout agent du projet | `AGENTS.md`, **au-dessus ou en dessous** du bloc `<!-- kata:begin ... -->` jamais dedans |
-| Une règle commune à tous les projets Nakama | `.claude/rules/kata-*.md` : ce sont des fichiers gérés, à modifier dans le pack, pas localement |
+| Une règle commune à tous les projets qui installent Kata | `.claude/rules/kata-*.md` : ce sont des fichiers gérés, à modifier dans le pack, pas localement |
 | Un garde-fou qui doit **empêcher** (commande, chemin) | `.claude/kata.policy.json`, pas un texte : un texte se contourne, une garde non |
 | Une connaissance durable (décision, piège) | `/kata-learn` : docs du projet, pas un document d'agent |
 

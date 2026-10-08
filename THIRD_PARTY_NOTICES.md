@@ -1,6 +1,6 @@
 # Notices
 
-Kata assemble des idées éprouvées par d'autres projets, tous sous licence MIT. Aucun fichier n'est copié : les textes sont réécrits en français et adaptés au flux Nakama (politique projet, gardes, pas de commit sans demande). Les textes de licence sont dans `licenses/` ; `credits.json` est la source de ce tableau et du site de documentation, et chaque skill concernée porte sa ligne d'origine en dernière ligne.
+Kata assemble des idées éprouvées par d'autres projets, tous sous licence MIT. Aucun fichier n'est copié : les textes sont réécrits en français et adaptés à un flux par pull request (politique projet, gardes, pas de commit sans demande). Les textes de licence sont dans `licenses/` ; `credits.json` est la source de ce tableau et du site de documentation, et chaque skill concernée porte sa ligne d'origine en dernière ligne.
 
 ## superpowers — Jesse Vincent (MIT)
 

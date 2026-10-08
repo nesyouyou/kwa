@@ -66,7 +66,7 @@ Arrêter et remonter l'échelle si tu écris :
 - une dépendance ajoutée pour un format de date, un clone profond, un identifiant ;
 - plus de lignes de justification que de lignes de code.
 
-## Sur les stacks Nakama
+## Sur quelques stacks courantes
 
 - **Next.js** : composant serveur avant composant client ; `fetch` et cache natifs avant une lib de requêtes ;
   CSS et variables avant un état JS ; `<dialog>`, `<details>`, `<input type="date">` avant une bibliothèque de

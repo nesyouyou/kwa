@@ -135,7 +135,7 @@ class Write(unittest.TestCase):
     def test_secrets_in_content(self):
         samples = ["sk-ant-" + "a" * 30, "sk_live_" + "a" * 24, "AKIA" + "A" * 16, "ghp_" + "a" * 36,
                    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.abcdefghijk",
-                   "postgres://nakama:s3cr3tpw@db.example.com/x", "-----BEGIN RSA PRIVATE KEY-----"]
+                   "postgres://app:s3cr3tpw@db.example.com/x", "-----BEGIN RSA PRIVATE KEY-----"]
         for s in samples:
             with self.subTest(s=s[:12]):
                 self.assertEqual(run("guard-write.py", "Write", {"file_path": "/tmp/x.ts", "content": f"const k = '{s}'"}), "deny")

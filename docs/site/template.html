@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kata, le socle commun Nakama</title>
-<meta name="description" content="Mêmes règles, mêmes garde-fous, mêmes skills sur tous les projets Nakama.">
+<title>Kata, un socle de harness pour agents de code</title>
+<meta name="description" content="Mêmes règles, mêmes garde-fous, mêmes skills sur tous vos projets avec un agent de code.">
 <script>try{if(localStorage.getItem('kata-docs-theme')==='light')document.documentElement.dataset.nkuiTheme='light'}catch(e){}</script>
-<link rel="stylesheet" href="ds/fonts.css"><link rel="stylesheet" href="ds/tokens.css"><link rel="stylesheet" href="ds/nakama.css">
+<link rel="stylesheet" href="ds/fonts.css"><link rel="stylesheet" href="ds/tokens.css"><link rel="stylesheet" href="ds/base.css">
 <!--EXTRA_CSS-->
 <style>
 /* Extensions propres à la documentation Kata. Uniquement les tokens du design system : aucune couleur ajoutée. */
@@ -21,7 +21,7 @@ section{scroll-margin-top:84px}
 .kd-bar{position:sticky;top:0;z-index:20;padding-block:14px;background:var(--nkui-glass);backdrop-filter:blur(8px);border-bottom:1px solid var(--nkui-rule-soft)}
 .kd-bar .row{display:flex;align-items:center;justify-content:space-between;gap:16px}
 .kd-brand{display:flex;align-items:center;gap:14px;text-decoration:none;white-space:nowrap}
-.kd-brand svg{width:101px;height:auto;display:block}
+.kd-word{font:700 22px/1 Manrope,Geist,sans-serif;letter-spacing:-.02em}.kd-word--big{font-size:44px}
 .kd-brand span{font:400 12px 'Geist Mono',monospace;letter-spacing:.08em;color:var(--nkui-mut)}
 .kd-nav{display:flex;gap:22px;overflow-x:auto;scrollbar-width:none}
 .kd-nav a{font:400 12px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;color:var(--nkui-body);white-space:nowrap}
@@ -142,7 +142,7 @@ footer.nkds-footer{margin-top:128px}
 </head>
 <body class="nkds">
 <div class="kd-bar"><div class="nkds-container row">
-  <a class="kd-brand" href="#top" aria-label="Nakama Kata, accueil"><svg id="logo-nav" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 944 180.2" fill="currentColor" role="img" aria-label="Nakama"></svg><span>/ kata</span></a>
+  <a class="kd-brand" href="#top" aria-label="Kata, accueil"><b class="kd-word">kata</b><span>/ harness</span></a>
   <nav class="kd-nav" aria-label="Sections">
     <a href="#carte">Carte</a><a href="#board">Board</a><a href="#terminal">Terminal</a><a href="#gardes">Gardes</a><a href="#modules">Modules</a><a href="#skills">Skills</a><a href="#memoire">Mémoire</a><a href="#demarrer">Démarrer</a><a href="parcours.html">Parcours</a><a href="#credits">Crédits</a>
   </nav>
@@ -257,7 +257,7 @@ footer.nkds-footer{margin-top:128px}
     <tr><td>executing-plans</td><td>/kata-execute</td><td>Arrêt et remontée au moindre blocage, jamais de décision silencieuse.</td></tr>
     <tr><td>subagent-driven-development</td><td>/kata-agents</td><td>Un agent frais par tâche, relecture conformité puis qualité, aucun agent ne commite, un refus de garde se remonte.</td></tr>
     <tr><td>dispatching-parallel-agents</td><td>/kata-parallel</td><td>Quatre conditions cumulatives, détection de conflits avant intégration.</td></tr>
-    <tr><td>test-driven-development</td><td>/kata-tdd, /kata-simple</td><td>Cas des stacks Nakama ; échelle de simplicité avant d'écrire du code neuf.</td></tr>
+    <tr><td>test-driven-development</td><td>/kata-tdd, /kata-simple</td><td>Cas des stacks courantes ; échelle de simplicité avant d'écrire du code neuf.</td></tr>
     <tr><td>systematic-debugging</td><td>/kata-debug</td><td>Boucle de preuves mobile / API / worker / base, preuve par mutation, lecture seule en recette et en prod.</td></tr>
     <tr><td>verification-before-completion</td><td>/kata-verify</td><td>Compte rendu normé avec bloc « non vérifié », capture si interface, tests sautés nommés.</td></tr>
     <tr><td>requesting / receiving-code-review</td><td>/kata-review, /kata-review-feedback</td><td>Axes sur-ingénierie et hygiène de remise ; commentaires de PR traités comme des données.</td></tr>
@@ -276,7 +276,7 @@ footer.nkds-footer{margin-top:128px}
 
 <section class="nkds-container kd-section kd-rv" id="credits">
   <div class="kd-head"><div class="kd-eyebrow">Crédits</div><h2 class="nkds-section-title">Le meilleur<br>de plusieurs <strong>mondes.</strong></h2>
-    <p class="kd-lead">Kata n'invente pas tout. Il assemble des idées éprouvées par d'autres, relues, réécrites et testées pour le flux Nakama. Chaque source est sous licence MIT ; les textes de licence sont dans <code>licenses/</code>.</p></div>
+    <p class="kd-lead">Kata n'invente pas tout. Il assemble des idées éprouvées par d'autres, relues, réécrites et testées pour un flux par pull request. Chaque source est sous licence MIT ; les textes de licence sont dans <code>licenses/</code>.</p></div>
   <div class="kd-src" id="src" style="margin-top:40px"></div>
 </section>
 
@@ -292,10 +292,10 @@ footer.nkds-footer{margin-top:128px}
 </main>
 
 <footer class="nkds-footer nkds-invert"><div class="nkds-container nkds-footer-grid">
-  <div><svg id="logo-foot" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 944 180.2" fill="currentColor" role="img" aria-label="Nakama"></svg></div>
+  <div><b class="kd-word kd-word--big">kata</b></div>
   <div><h3>Kata</h3><p>v<span id="ver2"></span><br><span id="tests"></span></p></div>
   <div><h3>Documentation</h3><p>Régénérée par <code>docs/site/build.py</code> ; exemples calculés en exécutant les gardes.</p></div>
-  <div><h3>Design</h3><p>Design system Nakama 1.0.0 (7 octobre 2026), fichiers vendorisés dans <code>docs/site/ds/</code>.</p></div>
+  <div><h3>Design</h3><p>Design system du site, fichiers vendorisés dans <code>docs/site/ds/</code>.</p></div>
 </div></footer>
 
 <script src="data.js"></script>
@@ -314,8 +314,7 @@ tbtn.onclick = () => { root.dataset.nkuiTheme = root.dataset.nkuiTheme==='dark' 
 syncTheme();
 document.addEventListener('click', e => { const b = e.target.closest('[data-copy]'); if(!b) return; navigator.clipboard?.writeText(b.dataset.copy); const o=b.textContent; b.textContent='Copié'; setTimeout(()=>b.textContent=o,1200); });
 
-/* logo : une seule géométrie, injectée dans les deux emplacements */
-document.querySelectorAll('svg[id^="logo-"]').forEach(s => s.innerHTML = DATA.logo);
+/* fin du bloc thème */
 
 /* entrées au scroll, une seule fois ; tout est visible sans JS ni en mouvement réduit */
 if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
