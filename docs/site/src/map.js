@@ -376,7 +376,7 @@
       clone.setAttribute('xmlns', NS); clone.setAttribute('width', b.w + pad * 2); clone.setAttribute('height', b.h + pad * 2);
       clone.setAttribute('viewBox', [b.x - pad, b.y - pad, b.w + pad * 2, b.h + pad * 2].join(' ')); clone.removeAttribute('class'); clone.removeAttribute('tabindex');
       var world = clone.querySelector('.km-world'); world.removeAttribute('style');
-      var bg = s('rect', { x: b.x - pad, y: b.y - pad, width: b.w + pad * 2, height: b.h + pad * 2, fill: getComputedStyle(root).getPropertyValue('--nkui-bg').trim() || '#fff' });
+      var bg = s('rect', { x: b.x - pad, y: b.y - pad, width: b.w + pad * 2, height: b.h + pad * 2, fill: getComputedStyle(root).getPropertyValue('--kw-bg').trim() || '#fff' });
       clone.insertBefore(bg, clone.firstChild);
       var st = s('style'); st.textContent = cssText() + '\ntext{font-family:Geist,Arial,sans-serif}'; clone.insertBefore(st, clone.firstChild);
       var xml = new XMLSerializer().serializeToString(clone), name = 'kwa-' + state.view.replace(':', '-');

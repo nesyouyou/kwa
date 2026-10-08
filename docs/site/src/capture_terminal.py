@@ -26,6 +26,7 @@ OUT = HERE / "terminal-data.json"
 DAY = "2026-10-07"  # date figée dans les sorties (kwa-memory date ses notes du jour)
 
 BASE_ENV = {k: v for k, v in os.environ.items() if k.startswith(("LC_", "LANG")) or k in {"PATH", "HOME"}}
+BASE_ENV["GH"] = "false"  # jamais le vrai GitHub : la capture doit être la même partout
 BASE_ENV.update({
     "GIT_AUTHOR_NAME": "Demo", "GIT_AUTHOR_EMAIL": "demo@example.test",
     "GIT_COMMITTER_NAME": "Demo", "GIT_COMMITTER_EMAIL": "demo@example.test",

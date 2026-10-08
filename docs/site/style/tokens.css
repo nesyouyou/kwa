@@ -1,0 +1,46 @@
+/* Couleurs et mesures du site de documentation. Clair ou sombre selon html[data-theme] ; le sombre est le défaut. */
+:root, [data-theme="light"] {
+  --kw-bg: #ffffff;
+  --kw-brick: #ffffff;
+  --kw-raise: #f4f4f5;
+  --kw-tint: rgba(9, 9, 11, .03);
+  --kw-cell-hover: rgba(9, 9, 11, .05);
+  --kw-glass: rgba(255, 255, 255, .85);
+  --kw-rule: #e1e1e5;
+  --kw-rule-soft: #eeeef1;
+  --kw-fg: #18181b;
+  --kw-body: #3f3f46;
+  --kw-mut: #6b6b75;
+  --kw-dim: #8e8e98;
+  --kw-green: #15803d;
+  --kw-invert-bg: #18181b;
+  --kw-invert-fg: #fafafa;
+  --kw-footer-bg: #f4f4f5;
+  --kw-footer-fg: #18181b;
+  --kw-footer-mut: #52525b;
+}
+[data-theme="dark"] {
+  --kw-bg: #0c0c0e;
+  --kw-brick: #000000;
+  --kw-raise: #18181b;
+  --kw-tint: rgba(250, 250, 250, .025);
+  --kw-cell-hover: rgba(250, 250, 250, .05);
+  --kw-glass: rgba(12, 12, 14, .8);
+  --kw-rule: #27272b;
+  --kw-rule-soft: #1e1e22;
+  --kw-fg: #fafafa;
+  --kw-body: #a8a8b2;
+  --kw-mut: #7c7c86;
+  --kw-dim: #5a5a63;
+  --kw-green: #22c55e;
+  --kw-invert-bg: #fafafa;
+  --kw-invert-fg: #0c0c0e;
+  --kw-footer-bg: #131316;
+  --kw-footer-fg: #fafafa;
+  --kw-footer-mut: #a8a8b2;
+}
+:root {
+  --kw-max-width: 1120px;
+  --kw-gutter: clamp(16px, 4vw, 48px);
+  --kw-ease: cubic-bezier(.22, 1, .36, 1);
+}

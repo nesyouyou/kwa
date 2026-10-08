@@ -24,7 +24,8 @@ _loader.exec_module(kwa)
 
 
 def verdict(guard, tool, tool_input, cwd, env=None):
-    e = {**os.environ, "CLAUDE_PROJECT_DIR": cwd, **(env or {})}
+    # GH=false : le garde ne doit jamais interroger le vrai GitHub, sinon la page dépend de l'état d'un dépôt réel
+    e = {**os.environ, "GH": "false", "CLAUDE_PROJECT_DIR": cwd, **(env or {})}
     p = subprocess.run([sys.executable, os.path.join(HOOKS, guard)], input=json.dumps(
         {"tool_name": tool, "tool_input": tool_input, "cwd": cwd}), capture_output=True, text=True, env=e)
     if not p.stdout.strip():
@@ -165,16 +166,16 @@ def main():
         bar_p = bar.replace('href="#top"', 'href="index.html"').replace('<nav class="kd-nav" aria-label="Sections">', '<nav class="kd-nav" aria-label="Pages">')
         bar_p = re.sub(r'<nav class="kd-nav".*?</nav>', '<nav class="kd-nav" aria-label="Pages"><a href="index.html">Accueil</a><a href="skill-map.html">Carte</a><a href="board.html">Circuit</a><a href="terminal.html">Terminal</a><a href="parcours.html">Parcours</a></nav>', bar_p, flags=re.S)
         html = f"""<!doctype html>
-<html lang="fr" data-nkui-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<html lang="fr" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title} | Kwa</title>
-<script>try{{if(localStorage.getItem('kwa-docs-theme')==='light')document.documentElement.dataset.nkuiTheme='light'}}catch(e){{}}</script>
-<link rel="stylesheet" href="ds/fonts.css"><link rel="stylesheet" href="ds/tokens.css"><link rel="stylesheet" href="ds/base.css">{wcss}
+<script>try{{if(localStorage.getItem('kwa-docs-theme')==='light')document.documentElement.dataset.theme='light'}}catch(e){{}}</script>
+<link rel="stylesheet" href="style/fonts.css"><link rel="stylesheet" href="style/tokens.css"><link rel="stylesheet" href="style/base.css">{wcss}
 {head}</head>
-<body class="nkds">
+<body class="kw">
 {bar_p}
-<main class="nkds-container" style="padding-top:32px">
+<main class="kw-container" style="padding-top:32px">
   <div class="kd-eyebrow">{eyebrow}</div>
-  <h1 class="nkds-section-title" style="margin-bottom:16px;font-size:clamp(30px,3.4vw,44px)">{title}<strong>.</strong></h1>
+  <h1 class="kw-page-title">{title}</h1>
   {mount_html}
 </main>
 {foot}

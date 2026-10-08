@@ -167,6 +167,28 @@ class Parcours(unittest.TestCase):
         self.assertIn("parcours.html", open(os.path.join(self.SITE, "template.html"), encoding="utf-8").read())
 
 
+class OwnStyle(unittest.TestCase):
+    """Le site porte sa propre feuille de style : plus de trace d'une charte graphique empruntée."""
+
+    def test_no_borrowed_prefixes_or_fonts(self):
+        files = subprocess.run(["git", "ls-files"], cwd=PACK, capture_output=True, text=True).stdout.split("\n")
+        hits = []
+        for f in files:
+            path = os.path.join(PACK, f)
+            if not f or not os.path.isfile(path) or f.endswith((".woff2", ".ttf", ".png", ".jpg")) or f.startswith("tests/"):
+                continue
+            text = open(path, encoding="utf-8", errors="ignore").read()
+            if re.search(r"nkds|nkui|Manrope", text):
+                hits.append(f)
+        self.assertEqual(hits, [])
+
+    def test_titles_are_plain(self):
+        text = open(os.path.join(PACK, "docs", "site", "template.html"), encoding="utf-8").read()
+        for m in re.finditer(r"<h[12] class=\"kw-(?:section-)?title\"[^>]*>(.*?)</h[12]>", text, re.S):
+            self.assertNotRegex(m.group(1), r"<strong>|<br", "un titre est du texte simple : pas de mot en gras ni de retour forcé")
+            self.assertFalse(m.group(1).rstrip().endswith("."), "pas de point final décoratif")
+
+
 class Neutral(unittest.TestCase):
     def test_no_organisation_name_in_tracked_files(self):
         # le dépôt est personnel pour l'instant : aucun nom d'organisation, y compris dans les pages générées
