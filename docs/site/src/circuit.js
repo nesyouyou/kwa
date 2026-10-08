@@ -37,6 +37,7 @@
     root.textContent = '';
 
     var scen = h('div', { class: 'kc-scen', role: 'group', 'aria-label': 'Scénario' });
+    var intro = h('p', { class: 'kc-intro' });
     var track = h('ol', { class: 'kc-track', 'aria-label': 'Étapes du scénario' });
     var legend = h('ul', { class: 'kc-legend', 'aria-label': 'Légende' }, [
       h('li', null, [h('i', { class: 'kc-key kc-key--auto', 'aria-hidden': 'true' }), 'Étape automatique, sous les gardes']),
@@ -49,12 +50,11 @@
     prev.addEventListener('click', function () { go(st.i - 1); });
     next.addEventListener('click', function () { go(st.i === sc().steps.length - 1 ? 0 : st.i + 1); });
     var bar = h('div', { class: 'kc-bar' }, [legend, h('div', { class: 'kc-ctrl' }, [prev, next])]);
-    [scen, h('div', { class: 'kc-trackwrap' }, [track]), bar, fiche].forEach(function (e) { root.appendChild(e); });
+    [scen, intro, h('div', { class: 'kc-trackwrap' }, [track]), fiche, bar].forEach(function (e) { root.appendChild(e); });
 
     D.SCENARIOS.forEach(function (sc, idx) {
       var b = h('button', { class: 'kc-sc kc-sc--' + sc.id, type: 'button', 'aria-pressed': idx === 0 ? 'true' : 'false' }, [
-        h('span', { class: 'kc-sc-t' }, [h('i', { class: 'kc-dot', 'aria-hidden': 'true' }), sc.label, h('span', { class: 'kc-sc-n', text: sc.card.id + ' · ' + sc.card.title })]),
-        h('span', { class: 'kc-sc-d', text: sc.intro })
+        h('i', { class: 'kc-dot', 'aria-hidden': 'true' }), sc.label, h('span', { class: 'kc-sc-n', text: sc.card.id })
       ]);
       b.addEventListener('click', function () { st.sc = idx; st.i = 0; build(); });
       scen.appendChild(b);
@@ -68,6 +68,7 @@
     function build() {
       var S = sc();
       root.setAttribute('data-sc', S.id);
+      intro.textContent = S.card.id + ' ' + S.card.title + ' : ' + S.intro;
       Array.prototype.forEach.call(scen.children, function (b, k) { b.setAttribute('aria-pressed', k === st.sc ? 'true' : 'false'); });
       track.textContent = '';
       var group = null, lastCol = -1;

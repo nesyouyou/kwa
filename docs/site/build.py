@@ -174,7 +174,7 @@ def main():
 {bar_p}
 <main class="nkds-container" style="padding-top:32px">
   <div class="kd-eyebrow">{eyebrow}</div>
-  <h1 class="nkds-section-title" style="margin-bottom:20px;font-size:clamp(30px,3.6vw,48px)">{title}<strong>.</strong></h1>
+  <h1 class="nkds-section-title" style="margin-bottom:16px;font-size:clamp(30px,3.4vw,44px)">{title}<strong>.</strong></h1>
   {mount_html}
 </main>
 {foot}
