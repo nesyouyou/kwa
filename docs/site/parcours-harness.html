@@ -17,6 +17,7 @@ section{scroll-margin-top:84px}
 .kd-bar .row{display:flex;align-items:center;justify-content:space-between;gap:16px}
 .kd-brand{display:flex;align-items:center;gap:14px;text-decoration:none;white-space:nowrap}
 .kd-theme{width:40px;height:40px;flex:none;border-radius:50%;border:1px solid var(--nkui-rule);background:transparent;color:var(--nkui-fg);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0}.kd-theme:hover{background:var(--nkui-raise)}.kd-theme svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}.kd-theme .i-sun{display:none}html[data-nkui-theme="dark"] .kd-theme .i-sun{display:block}html[data-nkui-theme="dark"] .kd-theme .i-moon{display:none}
+.nkds-hero .nkds-title{font-size:clamp(34px,4.6vw,60px);letter-spacing:-.04em}@media(max-width:1023px){.nkds-hero .nkds-title{font-size:clamp(32px,9vw,46px)}}
 .kd-word{font:700 22px/1 Manrope,Geist,sans-serif;letter-spacing:-.02em}.kd-word--big{font-size:44px}
 .kd-brand span{font:400 12px 'Geist Mono',monospace;letter-spacing:.08em;color:var(--nkui-mut)}
 .kd-nav{display:flex;gap:22px;overflow-x:auto;scrollbar-width:none}
@@ -162,7 +163,7 @@ footer.nkds-footer{margin-top:128px}
 <tr><td>Déploiement vérifié</td><td><code>/kwa-deploy</code></td></tr>
 <tr><td>Rétrospective</td><td><code>/kwa-learn</code>, mémoire de session</td></tr></tbody></table>
 <div class="pc-proof"><div><b>Preuve attendue</b><p>Placer cinq étapes de votre processus actuel et dire ce qui les remplace quand un agent travaille.</p></div><div><b>Piège</b><p>Un harness n'ajoute pas de la bureaucratie : il rend vérifiables par une machine des contrôles que l'équipe faisait déjà.</p></div></div></div></section><section class="pc-stage" id="etape-1"><div class="pc-num">1</div><div class="pc-main"><h2 class="pc-h">Instructions et contrainte</h2><p class="pc-tag">Ce que l'agent lit, et ce qui l'oblige.</p><p>Installez Kwa dans un dépôt jetable. Regardez ce qui est écrit pour l'agent, puis demandez-vous : quelle ligne l'empêche de committer sur <code>main</code> ?</p>
-<pre class="kd-code"><span class="p">$</span> kwa install ./mon-projet --modules core,memory,craft,issue-flow</pre><pre class="kd-code">kwa v0.1.0 → /privatemon-projet
+<pre class="kd-code"><span class="p">$</span> kwa install ./mon-projet --modules core,memory,craft,issue-flow</pre><pre class="kd-code">kwa v0.1.0 → mon-projet
   modules : core, memory, craft, issue-flow
   fichiers ajouté : 51
   fichiers seed : 4
@@ -229,10 +230,10 @@ FAILED (failures=2)</pre>
 <section class="pc-stage" id="etape-7"><div class="pc-num">7</div><div class="pc-main"><h2 class="pc-h">Le circuit complet</h2><p class="pc-tag">Une demande, une branche, une preuve, une PR.</p><p>Démarrez un changement : une branche dans son propre worktree, à côté du dépôt, jamais sur <code>main</code>.</p>
 <pre class="kd-code"><span class="p">$</span> kwa-start feat status-filter "Ajouter un filtre de statut" --no-issue</pre><pre class="kd-code">aucune issue créée (flow.auto_issue: false ou --no-issue)
 branche : feat/status-filter
-worktree : /privatemon-projet-wt-status-filter
+worktree : mon-projet-wt-status-filter
 
-Travailler dans : /privatemon-projet-wt-status-filter</pre><pre class="kd-code">/privatemon-projet                   0dd6794 [main]
-/privatemon-projet-wt-status-filter  0dd6794 [feat/status-filter]</pre>
+Travailler dans : mon-projet-wt-status-filter</pre><pre class="kd-code">mon-projet                   fb8ad82 [main]
+mon-projet-wt-status-filter  fb8ad82 [feat/status-filter]</pre>
 <p>La suite se joue avec les skills : <code>/kwa-brainstorm</code>, <code>/kwa-plan</code>, <code>/kwa-tdd</code>, <code>/kwa-verify</code>, <code>/kwa-review</code>, <code>/kwa-ship</code>. La page <a href="board.html">Board</a> déroule ce circuit sur une demande réelle, et le <a href="terminal.html">Terminal</a> montre les commandes.</p><div class="pc-proof"><div><b>Preuve attendue</b><p>Conduire un petit changement jusqu'à une PR, avec une preuve que quelqu'un d'autre peut rejouer.</p></div><div><b>Piège</b><p>Versionner n'est pas publier, et un commit n'est pas un déploiement. Chaque étape reste une décision.</p></div></div></div></section>
 <section class="pc-stage" id="etape-8"><div class="pc-num">8</div><div class="pc-main"><h2 class="pc-h">Les limites, sans maquillage</h2><p class="pc-tag">Un garde est un filet contre la bévue, pas une frontière de sécurité.</p><p>Essayez de contourner le garde des secrets. Ces trois commandes lisent le même fichier d'environnement ; seule la forme change :</p>
 <table class="pc-table"><thead><tr><th>Commande</th><th>Verdict réel</th></tr></thead><tbody><tr><td><code>cat $(echo .e)nv</code></td><td><span class="kd-pill allow">passe</span></td></tr><tr><td><code>cat .e*</code></td><td><span class="kd-pill allow">passe</span></td></tr><tr><td><code>python3 -c "print(open('.env').read())"</code></td><td><span class="kd-pill allow">passe</span></td></tr></tbody></table>
