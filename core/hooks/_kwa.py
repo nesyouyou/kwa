@@ -17,15 +17,37 @@ SEP_RE = re.compile(r"\|\||&&|[;&|\n]")
 SUBST_RE = re.compile(r"\$\(([^()]*)\)|`([^`]*)`")
 
 
+_LAST: dict = {}  # dernière charge lue : sert au signal de refus (session, commande)
+
+
 def load_payload() -> dict:
     try:
-        return json.load(sys.stdin)
+        data = json.load(sys.stdin)
     except ValueError:
         return {}
+    if isinstance(data, dict):
+        _LAST.update(data)
+    return data
+
+
+def _log_refusal(reason: str) -> None:
+    """Un refus est le signal d'apprentissage le plus fiable : l'erreur que le projet voulait éviter. Jamais bloquant."""
+    try:
+        import _journal  # module memory : absent ailleurs, sans conséquence
+
+        if not _journal.enabled():
+            return
+        tool = _LAST.get("tool_input") or {}
+        _journal.append_signal(project_dir(_LAST), "refus", session=_journal._sid(_LAST), key=reason,
+                               text=str(tool.get("command") or tool.get("file_path") or ""))
+    except Exception:  # noqa: BLE001
+        pass
 
 
 def decide(decision: str, reason: str) -> None:
     """decision: deny | ask. Sort avec le code 0 après avoir imprimé la décision."""
+    if decision == "deny":
+        _log_refusal(reason)
     print(json.dumps({"hookSpecificOutput": {
         "hookEventName": "PreToolUse",
         "permissionDecision": decision,

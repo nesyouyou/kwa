@@ -191,7 +191,7 @@
       }
     },
     "memory": {
-      "about": "Capitalisation des sessions : notes en cours de route, invitation unique en fin de session, /kwa-learn range décisions, pièges et règles au bon endroit après accord",
+      "about": "Mémoire des sessions : journal et reprise au démarrage, notes et signaux (corrections, refus de garde), invitation unique en fin de session, /kwa-learn range décisions, pièges et règles au bon endroit après accord",
       "files": {
         "core/bin/kwa-memory": {
           "dest": ".claude/kwa/bin/kwa-memory",
@@ -203,6 +203,22 @@
         },
         "core/hooks/memory-nudge.py": {
           "dest": ".claude/kwa/hooks/memory-nudge.py",
+          "mode": "755"
+        },
+        "core/hooks/_journal.py": {
+          "dest": ".claude/kwa/hooks/_journal.py",
+          "mode": "644"
+        },
+        "core/hooks/journal-compact.py": {
+          "dest": ".claude/kwa/hooks/journal-compact.py",
+          "mode": "755"
+        },
+        "core/hooks/journal-end.py": {
+          "dest": ".claude/kwa/hooks/journal-end.py",
+          "mode": "755"
+        },
+        "core/hooks/signal-prompt.py": {
+          "dest": ".claude/kwa/hooks/signal-prompt.py",
           "mode": "755"
         },
         "core/skills/learn/SKILL.md": {
@@ -231,13 +247,47 @@
               }
             ]
           }
+        ],
+        "PreCompact": [
+          {
+            "hooks": [
+              {
+                "type": "command",
+                "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kwa/hooks/journal-compact.py",
+                "timeout": 10
+              }
+            ]
+          }
+        ],
+        "SessionEnd": [
+          {
+            "hooks": [
+              {
+                "type": "command",
+                "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kwa/hooks/journal-end.py",
+                "timeout": 2
+              }
+            ]
+          }
+        ],
+        "UserPromptSubmit": [
+          {
+            "hooks": [
+              {
+                "type": "command",
+                "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kwa/hooks/signal-prompt.py",
+                "timeout": 5
+              }
+            ]
+          }
         ]
       },
       "policy": {
         "memory": {
           "min_files": 3,
           "decisions_dir": "docs/decisions",
-          "gotchas_file": "docs/gotchas.md"
+          "gotchas_file": "docs/gotchas.md",
+          "journal_days": 90
         }
       }
     },

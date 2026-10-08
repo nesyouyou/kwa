@@ -1,0 +1,75 @@
+{"t": "2026-10-08 12:03:09", "ts": 1791453789.71974, "session": "inconnue", "kind": "refus", "key": "commande refusée : touche un fichier de secret=[masqué]", "text": "cat .env"}
+{"t": "2026-10-08 12:03:09", "ts": 1791453789.788682, "session": "inconnue", "kind": "refus", "key": "commande refusée : touche un fichier de secret=[masqué]", "text": "cat .env.local"}
+{"t": "2026-10-08 12:03:09", "ts": 1791453789.850469, "session": "inconnue", "kind": "refus", "key": "commande refusée : touche un fichier de secret=[masqué]", "text": "cat .env.backup"}
+{"t": "2026-10-08 12:03:09", "ts": 1791453789.913546, "session": "inconnue", "kind": "refus", "key": "commande refusée : touche un fichier de secret=[masqué]", "text": "cat config/prod.env"}
+{"t": "2026-10-08 12:03:09", "ts": 1791453789.9761212, "session": "inconnue", "kind": "refus", "key": "commande refusée : touche un fichier de secret=[masqué]", "text": "cat .e''nv"}
+{"t": "2026-10-08 12:03:10", "ts": 1791453790.038351, "session": "inconnue", "kind": "refus", "key": "commande refusée : touche un fichier de secret=[masqué]", "text": "bash -c 'cat .env'"}
+{"t": "2026-10-08 12:03:10", "ts": 1791453790.101656, "session": "inconnue", "kind": "refus", "key": "commande refusée : touche un fichier de secret=[masqué]", "text": "env A=1 cat .env"}
+{"t": "2026-10-08 12:03:10", "ts": 1791453790.172698, "session": "inconnue", "kind": "refus", "key": "commande refusée : touche un fichier de secret=[masqué]", "text": "KEY=1\ncat .env"}
+{"t": "2026-10-08 12:03:10", "ts": 1791453790.237107, "session": "inconnue", "kind": "refus", "key": "commande refusée : printenv (affiche tout l'environnement)", "text": "printenv"}
+{"t": "2026-10-08 12:03:10", "ts": 1791453790.301858, "session": "inconnue", "kind": "refus", "key": "commande refusée : gh auth token=[masqué] le jeton GitHub)", "text": "gh auth token"}
+{"t": "2026-10-08 12:03:10", "ts": 1791453790.369008, "session": "inconnue", "kind": "refus", "key": "commande refusée : touche un fichier de secret=[masqué]", "text": "cat ~/.netrc"}
+{"t": "2026-10-08 12:03:10", "ts": 1791453790.4338439, "session": "inconnue", "kind": "refus", "key": "commande refusée : touche un fichier de secret=[masqué]", "text": "cat ~/.config/gh/hosts.yml"}
+{"t": "2026-10-08 12:03:10", "ts": 1791453790.497104, "session": "inconnue", "kind": "refus", "key": "commande refusée : touche un fichier de secret=[masqué]", "text": "cat id_rsa"}
+{"t": "2026-10-08 12:03:10", "ts": 1791453790.5911539, "session": "inconnue", "kind": "refus", "key": "commande refusée : scw config get secret-key (affiche la clé secrète Scaleway)", "text": "scw config get secret-key"}
+{"t": "2026-10-08 12:03:10", "ts": 1791453790.655318, "session": "inconnue", "kind": "refus", "key": "commande refusée : touche un fichier de secret=[masqué]", "text": "echo ok; cat .env"}
+{"t": "2026-10-08 12:03:10", "ts": 1791453790.7222478, "session": "inconnue", "kind": "refus", "key": "commande refusée : touche un fichier de secret=[masqué]", "text": "cat < .env"}
+{"t": "2026-10-08 12:03:10", "ts": 1791453790.786423, "session": "inconnue", "kind": "refus", "key": "commande refusée : touche un fichier de secret=[masqué]", "text": "nice -n 5 cat .env"}
+{"t": "2026-10-08 12:03:10", "ts": 1791453790.99061, "session": "inconnue", "kind": "refus", "key": "lecture refusée : .env est un fichier de secrets", "text": "/x/.env"}
+{"t": "2026-10-08 12:03:11", "ts": 1791453791.286952, "session": "inconnue", "kind": "refus", "key": "clé Anthropic en clair dans x.ts : utiliser une variable d'environnement (valeur jamais af", "text": "/tmp/x.ts"}
+{"t": "2026-10-08 12:03:11", "ts": 1791453791.350985, "session": "inconnue", "kind": "refus", "key": "clé Stripe live en clair dans x.ts : utiliser une variable d'environnement (valeur jamais ", "text": "/tmp/x.ts"}
+{"t": "2026-10-08 12:03:11", "ts": 1791453791.421192, "session": "inconnue", "kind": "refus", "key": "clé AWS en clair dans x.ts : utiliser une variable d'environnement (valeur jamais affichée", "text": "/tmp/x.ts"}
+{"t": "2026-10-08 12:03:11", "ts": 1791453791.486499, "session": "inconnue", "kind": "refus", "key": "jeton GitHub en clair dans x.ts : utiliser une variable d'environnement (valeur jamais aff", "text": "/tmp/x.ts"}
+{"t": "2026-10-08 12:03:11", "ts": 1791453791.556247, "session": "inconnue", "kind": "refus", "key": "JWT en clair dans x.ts : utiliser une variable d'environnement (valeur jamais affichée)", "text": "/tmp/x.ts"}
+{"t": "2026-10-08 12:03:11", "ts": 1791453791.619458, "session": "inconnue", "kind": "refus", "key": "URL de base avec mot de passe en clair dans x.ts : utiliser une variable d'environnement (", "text": "/tmp/x.ts"}
+{"t": "2026-10-08 12:03:11", "ts": 1791453791.684981, "session": "inconnue", "kind": "refus", "key": "clé privée en clair dans x.ts : utiliser une variable d'environnement (valeur jamais affic", "text": "/tmp/x.ts"}
+{"t": "2026-10-08 12:04:02", "ts": 1791453842.514198, "session": "inconnue", "kind": "refus", "key": "commande refusée : touche un fichier de secret=[masqué]", "text": "cat .env"}
+{"t": "2026-10-08 12:04:02", "ts": 1791453842.57571, "session": "inconnue", "kind": "refus", "key": "commande refusée : touche un fichier de secret=[masqué]", "text": "cat .env.local"}
+{"t": "2026-10-08 12:04:02", "ts": 1791453842.6376262, "session": "inconnue", "kind": "refus", "key": "commande refusée : touche un fichier de secret=[masqué]", "text": "cat .env.backup"}
+{"t": "2026-10-08 12:04:02", "ts": 1791453842.696693, "session": "inconnue", "kind": "refus", "key": "commande refusée : touche un fichier de secret=[masqué]", "text": "cat config/prod.env"}
+{"t": "2026-10-08 12:04:02", "ts": 1791453842.757719, "session": "inconnue", "kind": "refus", "key": "commande refusée : touche un fichier de secret=[masqué]", "text": "cat .e''nv"}
+{"t": "2026-10-08 12:04:02", "ts": 1791453842.818689, "session": "inconnue", "kind": "refus", "key": "commande refusée : touche un fichier de secret=[masqué]", "text": "bash -c 'cat .env'"}
+{"t": "2026-10-08 12:04:02", "ts": 1791453842.880713, "session": "inconnue", "kind": "refus", "key": "commande refusée : touche un fichier de secret=[masqué]", "text": "env A=1 cat .env"}
+{"t": "2026-10-08 12:04:02", "ts": 1791453842.941601, "session": "inconnue", "kind": "refus", "key": "commande refusée : touche un fichier de secret=[masqué]", "text": "KEY=1\ncat .env"}
+{"t": "2026-10-08 12:04:03", "ts": 1791453843.003031, "session": "inconnue", "kind": "refus", "key": "commande refusée : printenv (affiche tout l'environnement)", "text": "printenv"}
+{"t": "2026-10-08 12:04:03", "ts": 1791453843.0640671, "session": "inconnue", "kind": "refus", "key": "commande refusée : gh auth token=[masqué] le jeton GitHub)", "text": "gh auth token"}
+{"t": "2026-10-08 12:04:03", "ts": 1791453843.134089, "session": "inconnue", "kind": "refus", "key": "commande refusée : touche un fichier de secret=[masqué]", "text": "cat ~/.netrc"}
+{"t": "2026-10-08 12:04:03", "ts": 1791453843.1942132, "session": "inconnue", "kind": "refus", "key": "commande refusée : touche un fichier de secret=[masqué]", "text": "cat ~/.config/gh/hosts.yml"}
+{"t": "2026-10-08 12:04:03", "ts": 1791453843.254115, "session": "inconnue", "kind": "refus", "key": "commande refusée : touche un fichier de secret=[masqué]", "text": "cat id_rsa"}
+{"t": "2026-10-08 12:04:03", "ts": 1791453843.3144069, "session": "inconnue", "kind": "refus", "key": "commande refusée : scw config get secret-key (affiche la clé secrète Scaleway)", "text": "scw config get secret-key"}
+{"t": "2026-10-08 12:04:03", "ts": 1791453843.3754702, "session": "inconnue", "kind": "refus", "key": "commande refusée : touche un fichier de secret=[masqué]", "text": "echo ok; cat .env"}
+{"t": "2026-10-08 12:04:03", "ts": 1791453843.4374049, "session": "inconnue", "kind": "refus", "key": "commande refusée : touche un fichier de secret=[masqué]", "text": "cat < .env"}
+{"t": "2026-10-08 12:04:03", "ts": 1791453843.4981031, "session": "inconnue", "kind": "refus", "key": "commande refusée : touche un fichier de secret=[masqué]", "text": "nice -n 5 cat .env"}
+{"t": "2026-10-08 12:04:03", "ts": 1791453843.6847801, "session": "inconnue", "kind": "refus", "key": "lecture refusée : .env est un fichier de secrets", "text": "/x/.env"}
+{"t": "2026-10-08 12:04:03", "ts": 1791453843.9587898, "session": "inconnue", "kind": "refus", "key": "clé Anthropic en clair dans x.ts : utiliser une variable d'environnement (valeur jamais af", "text": "/tmp/x.ts"}
+{"t": "2026-10-08 12:04:04", "ts": 1791453844.0191429, "session": "inconnue", "kind": "refus", "key": "clé Stripe live en clair dans x.ts : utiliser une variable d'environnement (valeur jamais ", "text": "/tmp/x.ts"}
+{"t": "2026-10-08 12:04:04", "ts": 1791453844.080561, "session": "inconnue", "kind": "refus", "key": "clé AWS en clair dans x.ts : utiliser une variable d'environnement (valeur jamais affichée", "text": "/tmp/x.ts"}
+{"t": "2026-10-08 12:04:04", "ts": 1791453844.1406221, "session": "inconnue", "kind": "refus", "key": "jeton GitHub en clair dans x.ts : utiliser une variable d'environnement (valeur jamais aff", "text": "/tmp/x.ts"}
+{"t": "2026-10-08 12:04:04", "ts": 1791453844.2018151, "session": "inconnue", "kind": "refus", "key": "JWT en clair dans x.ts : utiliser une variable d'environnement (valeur jamais affichée)", "text": "/tmp/x.ts"}
+{"t": "2026-10-08 12:04:04", "ts": 1791453844.2646542, "session": "inconnue", "kind": "refus", "key": "URL de base avec mot de passe en clair dans x.ts : utiliser une variable d'environnement (", "text": "/tmp/x.ts"}
+{"t": "2026-10-08 12:04:04", "ts": 1791453844.32382, "session": "inconnue", "kind": "refus", "key": "clé privée en clair dans x.ts : utiliser une variable d'environnement (valeur jamais affic", "text": "/tmp/x.ts"}
+{"t": "2026-10-08 12:04:52", "ts": 1791453892.961328, "session": "inconnue", "kind": "refus", "key": "commande refusée : touche un fichier de secret=[masqué]", "text": "cat .env"}
+{"t": "2026-10-08 12:04:53", "ts": 1791453893.024804, "session": "inconnue", "kind": "refus", "key": "commande refusée : touche un fichier de secret=[masqué]", "text": "cat .env.local"}
+{"t": "2026-10-08 12:04:53", "ts": 1791453893.085118, "session": "inconnue", "kind": "refus", "key": "commande refusée : touche un fichier de secret=[masqué]", "text": "cat .env.backup"}
+{"t": "2026-10-08 12:04:53", "ts": 1791453893.145567, "session": "inconnue", "kind": "refus", "key": "commande refusée : touche un fichier de secret=[masqué]", "text": "cat config/prod.env"}
+{"t": "2026-10-08 12:04:53", "ts": 1791453893.2064378, "session": "inconnue", "kind": "refus", "key": "commande refusée : touche un fichier de secret=[masqué]", "text": "cat .e''nv"}
+{"t": "2026-10-08 12:04:53", "ts": 1791453893.269399, "session": "inconnue", "kind": "refus", "key": "commande refusée : touche un fichier de secret=[masqué]", "text": "bash -c 'cat .env'"}
+{"t": "2026-10-08 12:04:53", "ts": 1791453893.33233, "session": "inconnue", "kind": "refus", "key": "commande refusée : touche un fichier de secret=[masqué]", "text": "env A=1 cat .env"}
+{"t": "2026-10-08 12:04:53", "ts": 1791453893.397001, "session": "inconnue", "kind": "refus", "key": "commande refusée : touche un fichier de secret=[masqué]", "text": "KEY=1\ncat .env"}
+{"t": "2026-10-08 12:04:53", "ts": 1791453893.457889, "session": "inconnue", "kind": "refus", "key": "commande refusée : printenv (affiche tout l'environnement)", "text": "printenv"}
+{"t": "2026-10-08 12:04:53", "ts": 1791453893.518867, "session": "inconnue", "kind": "refus", "key": "commande refusée : gh auth token=[masqué] le jeton GitHub)", "text": "gh auth token"}
+{"t": "2026-10-08 12:04:53", "ts": 1791453893.57852, "session": "inconnue", "kind": "refus", "key": "commande refusée : touche un fichier de secret=[masqué]", "text": "cat ~/.netrc"}
+{"t": "2026-10-08 12:04:53", "ts": 1791453893.640604, "session": "inconnue", "kind": "refus", "key": "commande refusée : touche un fichier de secret=[masqué]", "text": "cat ~/.config/gh/hosts.yml"}
+{"t": "2026-10-08 12:04:53", "ts": 1791453893.702108, "session": "inconnue", "kind": "refus", "key": "commande refusée : touche un fichier de secret=[masqué]", "text": "cat id_rsa"}
+{"t": "2026-10-08 12:04:53", "ts": 1791453893.763105, "session": "inconnue", "kind": "refus", "key": "commande refusée : scw config get secret-key (affiche la clé secrète Scaleway)", "text": "scw config get secret-key"}
+{"t": "2026-10-08 12:04:53", "ts": 1791453893.824835, "session": "inconnue", "kind": "refus", "key": "commande refusée : touche un fichier de secret=[masqué]", "text": "echo ok; cat .env"}
+{"t": "2026-10-08 12:04:53", "ts": 1791453893.8853781, "session": "inconnue", "kind": "refus", "key": "commande refusée : touche un fichier de secret=[masqué]", "text": "cat < .env"}
+{"t": "2026-10-08 12:04:53", "ts": 1791453893.949755, "session": "inconnue", "kind": "refus", "key": "commande refusée : touche un fichier de secret=[masqué]", "text": "nice -n 5 cat .env"}
+{"t": "2026-10-08 12:04:54", "ts": 1791453894.136522, "session": "inconnue", "kind": "refus", "key": "lecture refusée : .env est un fichier de secrets", "text": "/x/.env"}
+{"t": "2026-10-08 12:04:54", "ts": 1791453894.42786, "session": "inconnue", "kind": "refus", "key": "clé Anthropic en clair dans x.ts : utiliser une variable d'environnement (valeur jamais af", "text": "/tmp/x.ts"}
+{"t": "2026-10-08 12:04:54", "ts": 1791453894.489634, "session": "inconnue", "kind": "refus", "key": "clé Stripe live en clair dans x.ts : utiliser une variable d'environnement (valeur jamais ", "text": "/tmp/x.ts"}
+{"t": "2026-10-08 12:04:54", "ts": 1791453894.550563, "session": "inconnue", "kind": "refus", "key": "clé AWS en clair dans x.ts : utiliser une variable d'environnement (valeur jamais affichée", "text": "/tmp/x.ts"}
+{"t": "2026-10-08 12:04:54", "ts": 1791453894.6113348, "session": "inconnue", "kind": "refus", "key": "jeton GitHub en clair dans x.ts : utiliser une variable d'environnement (valeur jamais aff", "text": "/tmp/x.ts"}
+{"t": "2026-10-08 12:04:54", "ts": 1791453894.675717, "session": "inconnue", "kind": "refus", "key": "JWT en clair dans x.ts : utiliser une variable d'environnement (valeur jamais affichée)", "text": "/tmp/x.ts"}
+{"t": "2026-10-08 12:04:54", "ts": 1791453894.741455, "session": "inconnue", "kind": "refus", "key": "URL de base avec mot de passe en clair dans x.ts : utiliser une variable d'environnement (", "text": "/tmp/x.ts"}
+{"t": "2026-10-08 12:04:54", "ts": 1791453894.804665, "session": "inconnue", "kind": "refus", "key": "clé privée en clair dans x.ts : utiliser une variable d'environnement (valeur jamais affic", "text": "/tmp/x.ts"}

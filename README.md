@@ -26,7 +26,7 @@ bash tests/run-safety.sh                     # suite hors-ligne
 |---|---|
 | `core` | gardes secrets / git / suppression / écriture / politique ; règles ; `/kwa-commit`, `/kwa-ship` |
 | `craft` | méthode : `/kwa-brainstorm`, `plan`, `execute`, `agents`, `parallel`, `tdd`, `debug`, `verify`, `review`, `review-feedback` + routage des skills au démarrage de session (remplace superpowers) |
-| `memory` | notes de session, invitation unique en fin de session, `/kwa-learn` (docs, politique, mémoire agent, base de connaissance) |
+| `memory` | journal des sessions et reprise au démarrage, notes et signaux (corrections, « retiens : », refus de garde), invitation unique en fin de session, `/kwa-learn` (docs, politique, skill de projet, mémoire agent, base de connaissance) |
 | `issue-flow` | circuit issue → worktree → preuve → PR « Closes #N » → fusion gardée ; `/kwa-start-dev`, gabarits GitHub |
 | `verify` | formatage des fichiers nouveaux ; garde Stop opt-in (`KWA_STOP_VERIFY=1`) |
 | `deploy` | `/kwa-deploy` : pré-vol, déploiement, vérification, pilotés par `environments` |

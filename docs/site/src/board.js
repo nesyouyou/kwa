@@ -36,7 +36,7 @@
     ship: B('skill', '/kwa-ship', 'Vérifie, résume ce qui part, demande confirmation.', 'Sur ta demande de publier', 'Branche ≠ main, état propre, vérifications lancées.'),
     git: B('garde', 'guard-git', 'Pas de commit ni de push sur main ; force refusé ; push de branche confirmé.', 'PreToolUse · Bash', 'KWA_ALLOW_MAIN=1 pour une exception assumée. Les push de branche demandent confirmation selon git.push_branch de la politique.'),
     github: B('garde', 'guard-github', '« Closes #N » à la création d’une PR ; issue et preuve avant fusion.', 'PreToolUse · Bash · module issue-flow', 'Lit la PR et ses issues via gh. Preuve = une image, ou une section « Preuve » réellement remplie.'),
-    nudge: B('hook', 'memory-nudge', 'Une invitation à capitaliser, une seule par session.', 'Stop · module memory', 'Seulement si 3 fichiers de code ou plus ont changé et qu’aucune note n’a été captée. Désactivable : KWA_MEMORY_NUDGE=0.'),
+    nudge: B('hook', 'memory-nudge', 'Demande l’entrée de journal et invite à capitaliser, une seule fois par session.', 'Stop · module memory', 'Seulement si 3 fichiers de code ou plus ont changé, ou si un signal fort a été capté (correction, « retiens : », refus de garde). Chaque demande est omise si elle est déjà satisfaite. Désactivable : KWA_MEMORY_NUDGE=0.'),
     learn: B('skill', '/kwa-learn', 'Range ce qui a été appris : docs, politique, mémoire de l’agent, base de connaissance.', 'Fin de session', 'Tableau de 7 lignes maximum, rien appliqué sans accord.')
   };
 

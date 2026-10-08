@@ -9,7 +9,9 @@ allowed-tools: Read Grep Glob Bash(git status *) Bash(git log *) Bash(git diff *
 
 Un handoff sert la reprise **immédiate** : un agent neuf lit un seul fichier et continue sans reposer les questions
 déjà tranchées. Pour la connaissance durable (décision, piège, procédure), c'est `/kwa-learn`. Les deux ne
-se substituent pas : ne pas recopier ici ce qui doit vivre dans une doc.
+se substituent pas : ne pas recopier ici ce qui doit vivre dans une doc. Le journal de sessions (automatique, local, voir
+`kwa-memory journal --last`) garde de lui-même la trace de chaque session ; le handoff reste le document écrit à la demande pour qu'un
+autre agent reprenne sans rien demander.
 
 ## 1. Cadrer
 

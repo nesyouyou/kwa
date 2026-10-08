@@ -33,7 +33,7 @@ class Credits(unittest.TestCase):
             self.assertTrue(os.path.isfile(path), src["license_file"])
             text = open(path, encoding="utf-8").read()
             self.assertIn("MIT License", text)
-            self.assertIn(src["author"].split()[0], text)
+            self.assertIn(src.get("license_holder", src["author"]).split()[0], text)
 
     def test_body_never_names_upstream_projects(self):
         for d in os.listdir(SKILLS):
