@@ -29,6 +29,7 @@ import json
 import os
 import re
 import shutil
+import subprocess
 import sys
 import tempfile
 import time
@@ -489,9 +490,15 @@ def sync_files(target: Path, modules: list[str], dry: bool) -> dict:
 def apply_local_excludes(target: Path, dry: bool) -> str:
     """Notes locales et sauvegardes ne se versionnent pas : exclusion dans .git/info/exclude (local, hors historique)."""
     git = target / ".git"
-    if not git.is_dir():
+    if not git.exists():
         return "pas de dépôt git"
-    path = git / "info" / "exclude"
+    if git.is_dir():
+        path = git / "info" / "exclude"
+    else:  # worktree : le fichier d'exclusion vit dans le dépôt commun
+        r = subprocess.run(["git", "-C", str(target), "rev-parse", "--git-path", "info/exclude"], capture_output=True, text=True)
+        if r.returncode != 0 or not r.stdout.strip():
+            return "dépôt git illisible"
+        path = (target / r.stdout.strip()).resolve()
     wanted = [".claude/kwa/local/", ".claude/kwa/backup/", ".claude/settings.json.bak-*"]
     have = path.read_text(encoding="utf-8").splitlines() if path.exists() else []
     missing = [w for w in wanted if w not in have]
