@@ -258,6 +258,11 @@ class Shell(unittest.TestCase):
     def read(self, name):
         return open(os.path.join(self.SITE, name), encoding="utf-8").read()
 
+    def test_every_page_declares_an_existing_favicon(self):
+        for name in self.pages():
+            self.assertIn('rel="icon"', self.read(name), name)
+        self.assertTrue(os.path.isfile(os.path.join(self.SITE, "assets", "favicon.svg")))
+
     def test_every_page_has_the_same_sidebar_with_its_own_entry_marked(self):
         self.assertGreaterEqual(len(self.pages()), 8)
         for name in self.pages():
