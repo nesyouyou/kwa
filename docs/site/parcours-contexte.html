@@ -173,38 +173,38 @@ footer.kw-footer{margin-top:128px}
 <section class="pc-stage" id="etape-3"><div class="pc-main"><p class="pc-kicker">Étape 3</p><h2 class="pc-h">Les fichiers d'instructions</h2><p class="pc-tag">CLAUDE.md et AGENTS.md : du contexte persistant, pas une contrainte.</p><p>Chaque session démarre avec une fenêtre vide. Deux mécanismes transmettent la connaissance d'une session à l'autre : les fichiers d'instructions que <strong>vous</strong> écrivez (<code>CLAUDE.md</code>, ou <code>AGENTS.md</code> que Claude Code peut lire à la place), et la <strong>mémoire automatique</strong> que Claude écrit lui-même d'après vos corrections.</p>
 <p>Deux faits à retenir. D'abord, ces fichiers sont du <strong>contexte</strong> : l'agent les lit et peut s'en écarter. Pour interdire une action quelle que soit sa décision, il faut un hook (parcours suivant). Ensuite, plus une instruction est précise et courte, plus elle est suivie de manière constante.</p>
 <p>Si <code>CLAUDE.md</code> et <code>AGENTS.md</code> existent tous les deux, Claude Code lit <code>CLAUDE.md</code> ; pour partager un seul fichier avec d'autres outils, <code>CLAUDE.md</code> importe l'autre avec une ligne <code>@AGENTS.md</code>. C'est ce que fait ce projet : <code>AGENTS.md</code> porte les consignes, <code>CLAUDE.md</code> n'est qu'un pointeur. Des consignes qui ne concernent qu'une partie du code se rangent à part : c'est l'étape suivante, les règles.</p>
-<p>Lequel de ces deux fichiers est le plus utile à un agent qui arrive sur le projet ?</p><div class="pc-proof" style="margin:0 0 16px"><div><b>Fichier A</b><pre class="kd-code" style="margin-top:10px;white-space:pre-wrap"># AGENTS.md
+<p>Lequel de ces deux fichiers est le plus utile à un agent qui arrive sur le projet ?</p><div class="pc-proof" style="margin:0 0 16px"><div><b>Fichier A</b><pre class="kd-code" style="margin-top:10px;white-space:pre-wrap"><span class="sx-h"># AGENTS.md</span>
 
 Tu es un expert senior. Écris du code propre, performant et maintenable.
-Fais attention à la sécurité. Teste bien ton code. Sois prudent.</pre></div><div><b>Fichier B</b><pre class="kd-code" style="margin-top:10px;white-space:pre-wrap"># AGENTS.md
+Fais attention à la sécurité. Teste bien ton code. Sois prudent.</pre></div><div><b>Fichier B</b><pre class="kd-code" style="margin-top:10px;white-space:pre-wrap"><span class="sx-h"># AGENTS.md</span>
 
 Site vitrine (Next.js, pnpm). Répondre en français.
 
-## Vérifier avant de dire « fait »
-- `npx tsc --noEmit` puis `pnpm test:int` : citer le résultat.
-- `pnpm lint` est cassé : ne pas s'y fier.
+<span class="sx-h">## Vérifier avant de dire « fait »</span>
+<span class="sx-p">-</span> <span class="sx-s">`npx tsc --noEmit`</span> puis <span class="sx-s">`pnpm test:int`</span> : citer le résultat.
+<span class="sx-p">-</span> <span class="sx-s">`pnpm lint`</span> est cassé : ne pas s'y fier.
 
-## Pièges
-- Le serveur de développement tourne sur le port 3100, pas 3000.
-- Après un changement de collection : `pnpm migrate:create &lt;nom&gt;` puis `pnpm migrate`.
+<span class="sx-h">## Pièges</span>
+<span class="sx-p">-</span> Le serveur de développement tourne sur le port 3100, pas 3000.
+<span class="sx-p">-</span> Après un changement de collection : <span class="sx-s">`pnpm migrate:create &lt;nom&gt;`</span> puis <span class="sx-s">`pnpm migrate`</span>.
 
-## Interdit
-- Pas de commit sur main : une branche par sujet, une PR par branche.</pre></div></div><details class="pc-reveal"><summary>Réponse</summary><div><p>Le B. Il contient ce que l'agent ne peut pas deviner en lisant le code : les commandes de vérification, les pièges, ce qui est interdit. Le A dit des intentions que n'importe quel modèle suit déjà (« écris du code propre ») sans rien de vérifiable. Une bonne instruction se teste : on peut dire si elle a été suivie.</p></div></details><p><strong>Exercice</strong> : écrivez dix lignes d'<code>AGENTS.md</code> pour un projet que vous connaissez, avec uniquement des commandes, des pièges et des interdits.</p><div class="pc-proof"><div><b>Preuve attendue</b><p>Produire dix lignes d'instructions vérifiables, et expliquer pourquoi elles ne remplacent pas un garde-fou.</p></div><div><b>Piège</b><p>Un fichier trop long ou contradictoire dilue ce qui compte. Deux sources qui se contredisent valent pire qu'une seule.</p></div></div></div></section>
+<span class="sx-h">## Interdit</span>
+<span class="sx-p">-</span> Pas de commit sur main : une branche par sujet, une PR par branche.</pre></div></div><details class="pc-reveal"><summary>Réponse</summary><div><p>Le B. Il contient ce que l'agent ne peut pas deviner en lisant le code : les commandes de vérification, les pièges, ce qui est interdit. Le A dit des intentions que n'importe quel modèle suit déjà (« écris du code propre ») sans rien de vérifiable. Une bonne instruction se teste : on peut dire si elle a été suivie.</p></div></details><p><strong>Exercice</strong> : écrivez dix lignes d'<code>AGENTS.md</code> pour un projet que vous connaissez, avec uniquement des commandes, des pièges et des interdits.</p><div class="pc-proof"><div><b>Preuve attendue</b><p>Produire dix lignes d'instructions vérifiables, et expliquer pourquoi elles ne remplacent pas un garde-fou.</p></div><div><b>Piège</b><p>Un fichier trop long ou contradictoire dilue ce qui compte. Deux sources qui se contredisent valent pire qu'une seule.</p></div></div></div></section>
 <section class="pc-stage" id="etape-4"><div class="pc-main"><p class="pc-kicker">Étape 4</p><h2 class="pc-h">Les règles</h2><p class="pc-tag">Des instructions rangées par sujet, chargées au bon moment.</p><p>Quand <code>AGENTS.md</code> grossit, tout y est lu à chaque session, même ce qui ne concerne qu'une partie du code. Les <strong>règles</strong> répondent à ce problème : un fichier Markdown par sujet dans <code>.claude/rules/</code> (<code>tests.md</code>, <code>api.md</code>, <code>securite.md</code>), découverts récursivement. Elles sont du contexte, comme les fichiers d'instructions : l'agent les lit et peut s'en écarter.</p>
 <p>Deux comportements, selon l'en-tête du fichier :</p>
 <table class="pc-table"><thead><tr><th>Règle</th><th>Quand elle entre dans le contexte</th></tr></thead><tbody>
 <tr><td>Sans <code>paths</code></td><td>Au lancement de la session, avec la même priorité que <code>.claude/CLAUDE.md</code></td></tr>
 <tr><td>Avec <code>paths</code> (motifs de fichiers)</td><td>Seulement quand l'agent lit, écrit ou modifie un fichier qui correspond</td></tr></tbody></table>
-<pre class="kd-code">---
-paths:
-  - "src/api/**/*.ts"
----
+<pre class="kd-code"><span class="sx-p">---</span>
+<span class="sx-k">paths</span><span class="sx-p">:</span>
+  - <span class="sx-s">"src/api/**/*.ts"</span>
+<span class="sx-p">---</span>
 
-# Règles de l'API
+<span class="sx-h"># Règles de l'API</span>
 
-- Valider toute entrée avant de l'utiliser.
-- Répondre aux erreurs avec le format commun (code, message, identifiant de requête).
-- Un endpoint nouveau a un test qui échoue avant d'être écrit.</pre>
+<span class="sx-p">-</span> Valider toute entrée avant de l'utiliser.
+<span class="sx-p">-</span> Répondre aux erreurs avec le format commun (code, message, identifiant de requête).
+<span class="sx-p">-</span> Un endpoint nouveau a un test qui échoue avant d'être écrit.</pre>
 <p>Le champ <code>paths</code> accepte des motifs comme <code>src/**/*.{ts,tsx}</code> ; c'est le seul champ que Claude Code lit dans une règle. Vos règles personnelles vont dans <code>~/.claude/rules/</code> et s'appliquent à tous vos projets ; elles sont chargées avant celles du projet, et si les deux se contredisent, l'agent peut suivre l'une ou l'autre : gardez-les cohérentes.</p>
 <p>Où ranger quoi ? Lisez les cinq cas puis pronostiquez :</p>
 <table class="pc-table"><thead><tr><th>Cas</th><th>Où</th></tr></thead><tbody>
@@ -216,13 +216,13 @@ paths:
 <p><strong>À ne pas confondre</strong> : les « règles de permission » (deny, ask, allow) de l'étape 9 sont appliquées par l'outil, dans les réglages. Les règles de cette étape sont des instructions lues par le modèle.</p>
 <p><strong>Exercice</strong> : prenez votre <code>AGENTS.md</code> et repérez deux paragraphes qui ne concernent qu'un type de fichier. Déplacez-les dans une règle avec <code>paths</code>.</p><div class="pc-proof"><div><b>Preuve attendue</b><p>Écrire une règle avec <code>paths</code> et dire pourquoi elle ne se charge pas à chaque session.</p></div><div><b>Piège</b><p>Une règle est aussi peu contraignante qu'une ligne d'AGENTS.md : elle range les consignes sans rien garantir.</p></div></div></div></section>
 <section class="pc-stage" id="etape-5"><div class="pc-main"><p class="pc-kicker">Étape 5</p><h2 class="pc-h">Les skills</h2><p class="pc-tag">Une procédure chargée seulement quand elle sert.</p><p>Une skill est un dossier avec un fichier <code>SKILL.md</code> : un en-tête qui dit <strong>quand</strong> l'appeler, un corps qui dit <strong>comment</strong>. Claude l'invoque quand la description correspond à la conversation, ou vous la tapez avec <code>/nom</code>.</p>
-<pre class="kd-code">---
-name: relance-client
-description: Rédiger une relance commerciale. À utiliser quand l'utilisateur demande un mail de relance ou « relance ce client ».
-disable-model-invocation: false
----
+<pre class="kd-code"><span class="sx-p">---</span>
+<span class="sx-k">name</span><span class="sx-p">:</span> relance-client
+<span class="sx-k">description</span><span class="sx-p">:</span> Rédiger une relance commerciale. À utiliser quand l'utilisateur demande un mail de relance ou « relance ce client ».
+<span class="sx-k">disable-model-invocation</span><span class="sx-p">:</span> <span class="sx-b">false</span>
+<span class="sx-p">---</span>
 
-# Relance client
+<span class="sx-h"># Relance client</span>
 
 1. Demander la date et l'objet de la dernière proposition si absents.
 2. Rédiger un objet et trois phrases au plus, une question fermée.
@@ -258,12 +258,12 @@ disable-model-invocation: false
 </div>
 <p class="po-cap" id="po-cap" aria-live="polite">Choisissez un mode pour lancer la scène.</p>
 <p class="pc-hint">Pourcentages illustratifs : ils montrent la logique, pas des mesures.</p></div>
-<pre class="kd-code">---
-name: relecteur
-description: Relit un diff et signale les risques. À utiliser après une modification, avant la PR.
-tools: Read, Glob, Grep
-model: sonnet
----
+<pre class="kd-code"><span class="sx-p">---</span>
+<span class="sx-k">name</span><span class="sx-p">:</span> relecteur
+<span class="sx-k">description</span><span class="sx-p">:</span> Relit un diff et signale les risques. À utiliser après une modification, avant la PR.
+<span class="sx-k">tools</span><span class="sx-p">:</span> Read, Glob, Grep
+<span class="sx-k">model</span><span class="sx-p">:</span> sonnet
+<span class="sx-p">---</span>
 
 Tu relis un changement sans le modifier. Pour chaque constat : fichier, comportement observé, comment le reproduire,
 importance. N'affirme pas avoir exécuté une commande que tu ne peux pas lancer.</pre>
@@ -275,30 +275,30 @@ importance. N'affirme pas avoir exécuté une commande que tu ne peux pas lancer
 <tr><td>Locale (par défaut)</td><td>Ce projet, vous seul</td><td><code>~/.claude.json</code></td></tr>
 <tr><td>Projet</td><td>Ce projet, toute l'équipe</td><td><code>.mcp.json</code> à la racine, versionné</td></tr>
 <tr><td>Utilisateur</td><td>Tous vos projets, vous seul</td><td><code>~/.claude.json</code></td></tr></tbody></table>
-<p>Un fichier <code>.mcp.json</code> de projet :</p><pre class="kd-code">{
-  "mcpServers": {
-    "base-de-donnees": {
-      "type": "stdio",
-      "command": "npx",
-      "args": [
-        "-y",
-        "@bytebase/dbhub"
-      ],
-      "env": {
-        "DATABASE_URL": "${DB_CONNECTION_STRING}"
-      }
-    },
-    "api-interne": {
-      "type": "http",
-      "url": "https://mcp.example.org/mcp",
-      "headers": {
-        "Authorization": "Bearer ${API_TOKEN}"
-      }
-    }
-  }
-}</pre>
+<p>Un fichier <code>.mcp.json</code> de projet :</p><pre class="kd-code"><span class="sx-p">{</span>
+  <span class="sx-k">"mcpServers"</span><span class="sx-p">:</span> <span class="sx-p">{</span>
+    <span class="sx-k">"base-de-donnees"</span><span class="sx-p">:</span> <span class="sx-p">{</span>
+      <span class="sx-k">"type"</span><span class="sx-p">:</span> <span class="sx-s">"stdio"</span><span class="sx-p">,</span>
+      <span class="sx-k">"command"</span><span class="sx-p">:</span> <span class="sx-s">"npx"</span><span class="sx-p">,</span>
+      <span class="sx-k">"args"</span><span class="sx-p">:</span> <span class="sx-p">[</span>
+        <span class="sx-s">"-y"</span><span class="sx-p">,</span>
+        <span class="sx-s">"@bytebase/dbhub"</span>
+      <span class="sx-p">]</span><span class="sx-p">,</span>
+      <span class="sx-k">"env"</span><span class="sx-p">:</span> <span class="sx-p">{</span>
+        <span class="sx-k">"DATABASE_URL"</span><span class="sx-p">:</span> <span class="sx-s">"${DB_CONNECTION_STRING}"</span>
+      <span class="sx-p">}</span>
+    <span class="sx-p">}</span><span class="sx-p">,</span>
+    <span class="sx-k">"api-interne"</span><span class="sx-p">:</span> <span class="sx-p">{</span>
+      <span class="sx-k">"type"</span><span class="sx-p">:</span> <span class="sx-s">"http"</span><span class="sx-p">,</span>
+      <span class="sx-k">"url"</span><span class="sx-p">:</span> <span class="sx-s">"https://mcp.example.org/mcp"</span><span class="sx-p">,</span>
+      <span class="sx-k">"headers"</span><span class="sx-p">:</span> <span class="sx-p">{</span>
+        <span class="sx-k">"Authorization"</span><span class="sx-p">:</span> <span class="sx-s">"Bearer ${API_TOKEN}"</span>
+      <span class="sx-p">}</span>
+    <span class="sx-p">}</span>
+  <span class="sx-p">}</span>
+<span class="sx-p">}</span></pre>
 <p>Remarquez les <code>${...}</code> : les secrets viennent de variables d'environnement, jamais du fichier versionné. Un serveur de portée projet demande une approbation avant son premier usage.</p>
-<pre class="kd-code"><span class="p">$</span> claude mcp add --transport http &lt;nom&gt; &lt;url&gt;</pre><pre class="kd-code"><span class="p">$</span> claude mcp list</pre><pre class="kd-code"><span class="p">$</span> claude mcp remove &lt;nom&gt;</pre>
+<pre class="kd-code"><span class="p">$</span> claude mcp add <span class="sx-f">--transport</span> http &lt;nom&gt; &lt;url&gt;</pre><pre class="kd-code"><span class="p">$</span> claude mcp list</pre><pre class="kd-code"><span class="p">$</span> claude mcp remove &lt;nom&gt;</pre>
 <p>Dans les règles de permission, un outil MCP se nomme <code>mcp__&lt;serveur&gt;__&lt;outil&gt;</code> (par exemple <code>mcp__notion__*</code> ou simplement <code>mcp__notion</code> pour tous les outils d'un serveur ; une règle <code>mcp__</code> avec des parenthèses est ignorée).</p>
 <p><strong>Exercice</strong> : écrivez le <code>.mcp.json</code> d'un serveur en lecture seule sur une base de test. Où va le mot de passe ?</p><details class="pc-reveal"><summary>Réponse</summary><div><p>Dans une variable d'environnement, référencée par <code>${NOM}</code>, définie hors du dépôt. Le fichier versionné ne contient aucun secret. Pour la base elle-même, un compte en lecture seule : la permission la plus étroite possible est la première protection.</p></div></details><div class="pc-proof"><div><b>Preuve attendue</b><p>Choisir la bonne portée d'un serveur MCP et écrire sa configuration sans secret en clair.</p></div><div><b>Piège</b><p>Un serveur MCP agit avec vos droits, il ne se limite pas à lire. Chaque serveur ajouté alourdit aussi le contexte.</p></div></div></div></section>
 <section class="pc-stage" id="etape-8"><div class="pc-main"><p class="pc-kicker">Étape 8</p><h2 class="pc-h">Context7 et Playwright</h2><p class="pc-tag">Deux serveurs MCP que tout développeur devrait avoir : la doc à jour, et un navigateur pour vérifier.</p><p>Parmi tous les serveurs MCP possibles, deux changent le quotidien d'un développeur web, parce qu'ils attaquent deux défauts classiques d'un agent : <strong>il code avec des API périmées</strong>, et <strong>il affirme que l'interface marche sans l'avoir vue</strong>.</p>
@@ -307,41 +307,41 @@ importance. N'affirme pas avoir exécuté une commande que tu ne peux pas lancer
 <p>Le plus utile : l'écrire une fois dans <code>AGENTS.md</code> (« pour toute API de bibliothèque, consulter Context7 avant d'écrire du code »), pour ne plus avoir à le demander. Limite à garder en tête : ces documentations sont alimentées par la communauté et ne sont pas garanties exactes ; c'est une source à citer et à vérifier, qui reste du texte non fiable (voir l'injection de prompt).</p>
 <h3 class="pc-h3">Playwright : un navigateur que l'agent pilote</h3>
 <p>Le serveur MCP <strong>Playwright</strong> donne à l'agent un vrai navigateur : ouvrir une page, cliquer, remplir un formulaire, lire la console et les requêtes réseau, prendre une capture. Il travaille surtout à partir d'<strong>instantanés d'accessibilité</strong> (l'arbre de la page, en texte), pas de pixels : l'agent n'a pas besoin de « voir » l'image pour agir. La capture sert à <em>montrer</em> le résultat, à vous comme à un agent vérificateur. Outils principaux : <code>browser_navigate</code>, <code>browser_snapshot</code>, <code>browser_click</code>, <code>browser_type</code>, <code>browser_take_screenshot</code>, <code>browser_console_messages</code>, <code>browser_network_requests</code>.</p>
-<p>Un fichier <code>.mcp.json</code> avec les deux, plus un second navigateur configuré en mobile (le serveur se lance avec <code>--viewport-size</code> ou <code>--device</code>) :</p><pre class="kd-code">{
-  "mcpServers": {
-    "context7": {
-      "type": "http",
-      "url": "https://mcp.context7.com/mcp",
-      "headers": {
-        "Authorization": "Bearer ${CONTEXT7_API_KEY}"
-      }
-    },
-    "playwright": {
-      "type": "stdio",
-      "command": "npx",
-      "args": [
-        "@playwright/mcp@latest",
-        "--isolated",
-        "--viewport-size",
-        "1280x720",
-        "--output-dir",
-        "./captures"
-      ]
-    },
-    "playwright-mobile": {
-      "type": "stdio",
-      "command": "npx",
-      "args": [
-        "@playwright/mcp@latest",
-        "--isolated",
-        "--device",
-        "iPhone 15",
-        "--output-dir",
-        "./captures"
-      ]
-    }
-  }
-}</pre>
+<p>Un fichier <code>.mcp.json</code> avec les deux, plus un second navigateur configuré en mobile (le serveur se lance avec <code>--viewport-size</code> ou <code>--device</code>) :</p><pre class="kd-code"><span class="sx-p">{</span>
+  <span class="sx-k">"mcpServers"</span><span class="sx-p">:</span> <span class="sx-p">{</span>
+    <span class="sx-k">"context7"</span><span class="sx-p">:</span> <span class="sx-p">{</span>
+      <span class="sx-k">"type"</span><span class="sx-p">:</span> <span class="sx-s">"http"</span><span class="sx-p">,</span>
+      <span class="sx-k">"url"</span><span class="sx-p">:</span> <span class="sx-s">"https://mcp.context7.com/mcp"</span><span class="sx-p">,</span>
+      <span class="sx-k">"headers"</span><span class="sx-p">:</span> <span class="sx-p">{</span>
+        <span class="sx-k">"Authorization"</span><span class="sx-p">:</span> <span class="sx-s">"Bearer ${CONTEXT7_API_KEY}"</span>
+      <span class="sx-p">}</span>
+    <span class="sx-p">}</span><span class="sx-p">,</span>
+    <span class="sx-k">"playwright"</span><span class="sx-p">:</span> <span class="sx-p">{</span>
+      <span class="sx-k">"type"</span><span class="sx-p">:</span> <span class="sx-s">"stdio"</span><span class="sx-p">,</span>
+      <span class="sx-k">"command"</span><span class="sx-p">:</span> <span class="sx-s">"npx"</span><span class="sx-p">,</span>
+      <span class="sx-k">"args"</span><span class="sx-p">:</span> <span class="sx-p">[</span>
+        <span class="sx-s">"@playwright/mcp@latest"</span><span class="sx-p">,</span>
+        <span class="sx-s">"--isolated"</span><span class="sx-p">,</span>
+        <span class="sx-s">"--viewport-size"</span><span class="sx-p">,</span>
+        <span class="sx-s">"1280x720"</span><span class="sx-p">,</span>
+        <span class="sx-s">"--output-dir"</span><span class="sx-p">,</span>
+        <span class="sx-s">"./captures"</span>
+      <span class="sx-p">]</span>
+    <span class="sx-p">}</span><span class="sx-p">,</span>
+    <span class="sx-k">"playwright-mobile"</span><span class="sx-p">:</span> <span class="sx-p">{</span>
+      <span class="sx-k">"type"</span><span class="sx-p">:</span> <span class="sx-s">"stdio"</span><span class="sx-p">,</span>
+      <span class="sx-k">"command"</span><span class="sx-p">:</span> <span class="sx-s">"npx"</span><span class="sx-p">,</span>
+      <span class="sx-k">"args"</span><span class="sx-p">:</span> <span class="sx-p">[</span>
+        <span class="sx-s">"@playwright/mcp@latest"</span><span class="sx-p">,</span>
+        <span class="sx-s">"--isolated"</span><span class="sx-p">,</span>
+        <span class="sx-s">"--device"</span><span class="sx-p">,</span>
+        <span class="sx-s">"iPhone 15"</span><span class="sx-p">,</span>
+        <span class="sx-s">"--output-dir"</span><span class="sx-p">,</span>
+        <span class="sx-s">"./captures"</span>
+      <span class="sx-p">]</span>
+    <span class="sx-p">}</span>
+  <span class="sx-p">}</span>
+<span class="sx-p">}</span></pre>
 <p>Variante sans serveur MCP : Context7 propose aussi un mode « CLI + skill » (<code>npx ctx7 setup --claude</code>), et Claude Code peut piloter votre navigateur Chrome via son extension. Le principe reste le même : donner à l'agent un moyen de <strong>vérifier</strong>.</p>
 <p>Voici ce que ça donne en pratique. Demandez, avec ces deux serveurs branchés :</p><pre class="kd-code">Ajoute la pagination à la liste des commandes avec TanStack Query. use context7
 
@@ -349,23 +349,23 @@ Puis ouvre http://localhost:3100/commandes, prends une capture à 1280 px et une
 <p>L'agent lit la documentation de la bonne version, écrit le code, ouvre la page, capture les deux tailles et rapporte les erreurs. Vous relisez des preuves.</p>
 <p><strong>Exercice</strong> : branchez les deux serveurs sur un projet jetable, demandez une petite évolution d'interface, et obtenez deux captures (bureau et mobile) sans aucune erreur de console.</p><details class="pc-reveal"><summary>Sécurité : ce qu'il faut restreindre</summary><div><p>Playwright n'est <strong>pas une frontière de sécurité</strong>. Son outil <code>browser_run_code_unsafe</code> exécute du JavaScript arbitraire côté serveur et équivaut à une exécution de code à distance : refusez-le dans les permissions (<code>mcp__playwright__browser_run_code_unsafe</code>). N'ouvrez que des sites de confiance : une page hostile est une entrée non fiable (injection de prompt). N'exposez jamais le serveur au réseau (<code>--host 0.0.0.0</code>). Pour Context7, la clé d'API se passe par variable d'environnement, jamais en clair dans le fichier versionné.</p></div></details><div class="pc-proof"><div><b>Preuve attendue</b><p>Obtenir, avec Context7 et Playwright, une évolution d'interface vérifiée par deux captures et une console propre.</p></div><div><b>Piège</b><p>Une capture n'est une preuve que si l'agent a ouvert la bonne page, dans la bonne taille. Demandez l'adresse, la taille et la date de chaque capture.</p></div></div></div></section>
 <section class="pc-stage" id="etape-9"><div class="pc-main"><p class="pc-kicker">Étape 9</p><h2 class="pc-h">Permissions et réglages</h2><p class="pc-tag">Ce que l'agent peut faire, décidé hors de son texte.</p><p>Contrairement aux fichiers d'instructions, les <strong>règles de permission</strong> sont appliquées par l'outil, pas suggérées au modèle. Elles vivent dans les fichiers de réglages : <code>.claude/settings.json</code> (projet, partagé), <code>.claude/settings.local.json</code> (vos choix locaux, à garder hors du dépôt), <code>~/.claude/settings.json</code> (personnel), et des réglages d'organisation qui priment.</p>
-<pre class="kd-code">{
-  "permissions": {
-    "allow": [
-      "Bash(npm test *)",
-      "Bash(git status)"
-    ],
-    "ask": [
-      "Bash(git push *)"
-    ],
-    "deny": [
-      "Read(./.env)",
-      "Read(./secrets/**)",
-      "Bash(rm -rf *)",
-      "mcp__playwright__browser_run_code_unsafe"
-    ]
-  }
-}</pre>
+<pre class="kd-code"><span class="sx-p">{</span>
+  <span class="sx-k">"permissions"</span><span class="sx-p">:</span> <span class="sx-p">{</span>
+    <span class="sx-k">"allow"</span><span class="sx-p">:</span> <span class="sx-p">[</span>
+      <span class="sx-s">"Bash(npm test *)"</span><span class="sx-p">,</span>
+      <span class="sx-s">"Bash(git status)"</span>
+    <span class="sx-p">]</span><span class="sx-p">,</span>
+    <span class="sx-k">"ask"</span><span class="sx-p">:</span> <span class="sx-p">[</span>
+      <span class="sx-s">"Bash(git push *)"</span>
+    <span class="sx-p">]</span><span class="sx-p">,</span>
+    <span class="sx-k">"deny"</span><span class="sx-p">:</span> <span class="sx-p">[</span>
+      <span class="sx-s">"Read(./.env)"</span><span class="sx-p">,</span>
+      <span class="sx-s">"Read(./secrets/**)"</span><span class="sx-p">,</span>
+      <span class="sx-s">"Bash(rm -rf *)"</span><span class="sx-p">,</span>
+      <span class="sx-s">"mcp__playwright__browser_run_code_unsafe"</span>
+    <span class="sx-p">]</span>
+  <span class="sx-p">}</span>
+<span class="sx-p">}</span></pre>
 <p>Trois listes, évaluées dans cet ordre : <strong>deny</strong>, puis <strong>ask</strong>, puis <strong>allow</strong>. La première qui correspond décide, quelle que soit la précision des règles. Pronostiquez :</p>
 <table class="pc-table"><thead><tr><th>Cas</th><th>Résultat</th></tr></thead><tbody><tr><td>allow Bash(aws s3 ls) et deny Bash(aws *) : que se passe-t-il pour aws s3 ls ?</td><td><details class="pc-reveal"><summary>Mon pronostic</summary><div><span class="kd-pill deny">refusé</span> Refusé. Une règle d'interdiction large bloque aussi ce qu'une règle d'autorisation plus précise voudrait laisser passer.</div></details></td></tr><tr><td>allow Bash(git push *) et ask Bash(git push *) : que se passe-t-il pour git push origin feat ?</td><td><details class="pc-reveal"><summary>Mon pronostic</summary><div><span class="kd-pill ask">demande</span> Une confirmation est demandée. Une règle « demander » l'emporte sur une règle « autoriser ».</div></details></td></tr><tr><td>Un hook PreToolUse répond « autoriser » mais deny Read(./.env) existe : lecture de .env ?</td><td><details class="pc-reveal"><summary>Mon pronostic</summary><div><span class="kd-pill deny">refusé</span> Refusée. Les règles d'interdiction et de confirmation sont évaluées quel que soit le résultat d'un hook.</div></details></td></tr></tbody></table>
 <p>Les <strong>modes</strong> règlent le niveau d'autonomie : <code>default</code> (demande à la première utilisation), <code>acceptEdits</code> (accepte les modifications de fichiers), <code>plan</code> (explore sans modifier), <code>auto</code> (un classifieur vérifie les actions), <code>dontAsk</code> (refuse ce qui demanderait), <code>bypassPermissions</code> (aucune demande : réservé aux environnements isolés).</p>

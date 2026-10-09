@@ -105,3 +105,10 @@ html { scroll-padding-top: calc(var(--kd-top-h) + 16px); }
   main.pc-wrap > .kw-page-title { animation: kd-head-in .55s .06s cubic-bezier(.22, 1, .36, 1) both; }
   html { scroll-behavior: smooth; }
 }
+
+/* coloration syntaxique des blocs de code (faite à la génération) */
+:root { --sx-k: #7cb7ff; --sx-s: #86d9a0; --sx-n: #f5b45e; --sx-b: #c4a5ff; --sx-c: #8b8b94; --sx-f: #5eead4; --sx-v: #f5b45e; --sx-p: #8b8b94; --sx-a: #f472b6; --sx-h: var(--kw-fg); }
+:root[data-theme="light"] { --sx-k: #1d63c4; --sx-s: #14803c; --sx-n: #b45309; --sx-b: #6d3fd1; --sx-c: #6b7280; --sx-f: #0f766e; --sx-v: #b45309; --sx-p: #6b7280; --sx-a: #be185d; }
+.sx-k { color: var(--sx-k); } .sx-s { color: var(--sx-s); } .sx-n { color: var(--sx-n); } .sx-b { color: var(--sx-b); }
+.sx-c { color: var(--sx-c); font-style: italic; } .sx-f { color: var(--sx-f); } .sx-v { color: var(--sx-v); }
+.sx-p { color: var(--sx-p); } .sx-a { color: var(--sx-a); font-weight: 600; } .sx-h { color: var(--sx-h); font-weight: 600; }

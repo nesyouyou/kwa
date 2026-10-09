@@ -161,46 +161,46 @@ footer.kw-footer{margin-top:128px}
 <tr><td>Déploiement vérifié</td><td><code>/kwa-deploy</code></td></tr>
 <tr><td>Rétrospective</td><td><code>/kwa-learn</code>, mémoire de session</td></tr></tbody></table>
 <div class="pc-proof"><div><b>Preuve attendue</b><p>Placer cinq étapes de votre processus actuel et dire ce qui les remplace quand un agent travaille.</p></div><div><b>Piège</b><p>Un harness rend vérifiables par une machine des contrôles que l'équipe faisait déjà ; il ne doit pas en ajouter par réflexe.</p></div></div></div></section><section class="pc-stage" id="etape-1"><div class="pc-main"><p class="pc-kicker">Étape 1</p><h2 class="pc-h">Instructions et contrainte</h2><p class="pc-tag">Ce que l'agent lit, et ce qui l'oblige.</p><p>Installez Kwa dans un dépôt jetable. Regardez ce qui est écrit pour l'agent, puis demandez-vous : quelle ligne l'empêche de committer sur <code>main</code> ?</p>
-<pre class="kd-code"><span class="p">$</span> kwa install ./mon-projet --modules core,memory,craft,issue-flow</pre><pre class="kd-code">kwa v0.1.0 → mon-projet
+<pre class="kd-code"><span class="p">$</span> kwa install ./mon-projet <span class="sx-f">--modules</span> core,memory,craft,issue-flow</pre><pre class="kd-code">kwa v0.1.0 → mon-projet
   modules : core, memory, craft, issue-flow
   fichiers ajouté : 55
   fichiers seed : 4
     - .github/pull_request_template.md</pre>
 <p><code>CLAUDE.md</code> contient une ligne, un pointeur vers le fichier commun :</p><pre class="kd-code">@AGENTS.md</pre>
-<p>Début du bloc géré de <code>AGENTS.md</code> :</p><pre class="kd-code"># AGENTS.md
+<p>Début du bloc géré de <code>AGENTS.md</code> :</p><pre class="kd-code"><span class="sx-h"># AGENTS.md</span>
 &lt;!-- kwa:begin v0.1.0 profile=pr-flow (géré ; toute retouche ici est écrasée à la mise à jour) --&gt;
-## Kwa — socle commun
-Ce bloc est géré par Kwa (`kwa install`) : ne pas l'éditer ici, le modifier dans le pack.
-Tout ce qui est propre au projet va **au-dessus ou en dessous** des marqueurs, ou dans `.claude/kwa.policy.json`.
-- `AGENTS.md` est la source unique. `CLAUDE.md` n'est qu'un pointeur `@AGENTS.md`.
-- Modules actifs : core, memory, craft, issue-flow.
-- Règles communes : `.claude/rules/kwa-*.md`. Garde-fous automatiques : `.claude/kwa/hooks/` ; ce sont des
+<span class="sx-h">## Kwa — socle commun</span>
+Ce bloc est géré par Kwa (<span class="sx-s">`kwa install`</span>) : ne pas l'éditer ici, le modifier dans le pack.
+Tout ce qui est propre au projet va **au-dessus ou en dessous** des marqueurs, ou dans <span class="sx-s">`.claude/kwa.policy.json`</span>.
+<span class="sx-p">-</span> <span class="sx-s">`AGENTS.md`</span> est la source unique. <span class="sx-s">`CLAUDE.md`</span> n'est qu'un pointeur <span class="sx-s">`@AGENTS.md`</span>.
+<span class="sx-p">-</span> Modules actifs : core, memory, craft, issue-flow.
+<span class="sx-p">-</span> Règles communes : <span class="sx-s">`.claude/rules/kwa-*.md`</span>. Garde-fous automatiques : <span class="sx-s">`.claude/kwa/hooks/`</span> ; ce sont des
   filets contre la bévue, pas une frontière de sécurité : ne jamais les contourner ni les éditer sans accord.</pre>
-<details class="pc-reveal"><summary>Réponse</summary><div><p>Aucune ligne ne l'empêche. Un fichier d'instructions est du <strong>contexte</strong> : l'agent le lit et peut s'en écarter. Ce qui contraint, c'est un hook qui s'exécute avant l'outil. Voici le même commit, tenté sur <code>main</code>, quand le garde est appelé :</p><pre class="kd-code">{"hookSpecificOutput": {"hookEventName": "PreToolUse", "permissionDecision": "deny", "permissionDecisionReason": "Kwa — git commit sur main refusé : travailler sur une branche dédiée et ouvrir une PR (KWA_ALLOW_MAIN=1 pour une exception assumée)"}}</pre></div></details><div class="pc-proof"><div><b>Preuve attendue</b><p>Dire pourquoi une règle écrite ne suffit pas, et nommer ce qui la fait respecter.</p></div><div><b>Piège</b><p>Le dossier <code>hooks/</code> ne fait rien tout seul : un hook n'existe que s'il est branché dans <code>settings.json</code> (étape 3).</p></div></div></div></section>
+<details class="pc-reveal"><summary>Réponse</summary><div><p>Aucune ligne ne l'empêche. Un fichier d'instructions est du <strong>contexte</strong> : l'agent le lit et peut s'en écarter. Ce qui contraint, c'est un hook qui s'exécute avant l'outil. Voici le même commit, tenté sur <code>main</code>, quand le garde est appelé :</p><pre class="kd-code"><span class="sx-p">{</span><span class="sx-k">"hookSpecificOutput"</span><span class="sx-p">:</span> <span class="sx-p">{</span><span class="sx-k">"hookEventName"</span><span class="sx-p">:</span> <span class="sx-s">"PreToolUse"</span><span class="sx-p">,</span> <span class="sx-k">"permissionDecision"</span><span class="sx-p">:</span> <span class="sx-s">"deny"</span><span class="sx-p">,</span> <span class="sx-k">"permissionDecisionReason"</span><span class="sx-p">:</span> <span class="sx-s">"Kwa — git commit sur main refusé : travailler sur une branche dédiée et ouvrir une PR (KWA_ALLOW_MAIN=1 pour une exception assumée)"</span><span class="sx-p">}</span><span class="sx-p">}</span></pre></div></details><div class="pc-proof"><div><b>Preuve attendue</b><p>Dire pourquoi une règle écrite ne suffit pas, et nommer ce qui la fait respecter.</p></div><div><b>Piège</b><p>Le dossier <code>hooks/</code> ne fait rien tout seul : un hook n'existe que s'il est branché dans <code>settings.json</code> (étape 3).</p></div></div></div></section>
 <section class="pc-stage" id="etape-2"><div class="pc-main"><p class="pc-kicker">Étape 2</p><h2 class="pc-h">Un garde, de la commande au verdict</h2><p class="pc-tag">Un hook reçoit du JSON et répond refuse, demande ou laisse passer.</p><p>Un garde est un petit programme. Claude Code lui envoie ce que l'agent s'apprête à faire, il répond sur la sortie standard. Appelez-le à la main :</p>
-<pre class="kd-code"><span class="p">$</span> echo '{"tool_name": "Bash", "tool_input": {"command": "git commit -m wip"}, "cwd": "."}' | python3 .claude/kwa/hooks/guard-git.py</pre>
+<pre class="kd-code"><span class="p">$</span> <span class="sx-b">echo</span> <span class="sx-s">'{"tool_name": "Bash", "tool_input": {"command": "git commit -m wip"}, "cwd": "."}'</span> | python3 .claude/kwa/hooks/guard-git.py</pre>
 <p>Pas de sortie veut dire « laisse passer ». Avant de regarder les réponses, <strong>faites votre pronostic</strong> pour chaque commande, puis ouvrez :</p>
 <table class="pc-table"><thead><tr><th>Commande</th><th>Verdict réel</th></tr></thead><tbody><tr><td><code>cat .env</code><br><small>branche de travail</small></td><td><details class="pc-reveal"><summary>Mon pronostic</summary><div><span class="kd-pill deny">refusé</span> <small>commande refusée : touche un fichier de secrets (.env)</small></div></details></td></tr><tr><td><code>cat .env.example</code><br><small>branche de travail</small></td><td><details class="pc-reveal"><summary>Mon pronostic</summary><div><span class="kd-pill allow">passe</span></div></details></td></tr><tr><td><code>git push --force origin feat/12-filtre</code><br><small>branche de travail</small></td><td><details class="pc-reveal"><summary>Mon pronostic</summary><div><span class="kd-pill deny">refusé</span> <small>push forcé ou destructif refusé (--force, -f, +ref, --delete, --all, --mirror). Après un rebase : --force-with-lease, avec confirmation.</small></div></details></td></tr><tr><td><code>rm -rf build</code><br><small>branche de travail</small></td><td><details class="pc-reveal"><summary>Mon pronostic</summary><div><span class="kd-pill allow">passe</span></div></details></td></tr><tr><td><code>git commit -m 'wip'</code><br><small>branche main</small></td><td><details class="pc-reveal"><summary>Mon pronostic</summary><div><span class="kd-pill deny">refusé</span> <small>git commit sur main refusé : travailler sur une branche dédiée et ouvrir une PR (KWA_ALLOW_MAIN=1 pour une exception assumée)</small></div></details></td></tr></tbody></table>
 <p class="kd-note">Verdicts calculés en exécutant les gardes à chaque génération de la page.</p><div class="pc-proof"><div><b>Preuve attendue</b><p>Prédire le verdict d'une commande avant de l'exécuter, et lire la raison donnée.</p></div><div><b>Piège</b><p><code>.env.example</code> reste lisible : un garde trop large se fait contourner par agacement.</p></div></div></div></section>
-<section class="pc-stage" id="etape-3"><div class="pc-main"><p class="pc-kicker">Étape 3</p><h2 class="pc-h">Le branchement</h2><p class="pc-tag">settings.json relie un événement à un script. Sans lui, rien n'est appelé.</p><p>Voici l'entrée qui relie le garde git à l'événement <code>PreToolUse</code> pour l'outil <code>Bash</code> :</p><pre class="kd-code">{
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kwa/hooks/guard-git.py",
-            "timeout": 10
-          }
-        ]
-      }
-    ]
-  }
-}</pre>
+<section class="pc-stage" id="etape-3"><div class="pc-main"><p class="pc-kicker">Étape 3</p><h2 class="pc-h">Le branchement</h2><p class="pc-tag">settings.json relie un événement à un script. Sans lui, rien n'est appelé.</p><p>Voici l'entrée qui relie le garde git à l'événement <code>PreToolUse</code> pour l'outil <code>Bash</code> :</p><pre class="kd-code"><span class="sx-p">{</span>
+  <span class="sx-k">"hooks"</span><span class="sx-p">:</span> <span class="sx-p">{</span>
+    <span class="sx-k">"PreToolUse"</span><span class="sx-p">:</span> <span class="sx-p">[</span>
+      <span class="sx-p">{</span>
+        <span class="sx-k">"matcher"</span><span class="sx-p">:</span> <span class="sx-s">"Bash"</span><span class="sx-p">,</span>
+        <span class="sx-k">"hooks"</span><span class="sx-p">:</span> <span class="sx-p">[</span>
+          <span class="sx-p">{</span>
+            <span class="sx-k">"type"</span><span class="sx-p">:</span> <span class="sx-s">"command"</span><span class="sx-p">,</span>
+            <span class="sx-k">"command"</span><span class="sx-p">:</span> <span class="sx-s">"python3 \"$CLAUDE_PROJECT_DIR\"/.claude/kwa/hooks/guard-git.py"</span><span class="sx-p">,</span>
+            <span class="sx-k">"timeout"</span><span class="sx-p">:</span> <span class="sx-n">10</span>
+          <span class="sx-p">}</span>
+        <span class="sx-p">]</span>
+      <span class="sx-p">}</span>
+    <span class="sx-p">]</span>
+  <span class="sx-p">}</span>
+<span class="sx-p">}</span></pre>
 <p>Vérifiez l'état de l'installation :</p><pre class="kd-code"><span class="p">$</span> kwa doctor ./mon-projet</pre><pre class="kd-code">✓ cible conforme</pre>
 <p><strong>Cassez-le</strong> : supprimez cette entrée de <code>settings.json</code> sans toucher au script, puis relancez le diagnostic.</p><pre class="kd-code">✗ 1 hook(s) kwa non branchés dans settings.json</pre>
-<details class="pc-reveal"><summary>Que fait le script maintenant ?</summary><div><p>Il refuse toujours quand on l'appelle à la main, mais plus personne ne l'appelle. Un garde qui existe sans être branché protège de rien.</p><pre class="kd-code">{"hookSpecificOutput": {"hookEventName": "PreToolUse", "permissionDecision": "deny", "permissionDecisionReason": "Kwa — git commit sur main refusé : travailler sur une branche dédiée et ouvrir une PR (KWA_ALLOW_MAIN=1 pour une exception assumée)"}}</pre></div></details><div class="pc-proof"><div><b>Preuve attendue</b><p>Suivre la chaîne événement, filtre d'outil, commande, trace, et repérer un garde non branché.</p></div><div><b>Piège</b><p>Le chemin <code>$CLAUDE_PROJECT_DIR</code> se résout à la racine du projet ; ne pas recopier tel quel une variable propre aux plugins.</p></div></div></div></section>
+<details class="pc-reveal"><summary>Que fait le script maintenant ?</summary><div><p>Il refuse toujours quand on l'appelle à la main, mais plus personne ne l'appelle. Un garde qui existe sans être branché protège de rien.</p><pre class="kd-code"><span class="sx-p">{</span><span class="sx-k">"hookSpecificOutput"</span><span class="sx-p">:</span> <span class="sx-p">{</span><span class="sx-k">"hookEventName"</span><span class="sx-p">:</span> <span class="sx-s">"PreToolUse"</span><span class="sx-p">,</span> <span class="sx-k">"permissionDecision"</span><span class="sx-p">:</span> <span class="sx-s">"deny"</span><span class="sx-p">,</span> <span class="sx-k">"permissionDecisionReason"</span><span class="sx-p">:</span> <span class="sx-s">"Kwa — git commit sur main refusé : travailler sur une branche dédiée et ouvrir une PR (KWA_ALLOW_MAIN=1 pour une exception assumée)"</span><span class="sx-p">}</span><span class="sx-p">}</span></pre></div></details><div class="pc-proof"><div><b>Preuve attendue</b><p>Suivre la chaîne événement, filtre d'outil, commande, trace, et repérer un garde non branché.</p></div><div><b>Piège</b><p>Le chemin <code>$CLAUDE_PROJECT_DIR</code> se résout à la racine du projet ; ne pas recopier tel quel une variable propre aux plugins.</p></div></div></div></section>
 <section class="pc-stage" id="etape-4"><div class="pc-main"><p class="pc-kicker">Étape 4</p><h2 class="pc-h">Les autres événements de hooks</h2><p class="pc-tag">Le garde ne sert qu'un événement sur plus de trente. Le choix de l'événement fait la différence.</p><p>Jusqu'ici, un seul événement : <code>PreToolUse</code>, avant un outil. Il en existe plus de trente. Cinq suffisent pour commencer :</p>
 <table class="pc-table"><thead><tr><th>Événement</th><th>Quand</th><th>Usage typique</th><th>Dans Kwa</th></tr></thead><tbody>
 <tr><td><code>SessionStart</code></td><td>Début, reprise, après effacement ou compaction</td><td>Réinjecter le contexte utile</td><td><code>memory-context</code></td></tr>
@@ -210,56 +210,56 @@ Tout ce qui est propre au projet va **au-dessus ou en dessous** des marqueurs, o
 <tr><td><code>Stop</code></td><td>Quand l'agent a fini de répondre</td><td>Refuser de s'arrêter tant que ce n'est pas vérifié</td><td><code>verify-stop</code></td></tr></tbody></table>
 <p>Un hook est une commande, mais aussi, selon le besoin, un appel HTTP, un outil MCP, une évaluation par un modèle, ou un sous-agent de vérification (ces deux derniers sont réservés aux décisions qui demandent du jugement). La règle des codes de sortie est la même partout : <strong>0</strong> laisse faire, <strong>2</strong> bloque et renvoie le message à l'agent.</p>
 <p>Pour sentir le principe sans Kwa, voici un garde complet, hors de tout outillage : un script et sa déclaration.</p>
-<p><code>.claude/hooks/protege.sh</code> :</p><pre class="kd-code">#!/bin/bash
-# bloque l'édition des fichiers protégés
-FILE=$(cat | jq -r '.tool_input.file_path // empty')
-for motif in ".env" "package-lock.json" ".git/"; do
-  if [[ "$FILE" == *"$motif"* ]]; then
-    echo "Bloqué : $FILE correspond à $motif" &gt;&amp;2
-    exit 2
-  fi
-done
-exit 0</pre><p><code>.claude/settings.json</code> :</p><pre class="kd-code">{
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Edit|Write",
-        "hooks": [{ "type": "command", "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/protege.sh" }]
-      }
-    ]
-  }
-}</pre>
+<p><code>.claude/hooks/protege.sh</code> :</p><pre class="kd-code"><span class="sx-c">#!/bin/bash</span>
+<span class="sx-c"># bloque l'édition des fichiers protégés</span>
+FILE=<span class="sx-v">$(</span>cat | jq <span class="sx-f">-r</span> <span class="sx-s">'.tool_input.file_path // empty'</span>)
+<span class="sx-b">for</span> motif <span class="sx-b">in</span> <span class="sx-s">".env"</span> <span class="sx-s">"package-lock.json"</span> <span class="sx-s">".git/"</span>; <span class="sx-b">do</span>
+  <span class="sx-b">if</span> [[ <span class="sx-s">"$FILE"</span> == *<span class="sx-s">"$motif"</span>* ]]; <span class="sx-b">then</span>
+    <span class="sx-b">echo</span> <span class="sx-s">"Bloqué : $FILE correspond à $motif"</span> &gt;&amp;2
+    <span class="sx-b">exit</span> 2
+  <span class="sx-b">fi</span>
+<span class="sx-b">done</span>
+<span class="sx-b">exit</span> 0</pre><p><code>.claude/settings.json</code> :</p><pre class="kd-code"><span class="sx-p">{</span>
+  <span class="sx-k">"hooks"</span><span class="sx-p">:</span> <span class="sx-p">{</span>
+    <span class="sx-k">"PreToolUse"</span><span class="sx-p">:</span> <span class="sx-p">[</span>
+      <span class="sx-p">{</span>
+        <span class="sx-k">"matcher"</span><span class="sx-p">:</span> <span class="sx-s">"Edit|Write"</span><span class="sx-p">,</span>
+        <span class="sx-k">"hooks"</span><span class="sx-p">:</span> <span class="sx-p">[</span><span class="sx-p">{</span> <span class="sx-k">"type"</span><span class="sx-p">:</span> <span class="sx-s">"command"</span><span class="sx-p">,</span> <span class="sx-k">"command"</span><span class="sx-p">:</span> <span class="sx-s">"\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/protege.sh"</span> <span class="sx-p">}</span><span class="sx-p">]</span>
+      <span class="sx-p">}</span>
+    <span class="sx-p">]</span>
+  <span class="sx-p">}</span>
+<span class="sx-p">}</span></pre>
 <p>Pronostic : pour chaque besoin, quel événement ?</p>
 <table class="pc-table"><thead><tr><th>Besoin</th><th>Événement</th></tr></thead><tbody>
 <tr><td>Formater chaque fichier modifié</td><td><details class="pc-reveal"><summary>Mon pronostic</summary><div><p><code>PostToolUse</code> sur <code>Edit|Write</code> : le fichier existe déjà, on le nettoie.</p></div></details></td></tr>
 <tr><td>Rappeler au démarrage où en était la session précédente</td><td><details class="pc-reveal"><summary>Mon pronostic</summary><div><p><code>SessionStart</code> : sa sortie est ajoutée au contexte.</p></div></details></td></tr>
 <tr><td>Empêcher de terminer avec des tests rouges</td><td><details class="pc-reveal"><summary>Mon pronostic</summary><div><p><code>Stop</code>, avec un test de <code>stop_hook_active</code> pour ne pas boucler.</p></div></details></td></tr></tbody></table><div class="pc-proof"><div><b>Preuve attendue</b><p>Choisir l'événement adapté à un besoin, et écrire un garde de quinze lignes sans Kwa.</p></div><div><b>Piège</b><p>Un hook Stop qui bloque sans condition de sortie boucle : Claude Code le désactive après huit blocages consécutifs. Testez <code>stop_hook_active</code>.</p></div></div></div></section>
 <section class="pc-stage" id="etape-5"><div class="pc-main"><p class="pc-kicker">Étape 5</p><h2 class="pc-h">La politique du projet</h2><p class="pc-tag">Ce qui change d'un projet à l'autre tient dans un fichier, pas dans un script.</p><p>Les gardes sont communs, la politique est locale (<code>.claude/kwa.policy.json</code>). Dans le dépôt jetable, la commande <code>npm run deploy:prod</code> n'est pas gardée : <span class="kd-pill allow">passe</span></p>
-<p>Ajoutez cette règle dans <code>bash.deny</code> :</p><pre class="kd-code">{
-  "id": "deploy-prod",
-  "reason": "Le déploiement de production passe par la PR, pas par ce script.",
-  "all": [
-    "npm run deploy:prod"
-  ]
-}</pre>
-<p>Même commande, même garde, nouveau verdict : <span class="kd-pill deny">refusé</span></p><pre class="kd-code">[deploy-prod] Le déploiement de production passe par la PR, pas par ce script.</pre><div class="pc-proof"><div><b>Preuve attendue</b><p>Ajouter une règle de projet et prouver qu'elle change un verdict.</p></div><div><b>Piège</b><p>Le refus l'emporte toujours sur la demande. Une politique trop stricte se contourne, une règle utile est précise.</p></div></div></div></section>
-<section class="pc-stage" id="etape-6"><div class="pc-main"><p class="pc-kicker">Étape 6</p><h2 class="pc-h">Une skill, et comment la casser</h2><p class="pc-tag">Une procédure que l'agent déclenche ou que vous tapez.</p><p>Une skill est un fichier <code>SKILL.md</code> : un en-tête qui dit quand l'appeler, un corps qui dit comment. Celui de <code>/kwa-rephrase</code> :</p><pre class="kd-code">---
-name: kwa-rephrase
-description: Reformuler le dernier message quand l'utilisateur n'a pas compris. À utiliser dès qu'il dit « stop », « je ne comprends pas », « explique autrement », « reformule », « c'est quoi ça ? », « /kwa-rephrase ».
-disable-model-invocation: true
----</pre>
-<p>Créez une skill dont la description contient « : » (un piège YAML qui tronque l'en-tête sans bruit), puis lancez la suite de contrôle des skills. Elle échoue deux fois : le premier échec est le piège YAML, le second rappelle qu'une skill doit être déclarée dans <code>manifest.json</code>.</p><pre class="kd-code"><span class="p">$</span> python3 -m unittest tests.test_skills.Lint</pre><pre class="kd-code">FAIL: test_description_survives_yaml_parsing (tests.test_skills.Lint) (skill='demo')
+<p>Ajoutez cette règle dans <code>bash.deny</code> :</p><pre class="kd-code"><span class="sx-p">{</span>
+  <span class="sx-k">"id"</span><span class="sx-p">:</span> <span class="sx-s">"deploy-prod"</span><span class="sx-p">,</span>
+  <span class="sx-k">"reason"</span><span class="sx-p">:</span> <span class="sx-s">"Le déploiement de production passe par la PR, pas par ce script."</span><span class="sx-p">,</span>
+  <span class="sx-k">"all"</span><span class="sx-p">:</span> <span class="sx-p">[</span>
+    <span class="sx-s">"npm run deploy:prod"</span>
+  <span class="sx-p">]</span>
+<span class="sx-p">}</span></pre>
+<p>Même commande, même garde, nouveau verdict : <span class="kd-pill deny">refusé</span></p><pre class="kd-code"><span class="sx-p">[</span>deploy-prod<span class="sx-p">]</span> Le déploiement de production passe par la PR<span class="sx-p">,</span> pas par ce script.</pre><div class="pc-proof"><div><b>Preuve attendue</b><p>Ajouter une règle de projet et prouver qu'elle change un verdict.</p></div><div><b>Piège</b><p>Le refus l'emporte toujours sur la demande. Une politique trop stricte se contourne, une règle utile est précise.</p></div></div></div></section>
+<section class="pc-stage" id="etape-6"><div class="pc-main"><p class="pc-kicker">Étape 6</p><h2 class="pc-h">Une skill, et comment la casser</h2><p class="pc-tag">Une procédure que l'agent déclenche ou que vous tapez.</p><p>Une skill est un fichier <code>SKILL.md</code> : un en-tête qui dit quand l'appeler, un corps qui dit comment. Celui de <code>/kwa-rephrase</code> :</p><pre class="kd-code"><span class="sx-p">---</span>
+<span class="sx-k">name</span><span class="sx-p">:</span> kwa-rephrase
+<span class="sx-k">description</span><span class="sx-p">:</span> Reformuler le dernier message quand l'utilisateur n'a pas compris. À utiliser dès qu'il dit « stop », « je ne comprends pas », « explique autrement », « reformule », « c'est quoi ça ? », « /kwa-rephrase ».
+<span class="sx-k">disable-model-invocation</span><span class="sx-p">:</span> <span class="sx-b">true</span>
+<span class="sx-p">---</span></pre>
+<p>Créez une skill dont la description contient « : » (un piège YAML qui tronque l'en-tête sans bruit), puis lancez la suite de contrôle des skills. Elle échoue deux fois : le premier échec est le piège YAML, le second rappelle qu'une skill doit être déclarée dans <code>manifest.json</code>.</p><pre class="kd-code"><span class="p">$</span> python3 <span class="sx-f">-m</span> unittest tests.test_skills.Lint</pre><pre class="kd-code">FAIL: test_description_survives_yaml_parsing (tests.test_skills.Lint) (skill='demo')
 AssertionError: ': ' unexpectedly found in 'Faire une démonstration. À lancer quand : on le demande.' : « : » dans une description non quotée casse le YAML
 FAIL: test_manifest_covers_every_skill (tests.test_skills.Lint)
 FAILED (failures=2)</pre>
 <details class="pc-reveal"><summary>Pourquoi ce test existe</summary><div><p>Une description mal formée ne plante rien : la skill devient simplement introuvable. Un test qui échoue vaut mieux qu'une skill invisible.</p></div></details><div class="pc-proof"><div><b>Preuve attendue</b><p>Écrire l'en-tête d'une skill et lire l'échec qui signale une erreur.</p></div><div><b>Piège</b><p>Une description dit quand invoquer la skill, pas son déroulé : un agent qui lit les étapes saute le corps (voir <code>/kwa-agent-docs</code>).</p></div></div></div></section>
 <section class="pc-stage" id="etape-7"><div class="pc-main"><p class="pc-kicker">Étape 7</p><h2 class="pc-h">La mémoire qui s'enrichit</h2><p class="pc-tag">Noter pendant, trier à la fin, valider soi-même.</p><p>Capturez un piège rencontré pendant le travail, sans rien écrire dans la documentation :</p>
-<pre class="kd-code"><span class="p">$</span> kwa-memory capture gotcha "Les tests d'intégration ont besoin du fichier d'environnement local"</pre>
+<pre class="kd-code"><span class="p">$</span> kwa-memory capture gotcha <span class="sx-s">"Les tests d'intégration ont besoin du fichier d'environnement local"</span></pre>
 <pre class="kd-code"><span class="p">$</span> kwa-memory pending</pre><pre class="kd-code">1 note(s) en attente
 - [2026-10-09] [gotcha] Les tests d'intégration ont besoin du fichier d'environnement local</pre>
 <p>En fin de session, <code>/kwa-learn</code> propose où chaque note devrait vivre (documentation, politique, mémoire de l'agent). <strong>Rien n'est appliqué sans votre accord.</strong></p><div class="pc-proof"><div><b>Preuve attendue</b><p>Capturer une note et dire qui décide de son destin.</p></div><div><b>Piège</b><p>Les notes locales ne sont pas versionnées : elles sont exclues via <code>.git/info/exclude</code>.</p></div></div></div></section>
 <section class="pc-stage" id="etape-8"><div class="pc-main"><p class="pc-kicker">Étape 8</p><h2 class="pc-h">Le workflow complet</h2><p class="pc-tag">Une demande, une branche, une preuve, une PR.</p><p>Démarrez un changement : une branche dans son propre worktree, à côté du dépôt, jamais sur <code>main</code>.</p>
-<pre class="kd-code"><span class="p">$</span> kwa-start feat status-filter "Ajouter un filtre de statut" --no-issue</pre><pre class="kd-code">aucune issue créée (flow.auto_issue: false ou --no-issue)
+<pre class="kd-code"><span class="p">$</span> kwa-start feat status-filter <span class="sx-s">"Ajouter un filtre de statut"</span> <span class="sx-f">--no-issue</span></pre><pre class="kd-code">aucune issue créée (flow.auto_issue: false ou --no-issue)
 branche : feat/status-filter
 worktree : mon-projet-wt-status-filter
 

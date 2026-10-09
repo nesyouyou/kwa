@@ -123,7 +123,7 @@
       val.textContent = 'Fenêtre principale : ' + Math.round(tot) + ' %';
     };
     var setSubs = function (w) { subs.forEach(function (e, i) { e.style.width = (w[i] || 0) + '%'; }); };
-    var fly = function (list, on) { Array.prototype.forEach.call(list, function (e, i) { e.classList.toggle('po-go', on); e.style.transitionDelay = on && !reduced ? (i * 120) + 'ms' : '0ms'; }); };
+    var fly = function (list, on) { Array.prototype.forEach.call(list, function (e, i) { e.classList.toggle('po-go', on); e.style.transitionDelay = on && !reduced ? (i * 70) + 'ms' : '0ms'; }); };
     var SCRIPT = {
       team: [
         function () { fly(downs, false); fly(ups, false); setSubs([0, 0, 0]); setMain({ sys: 10, hist: 4, files: 0, sum: 0 }); return 'L\'agent principal reçoit la demande : « refactorer l\'authentification ». Il a déjà ses consignes et l\'historique.'; },
@@ -147,7 +147,7 @@
         mode = b.getAttribute('data-orch'); step = 0; if (timer) clearInterval(timer);
         Array.prototype.forEach.call(orch.querySelectorAll('[data-orch]'), function (o) { o.setAttribute('aria-pressed', String(o === b)); });
         go();
-        if (!reduced) timer = setInterval(next, 2600);
+        if (!reduced) timer = setInterval(next, 1900);
       });
     });
     var nb = $('[data-orch-next]', orch);
