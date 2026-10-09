@@ -170,7 +170,7 @@ def _render(name: str, node: dict, depth: int) -> str:
     inner = "".join(_render(k, node[k], depth + 1) for k in kids)
     mods = " ".join(sorted(_mods(node)))
     is_local = name in ("local",) or name.startswith("local")
-    return (f'<details class="tr-dir{" tr-local" if is_local else ""}" data-mod="{mods}"{" open" if depth < 2 else ""}>'
+    return (f'<details class="tr-dir{" tr-local" if is_local else ""}" data-mod="{mods}"{" open" if depth == 0 and name == ".claude" else ""}>'
             f'<summary class="tr-row">{ICONS["dir"]}<span class="tr-n">{html.escape(name)}/</span></summary><div class="tr-kids">{inner}</div></details>')
 
 
