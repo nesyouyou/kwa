@@ -151,7 +151,7 @@ footer.kw-footer{margin-top:128px}
 </div></div>
 <footer class="kw-footer"><div class="kw-container kw-footer-grid">
   <div><b class="kd-word kd-word--big">kwa</b></div>
-  <div><h3>Kwa</h3><p>v<span id="ver2"></span><br><span id="tests"></span></p></div>
+  <div><h3>Kwa</h3><p>v<span id="ver2"></span></p></div>
   <div><h3>Documentation</h3><p>Régénérée par <code>docs/site/build.py</code> ; exemples calculés en exécutant les gardes.</p></div>
   <div><h3>Style</h3><p>Feuille de style écrite pour ce site ; polices Geist, licence SIL OFL.</p></div>
 </div></footer>
@@ -174,6 +174,6 @@ document.addEventListener('click', e => { const b = e.target.closest('[data-copy
 
 /* fin du bloc thème */
 
-$('#ver2').textContent = DATA.version; $('#tests').textContent = `${DATA.tests} tests ${DATA.tests_ok ? 'au vert' : 'en échec'}`;
+$('#ver2').textContent = DATA.version;
 KwaTerminal.mount($('#term-root'), DATA.terminal);
 </script></body></html>
