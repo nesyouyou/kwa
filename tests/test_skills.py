@@ -136,8 +136,8 @@ class Parcours(unittest.TestCase):
             text = self.page(name)
             for n in range(1, count + 1):
                 self.assertIn(f'id="etape-{n}"', text, name)
-        self.assertIn("parcours-widgets.js", self.page("parcours-culture.html"))
-        self.assertTrue(os.path.isfile(os.path.join(self.SITE, "src", "parcours-widgets.js")))
+        self.assertIn("parcours.js", self.page("parcours-culture.html"))
+        self.assertTrue(os.path.isfile(os.path.join(self.SITE, "src", "parcours.js")))
 
     def test_hub_links_the_three_parcours(self):
         text = self.page("parcours.html")
@@ -164,7 +164,185 @@ class Parcours(unittest.TestCase):
 
     def test_linked_from_home_and_readme(self):
         self.assertIn("parcours.html", open(os.path.join(PACK, "README.md"), encoding="utf-8").read())
-        self.assertIn("parcours.html", open(os.path.join(self.SITE, "template.html"), encoding="utf-8").read())
+        self.assertIn("parcours.html", self.page("index.html"))
+
+
+class ParcoursVisuals(unittest.TestCase):
+    """Explications visuelles des parcours : éléments présents, couleurs par parcours, mouvement réduit respecté."""
+    SITE = os.path.join(PACK, "docs", "site")
+
+    def read(self, *parts):
+        return open(os.path.join(self.SITE, *parts), encoding="utf-8").read()
+
+    def test_token_and_context_widgets_have_their_elements(self):
+        page = self.read("parcours-culture.html")
+        for needle in ("tk-chips", "tk-probs", "tk-draw", "tk-temp", "tok-input", "ctx-stack", "data-ctx-play", "data-ctx-compact", "Chiffres inventés"):
+            self.assertIn(needle, page, needle)
+        for seg in ("sys", "rules", "tools", "hist", "files", "res"):
+            self.assertIn(f'id="seg-{seg}"', page, seg)
+
+    def test_script_ids_exist_in_the_pages(self):
+        js = self.read("src", "parcours.js")
+        pages = "".join(self.read(f"parcours-{n}.html") for n in ("culture", "contexte", "harness"))
+        idents = set(re.findall(r"\$\('#([a-z-]+)'\)", js))
+        self.assertGreater(len(idents), 10)
+        for ident in idents:
+            self.assertIn(f'id="{ident}"', pages, ident)
+
+    def test_orchestrator_rules_and_skill_loading_are_taught(self):
+        contexte = self.read("parcours-contexte.html")
+        for needle in ('id="orch"', 'id="skl"', "Les règles", "paths", "etape-10"):
+            self.assertIn(needle, contexte, needle)
+
+    def test_everyday_tools_and_agent_flow_are_taught(self):
+        contexte = self.read("parcours-contexte.html")
+        for needle in ("Context7", "resolve-library-id", "query-docs", "Playwright", "browser_take_screenshot",
+                       "browser_run_code_unsafe", "/clear", "/rewind", "etape-8"):
+            self.assertIn(needle, contexte, needle)
+        harness = self.read("parcours-harness.html")
+        for needle in ('id="flow"', "PostToolUse", "stop_hook_active", "etape-9", "Playwright", "Context7"):
+            self.assertIn(needle, harness, needle)
+        culture = self.read("parcours-culture.html")
+        for needle in ('id="loop"', "Injection de prompt", "workflow"):
+            self.assertIn(needle, culture, needle)
+
+    def test_stage_numbers_match_the_navigation(self):
+        sys.path.insert(0, os.path.join(self.SITE, "src"))
+        import parcours_pages
+        for page, nav in (("culture", parcours_pages.CULTURE_NAV), ("contexte", parcours_pages.CONTEXTE_NAV), ("harness", parcours_pages.HARNESS_NAV)):
+            text = self.read(f"parcours-{page}.html")
+            ids = sorted(set(re.findall(r'<section class="pc-stage" id="etape-(\d+)"', text)), key=int)
+            self.assertEqual(ids, sorted([n for n, _ in nav], key=int), page)
+
+    def test_each_parcours_has_its_own_accent(self):
+        css = self.read("src", "parcours.css")
+        for name in ("culture", "contexte", "harness"):
+            self.assertIn(f'data-acc="{name}"', self.read(f"parcours-{name}.html"), name)
+            self.assertIn(f'[data-acc="{name}"]', css, name)
+
+    def test_motion_is_skipped_when_reduced(self):
+        self.assertIn("prefers-reduced-motion", self.read("src", "parcours.css"))
+        self.assertIn("prefers-reduced-motion", self.read("src", "parcours.js"))
+
+
+class Pictos(unittest.TestCase):
+    """Pictogrammes des concepts (garde, skill, agent) et mots importants en gras : générés, sans résidu de gabarit."""
+    SITE = os.path.join(PACK, "docs", "site")
+
+    def index(self):
+        with open(os.path.join(self.SITE, "index.html"), encoding="utf-8") as f:
+            return f.read()
+
+    def test_concept_pictos_are_in_the_page(self):
+        text = self.index()
+        self.assertNotIn("{{pic:", text)
+        for name in ("shield", "sword", "agent"):
+            self.assertIn(f"p-{name}", text, name)
+
+    def test_credits_markup_is_rendered_not_shown(self):
+        with open(os.path.join(PACK, "credits.json"), encoding="utf-8") as f:
+            sources = json.load(f)["sources"]
+        for src in sources:
+            self.assertEqual(src["took"].count("**") % 2, 0, src["id"])
+            self.assertIn("**", src["took"], src["id"])
+        self.assertIn("<strong>$1</strong>", self.index())
+
+
+class Shell(unittest.TestCase):
+    """Barre latérale de navigation et arborescence : générées, identiques partout, avec de vrais liens."""
+    SITE = os.path.join(PACK, "docs", "site")
+
+    def pages(self):
+        return [f for f in sorted(os.listdir(self.SITE)) if f.endswith(".html") and f != "template.html"]
+
+    def read(self, name):
+        return open(os.path.join(self.SITE, name), encoding="utf-8").read()
+
+    def test_every_page_declares_an_existing_favicon(self):
+        for name in self.pages():
+            self.assertIn('rel="icon"', self.read(name), name)
+        self.assertTrue(os.path.isfile(os.path.join(self.SITE, "assets", "favicon.svg")))
+
+    def test_every_page_has_the_same_sidebar_with_its_own_entry_marked(self):
+        self.assertGreaterEqual(len(self.pages()), 8)
+        for name in self.pages():
+            text = self.read(name)
+            self.assertIn('class="kd-side"', text, name)
+            self.assertIn('class="kd-top"', text, name)
+            current = re.findall(r'<a href="([^"]+)" aria-current="page"', text)
+            self.assertEqual(current, [name] if name != "index.html" else ["index.html#top"] if "index.html#top" in current else current, name)
+            self.assertIn("src/shell.js", text, name)
+
+    def test_every_sidebar_target_exists(self):
+        sys.path.insert(0, os.path.join(self.SITE, "src"))
+        import shell
+
+        for page in sorted(set(shell.PAGES)):
+            self.assertTrue(os.path.isfile(os.path.join(self.SITE, page)), page)
+        home = self.read("index.html")
+        for _, _, items in shell.SIDE:
+            for _, target in items:
+                page, _, frag = target.partition("#")
+                if page == "index.html" and frag:
+                    self.assertIn(f'id="{frag}"', home, target)
+
+    def test_tree_is_generated_from_the_manifest_and_every_file_is_described(self):
+        sys.path.insert(0, os.path.join(self.SITE, "src"))
+        import importlib.machinery, importlib.util
+        import tree
+
+        loader = importlib.machinery.SourceFileLoader("kwa_cli_t", os.path.join(PACK, "bin", "kwa"))
+        spec = importlib.util.spec_from_loader("kwa_cli_t", loader)
+        kwa = importlib.util.module_from_spec(spec)
+        loader.exec_module(kwa)
+        man = json.load(open(os.path.join(PACK, "manifest.json"), encoding="utf-8"))["modules"]
+        catalog = {}
+        for d in os.listdir(os.path.join(PACK, "core", "skills")):
+            f = os.path.join(PACK, "core", "skills", d, "SKILL.md")
+            if os.path.isfile(f):
+                m = re.search(r"^description:\s*(.+)$", open(f, encoding="utf-8").read(), re.M)
+                catalog[d] = m.group(1) if m else ""
+        files = tree.project_files(man, kwa.module_files, catalog)
+        installed = {spec["dest"] for m in man.values() for _, spec in kwa.module_files(m)}
+        self.assertTrue(installed <= {f["dest"] for f in files}, "tout ce que le manifeste installe figure dans l'arborescence")
+        for f in files:
+            self.assertTrue(f["desc"].strip(), f"{f['dest']} n'a pas de description")
+            if f["src"]:
+                self.assertTrue(os.path.isfile(os.path.join(PACK, f["src"])), f["src"])
+        home = self.read("index.html")
+        self.assertIn('id="arborescence"', home)
+        self.assertIn(".claude/", home)
+        self.assertNotIn('id="principes"', home)
+
+    def test_tree_links_to_the_map_point_at_real_nodes(self):
+        data = json.loads(self.read("data.js").split("window.KWA=", 1)[1].rstrip().rstrip(";"))
+        nodes = set(data["map"]["nodes"])
+        home = self.read("index.html")
+        targets = set(re.findall(r"skill-map\.html#view=pack&amp;node=([^\"]+)", home))
+        self.assertGreater(len(targets), 20)
+        self.assertEqual(sorted(t for t in targets if t not in nodes), [])
+
+
+class OwnStyle(unittest.TestCase):
+    """Le site porte sa propre feuille de style : plus de trace d'une charte graphique empruntée."""
+
+    def test_no_borrowed_prefixes_or_fonts(self):
+        files = subprocess.run(["git", "ls-files"], cwd=PACK, capture_output=True, text=True).stdout.split("\n")
+        hits = []
+        for f in files:
+            path = os.path.join(PACK, f)
+            if not f or not os.path.isfile(path) or f.endswith((".woff2", ".ttf", ".png", ".jpg")) or f.startswith("tests/"):
+                continue
+            text = open(path, encoding="utf-8", errors="ignore").read()
+            if re.search(r"nkds|nkui|Manrope", text):
+                hits.append(f)
+        self.assertEqual(hits, [])
+
+    def test_titles_are_plain(self):
+        text = open(os.path.join(PACK, "docs", "site", "template.html"), encoding="utf-8").read()
+        for m in re.finditer(r"<h[12] class=\"kw-(?:section-)?title\"[^>]*>(.*?)</h[12]>", text, re.S):
+            self.assertNotRegex(m.group(1), r"<strong>|<br", "un titre est du texte simple : pas de mot en gras ni de retour forcé")
+            self.assertFalse(m.group(1).rstrip().endswith("."), "pas de point final décoratif")
 
 
 class Neutral(unittest.TestCase):
@@ -185,7 +363,7 @@ class Neutral(unittest.TestCase):
 class ThemeIcon(unittest.TestCase):
     def test_every_page_uses_an_icon_button_without_visible_label(self):
         site = os.path.join(PACK, "docs", "site")
-        pages = [f for f in os.listdir(site) if f.endswith(".html")]
+        pages = [f for f in os.listdir(site) if f.endswith(".html") and f != "template.html"]
         self.assertGreaterEqual(len(pages), 7)
         for name in pages:
             text = open(os.path.join(site, name), encoding="utf-8").read()

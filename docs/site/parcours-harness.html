@@ -1,132 +1,134 @@
 <!doctype html>
-<html lang="fr" data-nkui-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<html lang="fr" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 <title>Parcours 3 : Harness | Kwa</title>
-<script>try{if(localStorage.getItem('kwa-docs-theme')==='light')document.documentElement.dataset.nkuiTheme='light'}catch(e){}</script>
-<link rel="stylesheet" href="ds/fonts.css"><link rel="stylesheet" href="ds/tokens.css"><link rel="stylesheet" href="ds/base.css"><link rel="stylesheet" href="src/parcours.css">
+<script>try{if(localStorage.getItem('kwa-docs-theme')==='light')document.documentElement.dataset.theme='light'}catch(e){}</script>
+<link rel="stylesheet" href="style/fonts.css"><link rel="stylesheet" href="style/tokens.css"><link rel="stylesheet" href="style/base.css"><link rel="stylesheet" href="src/shell.css"><link rel="stylesheet" href="src/parcours.css">
 <style>
 /* Extensions propres à la documentation Kwa. Uniquement les tokens du design system : aucune couleur ajoutée. */
 html{scroll-behavior:smooth;overflow-x:clip}
 section{scroll-margin-top:84px}
-.nkds-hero{grid-template-columns:minmax(0,1fr)}
+.kw-hero{grid-template-columns:minmax(0,1fr)}
 .kd-term{min-width:0}
-.kd-eyebrow{font:400 12px/1.4 'Geist Mono',ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--nkui-mut);margin-bottom:20px}
-.kd-lead{max-width:68ch;color:var(--nkui-body);font-size:clamp(15px,1.4vw,17px);margin:0}
-.kd-head .nkds-section-title{margin-bottom:20px}
+.kd-eyebrow{font:400 12px/1.4 'Geist Mono',ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--kw-mut);margin-bottom:20px}
+.kd-pic{width:18px;height:18px;margin-right:8px;vertical-align:-3px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.kd-pic.pic-fill{fill:currentColor;stroke:none}
+.kd-pic.p-shield{color:var(--tr-guard)}.kd-pic.p-sword{color:var(--tr-skill)}.kd-pic.p-hook{color:var(--tr-hook)}.kd-pic.p-agent{color:var(--kd-violet)}
+.kd-sk h3 .kd-pic{width:16px;height:16px;margin-right:6px;vertical-align:-2px}
+.kd-main strong{font-weight:600;color:var(--kw-fg)}
+.kd-lead{max-width:68ch;color:var(--kw-body);font-size:clamp(15px,1.4vw,17px);margin:0}
+.kd-head .kw-section-title{margin-bottom:20px}
 .kd-section{padding-top:128px}
-.kd-bar{position:sticky;top:0;z-index:20;padding-block:14px;background:var(--nkui-glass);backdrop-filter:blur(8px);border-bottom:1px solid var(--nkui-rule-soft)}
-.kd-bar .row{display:flex;align-items:center;justify-content:space-between;gap:16px}
 .kd-brand{display:flex;align-items:center;gap:14px;text-decoration:none;white-space:nowrap}
 .kd-theming, .kd-theming *, .kd-theming *::before, .kd-theming *::after{transition:background-color .35s ease,color .35s ease,border-color .35s ease,fill .35s ease,stroke .35s ease !important}
-.kd-theme{width:40px;height:40px;flex:none;border-radius:50%;border:1px solid var(--nkui-rule);background:transparent;color:var(--nkui-fg);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0}.kd-theme:hover{background:var(--nkui-raise)}.kd-theme svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}.kd-theme .i-sun{display:none}html[data-nkui-theme="dark"] .kd-theme .i-sun{display:block}html[data-nkui-theme="dark"] .kd-theme .i-moon{display:none}
-.nkds-hero .nkds-title{font-size:clamp(34px,4.6vw,60px);letter-spacing:-.04em}@media(max-width:1023px){.nkds-hero .nkds-title{font-size:clamp(32px,9vw,46px)}}
-.kd-word{font:700 22px/1 Manrope,Geist,sans-serif;letter-spacing:-.02em}.kd-word--big{font-size:44px}
-.kd-brand span{font:400 12px 'Geist Mono',monospace;letter-spacing:.08em;color:var(--nkui-mut)}
-.kd-nav{display:flex;gap:22px;overflow-x:auto;scrollbar-width:none}
-.kd-nav a{font:400 12px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;color:var(--nkui-body);white-space:nowrap}
-.kd-nav a:hover{color:var(--nkui-fg)}
-.kd-nav::-webkit-scrollbar{display:none}
-.kd-code{margin:0;background:var(--nkui-brick);border:1px solid var(--nkui-rule);border-radius:12px;padding:16px 18px;overflow-x:auto;font:13px/1.7 'Geist Mono',monospace;color:var(--nkui-fg)}
-.kd-code .p{color:var(--nkui-mut)} .kd-code .s{color:var(--nkui-green)}
+.kd-theme{width:40px;height:40px;flex:none;border-radius:50%;border:1px solid var(--kw-rule);background:transparent;color:var(--kw-fg);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0}.kd-theme:hover{background:var(--kw-raise)}.kd-theme svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}.kd-theme .i-sun{display:none}html[data-theme="dark"] .kd-theme .i-sun{display:block}html[data-theme="dark"] .kd-theme .i-moon{display:none}
+.kd-word{font:700 20px/1 Geist,system-ui,sans-serif;letter-spacing:-.02em}.kd-word--big{font-size:30px}
+.kd-brand span{font:400 12px 'Geist Mono',monospace;letter-spacing:.08em;color:var(--kw-mut)}
+.kd-code{margin:0;background:var(--kw-brick);border:1px solid var(--kw-rule);border-radius:12px;padding:16px 18px;overflow-x:auto;font:13px/1.7 'Geist Mono',monospace;color:var(--kw-fg)}
+.kd-code .p{color:var(--kw-mut)} .kd-code .s{color:var(--kw-green)}
 .kd-term{margin-top:40px;max-width:760px}
-.kd-term .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font:400 11px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--nkui-mut)}
-.kd-copy{font:400 11px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;background:transparent;color:var(--nkui-body);border:1px solid var(--nkui-rule);border-radius:999px;padding:6px 12px;min-height:30px}
-.kd-copy:hover{background:var(--nkui-raise)}
-code{font:.9em 'Geist Mono',monospace;background:var(--nkui-tint);border:1px solid var(--nkui-rule-soft);border-radius:6px;padding:1px 6px}
+.kd-term .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font:400 11px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--kw-mut)}
+.kd-copy{font:400 11px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;background:transparent;color:var(--kw-body);border:1px solid var(--kw-rule);border-radius:999px;padding:6px 12px;min-height:30px}
+.kd-copy:hover{background:var(--kw-raise)}
+code{font:.9em 'Geist Mono',monospace;background:var(--kw-tint);border:1px solid var(--kw-rule-soft);border-radius:6px;padding:1px 6px}
 .kd-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.kd-stat{padding:24px;border:1px solid var(--nkui-rule);border-radius:20px}
-.kd-stat .n{font:300 clamp(40px,5vw,64px)/1 Manrope,sans-serif;letter-spacing:-.045em}
-.kd-stat .l{margin-top:10px;color:var(--nkui-body);font-size:14px}
+.kd-stat{padding:24px;border:1px solid var(--kw-rule);border-radius:20px}
+.kd-stat .n{font:650 clamp(30px,3.4vw,40px)/1 Geist,system-ui,sans-serif;letter-spacing:-.02em}
+.kd-stat .l{margin-top:10px;color:var(--kw-body);font-size:14px}
 .kd-grid{display:grid;gap:12px}
 .kd-g2{grid-template-columns:repeat(2,minmax(0,1fr))}.kd-g3{grid-template-columns:repeat(3,minmax(0,1fr))}.kd-g4{grid-template-columns:repeat(4,minmax(0,1fr))}
-.kd-card{min-width:0;padding:24px;border:1px solid var(--nkui-rule);border-radius:20px;background:transparent;text-align:left;font:inherit;color:inherit}
+.kd-card{min-width:0;padding:24px;border:1px solid var(--kw-rule);border-radius:20px;background:transparent;text-align:left;font:inherit;color:inherit}
 .kd-card h3{font:500 18px/1.4 Geist,sans-serif;margin:0 0 12px}
-.kd-card p{color:var(--nkui-body);font-size:14px;line-height:1.625;margin:0}
+.kd-card p{color:var(--kw-body);font-size:14px;line-height:1.625;margin:0}
 .kd-flow{display:grid;grid-template-columns:280px minmax(0,1fr);gap:12px;align-items:start}
 .kd-steps{display:grid;gap:8px}
-.kd-step{display:grid;grid-template-columns:30px minmax(0,1fr);align-items:center;gap:10px;text-align:left;min-height:44px;padding:10px 16px;border:1px solid var(--nkui-rule);border-radius:12px;background:transparent;color:var(--nkui-fg);font:500 14px Geist,sans-serif;transition:background .2s ease,color .2s ease}
-.kd-step i{font:400 11px 'Geist Mono',monospace;color:var(--nkui-mut);font-style:normal}
-.kd-step:hover{background:var(--nkui-raise)}
-.kd-step[aria-selected="true"]{background:var(--nkui-invert-bg);color:var(--nkui-invert-fg);border-color:transparent}
-.kd-step[aria-selected="true"] i{color:var(--nkui-invert-fg);opacity:.7}
-.kd-panel{border:1px solid var(--nkui-rule);border-radius:20px;padding:32px;min-height:420px}
-.kd-panel h3{font:300 clamp(30px,3.6vw,44px)/1.1 Manrope,sans-serif;letter-spacing:-.045em;margin:6px 0 16px}
+.kd-step{display:grid;grid-template-columns:30px minmax(0,1fr);align-items:center;gap:10px;text-align:left;min-height:44px;padding:10px 16px;border:1px solid var(--kw-rule);border-radius:12px;background:transparent;color:var(--kw-fg);font:500 14px Geist,sans-serif;transition:background .2s ease,color .2s ease}
+.kd-step i{font:400 11px 'Geist Mono',monospace;color:var(--kw-mut);font-style:normal}
+.kd-step:hover{background:var(--kw-raise)}
+.kd-step[aria-selected="true"]{background:var(--kw-invert-bg);color:var(--kw-invert-fg);border-color:transparent}
+.kd-step[aria-selected="true"] i{color:var(--kw-invert-fg);opacity:.7}
+.kd-panel{border:1px solid var(--kw-rule);border-radius:20px;padding:32px;min-height:420px}
+.kd-panel h3{font:650 clamp(22px,2.4vw,28px)/1.2 Geist,system-ui,sans-serif;letter-spacing:-.015em;margin:6px 0 16px}
 .kd-panel h3 strong{font-weight:700}
 .kd-panel .cols{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px}
-.kd-panel h4,.kd-detail h4{margin:0 0 8px;font:400 11px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--nkui-mut)}
-.kd-panel ul{margin:0;padding-left:18px;color:var(--nkui-body);font-size:14px;line-height:1.7}
+.kd-panel h4,.kd-detail h4{margin:0 0 8px;font:400 11px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--kw-mut)}
+.kd-panel ul{margin:0;padding-left:18px;color:var(--kw-body);font-size:14px;line-height:1.7}
 .kd-panel p.v{font:14px/1.6 'Geist Mono',monospace;margin:0}
 .kd-tools{display:flex;flex-wrap:wrap;gap:8px;margin:32px 0 20px;align-items:center}
-.kd-chip{font:400 12px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;background:transparent;color:var(--nkui-body);border:1px solid var(--nkui-rule);border-radius:999px;padding:9px 14px;min-height:36px;transition:background .2s ease}
-.kd-chip:hover{background:var(--nkui-raise)}
-.kd-chip[aria-pressed="true"]{background:var(--nkui-invert-bg);color:var(--nkui-invert-fg);border-color:transparent}
-.kd-search{flex:1;min-width:200px;min-height:36px;background:transparent;border:1px solid var(--nkui-rule);border-radius:999px;color:var(--nkui-fg);padding:8px 16px;font:13px 'Geist Mono',monospace}
-.kd-table{border:1px solid var(--nkui-rule);border-radius:20px;overflow:hidden}
-.kd-row{display:grid;grid-template-columns:110px minmax(0,1fr);gap:4px 20px;padding:16px 20px;border-top:1px solid var(--nkui-rule-soft);align-items:start}
+.kw .kd-chip{font:500 13px/1.2 Geist,system-ui,sans-serif;background:transparent;color:var(--kw-body);border:1px solid var(--kw-rule);border-radius:6px;padding:6px 10px;transition:background .2s ease}
+.kw .kd-chip:hover{background:var(--kw-raise)}
+.kw .kd-chip[aria-pressed="true"]{background:var(--kw-invert-bg);color:var(--kw-invert-fg);border-color:transparent}
+.kd-search{flex:1;min-width:200px;background:transparent;border:1px solid var(--kw-rule);border-radius:6px;color:var(--kw-fg);padding:6px 10px;font:13px 'Geist Mono',monospace}
+.kd-table{border:1px solid var(--kw-rule);border-radius:20px;overflow:hidden}
+.kd-row{display:grid;grid-template-columns:110px minmax(0,1fr);gap:4px 20px;padding:16px 20px;border-top:1px solid var(--kw-rule-soft);align-items:start}
 .kd-row:first-child{border-top:0}
-.kd-pill{display:inline-flex;align-items:center;gap:8px;padding:3px 10px;border-radius:999px;border:1px solid var(--nkui-rule);font:400 11px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase}
-.kd-pill.deny{background:var(--nkui-invert-bg);color:var(--nkui-invert-fg);border-color:transparent}
-.kd-pill.ask{border-color:var(--nkui-fg)}
-.kd-pill.allow{color:var(--nkui-green);border-color:currentColor}
+.kd-pill{display:inline-flex;align-items:center;gap:8px;padding:2px 8px;border-radius:6px;border:1px solid var(--kw-rule);font:500 12px/1.4 Geist,system-ui,sans-serif}
+.kd-pill.deny{background:var(--kw-invert-bg);color:var(--kw-invert-fg);border-color:transparent}
+.kd-pill.ask{border-color:var(--kw-fg)}
+.kd-pill.allow{color:var(--kw-green);border-color:currentColor}
 .kd-row .cmd{font:13px/1.55 'Geist Mono',monospace;white-space:pre-wrap;word-break:break-word}
-.kd-row .meta{font:400 11px 'Geist Mono',monospace;letter-spacing:.06em;color:var(--nkui-mut);text-transform:uppercase;margin-left:10px}
-.kd-row .why{grid-column:2;color:var(--nkui-body);font-size:14px}
-.kd-note{margin-top:14px;font:400 12px 'Geist Mono',monospace;letter-spacing:.04em;color:var(--nkui-mut)}
-.kd-legend{display:flex;flex-wrap:wrap;gap:10px 22px;margin:0 0 26px;font:400 11px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--nkui-body)}
+.kd-row .meta{font:400 11px 'Geist Mono',monospace;letter-spacing:.06em;color:var(--kw-mut);text-transform:uppercase;margin-left:10px}
+.kd-row .why{grid-column:2;color:var(--kw-body);font-size:14px}
+.kd-note{margin-top:14px;font:400 12px 'Geist Mono',monospace;letter-spacing:.04em;color:var(--kw-mut)}
+.kd-legend{display:flex;flex-wrap:wrap;gap:10px 22px;margin:0 0 26px;font:400 11px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--kw-body)}
 .kd-legend span{display:inline-flex;align-items:center;gap:9px}
-.sw{width:24px;height:14px;display:inline-block;border:1px solid var(--nkui-fg);border-radius:3px}
-.sw.hook{border-style:dashed}.sw.agent{border-style:double;border-width:4px}.sw.garde{border:2px solid var(--nkui-fg)}.sw.humain{background:var(--nkui-invert-bg);border-radius:10px;border-color:transparent}
+.sw{width:24px;height:14px;display:inline-block;border:1px solid var(--kw-fg);border-radius:3px}
+.sw.hook{border-style:dashed}.sw.agent{border-style:double;border-width:4px}.sw.garde{border:2px solid var(--kw-fg)}.sw.humain{background:var(--kw-invert-bg);border-radius:10px;border-color:transparent}
 .kd-track{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:34px 36px}
-.kd-brick{position:relative;text-align:left;font:inherit;color:inherit;background:transparent;border:1px solid var(--nkui-fg);border-radius:12px;padding:16px 18px;transition:translate .2s ease,background .2s ease}
-.kd-brick:hover{translate:0 -2px;background:var(--nkui-tint)}
-.kd-brick[aria-pressed="true"]{background:var(--nkui-raise)}
-.kd-brick .ty{display:block;margin-bottom:8px;font:400 11px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--nkui-mut)}
+.kd-brick{position:relative;text-align:left;font:inherit;color:inherit;background:transparent;border:1px solid var(--kw-fg);border-radius:12px;padding:16px 18px;transition:translate .2s ease,background .2s ease}
+.kd-brick:hover{translate:0 -2px;background:var(--kw-tint)}
+.kd-brick[aria-pressed="true"]{background:var(--kw-raise)}
+.kd-brick .ty{display:block;margin-bottom:8px;font:400 11px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--kw-mut)}
 .kd-brick b{display:block;font:500 16px/1.35 Geist,sans-serif;margin-bottom:6px}
-.kd-brick .d{display:block;font-size:13.5px;line-height:1.55;color:var(--nkui-body)}
-.kd-brick .when{display:block;margin-top:10px;font:400 11px/1.5 'Geist Mono',monospace;letter-spacing:.04em;color:var(--nkui-mut)}
-.kd-brick.hook{border:1px dashed var(--nkui-fg)}
-.kd-brick.agent{border:4px double var(--nkui-fg);padding:13px 15px}
-.kd-brick.garde{border:2px solid var(--nkui-fg)}
-.kd-brick.humain{background:var(--nkui-invert-bg);color:var(--nkui-invert-fg);border-color:transparent;border-radius:28px;padding:18px 22px}
-.kd-brick.humain .ty,.kd-brick.humain .d,.kd-brick.humain .when{color:var(--nkui-invert-fg);opacity:.75}
-.kd-brick:not(:last-child)::after{content:"→";position:absolute;right:-28px;top:50%;translate:0 -50%;font:16px 'Geist Mono',monospace;color:var(--nkui-mut)}
-.kd-detail{margin-top:26px;border:1px solid var(--nkui-rule);border-radius:20px;padding:22px 26px;min-height:92px}
-.kd-detail p{margin:0;color:var(--nkui-body);font-size:14.5px;line-height:1.65}
+.kd-brick .d{display:block;font-size:13.5px;line-height:1.55;color:var(--kw-body)}
+.kd-brick .when{display:block;margin-top:10px;font:400 11px/1.5 'Geist Mono',monospace;letter-spacing:.04em;color:var(--kw-mut)}
+.kd-brick.hook{border:1px dashed var(--kw-fg)}
+.kd-brick.agent{border:4px double var(--kw-fg);padding:13px 15px}
+.kd-brick.garde{border:2px solid var(--kw-fg)}
+.kd-brick.humain{background:var(--kw-invert-bg);color:var(--kw-invert-fg);border-color:transparent;border-radius:28px;padding:18px 22px}
+.kd-brick.humain .ty,.kd-brick.humain .d,.kd-brick.humain .when{color:var(--kw-invert-fg);opacity:.75}
+.kd-brick:not(:last-child)::after{content:"→";position:absolute;right:-28px;top:50%;translate:0 -50%;font:16px 'Geist Mono',monospace;color:var(--kw-mut)}
+.kd-detail{margin-top:26px;border:1px solid var(--kw-rule);border-radius:20px;padding:22px 26px;min-height:92px}
+.kd-detail p{margin:0;color:var(--kw-body);font-size:14.5px;line-height:1.65}
 .kd-sk{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
 .kd-sk .kd-card h3{font:500 16px 'Geist Mono',monospace;margin-top:10px}
-.kd-fam{font:400 11px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--nkui-mut)}
-.kd-origin{display:inline-flex;align-items:center;gap:8px;margin:14px 6px 0 0;padding:3px 12px 3px 3px;border-radius:999px;background:var(--nkui-invert-bg);color:var(--nkui-invert-fg);font:10px/1.7 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase}
+.kd-fam{font:400 11px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--kw-mut)}
+.kd-origin{display:inline-flex;align-items:center;gap:8px;margin:14px 6px 0 0;padding:3px 12px 3px 3px;border-radius:999px;background:var(--kw-invert-bg);color:var(--kw-invert-fg);font:10px/1.7 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase}
 .kd-origin img{width:22px;height:22px;border-radius:50%;object-fit:cover}
 .kd-origin.kwa{padding:3px 12px}
-.kd-av{width:56px;height:56px;border-radius:50%;object-fit:cover;border:1px solid var(--nkui-rule);margin-bottom:14px;display:block}
-.kd-origin.kwa{background:transparent;color:var(--nkui-fg);border:1px solid var(--nkui-fg)}
-.kd-src{display:grid;gap:12px}
-.kd-src .kd-card{display:grid;grid-template-columns:230px minmax(0,1fr);gap:8px 32px}
-.kd-src a{display:inline-block;margin-top:8px;font:12px 'Geist Mono',monospace;color:var(--nkui-body);word-break:break-all}
-.kd-tag{display:inline-block;margin:10px 6px 0 0;padding:3px 9px;border:1px solid var(--nkui-rule);border-radius:999px;font:11px 'Geist Mono',monospace;color:var(--nkui-body)}
+.kd-av{width:24px;height:24px;border-radius:50%;object-fit:cover;border:1px solid var(--kw-rule);flex:none}
+.kd-origin.kwa{background:transparent;color:var(--kw-fg);border:1px solid var(--kw-fg)}
+.kd-src{border:1px solid var(--kw-rule);border-radius:10px}
+.kd-src .kd-card{display:grid;grid-template-columns:260px minmax(0,1fr);gap:4px 32px;padding:14px 18px;border:0;border-radius:0;border-top:1px solid var(--kw-rule)}
+.kd-src .kd-card:first-child{border-top:0}
+.kd-src .who{display:flex;align-items:center;gap:10px}
+.kd-src h3{font:500 15px Geist,sans-serif;margin:0}
+.kd-src .sub{margin-top:4px;font-size:12px;color:var(--kw-mut)}
+.kd-src a{color:var(--kw-body);text-decoration:underline;text-underline-offset:2px}
+.kd-tag{display:inline-block;margin:6px 6px 0 0;padding:2px 7px;border:1px solid var(--kw-rule);border-radius:6px;font:12px 'Geist Mono',monospace;color:var(--kw-body)}
 .kd-loop{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:34px}
-.kd-node{position:relative;padding:20px;border:1px solid var(--nkui-rule);border-radius:20px}
-.kd-node:not(:last-child)::after{content:"→";position:absolute;right:-28px;top:50%;translate:0 -50%;font:16px 'Geist Mono',monospace;color:var(--nkui-mut)}
-.kd-node b{display:block;font:500 15px Geist,sans-serif;margin-bottom:8px}.kd-node span{display:block;font-size:13.5px;line-height:1.6;color:var(--nkui-body)}
-.kd-gate{margin-top:12px;border:1px dashed var(--nkui-dim);border-radius:20px;padding:18px 22px;display:flex;gap:16px;align-items:baseline;color:var(--nkui-body);font-size:14px}
-.kd-gate b{font:400 12px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--nkui-fg);white-space:nowrap}
+.kd-node{position:relative;padding:20px;border:1px solid var(--kw-rule);border-radius:20px}
+.kd-node:not(:last-child)::after{content:"→";position:absolute;right:-28px;top:50%;translate:0 -50%;font:16px 'Geist Mono',monospace;color:var(--kw-mut)}
+.kd-node b{display:block;font:500 15px Geist,sans-serif;margin-bottom:8px}.kd-node span{display:block;font-size:13.5px;line-height:1.6;color:var(--kw-body)}
+.kd-gate{margin-top:12px;border:1px dashed var(--kw-dim);border-radius:20px;padding:18px 22px;display:flex;gap:16px;align-items:baseline;color:var(--kw-body);font-size:14px}
+.kd-gate b{font:400 12px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--kw-fg);white-space:nowrap}
 .kd-ob{display:grid;gap:12px}
-.kd-ob .item{display:grid;grid-template-columns:56px minmax(0,1fr);gap:20px;padding:24px;border:1px solid var(--nkui-rule);border-radius:20px}
-.kd-ob .num{font:300 48px/1 Manrope,sans-serif;letter-spacing:-.045em;color:var(--nkui-dim)}
-.kd-ob h3{font:500 18px Geist,sans-serif;margin:0 0 6px}.kd-ob p{margin:0 0 14px;color:var(--nkui-body);font-size:14px}
-.kd-wrap{border:1px solid var(--nkui-rule);border-radius:20px;overflow-x:auto}
+.kd-ob .item{display:grid;grid-template-columns:56px minmax(0,1fr);gap:20px;padding:24px;border:1px solid var(--kw-rule);border-radius:20px}
+.kd-ob .num{font:650 28px/1 Geist,system-ui,sans-serif;letter-spacing:-.02em;color:var(--kw-dim)}
+.kd-ob h3{font:500 18px Geist,sans-serif;margin:0 0 6px}.kd-ob p{margin:0 0 14px;color:var(--kw-body);font-size:14px}
+.kd-wrap{border:1px solid var(--kw-rule);border-radius:20px;overflow-x:auto}
 .kd-wrap table{width:100%;min-width:560px;border-collapse:collapse;font-size:14px}
-.kd-wrap th{font:400 11px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--nkui-mut);text-align:left;padding:14px 20px;border-bottom:1px solid var(--nkui-rule)}
-.kd-wrap td{padding:14px 20px;border-top:1px solid var(--nkui-rule-soft);vertical-align:top;color:var(--nkui-body);line-height:1.6}
-.kd-wrap td:first-child{color:var(--nkui-fg);font-weight:500}
-details{border-top:1px solid var(--nkui-rule);padding:20px 0}
-details summary{cursor:pointer;font:500 18px Geist,sans-serif;min-height:44px;display:flex;align-items:center}
-details p{margin:10px 0 0;color:var(--nkui-body);max-width:68ch}
+.kd-wrap th{font:400 11px 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--kw-mut);text-align:left;padding:14px 20px;border-bottom:1px solid var(--kw-rule)}
+.kd-wrap td{padding:14px 20px;border-top:1px solid var(--kw-rule-soft);vertical-align:top;color:var(--kw-body);line-height:1.6}
+.kd-wrap td:first-child{color:var(--kw-fg);font-weight:500}
+#limites details{border-top:1px solid var(--kw-rule);padding:20px 0}
+#limites details summary{cursor:pointer;font:500 18px Geist,sans-serif;min-height:44px;display:flex;align-items:center}
+#limites details p{margin:10px 0 0;color:var(--kw-body);max-width:68ch}
 .kd-rv{opacity:1;transform:none}
-.js .kd-rv{opacity:0;transform:translateY(18px);transition:opacity .88s var(--nkds-ease),transform .88s var(--nkds-ease)}
+.js .kd-rv{opacity:0;transform:translateY(18px);transition:opacity .88s var(--kw-ease),transform .88s var(--kw-ease)}
 .js .kd-rv.in{opacity:1;transform:none}
-footer.nkds-footer{margin-top:128px}
-@media (max-width:1023px){.kd-g4{grid-template-columns:repeat(2,minmax(0,1fr))}.kd-nav{display:none}}
-@media (max-width:900px){
+footer.kw-footer{margin-top:128px}
+@media (max-width:1023px){.kd-g4{grid-template-columns:repeat(2,minmax(0,1fr))}@media (max-width:900px){
   .kd-stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.kd-g2,.kd-g3{grid-template-columns:minmax(0,1fr)}
   .kd-flow{grid-template-columns:minmax(0,1fr)}.kd-steps{grid-template-columns:repeat(2,minmax(0,1fr))}.kd-panel{padding:22px;min-height:0}.kd-panel .cols{grid-template-columns:minmax(0,1fr)}
   .kd-loop{grid-template-columns:minmax(0,1fr)}.kd-node:not(:last-child)::after{content:"↓";right:auto;left:50%;top:auto;bottom:-30px;translate:-50% 0}
@@ -135,19 +137,14 @@ footer.nkds-footer{margin-top:128px}
   .kd-ob .item{grid-template-columns:minmax(0,1fr);padding:18px}.kd-ob .num{display:none}.kd-section{padding-top:88px}.kd-brand span{display:none}
 }
 @media (prefers-reduced-motion:reduce){.js .kd-rv{opacity:1;transform:none;transition:none}}
-@media print{.kd-bar{display:none}.js .kd-rv{opacity:1;transform:none}}
-</style></head>
-<body class="nkds">
-<div class="kd-bar"><div class="nkds-container row">
-  <a class="kd-brand" href="index.html" aria-label="Kwa, accueil"><b class="kd-word">kwa</b><span>/ harness</span></a>
-  <nav class="kd-nav" aria-label="Pages"><a href="index.html">Accueil</a><a href="skill-map.html">Carte</a><a href="board.html">Circuit</a><a href="terminal.html">Terminal</a><a href="parcours.html">Parcours</a></nav>
-  <button type="button" class="kd-theme" id="theme" aria-label="Passer en thème clair" title="Changer de thème"><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></svg><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 14.6A8.4 8.4 0 0 1 9.4 3.8a8.4 8.4 0 1 0 10.8 10.8z"/></svg></button>
-</div></div>
-
-<main class="nkds-container" style="padding-top:32px">
+@media print{</style></head>
+<body class="kw">
+<header class="kd-top"><button type="button" class="kd-menu" id="menu" aria-label="Ouvrir la navigation" aria-expanded="false" aria-controls="side"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><a class="kd-brand" href="index.html" aria-label="Kwa, accueil"><b class="kd-word">kwa</b><span>/ harness</span></a><span class="kd-spacer"></span><button type="button" class="kd-theme" id="theme" aria-label="Passer en thème clair" title="Changer de thème"><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></svg><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 14.6A8.4 8.4 0 0 1 9.4 3.8a8.4 8.4 0 1 0 10.8 10.8z"/></svg></button></header>
+<div class="kd-layout"><aside class="kd-side" id="side" aria-label="Navigation"><nav><div class="kd-sg"><h2><svg class="kd-ico" style="--dot:var(--kd-blue)" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>Kwa</h2><ul><li><a href="index.html#top">Présentation</a></li><li><a href="index.html#pourquoi">Pourquoi ce projet</a></li><li><a href="index.html#arborescence">Arborescence</a></li></ul></div><div class="kd-sg"><h2><svg class="kd-ico" style="--dot:var(--kd-violet)" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg>Explorer</h2><ul><li><a href="skill-map.html">Carte des skills</a></li><li><a href="board.html">Circuit d&#x27;une demande</a></li><li><a href="terminal.html">Terminal</a></li></ul></div><div class="kd-sg"><h2><svg class="kd-ico" style="--dot:var(--kd-green)" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11.5V16c0 1.2 2.7 3 6 3s6-1.8 6-3v-4.5"/></svg>Apprendre</h2><ul><li><a href="parcours.html">Les trois parcours</a></li><li><a href="parcours-culture.html">1 · Culture IA générative</a></li><li><a href="parcours-contexte.html">2 · Context engineering</a></li><li><a href="parcours-harness.html" aria-current="page">3 · Harness</a><ul class="kd-toc"><li><a href="#etape-0" data-spy="etape-0">L&#x27;histoire</a></li><li><a href="#etape-1" data-spy="etape-1">1 · Instructions</a></li><li><a href="#etape-2" data-spy="etape-2">2 · Un garde</a></li><li><a href="#etape-3" data-spy="etape-3">3 · Branchement</a></li><li><a href="#etape-4" data-spy="etape-4">4 · Événements</a></li><li><a href="#etape-5" data-spy="etape-5">5 · Politique</a></li><li><a href="#etape-6" data-spy="etape-6">6 · Une skill</a></li><li><a href="#etape-7" data-spy="etape-7">7 · Mémoire</a></li><li><a href="#etape-8" data-spy="etape-8">8 · Circuit</a></li><li><a href="#etape-9" data-spy="etape-9">9 · Le flux</a></li><li><a href="#etape-10" data-spy="etape-10">10 · Limites</a></li></ul></li></ul></div><div class="kd-sg"><h2><svg class="kd-ico" style="--dot:var(--kd-amber)" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/></svg>Référence</h2><ul><li><a href="index.html#demarrer">Démarrer</a></li><li><a href="index.html#skills">Skills</a></li><li><a href="index.html#gardes">Gardes en action</a></li><li><a href="index.html#memoire">Mémoire</a></li><li><a href="index.html#superpowers">Méthode</a></li><li><a href="index.html#migrer">Remplacer l&#x27;existant</a></li><li><a href="index.html#limites">Limites et suite</a></li><li><a href="index.html#credits">Crédits</a></li></ul></div></nav></aside><div class="kd-scrim" id="scrim"></div><div class="kd-main">
+<main class="kw-container pc-wrap" data-acc="harness" style="padding-top:32px">
   <div class="kd-eyebrow">Encadrer l'agent</div>
-  <h1 class="nkds-section-title" style="margin-bottom:16px;font-size:clamp(30px,3.4vw,44px)">Parcours 3 : Harness<strong>.</strong></h1>
-  <p class="pc-intro">De l'histoire du processus de développement jusqu'à un harness complet, puis huit étapes pratiques sur un dépôt jetable, avec les vrais gardes : les sorties affichées sont celles de l'exécution, recalculées à chaque génération du site. Prérequis : les parcours Culture et Contexte, Python 3, git, un terminal. Aucun compte, aucune clé. Environ trois heures et demie, à calibrer en séance.</p><ol class="pc-nav"><li style="list-style:none"><a href="#etape-0">0 · L'histoire</a></li><li style="list-style:none"><a href="#etape-1">1 · Instructions</a></li><li style="list-style:none"><a href="#etape-2">2 · Un garde</a></li><li style="list-style:none"><a href="#etape-3">3 · Branchement</a></li><li style="list-style:none"><a href="#etape-4">4 · Politique</a></li><li style="list-style:none"><a href="#etape-5">5 · Une skill</a></li><li style="list-style:none"><a href="#etape-6">6 · Mémoire</a></li><li style="list-style:none"><a href="#etape-7">7 · Circuit</a></li><li style="list-style:none"><a href="#etape-8">8 · Limites</a></li></ol><section class="pc-stage" id="etape-0"><div class="pc-num">0</div><div class="pc-main">
+  <h1 class="kw-page-title">Parcours 3 : Harness</h1>
+  <p class="pc-intro">De l'histoire du processus de développement jusqu'à un harness complet, puis dix étapes sur un dépôt jetable, avec les vrais gardes : les sorties affichées sont celles de l'exécution, recalculées à chaque génération du site. Prérequis : les parcours Culture et Contexte, Python 3, git, un terminal. Aucun compte, aucune clé. Environ quatre heures, à calibrer en séance.</p><ol class="pc-nav"><li style="list-style:none"><a href="#etape-0">0 · L'histoire</a></li><li style="list-style:none"><a href="#etape-1">1 · Instructions</a></li><li style="list-style:none"><a href="#etape-2">2 · Un garde</a></li><li style="list-style:none"><a href="#etape-3">3 · Branchement</a></li><li style="list-style:none"><a href="#etape-4">4 · Événements</a></li><li style="list-style:none"><a href="#etape-5">5 · Politique</a></li><li style="list-style:none"><a href="#etape-6">6 · Une skill</a></li><li style="list-style:none"><a href="#etape-7">7 · Mémoire</a></li><li style="list-style:none"><a href="#etape-8">8 · Circuit</a></li><li style="list-style:none"><a href="#etape-9">9 · Le flux</a></li><li style="list-style:none"><a href="#etape-10">10 · Limites</a></li></ol><section class="pc-stage" id="etape-0"><div class="pc-num">0</div><div class="pc-main">
 <h2 class="pc-h">D'où vient le harness</h2><p class="pc-tag">Le processus protégeait la qualité. L'agent l'a contourné par vitesse.</p>
 <p>Pendant cinquante ans, la qualité d'un logiciel ne dépendait pas que du talent de chacun : elle venait d'un <strong>processus</strong> (spécifier, tester, relire, intégrer, déployer). Chaque époque a ajouté une couche de vérification. Un agent de code écrit et exécute plus vite que ce processus ne peut suivre : sans cadre, il décide et agit seul. Le <strong>harness</strong> est ce cadre : tout ce qui entoure le modèle pour qu'il travaille dans le processus, et non à côté.</p>
 <table class="pc-table"><thead><tr><th>Époque</th><th>Pratique</th><th>Qui écrit</th><th>Ce qui protège la qualité</th></tr></thead><tbody><tr><td><b>1970</b></td><td>Cycle séquentiel</td><td>Les personnes, en phases successives</td><td>Spécification et recette finales, revues de documents</td></tr><tr><td><b>2001</b></td><td>Méthodes agiles</td><td>Les personnes, par petits lots</td><td>Itérations courtes, tests, revue entre pairs</td></tr><tr><td><b>2008 à 2010</b></td><td>Pull requests, CI/CD, DevOps</td><td>Les personnes, avec des machines qui vérifient</td><td>Revue de code sur chaque changement, intégration continue, déploiement automatisé, branches protégées</td></tr><tr><td><b>2021</b></td><td>Complétion dans l'éditeur</td><td>La personne, avec des suggestions</td><td>Inchangé : la personne relit chaque ligne qu'elle accepte</td></tr><tr><td><b>2022</b></td><td>Assistant par conversation</td><td>La personne, qui copie et colle</td><td>Inchangé, mais le volume de texte relu augmente</td></tr><tr><td><b>2024 à 2025</b></td><td>Agents avec outils (MCP, terminal)</td><td>Un agent, qui lit, modifie, lance et commit</td><td>Les demandes d'autorisation de l'outil existent, mais elles ignorent votre processus et les règles de votre équipe</td></tr><tr><td><b>Aujourd'hui</b></td><td>Harness</td><td>Un agent, dans un cadre</td><td>Règles, gardes, skills, mémoire et preuve rebranchés autour de l'agent</td></tr></tbody></table>
@@ -204,7 +201,40 @@ Tout ce qui est propre au projet va **au-dessus ou en dessous** des marqueurs, o
 <p>Vérifiez l'état de l'installation :</p><pre class="kd-code"><span class="p">$</span> kwa doctor ./mon-projet</pre><pre class="kd-code">✓ cible conforme</pre>
 <p><strong>Cassez-le</strong> : supprimez cette entrée de <code>settings.json</code> sans toucher au script, puis relancez le diagnostic.</p><pre class="kd-code">✗ 1 hook(s) kwa non branchés dans settings.json</pre>
 <details class="pc-reveal"><summary>Que fait le script maintenant ?</summary><div><p>Il refuse toujours quand on l'appelle à la main, mais plus personne ne l'appelle. Un garde qui existe sans être branché protège de rien.</p><pre class="kd-code">{"hookSpecificOutput": {"hookEventName": "PreToolUse", "permissionDecision": "deny", "permissionDecisionReason": "Kwa — git commit sur main refusé : travailler sur une branche dédiée et ouvrir une PR (KWA_ALLOW_MAIN=1 pour une exception assumée)"}}</pre></div></details><div class="pc-proof"><div><b>Preuve attendue</b><p>Suivre la chaîne événement, filtre d'outil, commande, trace, et repérer un garde non branché.</p></div><div><b>Piège</b><p>Le chemin <code>$CLAUDE_PROJECT_DIR</code> se résout à la racine du projet ; ne pas recopier tel quel une variable propre aux plugins.</p></div></div></div></section>
-<section class="pc-stage" id="etape-4"><div class="pc-num">4</div><div class="pc-main"><h2 class="pc-h">La politique du projet</h2><p class="pc-tag">Ce qui change d'un projet à l'autre tient dans un fichier, pas dans un script.</p><p>Les gardes sont communs, la politique est locale (<code>.claude/kwa.policy.json</code>). Dans le dépôt jetable, la commande <code>npm run deploy:prod</code> n'est pas gardée : <span class="kd-pill allow">passe</span></p>
+<section class="pc-stage" id="etape-4"><div class="pc-num">4</div><div class="pc-main"><h2 class="pc-h">Les autres événements de hooks</h2><p class="pc-tag">Le garde ne sert qu'un événement sur plus de trente. Le choix de l'événement fait la différence.</p><p>Jusqu'ici, un seul événement : <code>PreToolUse</code>, avant un outil. Il en existe plus de trente. Cinq suffisent pour commencer :</p>
+<table class="pc-table"><thead><tr><th>Événement</th><th>Quand</th><th>Usage typique</th><th>Dans Kwa</th></tr></thead><tbody>
+<tr><td><code>SessionStart</code></td><td>Début, reprise, après effacement ou compaction</td><td>Réinjecter le contexte utile</td><td><code>memory-context</code></td></tr>
+<tr><td><code>UserPromptSubmit</code></td><td>Avant que l'agent traite votre message</td><td>Ajouter du contexte, repérer un signal</td><td><code>signal-prompt</code></td></tr>
+<tr><td><code>PreToolUse</code></td><td>Avant un outil</td><td>Bloquer ou demander</td><td>les gardes</td></tr>
+<tr><td><code>PostToolUse</code></td><td>Après un outil réussi</td><td>Formater, lancer un contrôle rapide</td><td><code>format-after-edit</code></td></tr>
+<tr><td><code>Stop</code></td><td>Quand l'agent a fini de répondre</td><td>Refuser de s'arrêter tant que ce n'est pas vérifié</td><td><code>verify-stop</code></td></tr></tbody></table>
+<p>Un hook est une commande, mais aussi, selon le besoin, un appel HTTP, un outil MCP, une évaluation par un modèle, ou un sous-agent de vérification (ces deux derniers sont réservés aux décisions qui demandent du jugement). La règle des codes de sortie est la même partout : <strong>0</strong> laisse faire, <strong>2</strong> bloque et renvoie le message à l'agent.</p>
+<p>Pour sentir le principe sans Kwa, voici un garde complet, hors de tout outillage : un script et sa déclaration.</p>
+<p><code>.claude/hooks/protege.sh</code> :</p><pre class="kd-code">#!/bin/bash
+# bloque l'édition des fichiers protégés
+FILE=$(cat | jq -r '.tool_input.file_path // empty')
+for motif in ".env" "package-lock.json" ".git/"; do
+  if [[ "$FILE" == *"$motif"* ]]; then
+    echo "Bloqué : $FILE correspond à $motif" &gt;&amp;2
+    exit 2
+  fi
+done
+exit 0</pre><p><code>.claude/settings.json</code> :</p><pre class="kd-code">{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [{ "type": "command", "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/protege.sh" }]
+      }
+    ]
+  }
+}</pre>
+<p>Pronostic : pour chaque besoin, quel événement ?</p>
+<table class="pc-table"><thead><tr><th>Besoin</th><th>Événement</th></tr></thead><tbody>
+<tr><td>Formater chaque fichier modifié</td><td><details class="pc-reveal"><summary>Mon pronostic</summary><div><p><code>PostToolUse</code> sur <code>Edit|Write</code> : le fichier existe déjà, on le nettoie.</p></div></details></td></tr>
+<tr><td>Rappeler au démarrage où en était la session précédente</td><td><details class="pc-reveal"><summary>Mon pronostic</summary><div><p><code>SessionStart</code> : sa sortie est ajoutée au contexte.</p></div></details></td></tr>
+<tr><td>Empêcher de terminer avec des tests rouges</td><td><details class="pc-reveal"><summary>Mon pronostic</summary><div><p><code>Stop</code>, avec un test de <code>stop_hook_active</code> pour ne pas boucler.</p></div></details></td></tr></tbody></table><div class="pc-proof"><div><b>Preuve attendue</b><p>Choisir l'événement adapté à un besoin, et écrire un garde de quinze lignes sans Kwa.</p></div><div><b>Piège</b><p>Un hook Stop qui bloque sans condition de sortie boucle : Claude Code le désactive après huit blocages consécutifs. Testez <code>stop_hook_active</code>.</p></div></div></div></section>
+<section class="pc-stage" id="etape-5"><div class="pc-num">5</div><div class="pc-main"><h2 class="pc-h">La politique du projet</h2><p class="pc-tag">Ce qui change d'un projet à l'autre tient dans un fichier, pas dans un script.</p><p>Les gardes sont communs, la politique est locale (<code>.claude/kwa.policy.json</code>). Dans le dépôt jetable, la commande <code>npm run deploy:prod</code> n'est pas gardée : <span class="kd-pill allow">passe</span></p>
 <p>Ajoutez cette règle dans <code>bash.deny</code> :</p><pre class="kd-code">{
   "id": "deploy-prod",
   "reason": "Le déploiement de production passe par la PR, pas par ce script.",
@@ -213,7 +243,7 @@ Tout ce qui est propre au projet va **au-dessus ou en dessous** des marqueurs, o
   ]
 }</pre>
 <p>Même commande, même garde, nouveau verdict : <span class="kd-pill deny">refusé</span></p><pre class="kd-code">[deploy-prod] Le déploiement de production passe par la PR, pas par ce script.</pre><div class="pc-proof"><div><b>Preuve attendue</b><p>Ajouter une règle de projet et prouver qu'elle change un verdict.</p></div><div><b>Piège</b><p>Le refus l'emporte toujours sur la demande. Une politique trop stricte se contourne, une règle utile est précise.</p></div></div></div></section>
-<section class="pc-stage" id="etape-5"><div class="pc-num">5</div><div class="pc-main"><h2 class="pc-h">Une skill, et comment la casser</h2><p class="pc-tag">Une procédure que l'agent déclenche ou que vous tapez.</p><p>Une skill est un fichier <code>SKILL.md</code> : un en-tête qui dit quand l'appeler, un corps qui dit comment. Celui de <code>/kwa-rephrase</code> :</p><pre class="kd-code">---
+<section class="pc-stage" id="etape-6"><div class="pc-num">6</div><div class="pc-main"><h2 class="pc-h">Une skill, et comment la casser</h2><p class="pc-tag">Une procédure que l'agent déclenche ou que vous tapez.</p><p>Une skill est un fichier <code>SKILL.md</code> : un en-tête qui dit quand l'appeler, un corps qui dit comment. Celui de <code>/kwa-rephrase</code> :</p><pre class="kd-code">---
 name: kwa-rephrase
 description: Reformuler le dernier message quand l'utilisateur n'a pas compris. À utiliser dès qu'il dit « stop », « je ne comprends pas », « explique autrement », « reformule », « c'est quoi ça ? », « /kwa-rephrase ».
 disable-model-invocation: true
@@ -223,12 +253,12 @@ AssertionError: ': ' unexpectedly found in 'Faire une démonstration. À lancer 
 FAIL: test_manifest_covers_every_skill (tests.test_skills.Lint)
 FAILED (failures=2)</pre>
 <details class="pc-reveal"><summary>Pourquoi ce test existe</summary><div><p>Une description mal formée ne plante rien : la skill devient simplement introuvable. Un test qui échoue vaut mieux qu'une skill invisible.</p></div></details><div class="pc-proof"><div><b>Preuve attendue</b><p>Écrire l'en-tête d'une skill et lire l'échec qui signale une erreur.</p></div><div><b>Piège</b><p>Une description dit quand invoquer la skill, pas son déroulé : un agent qui lit les étapes saute le corps (voir <code>/kwa-agent-docs</code>).</p></div></div></div></section>
-<section class="pc-stage" id="etape-6"><div class="pc-num">6</div><div class="pc-main"><h2 class="pc-h">La mémoire qui s'enrichit</h2><p class="pc-tag">Noter pendant, trier à la fin, valider soi-même.</p><p>Capturez un piège rencontré pendant le travail, sans rien écrire dans la documentation :</p>
+<section class="pc-stage" id="etape-7"><div class="pc-num">7</div><div class="pc-main"><h2 class="pc-h">La mémoire qui s'enrichit</h2><p class="pc-tag">Noter pendant, trier à la fin, valider soi-même.</p><p>Capturez un piège rencontré pendant le travail, sans rien écrire dans la documentation :</p>
 <pre class="kd-code"><span class="p">$</span> kwa-memory capture gotcha "Les tests d'intégration ont besoin du fichier d'environnement local"</pre>
 <pre class="kd-code"><span class="p">$</span> kwa-memory pending</pre><pre class="kd-code">1 note(s) en attente
-- [2026-10-08] [gotcha] Les tests d'intégration ont besoin du fichier d'environnement local</pre>
+- [2026-10-09] [gotcha] Les tests d'intégration ont besoin du fichier d'environnement local</pre>
 <p>En fin de session, <code>/kwa-learn</code> propose où chaque note devrait vivre (documentation, politique, mémoire de l'agent). <strong>Rien n'est appliqué sans votre accord.</strong></p><div class="pc-proof"><div><b>Preuve attendue</b><p>Capturer une note et dire qui décide de son destin.</p></div><div><b>Piège</b><p>Les notes locales ne sont pas versionnées : elles sont exclues via <code>.git/info/exclude</code>.</p></div></div></div></section>
-<section class="pc-stage" id="etape-7"><div class="pc-num">7</div><div class="pc-main"><h2 class="pc-h">Le circuit complet</h2><p class="pc-tag">Une demande, une branche, une preuve, une PR.</p><p>Démarrez un changement : une branche dans son propre worktree, à côté du dépôt, jamais sur <code>main</code>.</p>
+<section class="pc-stage" id="etape-8"><div class="pc-num">8</div><div class="pc-main"><h2 class="pc-h">Le circuit complet</h2><p class="pc-tag">Une demande, une branche, une preuve, une PR.</p><p>Démarrez un changement : une branche dans son propre worktree, à côté du dépôt, jamais sur <code>main</code>.</p>
 <pre class="kd-code"><span class="p">$</span> kwa-start feat status-filter "Ajouter un filtre de statut" --no-issue</pre><pre class="kd-code">aucune issue créée (flow.auto_issue: false ou --no-issue)
 branche : feat/status-filter
 worktree : mon-projet-wt-status-filter
@@ -236,7 +266,24 @@ worktree : mon-projet-wt-status-filter
 Travailler dans : mon-projet-wt-status-filter</pre><pre class="kd-code">mon-projet                   abc1234 [main]
 mon-projet-wt-status-filter  abc1234 [feat/status-filter]</pre>
 <p>La suite se joue avec les skills : <code>/kwa-brainstorm</code>, <code>/kwa-plan</code>, <code>/kwa-tdd</code>, <code>/kwa-verify</code>, <code>/kwa-review</code>, <code>/kwa-ship</code>. La page <a href="board.html">Board</a> déroule ce circuit sur une demande réelle, et le <a href="terminal.html">Terminal</a> montre les commandes.</p><div class="pc-proof"><div><b>Preuve attendue</b><p>Conduire un petit changement jusqu'à une PR, avec une preuve que quelqu'un d'autre peut rejouer.</p></div><div><b>Piège</b><p>Versionner n'est pas publier, et un commit n'est pas un déploiement. Chaque étape reste une décision.</p></div></div></div></section>
-<section class="pc-stage" id="etape-8"><div class="pc-num">8</div><div class="pc-main"><h2 class="pc-h">Les limites, sans maquillage</h2><p class="pc-tag">Un garde est un filet contre la bévue, pas une frontière de sécurité.</p><p>Essayez de contourner le garde des secrets. Ces trois commandes lisent le même fichier d'environnement ; seule la forme change :</p>
+<section class="pc-stage" id="etape-9"><div class="pc-num">9</div><div class="pc-main"><h2 class="pc-h">Le flux d'un développeur aujourd'hui</h2><p class="pc-tag">Tout mis ensemble : une journée où presque tout est automatisé, sauf les décisions.</p><p>Les étapes précédentes sont des pièces. Voici l'assemblage tel qu'une équipe qui l'a bien outillé le vit : l'agent code, mais <strong>chaque affirmation est adossée à une preuve</strong>, et les humains gardent les deux décisions qui engagent (valider ce qu'on construit, accepter ce qui est livré).</p>
+<div class="pc-widget po" id="flow">
+<div class="pc-actions"><button type="button" class="kd-copy" data-flow-play>Dérouler une journée type</button><button type="button" class="kd-copy" data-flow-next>Étape suivante</button></div>
+<ol class="pf-steps">
+<li data-who="auto"><b>1</b><div><strong>La demande devient une issue et une branche</strong><span>/kwa-start-dev ouvre l'issue, crée la branche dans son worktree. Rien ne s'écrit sur main.</span></div><em>Kwa</em></li>
+<li data-who="auto"><b>2</b><div><strong>Explorer, puis planifier</strong><span>En mode plan, l'agent lit le code sans rien modifier ; des sous-agents explorent chacun un domaine et renvoient un résumé.</span></div><em>Sous-agents</em></li>
+<li data-who="human"><b>3</b><div><strong>Vous validez le plan et les critères de réussite</strong><span>Le point où votre jugement compte le plus : ce que « fini » veut dire, y compris les captures attendues.</span></div><em>Humain</em></li>
+<li data-who="auto"><b>4</b><div><strong>Documentation à jour, puis test avant code</strong><span>Context7 donne la doc de la bonne version ; /kwa-tdd fait écrire le test qui échoue, puis le code qui le fait passer.</span></div><em>Context7</em></li>
+<li data-who="auto"><b>5</b><div><strong>Les contrôles automatiques tournent seuls</strong><span>Un hook PostToolUse formate, un hook Stop refuse de rendre la main tant que tests, lint et build ne sont pas verts.</span></div><em>Hooks</em></li>
+<li data-who="auto"><b>6</b><div><strong>Playwright ouvre l'application et fait ses captures</strong><span>Parcours du formulaire, capture à 1280 px et à 375 px, lecture de la console et des requêtes réseau.</span></div><em>Playwright</em></li>
+<li data-who="auto"><b>7</b><div><strong>Un agent vérificateur compare aux critères</strong><span>Un sous-agent en contexte neuf, qui n'a pas écrit le code, confronte captures et diff aux critères et ne signale que les écarts qui comptent.</span></div><em>Sous-agent</em></li>
+<li data-who="human"><b>8</b><div><strong>Pull request avec ses preuves ; vous relisez et fusionnez</strong><span>/kwa-ship ouvre la PR avec captures et sorties de tests. La fusion reste une décision humaine.</span></div><em>Humain</em></li>
+</ol>
+<p class="po-cap" id="flow-cap" aria-live="polite">Lancez la scène : chaque étape s'allume à son tour.</p>
+<p class="pc-hint">Parcours idéal : tout projet n'a pas ces huit étapes. Les points humains (3 et 8) sont voulus.</p></div>
+<p>Ce schéma ne dit pas « l'IA fait le travail ». Il dit que le travail d'un développeur se déplace : moins de frappe, plus de <strong>cadrage</strong> (critères de réussite précis), de <strong>mise en place</strong> (hooks, MCP, règles) et de <strong>relecture de preuves</strong>. Context7 règle l'API périmée, Playwright règle « ça marche chez moi, sans l'avoir vu », et un agent vérificateur en contexte neuf règle le biais de celui qui relit ce qu'il vient d'écrire.</p>
+<p>Ce que l'on évite de promettre : que la vérification attrape tout (un vérificateur invité à trouver des écarts en trouve toujours, d'où la consigne de ne retenir que ceux qui touchent aux exigences), et que le garde-fou remplace la relecture humaine.</p><details class="pc-reveal"><summary>À vous</summary><div><p>Prenez une tâche récente de votre équipe. Pour chacune des huit étapes, écrivez : ce qui était fait à la main, ce qui peut être automatisé, et le contrôle qui prouverait que c'est bon. Marquez les deux décisions que vous refusez de déléguer.</p></div></details><div class="pc-proof"><div><b>Preuve attendue</b><p>Décrire le flux complet d'une évolution et dire où se trouvent les deux points de décision humains.</p></div><div><b>Piège</b><p>Automatiser la preuve sans automatiser la décision : un agent qui valide son propre travail, sans contrôle extérieur, ne prouve rien.</p></div></div></div></section>
+<section class="pc-stage" id="etape-10"><div class="pc-num">10</div><div class="pc-main"><h2 class="pc-h">Les limites, sans maquillage</h2><p class="pc-tag">Un garde est un filet contre la bévue, pas une frontière de sécurité.</p><p>Essayez de contourner le garde des secrets. Ces trois commandes lisent le même fichier d'environnement ; seule la forme change :</p>
 <table class="pc-table"><thead><tr><th>Commande</th><th>Verdict réel</th></tr></thead><tbody><tr><td><code>cat $(echo .e)nv</code></td><td><span class="kd-pill allow">passe</span></td></tr><tr><td><code>cat .e*</code></td><td><span class="kd-pill allow">passe</span></td></tr><tr><td><code>python3 -c "print(open('.env').read())"</code></td><td><span class="kd-pill allow">passe</span></td></tr></tbody></table>
 <p>Le garde lit le <strong>texte</strong> de la commande, il ne l'exécute pas : un nom calculé, un glob ou un interpréteur lui échappent.</p>
 <details class="pc-reveal"><summary>Alors, à quoi ça sert, et que mettre en plus ?</summary><div><p>À arrêter l'erreur honnête, pas l'attaque. Pour une vraie barrière : la protection de branche GitHub, et les règles <code>permissions.deny</code> de Claude Code, qui portent sur le fichier lui-même. Savoir ce qu'un outil ne garantit pas fait partie du métier.</p></div></details><div class="pc-proof"><div><b>Preuve attendue</b><p>Trouver un contournement, et dire quelle barrière complète le garde.</p></div><div><b>Piège</b><p>Ne jamais présenter un hook comme une garantie. Un contournement trouvé en séance est un bon résultat.</p></div></div></div></section><div class="pc-check"><h2>Vous avez compris si vous savez</h2><ul>
@@ -247,22 +294,23 @@ mon-projet-wt-status-filter  abc1234 [feat/status-filter]</pre>
 <li>dire ce qu'aucun de ces garde-fous ne garantit, et quelle barrière complète.</li></ul>
 <p class="kd-note" style="margin-top:18px">Pour les consignes de chaque outil, les documentations officielles font foi : <a href="https://code.claude.com/docs/en/memory">mémoire et instructions</a>, <a href="https://code.claude.com/docs/en/hooks">hooks</a>, <a href="https://code.claude.com/docs/en/settings">réglages</a>. Les commandes et les noms de réglages évoluent avec les versions : vérifiez avant une séance.</p></div>
 </main>
-<footer class="nkds-footer nkds-invert"><div class="nkds-container nkds-footer-grid">
+</div></div>
+<footer class="kw-footer"><div class="kw-container kw-footer-grid">
   <div><b class="kd-word kd-word--big">kwa</b></div>
   <div><h3>Kwa</h3><p>v<span id="ver2"></span><br><span id="tests"></span></p></div>
   <div><h3>Documentation</h3><p>Régénérée par <code>docs/site/build.py</code> ; exemples calculés en exécutant les gardes.</p></div>
-  <div><h3>Design</h3><p>Design system du site, fichiers vendorisés dans <code>docs/site/ds/</code>.</p></div>
+  <div><h3>Style</h3><p>Feuille de style écrite pour ce site ; polices Geist, licence SIL OFL.</p></div>
 </div></footer>
-<script src="data.js"></script>
+<script src="data.js"></script><script src="src/parcours.js"></script><script src="src/shell.js"></script>
 <script>
 const DATA = window.KWA;
 const $ = (s, r=document) => r.querySelector(s);
 /* thème : clair par défaut, seul un choix explicite est enregistré */
 const root = document.documentElement, tbtn = $('#theme');
-function syncTheme(){ const dark = root.dataset.nkuiTheme==='dark'; tbtn.setAttribute('aria-label', dark ? 'Passer en thème clair' : 'Passer en thème sombre'); }
+function syncTheme(){ const dark = root.dataset.theme==='dark'; tbtn.setAttribute('aria-label', dark ? 'Passer en thème clair' : 'Passer en thème sombre'); }
 tbtn.onclick = () => {
-  const next = root.dataset.nkuiTheme==='dark' ? 'light' : 'dark';
-  const write = () => { root.dataset.nkuiTheme = next; try{ localStorage.setItem('kwa-docs-theme', next); }catch(e){} syncTheme(); };
+  const next = root.dataset.theme==='dark' ? 'light' : 'dark';
+  const write = () => { root.dataset.theme = next; try{ localStorage.setItem('kwa-docs-theme', next); }catch(e){} syncTheme(); };
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return write();
   if (document.startViewTransition) return document.startViewTransition(write);
   root.classList.add('kd-theming'); write(); setTimeout(() => root.classList.remove('kd-theming'), 420);

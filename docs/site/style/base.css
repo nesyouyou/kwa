@@ -1,0 +1,35 @@
+/* Base typographique et mise en page du site de documentation : sobre, sans dépendance. */
+.kw { margin: 0; background: var(--kw-bg); color: var(--kw-fg); font: 16px/1.65 Geist, system-ui, -apple-system, 'Segoe UI', sans-serif; -webkit-font-smoothing: antialiased; }
+.kw *, .kw *::before, .kw *::after { box-sizing: border-box; }
+.kw :is(h1, h2, h3, p, figure) { margin: 0; }
+.kw a { color: inherit; }
+.kw button { font: inherit; cursor: pointer; }
+.kw :focus-visible { outline: 2px solid var(--kw-fg); outline-offset: 3px; }
+.kw ::selection { background: var(--kw-fg); color: var(--kw-bg); }
+.kw-container { width: min(100% - 2 * var(--kw-gutter), var(--kw-max-width)); margin-inline: auto; }
+
+/* titres : une seule graisse, des tailles courantes, pas de point final décoratif */
+.kw-title { font: 650 clamp(30px, 4vw, 44px)/1.15 Geist, system-ui, sans-serif; letter-spacing: -.02em; text-wrap: balance; }
+.kw-section-title { font: 650 clamp(24px, 2.6vw, 30px)/1.25 Geist, system-ui, sans-serif; letter-spacing: -.015em; text-wrap: balance; }
+.kw-page-title { font: 650 clamp(26px, 3vw, 34px)/1.2 Geist, system-ui, sans-serif; letter-spacing: -.015em; margin-bottom: 22px; }
+.kw-lead { max-width: 64ch; margin-top: 16px !important; font-size: 18px; line-height: 1.6; color: var(--kw-body); }
+.kw-hero { padding-block: 72px 24px; }
+.kw-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 20px; margin-top: 28px; }
+
+.kw-btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 40px; padding: 8px 16px; border: 1px solid var(--kw-rule); border-radius: 8px; color: var(--kw-fg); background: transparent; font-size: 14px; line-height: 1.4; text-decoration: none; transition: background-color .15s ease, border-color .15s ease; }
+.kw-btn--primary { background: var(--kw-invert-bg); color: var(--kw-invert-fg) !important; font-weight: 500; border-color: transparent; }
+.kw-btn--small { padding: 6px 12px; font-size: 13px; }
+.kw-btn:disabled { opacity: .45; cursor: not-allowed; }
+.kw-link { display: inline-flex; min-height: 40px; align-items: center; gap: 8px; font-size: 14px; text-decoration: none; }
+.kw-link:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+.kw-footer { margin-top: 96px; padding-block: 48px 24px; background: var(--kw-footer-bg); color: var(--kw-footer-fg); }
+.kw-footer-grid { display: grid; grid-template-columns: 1.2fr 1fr 1.35fr 1fr; gap: 32px; align-items: start; }
+.kw-footer p { color: var(--kw-footer-mut); font-size: 14px; }
+.kw-footer h3 { margin-bottom: 12px; font-weight: 600; font-size: 14px; }
+
+@media (hover: hover) { .kw-btn:hover { border-color: var(--kw-dim); } .kw-btn--primary:hover { opacity: .9; } }
+@media (max-width: 1023px) { .kw-hero { padding-block: 48px 16px; } .kw-lead { font-size: 16px; } }
+@media (max-width: 900px) { .kw-footer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (prefers-reduced-motion: reduce) { .kw *, .kw *::before, .kw *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
+@media print { .kw { background: white; color: black; } }

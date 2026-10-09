@@ -3,11 +3,24 @@
 Un socle de harness pour agents de code : mêmes règles, mêmes garde-fous, mêmes skills, partout.
 Kwa se lit **K**it · **W**orkflow · **A**gents (le K est aussi *Knowledge* : la connaissance qui s'enrichit) : un kit de process de développement pour travailler avec des agents de code.
 
+## Pourquoi ce dépôt
+
+Kwa est avant tout un **support pédagogique**. Il montre, avec de vrais fichiers qui tournent, comment encadrer un agent
+de code : règles, garde-fous, skills, mémoire, circuit de travail. Chaque pièce est lisible, testée, et expliquée sur le
+site de documentation et dans trois parcours de formation (culture de l'IA générative, context engineering, harness).
+
+- **En français.** Presque tout ce qui existe sur le sujet est en anglais. Les skills, les règles, la documentation et les
+  parcours sont ici en français, pour les développeuses et les développeurs que l'anglais freine.
+- **Pour partager des bonnes pratiques.** Ce qui est ici vient de l'usage et d'idées reprises à d'autres projets, toujours
+  créditées. Si cela sert à d'autres, tant mieux ; les retours et les corrections sont bienvenus.
+- **Sans prétendre à plus.** Les garde-fous sont des filets contre la bévue, pas une frontière de sécurité. Les
+  documentations officielles des outils font foi. Les parcours n'ont pas encore été éprouvés avec un groupe.
+
 **Parcours d'apprentissage** : `docs/site/parcours.html`, trois parcours qui s'enchaînent. 1) Culture IA générative (modèle, jetons, fenêtre de contexte, hallucinations, prompt engineering). 2) Context engineering (AGENTS.md et CLAUDE.md, skills, sous-agents, MCP et ses fichiers de configuration, permissions). 3) Harness (de l'histoire du processus de développement à Kwa, avec huit étapes pratiques sur un dépôt jetable dont les sorties viennent de l'exécution réelle).
 
 **Documentation illustrée** : `docs/site/index.html` (workflow cliquable, briques de déclenchement, gardes en action,
-modules, skills et origines, mémoire, onboarding, crédits), avec son propre design system (fichiers vendorisés dans
-`docs/site/ds/`, avec leurs licences de polices). Régénérer avec `python3 docs/site/build.py` : les exemples sont
+modules, skills et origines, mémoire, onboarding, crédits), avec une feuille de style propre (polices dans
+`docs/site/style/`, avec leur licence). Régénérer avec `python3 docs/site/build.py` : les exemples sont
 calculés en exécutant les gardes.
 
 ```bash
@@ -62,4 +75,4 @@ et testées : voir `THIRD_PARTY_NOTICES.md`, `credits.json` et `licenses/`. Aucu
 
 ## Licence
 
-MIT, voir `LICENSE`. Les idées reprises d'autres projets (MIT également) sont créditées dans `THIRD_PARTY_NOTICES.md`. Les polices vendorisées dans `docs/site/ds/` gardent leurs propres licences, dans `docs/site/ds/assets/licenses/`.
+MIT, voir `LICENSE`. Les idées reprises d'autres projets (MIT également) sont créditées dans `THIRD_PARTY_NOTICES.md`. Les polices Geist et Geist Mono, vendorisées dans `docs/site/style/`, gardent leur licence (SIL OFL), dans `docs/site/style/assets/licenses/`.
