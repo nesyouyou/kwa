@@ -319,6 +319,18 @@ class Modules(unittest.TestCase):
         self.assertNotEqual(sh("git", "-C", d, "log", "--oneline").returncode, 0)
         self.assertEqual(sh("git", "-C", d, "diff", "--cached", "--name-only").stdout, "")
 
+    def test_git_exclude_is_written_for_a_worktree(self):
+        d = self.project()
+        sh("git", "-C", d, "-c", "user.name=t", "-c", "user.email=t@example.org", "commit", "-q", "--allow-empty", "-m", "init")
+        wt = d + "-wt"
+        self.assertEqual(sh("git", "-C", d, "worktree", "add", "-q", wt, "-b", "wt-branch").returncode, 0)
+        try:
+            r = self.kwa("install", wt)
+            self.assertNotIn("pas de dépôt git", r.stdout)
+            self.assertIn(".claude/kwa/local/", open(os.path.join(d, ".git/info/exclude")).read())
+        finally:
+            sh("git", "-C", d, "worktree", "remove", "--force", wt)
+
     def test_codex_parity(self):
         d = self.project()
         self.kwa("install", d, "--codex")
