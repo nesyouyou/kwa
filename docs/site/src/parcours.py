@@ -15,6 +15,9 @@ import subprocess
 import sys
 import tempfile
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import hl  # noqa: E402
+
 
 def sh(cmd: list[str], cwd: str, env: dict | None = None, inp: str | None = None) -> str:
     p = subprocess.run(cmd, cwd=cwd, input=inp, capture_output=True, text=True, env={**os.environ, **(env or {})})
@@ -152,11 +155,11 @@ def esc(t: str) -> str:
 
 
 def code(t: str) -> str:
-    return f'<pre class="kd-code">{esc(t)}</pre>'
+    return f'<pre class="kd-code">{hl.highlight(t)}</pre>'
 
 
 def cmd(t: str) -> str:
-    return f'<pre class="kd-code"><span class="p">$</span> {esc(t)}</pre>'
+    return f'<pre class="kd-code"><span class="p">$</span> {hl.shell(t)}</pre>'
 
 
 def reveal(summary: str, body: str) -> str:

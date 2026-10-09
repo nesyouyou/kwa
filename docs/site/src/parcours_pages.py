@@ -9,6 +9,7 @@ import json
 import re
 import sys
 
+import hl
 from parcours import code, cmd, esc, pill, reveal, stage
 
 CULTURE_NAV = [("1", "Le modèle"), ("2", "Les jetons"), ("3", "Les hallucinations"), ("4", "Le contexte"), ("5", "Le prompt"), ("6", "L'agent"), ("7", "Risques")]
@@ -48,8 +49,8 @@ def intro(text: str) -> str:
 
 def pair(bad_title: str, bad: str, good_title: str, good: str) -> str:
     return ('<div class="pc-proof" style="margin:0 0 16px">'
-            f'<div><b>{esc(bad_title)}</b><pre class="kd-code" style="margin-top:10px;white-space:pre-wrap">{esc(bad)}</pre></div>'
-            f'<div><b>{esc(good_title)}</b><pre class="kd-code" style="margin-top:10px;white-space:pre-wrap">{esc(good)}</pre></div></div>')
+            f'<div><b>{esc(bad_title)}</b><pre class="kd-code" style="margin-top:10px;white-space:pre-wrap">{hl.highlight(bad)}</pre></div>'
+            f'<div><b>{esc(good_title)}</b><pre class="kd-code" style="margin-top:10px;white-space:pre-wrap">{hl.highlight(good)}</pre></div></div>')
 
 
 # ---------------------------------------------------------------------------------------------------------------------
