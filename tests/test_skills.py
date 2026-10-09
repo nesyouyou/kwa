@@ -198,6 +198,8 @@ class ParcoursVisuals(unittest.TestCase):
 
     def test_everyday_tools_and_agent_flow_are_taught(self):
         contexte = self.read("parcours-contexte.html")
+        for needle in ("tools/list", "tools/call", "resources/read", "prompts/get", "mcp-three", "JSON-RPC 2.0"):
+            self.assertIn(needle, contexte, needle)
         for needle in ("Context7", "resolve-library-id", "query-docs", "Playwright", "browser_take_screenshot",
                        "browser_run_code_unsafe", "/clear", "/rewind", "etape-8"):
             self.assertIn(needle, contexte, needle)

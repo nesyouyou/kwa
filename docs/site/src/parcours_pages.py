@@ -317,6 +317,54 @@ def parse_front(text: str) -> dict:
     return {k.strip(): v.strip() for k, v in (l.split(":", 1) for l in m.group(1).splitlines() if ":" in l)}
 
 
+MCP_REST = """GET /orders/42 HTTP/1.1
+Authorization: Bearer <jeton>
+
+200 OK
+{ "id": 42, "status": "shipped" }"""
+
+MCP_LIST = """-> {"jsonrpc": "2.0", "id": 1, "method": "tools/list"}
+
+<- {"jsonrpc": "2.0", "id": 1, "result": {"tools": [{
+     "name": "get_order",
+     "description": "Retourne une commande à partir de son numéro.",
+     "inputSchema": {"type": "object",
+       "properties": {"id": {"type": "integer"}}, "required": ["id"]}
+   }]}}"""
+
+MCP_CALL = """-> {"jsonrpc": "2.0", "id": 2, "method": "tools/call",
+    "params": {"name": "get_order", "arguments": {"id": 42}}}
+
+<- {"jsonrpc": "2.0", "id": 2, "result": {
+     "content": [{"type": "text", "text": "Commande 42 : expédiée"}],
+     "isError": false}}"""
+
+MCP_VS = """<h3 class="pc-h3">Une API, pour un agent</h3>
+<p>Vous connaissez déjà le principe : un service expose des opérations, un client les appelle. MCP est ce contrat, pensé pour un <strong>agent</strong> plutôt que pour votre code. Les différences tiennent à une idée : <strong>c'est le modèle qui découvre les opérations et décide de les appeler pendant la session</strong>, au lieu d'un développeur qui les a codées à l'avance.</p>
+<table class="pc-table mcp-vs"><thead><tr><th></th><th>API classique (REST)</th><th>Serveur MCP</th></tr></thead><tbody>
+<tr><td>Qui appelle</td><td>Votre code, écrit à l'avance</td><td>Le modèle, qui décide en cours de session</td></tr>
+<tr><td>Découverte</td><td>Vous lisez la documentation (OpenAPI) avant de coder</td><td>Le client demande la liste au serveur, à la connexion (<code>tools/list</code>)</td></tr>
+<tr><td>Description</td><td>Pour un humain : pages de doc, exemples</td><td>Pour le modèle : une phrase en langage naturel et un schéma JSON des paramètres</td></tr>
+<tr><td>Forme d'un appel</td><td><code>GET /orders/42</code></td><td><code>tools/call</code> avec le nom de l'outil et ses arguments</td></tr>
+<tr><td>Données</td><td>Des URL de ressources</td><td><code>resources/list</code> et <code>resources/read</code>, par URI</td></tr>
+<tr><td>Modèles de demande</td><td>Aucun</td><td><code>prompts/list</code> et <code>prompts/get</code></td></tr>
+<tr><td>Format</td><td>Libre (JSON, XML, formulaire)</td><td>Toujours du JSON-RPC 2.0</td></tr>
+<tr><td>Transport</td><td>HTTP</td><td>Un processus local en entrée et sortie standard, ou HTTP</td></tr>
+<tr><td>Authentification</td><td>Clé ou OAuth gérés par votre code</td><td>En-têtes ou OAuth déclarés dans la configuration du client</td></tr>
+<tr><td>Résultat</td><td>Code HTTP et corps de réponse</td><td>Du contenu lisible par le modèle, qui entre dans le contexte</td></tr></tbody></table>
+<div class="mcp-duo">
+<div><b>REST : un appel codé en dur</b>""" + code(MCP_REST) + """</div>
+<div><b>MCP : l'agent découvre la liste</b>""" + code(MCP_LIST) + """</div>
+<div><b>MCP : puis il appelle un outil</b>""" + code(MCP_CALL) + """</div>
+</div>
+<p>Un serveur MCP expose trois choses, chacune déclenchée par quelqu'un de différent :</p>
+<div class="mcp-three">
+<div class="mcp-card"><span class="mcp-tag mcp-t0">Outils</span><p>Des <strong>actions</strong> : chercher, créer, lancer. Elles sont décrites au modèle, qui décide de les appeler.</p><p class="mcp-ex">Exemples : <code>get_order</code>, <code>browser_click</code></p></div>
+<div class="mcp-card"><span class="mcp-tag mcp-t1">Ressources</span><p>Des <strong>données à lire</strong>, désignées par une URI. Dans Claude Code, vous les référencez vous-même avec <code>@</code>.</p><p class="mcp-ex">Exemple : <code>@postgres:schema://users</code></p></div>
+<div class="mcp-card"><span class="mcp-tag mcp-t2">Prompts</span><p>Des <strong>modèles de demande</strong> avec des arguments, qui deviennent des commandes que vous tapez.</p><p class="mcp-ex">Exemple : <code>/mcp__github__pr_review 456</code></p></div>
+</div>
+"""
+
 def contexte() -> str:
     # contrôles du build : les exemples doivent être corrects
     for must in ("name", "description"):
@@ -425,7 +473,9 @@ def contexte() -> str:
          "Dire ce qu'un sous-agent gagne (un contexte propre) et ce qu'il perd (la conversation).",
          "Restreindre les outils est une protection réelle pour un relecteur. Un agent qui peut tout modifier relit mal ce qu'il peut aussi corriger."),
         ("7", "MCP : brancher des outils", "Un protocole commun pour donner à l'agent l'accès à des données et à des services.",
-         f"""<p>Le <strong>Model Context Protocol</strong> permet à l'agent d'utiliser des serveurs externes : base de données, tracker, documentation, navigateur. Chaque serveur expose des outils que l'agent appelle. Deux conséquences. Leurs outils <strong>coûtent du contexte</strong>, mais peu : par défaut, la recherche d'outils ne charge au démarrage que les noms, et les définitions complètes seulement au moment du besoin. Et ils <strong>peuvent agir</strong> (lire des données, écrire, supprimer) : on n'installe donc que des serveurs de confiance, avec l'accès minimal.</p>
+         f"""<p>Le <strong>Model Context Protocol</strong> (MCP) permet à l'agent d'utiliser des serveurs externes : base de données, tracker, documentation, navigateur.</p>
+{MCP_VS}
+<p>Deux conséquences pour vous. Leurs outils <strong>coûtent du contexte</strong>, mais peu : par défaut, la recherche d'outils ne charge au démarrage que les noms, et les définitions complètes seulement au moment du besoin. Et ils <strong>peuvent agir</strong> (lire des données, écrire, supprimer) : on n'installe donc que des serveurs de confiance, avec l'accès minimal.</p>
 <table class="pc-table"><thead><tr><th>Portée</th><th>Visible</th><th>Stockée dans</th></tr></thead><tbody>
 <tr><td>Locale (par défaut)</td><td>Ce projet, vous seul</td><td><code>~/.claude.json</code></td></tr>
 <tr><td>Projet</td><td>Ce projet, toute l'équipe</td><td><code>.mcp.json</code> à la racine, versionné</td></tr>
