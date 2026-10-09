@@ -26,11 +26,11 @@ AVATARS = {  # id de source (credits.json) -> avatar vendorisé
 }
 
 KINDS = {
-    "skill": "skill que l'agent invoque ou que tu tapes",
+    "skill": "skill que l'agent invoque ou que vous tapez",
     "agent": "sous-agent lancé par une skill (outil Agent)",
     "hook": "hook déclenché tout seul par l'harnais",
     "garde": "garde PreToolUse : refuse ou demande",
-    "humain": "porte où c'est toi qui décides",
+    "humain": "porte où c'est vous qui décidez",
     "policy": "fichier du projet lu par les skills et les gardes",
     "step": "étape interne d'une skill",
 }
@@ -177,18 +177,18 @@ def build(catalog_ids: list[str], credits: dict, wf_text: dict) -> dict:
     for k, (label, what, when, how, src) in A.items():
         add(f"a:{k}", "agent", label, what, when, how, src, ["superpowers"] if k in ("impl", "spec", "qual", "rev") else ["kwa"])
     U = {
-        "spec": ("Tu approuves la spec", "Porte d'approbation avant tout plan.", "", "Sans accord, on ne passe pas à /kwa-plan."),
-        "commit": ("Tu décides du commit", "/kwa-commit puis /kwa-ship, jamais sans ta demande.", "", "Un commit par changement logique ; push de branche confirmé ; fusion = décision séparée."),
-        "go": ("Tu donnes le GO", "La fusion est une décision séparée.", "", "Kwa annonce si elle déclenche un déploiement."),
-        "preflight": ("Tu valides le pré-vol", "Chaque point du pré-vol est coché avec preuve, puis tu autorises le déploiement.", "", "Un point non vérifiable reste non coché : on n'avance pas."),
-        "learn": ("Tu valides ce qu'on retient", "Tableau de 7 lignes maximum ; rien n'est appliqué sans « tout », « 1 et 3 » ou « rien ».", "", "« Rien à capitaliser » est une réponse valable."),
+        "spec": ("Vous approuvez la spec", "Porte d'approbation avant tout plan.", "", "Sans accord, on ne passe pas à /kwa-plan."),
+        "commit": ("Vous décidez du commit", "/kwa-commit puis /kwa-ship, jamais sans votre demande.", "", "Un commit par changement logique ; push de branche confirmé ; fusion = décision séparée."),
+        "go": ("Vous donnez le GO", "La fusion est une décision séparée.", "", "Kwa annonce si elle déclenche un déploiement."),
+        "preflight": ("Vous validez le pré-vol", "Chaque point du pré-vol est coché avec preuve, puis vous autorisez le déploiement.", "", "Un point non vérifiable reste non coché : on n'avance pas."),
+        "learn": ("Vous validez ce qu'on retient", "Tableau de 7 lignes maximum ; rien n'est appliqué sans « tout », « 1 et 3 » ou « rien ».", "", "« Rien à capitaliser » est une réponse valable."),
     }
     for k, (label, what, when, how) in U.items():
         add(f"u:{k}", "humain", label, what, when, how)
     add("p:policy", "policy", ".claude/kwa.policy.json", "La politique du projet : commandes interdites, chemins protégés, vérifications, environnements.",
         "Créée une fois à partir de la détection, puis propriété du projet", "Lue par guard-policy, guard-write, /kwa-verify, /kwa-deploy, /kwa-start-dev. Jamais écrasée par kwa install.",
         ["examples/expo-monorepo.policy.json"])
-    add("r:request", "humain", "Ta demande", "Tu écris. L'agent choisit la skill qui correspond.", "", "Les consignes d'AGENTS.md et les tiennes priment toujours sur une skill.")
+    add("r:request", "humain", "Votre demande", "Vous écrivez. L'agent choisit la skill qui correspond.", "", "Les consignes d'AGENTS.md et les tiennes priment toujours sur une skill.")
 
     W, H_ = 280, 118  # pas de grille ; un nœud fait 224 × 92, l'écart laisse la place aux cadres et aux arêtes
     NW, NH = 224, 92
@@ -252,7 +252,7 @@ def build(catalog_ids: list[str], credits: dict, wf_text: dict) -> dict:
          loop=("a:qual", "a:impl", "retours critiques"))
     flow("bug", "Un bug", "Aucune correction avant la cause racine ; le correctif est prouvé en le retirant.",
          ["s:debug", "a:explore", "s:tdd", "s:simple", "s:verify", "h:nudge", "s:learn"], per_row=4)
-    flow("delivery", "Livraison", "Du push à la production : chaque porte est un garde ou toi.",
+    flow("delivery", "Livraison", "Du push à la production : chaque porte est un garde ou vous.",
          ["s:ship", "g:git", "g:github", "u:go", "s:deploy", "g:policy", "u:preflight", "s:learn", "u:learn"], per_row=4)
 
     # vues internes des skills : sections ## réelles

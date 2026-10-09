@@ -4,7 +4,7 @@
 (function () {
   'use strict';
   var NS = 'http://www.w3.org/2000/svg';
-  var KIND_LABEL = { skill: 'Skill', agent: 'Sous-agent', hook: 'Hook', garde: 'Garde', humain: 'Toi', policy: 'Politique', step: 'Étape' };
+  var KIND_LABEL = { skill: 'Skill', agent: 'Sous-agent', hook: 'Hook', garde: 'Garde', humain: 'Vous', policy: 'Politique', step: 'Étape' };
   var EDGE_LABEL = { calls: 'appelle', feeds: 'alimente', loop: 'reboucle' };
   var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
 

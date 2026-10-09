@@ -1,18 +1,18 @@
 /* KwaCircuit : « Une demande, de bout en bout », lisible sur un seul écran.
-   Trois scénarios (une couleur chacun), un rail horizontal des étapes (les portes où tu décides et les refus de
+   Trois scénarios (une couleur chacun), un rail horizontal des étapes (les portes où vous décidez et les refus de
    garde y sont visibles d'un coup d'œil), et une grande fiche qui change au même endroit. Rien ne bouge tout seul.
    Les données viennent de board.js (window.KwaBoard.data). Script classique, sans dépendance. */
 (function () {
   'use strict';
 
   var LABELS = {
-    feature: ['Cadrage : brainstorm avant de coder', 'Porte : tu approuves la spec', 'Plan en tâches de 2 à 5 minutes', 'Issue, branche et worktree',
+    feature: ['Cadrage : brainstorm avant de coder', 'Porte : vous approuvez la spec', 'Plan en tâches de 2 à 5 minutes', 'Issue, branche et worktree',
       'Un implémenteur par tâche', 'Refus : lecture de .env', 'Relecture : conformité puis qualité', 'Preuve : sortie fraîche des vérifications',
-      'Revue de toute la branche', 'Porte : tu demandes le commit', 'Commit, push confirmé, PR liée', 'Capitaliser ce qui a coûté'],
+      'Revue de toute la branche', 'Porte : vous demandez le commit', 'Commit, push confirmé, PR liée', 'Capitaliser ce qui a coûté'],
     bug: ['Cause racine avant tout correctif', 'Refus : code sur main', 'Issue et branche', 'Test rouge d’abord', 'Correctif minimal',
-      'Preuve par mutation', 'Porte : tu demandes la publication', 'Capitaliser le piège'],
-    delivery: ['Vérifications avant publication', 'Refus : push direct sur main', 'Porte : tu confirmes le push', 'Refus : PR sans issue',
-      'PR avec « Closes #14 »', 'Porte : ton GO de fusion', 'Refus : fusion sans preuve', 'Porte : tu confirmes le déploiement',
+      'Preuve par mutation', 'Porte : vous demandez la publication', 'Capitaliser le piège'],
+    delivery: ['Vérifications avant publication', 'Refus : push direct sur main', 'Porte : vous confirmez le push', 'Refus : PR sans issue',
+      'PR avec « Closes #14 »', 'Porte : votre GO de fusion', 'Refus : fusion sans preuve', 'Porte : vous confirmez le déploiement',
       'Vérifier la révision servie', 'Capitaliser']
   };
 
@@ -47,7 +47,7 @@
     var track = h('ol', { class: 'kc-track', 'aria-label': 'Étapes du scénario' });
     var legend = h('ul', { class: 'kc-legend', 'aria-label': 'Légende' }, [
       h('li', null, [h('i', { class: 'kc-key kc-key--auto', 'aria-hidden': 'true' }), 'Étape automatique, sous les gardes']),
-      h('li', null, [h('i', { class: 'kc-key kc-key--gate', 'aria-hidden': 'true' }), 'Porte : c’est toi qui décides']),
+      h('li', null, [h('i', { class: 'kc-key kc-key--gate', 'aria-hidden': 'true' }), 'Porte : c’est vous qui décidez']),
       h('li', null, [h('i', { class: 'kc-key kc-key--deny', 'aria-hidden': 'true' }), 'Refus : un garde bloque'])
     ]);
     var fiche = h('article', { class: 'kc-fiche', 'aria-live': 'polite' });
@@ -117,7 +117,7 @@
       var S = sc(), s = S.steps[st.i], k = kind(s), parts = split(s.caption);
       fiche.textContent = '';
       fiche.className = 'kc-fiche kc-fiche--' + k;
-      var spoken = 'Étape ' + (st.i + 1) + ' sur ' + S.steps.length + ', ' + D.COLS[s.col] + (k === 'gate' ? ', porte : c’est toi qui décides' : (k === 'deny' ? ', un garde refuse' : '')) + '. ';
+      var spoken = 'Étape ' + (st.i + 1) + ' sur ' + S.steps.length + ', ' + D.COLS[s.col] + (k === 'gate' ? ', porte : c’est vous qui décidez' : (k === 'deny' ? ', un garde refuse' : '')) + '. ';
 
       var left = h('div', { class: 'kc-left' });
       left.appendChild(h('h3', { class: 'kc-title' }, [h('span', { class: 'kc-sr', text: spoken }), plain(st.i)]));
@@ -125,13 +125,13 @@
       if (parts.why) left.appendChild(block('Pourquoi', [h('p', { text: cap(parts.why) })]));
       if (s.deny) left.appendChild(block(s.deny.by + ' répond', [h('code', { text: s.deny.msg })], 'kc-block--deny'));
       var human = s.bricks.filter(function (b) { return b.type === 'humain'; })[0];
-      if (human) left.appendChild(block('Ce que tu décides', [h('p', { text: human.name + '. ' + (human.detail || human.d) })], 'kc-block--gate'));
+      if (human) left.appendChild(block('Ce que vous décidez', [h('p', { text: human.name + '. ' + (human.detail || human.d) })], 'kc-block--gate'));
 
       var right = h('div', { class: 'kc-right' });
       right.appendChild(h('h4', { class: 'kc-rt', text: 'Ce qui se déclenche' }));
       var list = h('ul', { class: 'kc-bricks', 'aria-label': 'Briques déclenchées' });
       var shown = s.bricks.filter(function (b) { return b.type !== 'humain'; });
-      if (!shown.length) list.appendChild(h('li', { class: 'kc-none', text: 'Rien ne se déclenche : le workflow attend ta décision.' }));
+      if (!shown.length) list.appendChild(h('li', { class: 'kc-none', text: 'Rien ne se déclenche : le workflow attend votre décision.' }));
       shown.forEach(function (b) {
         list.appendChild(h('li', { class: 'kc-brick kc-brick--' + b.type }, [
           h('span', { class: 'kc-bt', text: D.TYPES[b.type] }),
