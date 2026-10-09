@@ -138,7 +138,7 @@ def culture() -> str:
          "Expliquer pourquoi une réponse est un tirage parmi des probabilités, et donner l'ordre de grandeur d'un document en jetons.",
          "Compter en pages ou en mots donne une idée, jamais le chiffre : deux textes de même longueur peuvent coûter des jetons différents."),
         ("3", "Les hallucinations", "Un texte faux dit avec assurance.",
-         """<p>Puisque le modèle tire la suite la plus plausible, et non la plus vraie, il peut produire une affirmation fausse ou une source qui n'existe pas, avec le même ton que le vrai. On parle d'<strong>hallucination</strong> : c'est une conséquence directe de ce que vous venez de voir, pas un bogue rare. Elle ne se règle pas par une phrase magique : on la réduit par la manière de demander, puis on la contrôle.</p>
+         """<p>Puisque le modèle tire la suite la plus plausible, et non la plus vraie, il peut produire une affirmation fausse ou une source qui n'existe pas, avec le même ton que le vrai. On parle d'<strong>hallucination</strong> : c'est une conséquence directe de ce que vous venez de voir, pas un bogue rare. Aucune phrase magique ne la supprime : on la réduit par la manière de demander, puis on la contrôle.</p>
 <p>Quatre leviers documentés :</p>
 <ul class="pc-list">
 <li><strong>Autoriser le « je ne sais pas »</strong> : dire explicitement qu'admettre l'incertitude est une bonne réponse.</li>
@@ -151,10 +151,10 @@ def culture() -> str:
               "Voici le contrat entre <contrat> et </contrat> (ces balises de délimitation sont expliquées à l'étape 5).\n1. Extrais d'abord les passages exacts qui parlent de responsabilité, de résiliation et de pénalités. Si tu n'en trouves pas, écris « aucun passage trouvé ».\n2. Analyse les risques en citant le numéro de chaque passage. N'utilise rien d'autre que ce contrat.\n3. Si un point te semble manquer, dis « je ne peux pas l'affirmer à partir du document ».") +
          reveal("Ce que ça ne règle pas", "<p>Ces techniques réduisent les hallucinations, elles ne les suppriment pas. Pour une décision importante, une personne relit les passages cités dans le document d'origine. Un chiffre, une date, une référence légale ou une citation s'écrivent dans un texte seulement après vérification à la source.</p>"),
          "Réécrire une demande pour qu'elle autorise l'incertitude et exige des passages, puis vérifier un passage cité à la main.",
-         "Une réponse bien rédigée n'est pas une réponse vraie. Le ton d'assurance ne dit rien sur l'exactitude."),
+         "Une réponse bien rédigée peut être fausse : le ton d'assurance ne dit rien de l'exactitude."),
         ("4", "La fenêtre de contexte", "Tout ce que le modèle peut voir à un instant donné, et rien d'autre.",
          """<p>La fenêtre de contexte est la « mémoire de travail » du modèle : <strong>tout</strong> ce qu'il peut consulter pour répondre, sa réponse comprise. Elle contient bien plus que votre dernier message : consignes du système, fichiers d'instructions, définitions des outils, historique de la conversation, fichiers lus, résultats des outils. Le modèle n'a pas de mémoire en dehors de cette fenêtre : une nouvelle session repart de zéro.</p>
-<p>Plus grande ne veut pas dire meilleure. À mesure que le contexte grossit, la précision et le rappel peuvent baisser : c'est ce que la documentation appelle <em>context rot</em>. Choisir ce qui entre compte autant que la place disponible.</p>
+<p>Une fenêtre plus grande n'améliore pas la réponse : à mesure que le contexte grossit, la précision et le rappel peuvent baisser : c'est ce que la documentation appelle <em>context rot</em>. Choisir ce qui entre compte autant que la place disponible.</p>
 <p>Remplissez la jauge, puis essayez les trois situations types.</p>""" + gauge,
          "Citer ce qui occupe une fenêtre en dehors de votre message, et dire pourquoi la remplir n'est pas un but.",
          "Les valeurs de la jauge sont des exemples pour comprendre, pas des mesures. Une interface de chat peut aussi faire glisser la conversation en oubliant les débuts."),
@@ -172,15 +172,15 @@ def culture() -> str:
               "Tu rédiges pour une ESN. Écris un e-mail de relance à un client dont la proposition est restée sans réponse depuis dix jours.\nContexte : première relance, ton cordial et direct, sans pression commerciale.\nFormat : objet, puis trois phrases au plus, une question fermée pour avancer.\n<exemple>\nObjet : Votre avis sur la proposition\nBonjour, je reviens vers vous au sujet de la proposition du 3. Avez-vous pu la relire ? Je peux répondre à vos questions cette semaine.\n</exemple>") +
          reveal("Pourquoi la seconde marche mieux", "<p>Elle dit pour qui on écrit, dans quelle situation, avec quel ton, quel format, et montre un exemple. Rien n'est laissé à deviner. Notez aussi ce qu'elle ne fait pas : elle n'empile pas vingt règles. Le but est le plus petit ensemble d'informations qui change vraiment le résultat.</p>"),
          "Transformer une demande vague en consigne qu'un collègue sans contexte pourrait exécuter.",
-         "Un prompt plus long n'est pas un meilleur prompt. Ajoutez ce qui manque au lecteur, pas ce qui rassure l'auteur."),
+         "Ajoutez au prompt ce qui manque au lecteur ; ce qui rassure l'auteur l'alourdit sans l'améliorer."),
         ("6", "De l'assistant à l'agent", "Un modèle, des outils et une boucle.",
          f"""<p>Un assistant de conversation répond puis s'arrête. Un <strong>agent</strong> reçoit un objectif et <strong>boucle</strong> : il réfléchit, appelle un outil (lire un fichier, lancer une commande, chercher), lit le résultat qui entre dans son contexte, puis décide de continuer ou de s'arrêter. Tout ce que vous venez de voir (jetons, fenêtre, probabilités) se rejoue à chaque tour de cette boucle.</p>
 {LOOP}
 <p>Deux familles de systèmes se distinguent : dans un <strong>workflow</strong>, le chemin est écrit à l'avance dans du code et le modèle remplit des étapes ; dans un <strong>agent</strong>, c'est le modèle qui décide des étapes et des outils. Le conseil constant de la documentation d'Anthropic : commencer par la solution la plus simple (un seul appel, bien contextualisé) et n'ajouter de l'autonomie que si la tâche l'exige, parce que l'autonomie coûte en latence, en argent et en risque d'erreurs qui s'accumulent.</p>
 <p>Deux conséquences pour la suite. D'abord, <strong>chaque outil est une porte ouverte</strong> : lire un fichier est bénin, lancer une commande ou écrire dans une base ne l'est pas, d'où les permissions du parcours suivant. Ensuite, <strong>ce qui entre dans la boucle</strong> (pages web, fichiers, résultats d'outils) est du texte que le modèle lit : s'il est hostile, il peut tenter de détourner l'agent (étape 7).</p>""" +
-         reveal("Question", "<p>Dans l'exemple, qu'est-ce qui décide que la boucle s'arrête ? Ce n'est pas un compteur : c'est le modèle qui juge que le test est vert. D'où l'intérêt de lui donner un contrôle qu'il peut lancer, plutôt que de lui faire confiance sur parole (parcours Harness).</p>"),
+         reveal("Question", "<p>Dans l'exemple, qu'est-ce qui décide que la boucle s'arrête ? Aucun compteur : le modèle juge que le test est vert. D'où l'intérêt de lui donner un contrôle qu'il peut lancer, plutôt que de lui faire confiance sur parole (parcours Harness).</p>"),
          "Décrire la boucle d'un agent et dire ce qui distingue un workflow d'un agent.",
-         "Plus d'autonomie n'est pas mieux : une tâche à étapes connues se traite mieux avec un workflow, plus simple à contrôler."),
+         "Plus d'autonomie n'améliore pas le résultat : une tâche aux étapes connues se traite mieux avec un workflow, plus simple à contrôler."),
         ("7", "Risques et usages responsables", "Ce qu'on n'envoie pas, ce qu'on vérifie, qui décide.",
          """<ul class="pc-list">
 <li><strong>Données</strong> : ne pas coller de données personnelles, de secrets ni de données client réelles dans un outil que l'on ne maîtrise pas. Anonymiser ou fabriquer des exemples.</li>
@@ -353,7 +353,7 @@ def contexte() -> str:
 
     s = [
         ("1", "Du prompt au contexte", "Choisir ce que le modèle voit, au lieu de tout lui montrer.",
-         """<p>Le <strong>context engineering</strong> est l'ensemble des moyens qui curent et entretiennent ce qui se trouve dans le contexte du modèle pendant le travail : consignes, outils, données externes, historique. Le prompt n'en est qu'une partie. L'objectif tient en une phrase : le plus petit ensemble d'informations très utiles qui produit le résultat voulu.</p>
+         """<p>Le <strong>context engineering</strong> est l'ensemble des moyens qui sélectionnent et entretiennent ce qui se trouve dans le contexte du modèle pendant le travail : consignes, outils, données externes, historique. Le prompt n'en est qu'une partie. L'objectif tient en une phrase : le plus petit ensemble d'informations très utiles qui produit le résultat voulu.</p>
 <p>Dans une session d'agent de code, ce qui entre dans la fenêtre vient de six endroits : les consignes du système, vos fichiers d'instructions, les définitions des outils (y compris ceux des serveurs MCP), la liste des skills, l'historique, et les résultats des outils. Quatre techniques gardent le contexte sain, et chacune a son pendant dans l'outil :</p>
 <table class="pc-table"><thead><tr><th>Technique</th><th>Dans Claude Code</th></tr></thead><tbody>
 <tr><td>Charger à la demande plutôt que tout précharger</td><td>Une skill n'entre en entier que lorsqu'elle est appelée ; l'agent lit les fichiers au moment du besoin</td></tr>
@@ -396,7 +396,7 @@ def contexte() -> str:
          "Produire dix lignes d'instructions vérifiables, et expliquer pourquoi elles ne remplacent pas un garde-fou.",
          "Un fichier trop long ou contradictoire dilue ce qui compte. Deux sources qui se contredisent valent pire qu'une seule."),
         ("4", "Les règles", "Des instructions rangées par sujet, chargées au bon moment.",
-         f"""<p>Quand <code>AGENTS.md</code> grossit, tout y est lu à chaque session, même ce qui ne concerne qu'une partie du code. Les <strong>règles</strong> règlent ce problème : un fichier Markdown par sujet dans <code>.claude/rules/</code> (<code>tests.md</code>, <code>api.md</code>, <code>securite.md</code>), découverts récursivement. Elles sont du contexte, comme les fichiers d'instructions : l'agent les lit et peut s'en écarter.</p>
+         f"""<p>Quand <code>AGENTS.md</code> grossit, tout y est lu à chaque session, même ce qui ne concerne qu'une partie du code. Les <strong>règles</strong> répondent à ce problème : un fichier Markdown par sujet dans <code>.claude/rules/</code> (<code>tests.md</code>, <code>api.md</code>, <code>securite.md</code>), découverts récursivement. Elles sont du contexte, comme les fichiers d'instructions : l'agent les lit et peut s'en écarter.</p>
 <p>Deux comportements, selon l'en-tête du fichier :</p>
 <table class="pc-table"><thead><tr><th>Règle</th><th>Quand elle entre dans le contexte</th></tr></thead><tbody>
 <tr><td>Sans <code>paths</code></td><td>Au lancement de la session, avec la même priorité que <code>.claude/CLAUDE.md</code></td></tr>
@@ -413,7 +413,7 @@ def contexte() -> str:
 <p><strong>À ne pas confondre</strong> : les « règles de permission » (deny, ask, allow) de l'étape 9 sont appliquées par l'outil, dans les réglages. Les règles de cette étape sont des instructions lues par le modèle.</p>
 <p><strong>Exercice</strong> : prenez votre <code>AGENTS.md</code> et repérez deux paragraphes qui ne concernent qu'un type de fichier. Déplacez-les dans une règle avec <code>paths</code>.</p>""",
          "Écrire une règle avec <code>paths</code> et dire pourquoi elle ne se charge pas à chaque session.",
-         "Une règle n'est pas plus contraignante qu'une ligne d'AGENTS.md : c'est un rangement, pas une garantie."),
+         "Une règle est aussi peu contraignante qu'une ligne d'AGENTS.md : elle range les consignes sans rien garantir."),
         ("5", "Les skills", "Une procédure chargée seulement quand elle sert.",
          f"""<p>Une skill est un dossier avec un fichier <code>SKILL.md</code> : un en-tête qui dit <strong>quand</strong> l'appeler, un corps qui dit <strong>comment</strong>. Claude l'invoque quand la description correspond à la conversation, ou vous la tapez avec <code>/nom</code>.</p>
 {code(SKILL_EX)}
@@ -439,7 +439,7 @@ def contexte() -> str:
          "Dire ce qu'un sous-agent gagne (un contexte propre) et ce qu'il perd (la conversation).",
          "Restreindre les outils est une protection réelle pour un relecteur. Un agent qui peut tout modifier relit mal ce qu'il peut aussi corriger."),
         ("7", "MCP : brancher des outils", "Un protocole commun pour donner à l'agent l'accès à des données et à des services.",
-         f"""<p>Le <strong>Model Context Protocol</strong> permet à l'agent d'utiliser des serveurs externes : base de données, tracker, documentation, navigateur. Chaque serveur expose des outils que l'agent appelle. Deux conséquences : leurs outils <strong>coûtent du contexte</strong> (par défaut, la recherche d'outils ne charge au démarrage que les noms, et les définitions complètes seulement au moment du besoin, donc l'ajout d'un serveur pèse peu tant qu'on ne s'en sert pas) et ils <strong>peuvent agir</strong> (lire des données, écrire, supprimer). On n'installe donc que des serveurs de confiance, avec l'accès minimal.</p>
+         f"""<p>Le <strong>Model Context Protocol</strong> permet à l'agent d'utiliser des serveurs externes : base de données, tracker, documentation, navigateur. Chaque serveur expose des outils que l'agent appelle. Deux conséquences. Leurs outils <strong>coûtent du contexte</strong>, mais peu : par défaut, la recherche d'outils ne charge au démarrage que les noms, et les définitions complètes seulement au moment du besoin. Et ils <strong>peuvent agir</strong> (lire des données, écrire, supprimer) : on n'installe donc que des serveurs de confiance, avec l'accès minimal.</p>
 <table class="pc-table"><thead><tr><th>Portée</th><th>Visible</th><th>Stockée dans</th></tr></thead><tbody>
 <tr><td>Locale (par défaut)</td><td>Ce projet, vous seul</td><td><code>~/.claude.json</code></td></tr>
 <tr><td>Projet</td><td>Ce projet, toute l'équipe</td><td><code>.mcp.json</code> à la racine, versionné</td></tr>
@@ -451,18 +451,18 @@ def contexte() -> str:
 <p><strong>Exercice</strong> : écrivez le <code>.mcp.json</code> d'un serveur en lecture seule sur une base de test. Où va le mot de passe ?</p>""" +
          reveal("Réponse", "<p>Dans une variable d'environnement, référencée par <code>${NOM}</code>, définie hors du dépôt. Le fichier versionné ne contient aucun secret. Pour la base elle-même, un compte en lecture seule : la permission la plus étroite possible est la première protection.</p>"),
          "Choisir la bonne portée d'un serveur MCP et écrire sa configuration sans secret en clair.",
-         "Un serveur MCP n'est pas une simple lecture : il agit avec vos droits. Chaque serveur ajouté alourdit aussi le contexte."),
+         "Un serveur MCP agit avec vos droits, il ne se limite pas à lire. Chaque serveur ajouté alourdit aussi le contexte."),
         ("8", "Context7 et Playwright", "Deux serveurs MCP que tout développeur devrait avoir : la doc à jour, et un navigateur pour vérifier.",
          f"""<p>Parmi tous les serveurs MCP possibles, deux changent le quotidien d'un développeur web, parce qu'ils attaquent deux défauts classiques d'un agent : <strong>il code avec des API périmées</strong>, et <strong>il affirme que l'interface marche sans l'avoir vue</strong>.</p>
 <h3 class="pc-h3">Context7 : la documentation à jour, à la version</h3>
 <p>Un modèle a été entraîné jusqu'à une date. Une bibliothèque a changé depuis : il écrit alors une API qui n'existe plus, avec assurance (c'est une hallucination, parcours Culture). <strong>Context7</strong> est un service qui fournit à l'agent la documentation et des exemples de code <em>de la version voulue</em>. Il expose deux outils : <code>resolve-library-id</code> (trouver l'identifiant d'une bibliothèque à partir de son nom) et <code>query-docs</code> (interroger sa documentation). On l'appelle en ajoutant « use context7 » à la demande, ou en nommant l'identifiant (<code>/supabase/supabase</code>) pour sauter la recherche. Une clé d'API gratuite relève les limites d'usage.</p>
-<p>Le plus utile : l'écrire une fois dans <code>AGENTS.md</code> (« pour toute API de bibliothèque, consulter Context7 avant d'écrire du code »), pour ne plus avoir à le demander. Limite à garder en tête : ces documentations sont alimentées par la communauté et ne sont pas garanties exactes ; c'est une source à citer et à vérifier, pas une vérité (et du texte non fiable, voir l'injection de prompt).</p>
+<p>Le plus utile : l'écrire une fois dans <code>AGENTS.md</code> (« pour toute API de bibliothèque, consulter Context7 avant d'écrire du code »), pour ne plus avoir à le demander. Limite à garder en tête : ces documentations sont alimentées par la communauté et ne sont pas garanties exactes ; c'est une source à citer et à vérifier, qui reste du texte non fiable (voir l'injection de prompt).</p>
 <h3 class="pc-h3">Playwright : un navigateur que l'agent pilote</h3>
 <p>Le serveur MCP <strong>Playwright</strong> donne à l'agent un vrai navigateur : ouvrir une page, cliquer, remplir un formulaire, lire la console et les requêtes réseau, prendre une capture. Il travaille surtout à partir d'<strong>instantanés d'accessibilité</strong> (l'arbre de la page, en texte), pas de pixels : l'agent n'a pas besoin de « voir » l'image pour agir. La capture sert à <em>montrer</em> le résultat, à vous comme à un agent vérificateur. Outils principaux : <code>browser_navigate</code>, <code>browser_snapshot</code>, <code>browser_click</code>, <code>browser_type</code>, <code>browser_take_screenshot</code>, <code>browser_console_messages</code>, <code>browser_network_requests</code>.</p>
 <p>Un fichier <code>.mcp.json</code> avec les deux, plus un second navigateur configuré en mobile (le serveur se lance avec <code>--viewport-size</code> ou <code>--device</code>) :</p>{code(mcp_dev_json)}
 <p>Variante sans serveur MCP : Context7 propose aussi un mode « CLI + skill » (<code>npx ctx7 setup --claude</code>), et Claude Code peut piloter votre navigateur Chrome via son extension. Le principe reste le même : donner à l'agent un moyen de <strong>vérifier</strong>.</p>
 <p>Voici ce que ça donne en pratique. Demandez, avec ces deux serveurs branchés :</p>{code(PROMPT_DEV)}
-<p>L'agent lit la documentation de la bonne version, écrit le code, ouvre la page, capture les deux tailles et rapporte les erreurs. Vous relisez des preuves au lieu de relire des promesses.</p>
+<p>L'agent lit la documentation de la bonne version, écrit le code, ouvre la page, capture les deux tailles et rapporte les erreurs. Vous relisez des preuves.</p>
 <p><strong>Exercice</strong> : branchez les deux serveurs sur un projet jetable, demandez une petite évolution d'interface, et obtenez deux captures (bureau et mobile) sans aucune erreur de console.</p>""" +
          reveal("Sécurité : ce qu'il faut restreindre", "<p>Playwright n'est <strong>pas une frontière de sécurité</strong>. Son outil <code>browser_run_code_unsafe</code> exécute du JavaScript arbitraire côté serveur et équivaut à une exécution de code à distance : refusez-le dans les permissions (<code>mcp__playwright__browser_run_code_unsafe</code>). N'ouvrez que des sites de confiance : une page hostile est une entrée non fiable (injection de prompt). N'exposez jamais le serveur au réseau (<code>--host 0.0.0.0</code>). Pour Context7, la clé d'API se passe par variable d'environnement, jamais en clair dans le fichier versionné.</p>"),
          "Obtenir, avec Context7 et Playwright, une évolution d'interface vérifiée par deux captures et une console propre.",
@@ -490,7 +490,7 @@ def contexte() -> str:
 <p>Cas pratique : « les composants React se testent avec Testing Library, jamais avec Enzyme ». Où l'écrire ? Une règle avec <code>paths: src/**/*.tsx</code>, parce que cela ne concerne que ces fichiers. Et « ne jamais supprimer une migration » ? Un hook, parce que c'est une garantie.</p>
 <p>Pour la gestion d'équipe, deux compléments existent : les <strong>plugins</strong> (un paquet installable qui regroupe skills, hooks, sous-agents et serveurs MCP) et les réglages gérés par l'organisation. Le parcours Harness montre comment l'ensemble s'assemble.</p>""",
          "Placer cinq consignes de votre projet dans le bon mécanisme, en justifiant le coût et la garantie.",
-         "Mettre une interdiction dans AGENTS.md la rend polie, pas obligatoire. Une garantie se code."),
+         "Une interdiction écrite dans AGENTS.md reste une demande polie : une garantie passe par un hook ou une règle de permission."),
     ]
     out = "\n".join(stage(*x) for x in s)
     return (intro("Du prompt isolé à un contexte entretenu : la session, les fichiers d'instructions, les règles, les skills, les agents, les serveurs MCP (dont Context7 et Playwright) et les permissions, avec les vrais fichiers de configuration. Les exemples sont des configurations valides, vérifiées à la génération de la page. Prérequis : le parcours Culture, ou une bonne pratique d'un assistant d'IA. Environ quatre heures, à calibrer en séance.") +
@@ -540,7 +540,7 @@ def history() -> str:
 <tr><td>Pull request avec preuve</td><td><code>/kwa-ship</code>, <code>guard-github</code></td></tr>
 <tr><td>Déploiement vérifié</td><td><code>/kwa-deploy</code></td></tr>
 <tr><td>Rétrospective</td><td><code>/kwa-learn</code>, mémoire de session</td></tr></tbody></table>
-<div class="pc-proof"><div><b>Preuve attendue</b><p>Placer cinq étapes de votre processus actuel et dire ce qui les remplace quand un agent travaille.</p></div><div><b>Piège</b><p>Un harness n'ajoute pas de la bureaucratie : il rend vérifiables par une machine des contrôles que l'équipe faisait déjà.</p></div></div></div></section>"""
+<div class="pc-proof"><div><b>Preuve attendue</b><p>Placer cinq étapes de votre processus actuel et dire ce qui les remplace quand un agent travaille.</p></div><div><b>Piège</b><p>Un harness rend vérifiables par une machine des contrôles que l'équipe faisait déjà ; il ne doit pas en ajouter par réflexe.</p></div></div></div></section>"""
 
 
 def harness(practice_html: str) -> str:

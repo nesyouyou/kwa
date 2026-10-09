@@ -285,8 +285,8 @@ def render(c: dict) -> str:
         ("9", "Le flux d'un développeur aujourd'hui", "Tout mis ensemble : une journée où presque tout est automatisé, sauf les décisions.",
          """<p>Les étapes précédentes sont des pièces. Voici l'assemblage tel qu'une équipe qui l'a bien outillé le vit : l'agent code, mais <strong>chaque affirmation est adossée à une preuve</strong>, et les humains gardent les deux décisions qui engagent (valider ce qu'on construit, accepter ce qui est livré).</p>
 """ + FLOW + """
-<p>Ce schéma ne dit pas « l'IA fait le travail ». Il dit que le travail d'un développeur se déplace : moins de frappe, plus de <strong>cadrage</strong> (critères de réussite précis), de <strong>mise en place</strong> (hooks, MCP, règles) et de <strong>relecture de preuves</strong>. Context7 règle l'API périmée, Playwright règle « ça marche chez moi, sans l'avoir vu », et un agent vérificateur en contexte neuf règle le biais de celui qui relit ce qu'il vient d'écrire.</p>
-<p>Ce que l'on évite de promettre : que la vérification attrape tout (un vérificateur invité à trouver des écarts en trouve toujours, d'où la consigne de ne retenir que ceux qui touchent aux exigences), et que le garde-fou remplace la relecture humaine.</p>""" +
+<p>Le travail d'un développeur se déplace : moins de frappe, plus de <strong>cadrage</strong> (critères de réussite précis), de <strong>mise en place</strong> (hooks, MCP, règles) et de <strong>relecture de preuves</strong>. Context7 évite l'API périmée, Playwright évite le « ça marche chez moi » sans l'avoir vu, et un agent vérificateur en contexte neuf évite le biais de celui qui relit ce qu'il vient d'écrire.</p>
+<p>Deux promesses à ne pas faire : que la vérification attrape tout (un vérificateur invité à trouver des écarts en trouve toujours, d'où la consigne de ne retenir que ceux qui touchent aux exigences), et que le garde-fou remplace la relecture humaine.</p>""" +
          reveal("À vous", "<p>Prenez une tâche récente de votre équipe. Pour chacune des huit étapes, écrivez : ce qui était fait à la main, ce qui peut être automatisé, et le contrôle qui prouverait que c'est bon. Marquez les deux décisions que vous refusez de déléguer.</p>"),
          "Décrire le flux complet d'une évolution et dire où se trouvent les deux points de décision humains.",
          "Automatiser la preuve sans automatiser la décision : un agent qui valide son propre travail, sans contrôle extérieur, ne prouve rien."),
@@ -294,7 +294,7 @@ def render(c: dict) -> str:
          f"""<p>Essayez de contourner le garde des secrets. Ces trois commandes lisent le même fichier d'environnement ; seule la forme change :</p>
 <table class="pc-table"><thead><tr><th>Commande</th><th>Verdict réel</th></tr></thead><tbody>{holes}</tbody></table>
 <p>Le garde lit le <strong>texte</strong> de la commande, il ne l'exécute pas : un nom calculé, un glob ou un interpréteur lui échappent.</p>
-{reveal("Alors, à quoi ça sert, et que mettre en plus ?", "<p>À arrêter l'erreur honnête, pas l'attaque. Pour une vraie barrière : la protection de branche GitHub, et les règles <code>permissions.deny</code> de Claude Code, qui portent sur le fichier lui-même. Savoir ce qu'un outil ne garantit pas fait partie du métier.</p>")}""",
+{reveal("Alors, à quoi ça sert, et que mettre en plus ?", "<p>À arrêter l'erreur honnête. Contre une attaque, il faut une vraie barrière : la protection de branche GitHub, et les règles <code>permissions.deny</code> de Claude Code, qui portent sur le fichier lui-même.</p>")}""",
          "Trouver un contournement, et dire quelle barrière complète le garde.",
          "Ne jamais présenter un hook comme une garantie. Un contournement trouvé en séance est un bon résultat."),
     ]

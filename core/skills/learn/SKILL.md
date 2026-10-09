@@ -1,6 +1,6 @@
 ---
 name: kwa-learn
-description: Capitaliser ce que la session a appris — décisions, pièges, commandes, règles à automatiser — en le rangeant au bon endroit (docs du projet, garde-fous, mémoire de l'agent, base de connaissance de l'équipe) après accord de l'utilisateur. À lancer en fin de session substantielle, quand un piège a coûté du temps, ou quand l'invitation Kwa mémoire le propose ("/kwa-learn", "capitalise", "qu'est-ce qu'on retient ?").
+description: Capitaliser ce que la session a appris (décisions, pièges, commandes, règles à automatiser) en le rangeant au bon endroit (docs du projet, garde-fous, mémoire de l'agent, base de connaissance de l'équipe) après accord de l'utilisateur. À lancer en fin de session substantielle, quand un piège a coûté du temps, ou quand l'invitation Kwa mémoire le propose ("/kwa-learn", "capitalise", "qu'est-ce qu'on retient ?").
 allowed-tools: Bash(python3 .claude/kwa/bin/kwa-memory *) Bash(git *) Read Grep Glob
 ---
 

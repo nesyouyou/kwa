@@ -196,7 +196,7 @@ footer.kw-footer{margin-top:128px}
 
 <section class="kw-container kd-section kd-rv" id="board">
   <div class="kd-head"><div class="kd-eyebrow">{{pic:agent}}Le workflow</div><h2 class="kw-section-title">Une demande, de bout en bout</h2>
-    <p class="kd-lead">Chaque étape dit ce qui se passe, pourquoi, quelles briques se déclenchent, et qui décide. Choisis un scénario, puis avance avec les boutons ou les flèches du clavier : la fiche reste au même endroit.</p></div>
+    <p class="kd-lead">Chaque étape dit ce qui se passe, pourquoi, quelles briques se déclenchent, et qui décide. Choisissez un scénario, puis avancez avec les boutons ou les flèches du clavier : la fiche reste au même endroit.</p></div>
   <div id="board-root" style="margin-top:40px"></div>
   <p class="kd-note"><a href="board.html">Ouvrir le workflow en plein écran ↗</a></p>
 </section>
@@ -217,7 +217,7 @@ footer.kw-footer{margin-top:128px}
 
 <section class="kw-container kd-section kd-rv" id="gardes">
   <div class="kd-head"><div class="kd-eyebrow">{{pic:shield}}Gardes en action</div><h2 class="kw-section-title">Ce que Kwa refuse, demande ou laisse passer</h2>
-    <p class="kd-lead">Chaque ligne a été <strong>calculée en exécutant réellement</strong> les gardes sur un dépôt de test avec une politique d'exemple (monorepo web, API et mobile Expo). Rien n'est écrit à la main.</p></div>
+    <p class="kd-lead">Chaque ligne a été <strong>calculée en exécutant réellement</strong> les gardes sur un dépôt de test avec une politique d'exemple (monorepo web, API et mobile Expo).</p></div>
   <div class="kd-tools" id="tools"></div>
   <div class="kd-table" id="table"></div>
   <p class="kd-note" id="gnote"></p>
@@ -225,10 +225,10 @@ footer.kw-footer{margin-top:128px}
 
 <section class="kw-container kd-section kd-rv" id="memoire">
   <div class="kd-head"><div class="kd-eyebrow">Mémoire</div><h2 class="kw-section-title">Chaque session enrichit la suivante</h2>
-    <p class="kd-lead">D'autres projets captent des corrections ou des découvertes. Kwa y ajoute le <strong>journal des sessions</strong>, qui dit au démarrage où l'on en était, le <strong>refus d'un garde comme signal d'apprentissage</strong>, et le rangement dans la documentation partagée du projet. Rien n'est écrit sans ton accord.</p></div>
+    <p class="kd-lead">D'autres projets captent des corrections ou des découvertes. Kwa y ajoute le <strong>journal des sessions</strong>, qui dit au démarrage où l'on en était, le <strong>refus d'un garde comme signal d'apprentissage</strong>, et le rangement dans la documentation partagée du projet. Rien n'est écrit sans votre accord.</p></div>
   <div class="kd-loop" style="margin-top:40px">
-    <div class="kd-node"><b>1. Capture</b><span>Sans y penser : tes corrections, tes « retiens : » et chaque refus de garde deviennent des candidats. Ou à la main : <code>kwa-memory capture gotcha "…"</code></span></div>
-    <div class="kd-node"><b>2. Journal</b><span>En fin de session substantielle, huit lignes : objectif, fait, décisions, reste à faire, pièges. Si tu fermes sans rien dire, un filet écrit au moins les faits.</span></div>
+    <div class="kd-node"><b>1. Capture</b><span>Sans y penser : vos corrections, vos « retiens : » et chaque refus de garde deviennent des candidats. Ou à la main : <code>kwa-memory capture gotcha "…"</code></span></div>
+    <div class="kd-node"><b>2. Journal</b><span>En fin de session substantielle, huit lignes : objectif, fait, décisions, reste à faire, pièges. Si vous fermez sans rien dire, un filet écrit au moins les faits.</span></div>
     <div class="kd-node"><b>3. Filtre</b><span>Seulement le non-dérivable du code et de git. Chaque affirmation est revérifiée.</span></div>
     <div class="kd-node"><b>4. Tri</b><span>Chaque apprentissage est routé vers la bonne destination, avec le diff exact.</span></div>
     <div class="kd-node"><b>5. Reprise</b><span>Au démarrage suivant : la dernière session de la branche, l'état git et les notes en attente, en 2 000 caractères au plus.</span></div>
@@ -275,7 +275,7 @@ footer.kw-footer{margin-top:128px}
   <details open><summary>Les gardes ne sont pas une frontière de sécurité</summary><p><strong>Un agent peut</strong> en théorie éditer ses propres hooks ; <code>guard-write</code> demande confirmation avant de toucher à <code>.claude/kwa/</code> et <code>settings.json</code>, rien de plus. Pour une vraie barrière : règles de protection de branche GitHub et <code>permissions.deny</code>.</p></details>
   <details><summary>Les gardes analysent du texte</summary><p>Un script écrit dans un fichier puis exécuté, ou une commande assemblée à l'exécution, échappent à l'analyse. Les cibles calculées (<code>$(…)</code>, variables) déclenchent une demande plutôt qu'un passage.</p></details>
   <details><summary>Feuille de route</summary><p>1. Essai sur un projet pilote, toujours en simulation d'abord. 2. <code>kwa sync</code> : installer sur tous les projets listés dans un fichier de configuration. 3. Packaging en plugin Claude Code (skills seulement ; les hooks passent par l'installeur). 4. Évals de skills avec <code>claude plugin eval</code>, à vérifier sur la version en place. 5. Fusion guidée d'un <code>CLAUDE.md</code> existant dans <code>AGENTS.md</code>, avec contrôle de couverture. 6. Profil « projet client » : compte machine, politique de fusion humaine.</p></details>
-  <details><summary>Ce que Kwa ne décide pas pour toi</summary><p>Le contenu de la politique d'un projet (commandes interdites, environnements, pré-vols) vient de tes incidents. Kwa pré-remplit ce qu'il peut déduire et te laisse le reste. Le module <code>client-handover</code> n'est jamais déduit : il dépend de l'intention.</p></details>
+  <details><summary>Ce que Kwa ne décide pas pour vous</summary><p>Le contenu de la politique d'un projet (commandes interdites, environnements, pré-vols) vient de vos incidents. Kwa pré-remplit ce qu'il peut déduire et vous laisse le reste. Le module <code>client-handover</code> n'est jamais déduit : il dépend de l'intention.</p></details>
   </div>
 </section>
 
