@@ -1,5 +1,7 @@
 # Kwa
 
+**Site : https://nesyouyou.github.io/kwa/** (documentation illustrée et trois parcours de formation)
+
 Un socle de harness pour agents de code : mêmes règles, mêmes garde-fous, mêmes skills, partout.
 Kwa se lit **K**it · **W**orkflow · **A**gents (le K est aussi *Knowledge* : la connaissance qui s'enrichit) : un kit de process de développement pour travailler avec des agents de code.
 
@@ -16,7 +18,7 @@ site de documentation et dans trois parcours de formation (culture de l'IA gén�
 - **Sans prétendre à plus.** Les garde-fous sont des filets contre la bévue, pas une frontière de sécurité. Les
   documentations officielles des outils font foi. Les parcours n'ont pas encore été éprouvés avec un groupe.
 
-**Parcours d'apprentissage** : `docs/site/parcours.html`, trois parcours qui s'enchaînent. 1) Culture IA générative (modèle, jetons, fenêtre de contexte, hallucinations, prompt engineering). 2) Context engineering (AGENTS.md et CLAUDE.md, skills, sous-agents, MCP et ses fichiers de configuration, permissions). 3) Harness (de l'histoire du processus de développement à Kwa, avec huit étapes pratiques sur un dépôt jetable dont les sorties viennent de l'exécution réelle).
+**Parcours d'apprentissage** : `docs/site/parcours.html`, trois parcours qui s'enchaînent. 1) Culture IA générative (modèle, jetons et probabilités, fenêtre de contexte, agent, hallucinations, prompt engineering, risques). 2) Context engineering (session, AGENTS.md et CLAUDE.md, règles, skills, sous-agents, MCP avec Context7 et Playwright, permissions). 3) Harness (de l'histoire du processus de développement à Kwa, avec dix étapes sur un dépôt jetable dont les sorties viennent de l'exécution réelle, et le flux complet d'un développeur aujourd'hui).
 
 **Documentation illustrée** : `docs/site/index.html` (workflow cliquable, briques de déclenchement, gardes en action,
 modules, skills et origines, mémoire, onboarding, crédits), avec une feuille de style propre (polices dans
