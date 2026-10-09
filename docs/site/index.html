@@ -8,7 +8,7 @@
 <meta name="description" content="Mêmes règles, mêmes garde-fous, mêmes skills sur tous vos projets avec un agent de code.">
 <script>try{if(localStorage.getItem('kwa-docs-theme')==='light')document.documentElement.dataset.theme='light'}catch(e){}</script>
 <link rel="stylesheet" href="style/fonts.css"><link rel="stylesheet" href="style/tokens.css"><link rel="stylesheet" href="style/base.css"><link rel="stylesheet" href="src/shell.css">
-<link rel="stylesheet" href="src/map.css"><link rel="stylesheet" href="src/circuit.css"><link rel="stylesheet" href="src/terminal.css">
+
 <style>
 /* Extensions propres à la documentation Kwa. Uniquement les tokens du design system : aucune couleur ajoutée. */
 html{scroll-behavior:smooth;overflow-x:clip}
@@ -20,6 +20,8 @@ section{scroll-margin-top:84px}
 .kd-pic.pic-fill{fill:currentColor;stroke:none}
 .kd-pic.p-shield{color:var(--tr-guard)}.kd-pic.p-sword{color:var(--tr-skill)}.kd-pic.p-hook{color:var(--tr-hook)}.kd-pic.p-agent{color:var(--kd-violet)}
 .kd-sk h3 .kd-pic{width:16px;height:16px;margin-right:6px;vertical-align:-2px}
+.kd-solo .kd-section{padding-top:36px}
+.kd-solo .kw-page-title{margin:0 0 14px}
 .kd-main strong{font-weight:600;color:var(--kw-fg)}
 .kd-lead{max-width:68ch;color:var(--kw-body);font-size:clamp(15px,1.4vw,17px);margin:0}
 .kd-head .kw-section-title{margin-bottom:20px}
@@ -146,16 +148,16 @@ footer.kw-footer{margin-top:128px}
 </head>
 <body class="kw">
 <header class="kd-top"><button type="button" class="kd-menu" id="menu" aria-label="Ouvrir la navigation" aria-expanded="false" aria-controls="side"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><a class="kd-brand" href="index.html" aria-label="Kwa, accueil"><b class="kd-word">kwa</b><span>/ harness</span></a><span class="kd-spacer"></span><button type="button" class="kd-theme" id="theme" aria-label="Passer en thème clair" title="Changer de thème"><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></svg><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 14.6A8.4 8.4 0 0 1 9.4 3.8a8.4 8.4 0 1 0 10.8 10.8z"/></svg></button></header>
-<div class="kd-layout"><aside class="kd-side" id="side" aria-label="Navigation"><nav><div class="kd-sg"><h2><svg class="kd-ico" style="--dot:var(--kd-blue)" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>Kwa</h2><ul><li><a href="#top" data-spy="top">Présentation</a></li><li><a href="#pourquoi" data-spy="pourquoi">Pourquoi ce projet</a></li><li><a href="#arborescence" data-spy="arborescence">Arborescence</a></li></ul></div><div class="kd-sg"><h2><svg class="kd-ico" style="--dot:var(--kd-violet)" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg>Explorer</h2><ul><li><a href="skill-map.html">Carte des skills</a></li><li><a href="board.html">Workflow d&#x27;une demande</a></li><li><a href="terminal.html">Terminal</a></li></ul></div><div class="kd-sg"><h2><svg class="kd-ico" style="--dot:var(--kd-green)" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11.5V16c0 1.2 2.7 3 6 3s6-1.8 6-3v-4.5"/></svg>Apprendre</h2><ul><li><a href="parcours.html">Les trois parcours</a></li><li><a href="parcours-culture.html">1 · Culture IA générative</a></li><li><a href="parcours-contexte.html">2 · Context engineering</a></li><li><a href="parcours-harness.html">3 · Harness</a></li></ul></div><div class="kd-sg"><h2><svg class="kd-ico" style="--dot:var(--kd-amber)" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/></svg>Référence</h2><ul><li><a href="#demarrer" data-spy="demarrer">Démarrer</a></li><li><a href="#skills" data-spy="skills">Skills</a></li><li><a href="#gardes" data-spy="gardes">Gardes en action</a></li><li><a href="#memoire" data-spy="memoire">Mémoire</a></li><li><a href="#superpowers" data-spy="superpowers">Méthode</a></li><li><a href="#migrer" data-spy="migrer">Remplacer l&#x27;existant</a></li><li><a href="#limites" data-spy="limites">Limites et suite</a></li><li><a href="#credits" data-spy="credits">Crédits</a></li></ul></div></nav></aside><div class="kd-scrim" id="scrim"></div><div class="kd-main">
+<div class="kd-layout"><aside class="kd-side" id="side" aria-label="Navigation"><nav><div class="kd-sg"><h2><svg class="kd-ico" style="--dot:var(--kd-blue)" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>Kwa</h2><ul><li><a href="#top" data-spy="top">Présentation</a></li><li><a href="#pourquoi" data-spy="pourquoi">Pourquoi ce projet</a></li><li><a href="#arborescence" data-spy="arborescence">Arborescence</a></li><li><a href="#demarrer" data-spy="demarrer">Démarrer</a></li></ul></div><div class="kd-sg"><h2><svg class="kd-ico" style="--dot:var(--kd-violet)" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg>Explorer</h2><ul><li><a href="skill-map.html">Carte des skills</a></li><li><a href="board.html">Workflow d&#x27;une demande</a></li><li><a href="terminal.html">Terminal</a></li><li><a href="skills.html">Skills</a></li><li><a href="gardes.html">Gardes en action</a></li><li><a href="memoire.html">Mémoire</a></li></ul></div><div class="kd-sg"><h2><svg class="kd-ico" style="--dot:var(--kd-green)" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11.5V16c0 1.2 2.7 3 6 3s6-1.8 6-3v-4.5"/></svg>Apprendre</h2><ul><li><a href="parcours.html">Les trois parcours</a></li><li><a href="parcours-culture.html">1 · Culture IA générative</a></li><li><a href="parcours-contexte.html">2 · Context engineering</a></li><li><a href="parcours-harness.html">3 · Harness</a></li></ul></div><div class="kd-sg"><h2><svg class="kd-ico" style="--dot:var(--kd-amber)" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/></svg>Référence</h2><ul><li><a href="methode.html">Méthode</a></li><li><a href="migrer.html">Remplacer l&#x27;existant</a></li><li><a href="limites.html">Limites et suite</a></li><li><a href="credits.html">Crédits</a></li></ul></div></nav></aside><div class="kd-scrim" id="scrim"></div><div class="kd-main">
 <main>
 <header class="kw-container kw-hero" id="top">
   <div class="kd-eyebrow">Kwa · Kit · Workflow · Agents · v<span id="ver"></span></div>
   <h1 class="kw-title">Un kit de workflow et d'agents</h1>
   <p class="kw-lead">Un socle de process de développement pour travailler avec des agents de code : règles, garde-fous, skills, mémoire et workflow, les mêmes sur chaque projet. Ce qui change d'un projet à l'autre tient dans un fichier de politique.</p>
   <div class="kw-actions">
-    <a class="kw-btn kw-btn--primary" href="#carte">Voir la carte <span aria-hidden="true">↗</span></a>
-    <a class="kw-btn" href="#board">Suivre une demande</a>
-    <a class="kw-link" href="#terminal">Ouvrir le terminal <span aria-hidden="true">→</span></a>
+    <a class="kw-btn kw-btn--primary" href="skill-map.html">Voir la carte <span aria-hidden="true">→</span></a>
+    <a class="kw-btn" href="board.html">Suivre une demande</a>
+    <a class="kw-link" href="terminal.html">Ouvrir le terminal <span aria-hidden="true">→</span></a>
   </div>
   <div class="kd-term">
     <div class="top"><span>Terminal</span><button class="kd-copy" data-copy="kwa install ./mon-projet --dry-run">Copier</button></div>
@@ -201,104 +203,6 @@ footer.kw-footer{margin-top:128px}
 </section>
 
 
-<section class="kw-container kd-section kd-rv" id="carte">
-  <div class="kd-head"><div class="kd-eyebrow"><svg class="kd-pic p-sword" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3 10.2 16.2 7.8 13.8z"/><path d="M5.5 11.5l7 7"/><path d="M9 15l-3.5 3.5"/><circle cx="4.6" cy="19.4" r="1.1"/></svg>Carte des skills</div><h2 class="kw-section-title">Chaque skill, chaque garde, et comment ils s'enchaînent</h2>
-    <p class="kd-lead">Cliquer un nœud pour voir quoi, quand, comment, d'où vient l'idée et ce qui l'appelle. Double-clic sur une skill pour ses étapes. Les vues « Une session », « Une fonctionnalité », « Un bug » et « Livraison » montrent ce qui se déclenche, et dans quel ordre.</p></div>
-  <div id="map" style="margin-top:40px"></div>
-  <p class="kd-note"><a href="skill-map.html">Ouvrir la carte en plein écran ↗</a></p>
-</section>
-
-<section class="kw-container kd-section kd-rv" id="board">
-  <div class="kd-head"><div class="kd-eyebrow"><svg class="kd-pic p-agent pic-fill" viewBox="0 0 16 16" aria-hidden="true"><path fill-rule="evenodd" d="M7 1h2v3h4v1h1v1h1v4h-1v1h-1v1H3v-1H2v-1H1V6h1V5h1V4h4zM5 6h2v3H5zM9 6h2v3H9zM7 10h2v1H7zM3 9h1v1H3zM12 9h1v1h-1z"/></svg>Le workflow</div><h2 class="kw-section-title">Une demande, de bout en bout</h2>
-    <p class="kd-lead">Chaque étape dit ce qui se passe, pourquoi, quelles briques se déclenchent, et qui décide. Choisissez un scénario, puis avancez avec les boutons ou les flèches du clavier : la fiche reste au même endroit.</p></div>
-  <div id="board-root" style="margin-top:40px"></div>
-  <p class="kd-note"><a href="board.html">Ouvrir le workflow en plein écran ↗</a></p>
-</section>
-
-<section class="kw-container kd-section kd-rv" id="terminal">
-  <div class="kd-head"><div class="kd-eyebrow">Le terminal</div><h2 class="kw-section-title">Comment on l'utilise, commande par commande</h2>
-    <p class="kd-lead">Chaque sortie ci-dessous a été <strong>produite en exécutant réellement</strong> Kwa sur un projet jetable. Rien n'est écrit à la main.</p></div>
-  <div id="term-root" style="margin-top:40px"></div>
-  <p class="kd-note"><a href="terminal.html">Ouvrir le terminal en plein écran ↗</a></p>
-</section>
-
-<section class="kw-container kd-section kd-rv" id="skills">
-  <div class="kd-head"><div class="kd-eyebrow"><svg class="kd-pic p-sword" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3 10.2 16.2 7.8 13.8z"/><path d="M5.5 11.5l7 7"/><path d="M9 15l-3.5 3.5"/><circle cx="4.6" cy="19.4" r="1.1"/></svg>Skills</div><h2 class="kw-section-title"><span id="nskills"></span> skills, classées par famille</h2>
-    <p class="kd-lead">Chaque skill dit quand l'utiliser. L'étiquette indique ce dont elle s'inspire ; « Kwa » signifie une conception propre. Aucun texte n'est recopié : tout est réécrit en français et branché sur la politique du projet.</p></div>
-  <div class="kd-tools" id="sk-tools"></div>
-  <div class="kd-sk" id="sk"></div>
-</section>
-
-<section class="kw-container kd-section kd-rv" id="gardes">
-  <div class="kd-head"><div class="kd-eyebrow"><svg class="kd-pic p-shield" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7.5 3v5.2c0 4.6-3.1 8.2-7.5 9.8-4.4-1.6-7.5-5.2-7.5-9.8V6z"/><path d="m8.8 12 2.3 2.3 4.2-4.6"/></svg>Gardes en action</div><h2 class="kw-section-title">Ce que Kwa refuse, demande ou laisse passer</h2>
-    <p class="kd-lead">Chaque ligne a été <strong>calculée en exécutant réellement</strong> les gardes sur un dépôt de test avec une politique d'exemple (monorepo web, API et mobile Expo).</p></div>
-  <div class="kd-tools" id="tools"></div>
-  <div class="kd-table" id="table"></div>
-  <p class="kd-note" id="gnote"></p>
-</section>
-
-<section class="kw-container kd-section kd-rv" id="memoire">
-  <div class="kd-head"><div class="kd-eyebrow">Mémoire</div><h2 class="kw-section-title">Chaque session enrichit la suivante</h2>
-    <p class="kd-lead">D'autres projets captent des corrections ou des découvertes. Kwa y ajoute le <strong>journal des sessions</strong>, qui dit au démarrage où l'on en était, le <strong>refus d'un garde comme signal d'apprentissage</strong>, et le rangement dans la documentation partagée du projet. Rien n'est écrit sans votre accord.</p></div>
-  <div class="kd-loop" style="margin-top:40px">
-    <div class="kd-node"><b>1. Capture</b><span>Sans y penser : vos corrections, vos « retiens : » et chaque refus de garde deviennent des candidats. Ou à la main : <code>kwa-memory capture gotcha "…"</code></span></div>
-    <div class="kd-node"><b>2. Journal</b><span>En fin de session substantielle, huit lignes : objectif, fait, décisions, reste à faire, pièges. Si vous fermez sans rien dire, un filet écrit au moins les faits.</span></div>
-    <div class="kd-node"><b>3. Filtre</b><span>Seulement le non-dérivable du code et de git. Chaque affirmation est revérifiée.</span></div>
-    <div class="kd-node"><b>4. Tri</b><span>Chaque apprentissage est routé vers la bonne destination, avec le diff exact.</span></div>
-    <div class="kd-node"><b>5. Reprise</b><span>Au démarrage suivant : la dernière session de la branche, l'état git et les notes en attente, en 2 000 caractères au plus.</span></div>
-  </div>
-  <div class="kd-grid kd-g4" style="margin-top:34px">
-    <div class="kd-card"><h3>Docs du projet</h3><p><strong>Décisions</strong> en ADR, <strong>pièges</strong> datés, <strong>conventions</strong> dans <code>AGENTS.md</code>. Versionné, lu par tout agent et tout collègue.</p></div>
-    <div class="kd-card"><h3>Garde-fous</h3><p>Une erreur répétable devient une <strong>règle de la politique</strong>, avec son cas de test.</p></div>
-    <div class="kd-card"><h3>Mémoire de l'agent</h3><p><strong>Préférences</strong> de collaboration, retours sur la façon de faire.</p></div>
-    <div class="kd-card"><h3>Base de connaissance</h3><p><strong>Transverse aux projets</strong> : capture rapide dans la boîte de réception de l'équipe (<code>KWA_VAULT_INBOX</code>), jamais dans un fichier protégé.</p></div>
-  </div>
-  <div class="kd-gate"><b>Accord requis</b><span>Un tableau de sept lignes maximum est présenté avec les diffs. Rien n'est appliqué sans « tout », « 1 et 3 » ou « rien ». « Rien à capitaliser » est une réponse valable.</span></div>
-</section>
-
-<section class="kw-container kd-section kd-rv" id="superpowers">
-  <div class="kd-head"><div class="kd-eyebrow">Méthode</div><h2 class="kw-section-title">Ce que superpowers apportait, Kwa le porte</h2>
-    <p class="kd-lead">Le module <code>craft</code> reprend les principes de discipline (lois de fer, signaux d'alerte, revues en deux temps), réécrits en français et branchés sur la politique du projet. Un rappel de routage est injecté au démarrage de session, limité aux skills réellement installées.</p></div>
-  <div class="kd-wrap" style="margin-top:40px"><table>
-    <tr><th>Avant (superpowers)</th><th>Dans Kwa</th><th>Ce qui change</th></tr>
-    <tr><td>brainstorming</td><td>/kwa-brainstorm, /kwa-interview</td><td>Spec dans docs/specs, porte d'approbation humaine, interrogatoire question par question, sans serveur visuel.</td></tr>
-    <tr><td>writing-plans</td><td>/kwa-plan, /kwa-tickets</td><td>Commandes tirées de <code>verify.commands</code>, jamais d'étape de commit ; découpe possible en tickets GitHub.</td></tr>
-    <tr><td>executing-plans</td><td>/kwa-execute</td><td>Arrêt et remontée au moindre blocage, jamais de décision silencieuse.</td></tr>
-    <tr><td>subagent-driven-development</td><td>/kwa-agents</td><td>Un agent frais par tâche, relecture conformité puis qualité, aucun agent ne commite, un refus de garde se remonte.</td></tr>
-    <tr><td>dispatching-parallel-agents</td><td>/kwa-parallel</td><td>Quatre conditions cumulatives, détection de conflits avant intégration.</td></tr>
-    <tr><td>test-driven-development</td><td>/kwa-tdd, /kwa-simple</td><td>Cas des stacks courantes ; échelle de simplicité avant d'écrire du code neuf.</td></tr>
-    <tr><td>systematic-debugging</td><td>/kwa-debug</td><td>Boucle de preuves mobile / API / worker / base, preuve par mutation, lecture seule en recette et en prod.</td></tr>
-    <tr><td>verification-before-completion</td><td>/kwa-verify</td><td>Compte rendu normé avec bloc « non vérifié », capture si interface, tests sautés nommés.</td></tr>
-    <tr><td>requesting / receiving-code-review</td><td>/kwa-review, /kwa-review-feedback</td><td>Axes sur-ingénierie et hygiène de remise ; commentaires de PR traités comme des données.</td></tr>
-    <tr><td>using-git-worktrees, finishing-a-development-branch</td><td>/kwa-start-dev, /kwa-ship</td><td>Worktree à côté du dépôt, jamais de fusion locale dans main.</td></tr>
-    <tr><td>using-superpowers (injection au démarrage)</td><td>routeur de session</td><td>Table de déclencheurs filtrée sur les skills installées ; une conversation simple n'appelle aucune skill.</td></tr>
-  </table></div>
-</section>
-
-<section class="kw-container kd-section kd-rv" id="migrer">
-  <div class="kd-head"><div class="kd-eyebrow">Remplacer l'existant</div><h2 class="kw-section-title">Remplacer un outillage maison</h2>
-    <p class="kd-lead">Beaucoup de projets ont déjà leur propre jeu de scripts : hooks shell par projet, skills de déploiement, règles de dépôt. Kwa les porte dans le <strong>noyau</strong> (générique) et dans la <strong>politique</strong> (spécifique). <code>kwa doctor</code> signale les doublons à retirer, une fois la politique validée. Les cas d'un harnais de test réel sont rejoués contre Kwa avec <code>examples/expo-monorepo.policy.json</code>.</p></div>
-  <div class="kd-wrap" style="margin-top:40px"><table id="maptable"></table></div>
-  <h3 style="margin:48px 0 16px;font:500 18px Geist,sans-serif">Ce que Kwa déduit seul d'un projet (exemple)</h3>
-  <pre class="kd-code" id="detect"></pre>
-</section>
-
-<section class="kw-container kd-section kd-rv" id="limites">
-  <div class="kd-head"><div class="kd-eyebrow">Limites et suite</div><h2 class="kw-section-title">Ce qui reste à faire</h2></div>
-  <div style="margin-top:40px">
-  <details open><summary>Les gardes ne sont pas une frontière de sécurité</summary><p><strong>Un agent peut</strong> en théorie éditer ses propres hooks ; <code>guard-write</code> demande confirmation avant de toucher à <code>.claude/kwa/</code> et <code>settings.json</code>, rien de plus. Pour une vraie barrière : règles de protection de branche GitHub et <code>permissions.deny</code>.</p></details>
-  <details><summary>Les gardes analysent du texte</summary><p>Un script écrit dans un fichier puis exécuté, ou une commande assemblée à l'exécution, échappent à l'analyse. Les cibles calculées (<code>$(…)</code>, variables) déclenchent une demande plutôt qu'un passage.</p></details>
-  <details><summary>Feuille de route</summary><p>1. Essai sur un projet pilote, toujours en simulation d'abord. 2. <code>kwa sync</code> : installer sur tous les projets listés dans un fichier de configuration. 3. Packaging en plugin Claude Code (skills seulement ; les hooks passent par l'installeur). 4. Évals de skills avec <code>claude plugin eval</code>, à vérifier sur la version en place. 5. Fusion guidée d'un <code>CLAUDE.md</code> existant dans <code>AGENTS.md</code>, avec contrôle de couverture. 6. Profil « projet client » : compte machine, politique de fusion humaine.</p></details>
-  <details><summary>Ce que Kwa ne décide pas pour vous</summary><p>Le contenu de la politique d'un projet (commandes interdites, environnements, pré-vols) vient de vos incidents. Kwa pré-remplit ce qu'il peut déduire et vous laisse le reste. Le module <code>client-handover</code> n'est jamais déduit : il dépend de l'intention.</p></details>
-  </div>
-</section>
-
-<section class="kw-container kd-section kd-rv" id="credits">
-  <div class="kd-head"><div class="kd-eyebrow">Crédits</div><h2 class="kw-section-title">Ce que Kwa doit aux autres projets</h2>
-    <p class="kd-lead">Kwa reprend des <strong>idées éprouvées ailleurs</strong>, réécrites et testées pour un flux par pull request. Sources sous licence MIT, textes dans <code>licenses/</code>.</p></div>
-  <div class="kd-src" id="src" style="margin-top:24px"></div>
-</section>
-
 </main>
 </div></div>
 
@@ -310,7 +214,7 @@ footer.kw-footer{margin-top:128px}
 </div></footer>
 
 <script src="data.js"></script>
-<script src="src/map.js"></script><script src="src/board.js"></script><script src="src/circuit.js"></script><script src="src/terminal.js"></script>
+
 <script>
 const DATA = window.KWA;
 document.documentElement.classList.add('js');
@@ -341,19 +245,17 @@ if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: re
   document.querySelectorAll('.kd-rv').forEach(n => io.observe(n));
 } else { document.querySelectorAll('.kd-rv').forEach(n => n.classList.add('in')); }
 
-$('#ver').textContent = $('#ver2').textContent = DATA.version;
+document.querySelectorAll('#ver, #ver2').forEach(n => n.textContent = DATA.version);
 $('#tests').textContent = `${DATA.tests} tests ${DATA.tests_ok ? 'au vert' : 'en échec'}`;
 
 /* chiffres */
+if ($('#stats')) {
 const nHooks = DATA.modules.reduce((n,m)=>n+m.files.filter(f=>f.includes('/hooks/')&&!f.includes('_kwa')).length,0);
 [[DATA.modules.length,'modules'],[nHooks,'hooks'],[DATA.catalog.length,'skills']].forEach(([n,l]) => $('#stats').append(el('div',{class:'kd-stat'},`<div class="n">${n}</div><div class="l">${l}</div>`)));
-
-/* widgets */
-DATA.map && window.KwaMap && KwaMap.mount($('#map'), DATA.map);
-window.KwaCircuit && KwaCircuit.mount($('#board-root'));
-DATA.terminal && window.KwaTerminal && KwaTerminal.mount($('#term-root'), DATA.terminal);
+}
 
 /* gardes */
+if ($('#tools')) {
 const cats = ['Tous', ...new Set(DATA.examples.map(e=>e.cat))];
 const decs = [['all','Toutes'],['deny','Refusées'],['ask','Demandées'],['allow','Autorisées']];
 let fc='Tous', fd='all', fq='';
@@ -367,8 +269,10 @@ function renderTable(){
   $('#gnote').textContent = `${rows.length} cas affichés sur ${DATA.examples.length}. Calculés par exécution réelle des gardes ; régénérer avec python3 docs/site/build.py.`;
 }
 renderTools(); renderTable();
+}
 
 /* skills */
+if ($('#sk')) {
 const FAMILIES = {cadrage:['interview','brainstorm','plan','tickets','questionnaire','prototype','architecture','rephrase'], faire:['execute','agents','parallel','tdd','simple','start-dev'], prouver:['debug','verify','review','review-feedback','audit'], livrer:['commit','ship','deploy','testflight','humanize'], memoire:['learn','handoff','agent-docs']};
 const FLAB = {cadrage:'Cadrer', faire:'Faire', prouver:'Prouver', livrer:'Livrer', memoire:'Mémoire'};
 const famOf = n => Object.keys(FAMILIES).find(f=>FAMILIES[f].includes(n)) || 'faire';
@@ -380,8 +284,10 @@ function renderSk(){
   $('#sk').innerHTML = DATA.catalog.filter(c=>ff==='all'||famOf(c.id)===ff).map(c=>{ const o=originsOf(c.id); return `<div class="kd-card"><span class="kd-fam">${FLAB[famOf(c.id)]}</span><h3>${PICTO.sword}/kwa-${c.id}</h3><p>${esc(c.description)}</p>${o.length?o.map(a=>`<span class="kd-origin"><img src="${esc(a.av)}" alt="" width="22" height="22">${esc(a.handle)}</span>`).join(''):'<span class="kd-origin kwa">Kwa</span>'}</div>`; }).join('');
 }
 renderSk();
+}
 
 /* onboarding */
+if ($('#ob')) {
 const OB = [
  ['Voir ce que Kwa détecte','kwa detect ./mon-projet',"Stack, modules proposés, politique déduite. N'écrit rien."],
  ["Simuler l'installation",'kwa install ./mon-projet --dry-run',"Liste ce qui serait ajouté, fusionné, sauvegardé. N'écrit rien."],
@@ -389,8 +295,10 @@ const OB = [
  ['Vérifier','kwa doctor ./mon-projet',"AGENTS.md, CLAUDE.md, hooks branchés, règles de politique, doublons avec l'outillage existant du projet."]
 ];
 OB.forEach(([t,c,d],i)=> $('#ob').append(el('div',{class:'item'},`<div class="num">${i+1}</div><div><h3>${t}</h3><p>${d}</p><div class="kd-term" style="margin-top:0"><div class="top"><span>Terminal</span><button class="kd-copy" data-copy="${esc(c)}">Copier</button></div><pre class="kd-code"><span class="p">$</span> ${esc(c)}</pre></div></div>`)));
+}
 
 /* migration d'un outillage existant */
+if ($('#maptable')) {
 const MAP = [
  ['Un hook shell qui refuse les commandes destructrices (reset de base, force-push, cibles de production)','guard-policy + guard-git ; règles <code>bash.deny</code> et <code>bash.ask</code> de la politique'],
  ["Heredoc : le corps est une donnée, sauf s'il est exécuté",'Repris dans le noyau, y compris pour les sous-shells'],
@@ -408,9 +316,12 @@ const MAP = [
 ];
 $('#maptable').innerHTML = '<tr><th>Outillage maison</th><th>Dans Kwa</th></tr>' + MAP.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('');
 $('#detect').textContent = DATA.detect.trim();
+}
 
 /* crédits */
+if ($('#src')) {
 $('#src').innerHTML = DATA.credits.sources.map(s=>`<div class="kd-card"><div><div class="who"><img class="kd-av" src="${esc((DATA.map.origins[s.id]||{}).avatar)}" alt="" width="24" height="24"><h3>${esc(s.author)}</h3></div><p class="sub"><a href="${esc(s.url)}">${esc(s.name)}</a> · ${esc(s.license)}</p></div><div><p>${rich(s.took)}</p><div>${s.skills.map(k=>`<span class="kd-tag">/kwa-${k}</span>`).join('')}</div></div></div>`).join('') + '<p class="kd-note">Kwa ne copie aucun fichier de ces projets : les textes sont réécrits, les mécanismes réimplémentés et testés. La ligne d\'origine figure à la fin de chaque skill concernée.</p>';
+}
 </script>
 <script src="src/shell.js"></script>
 </body>

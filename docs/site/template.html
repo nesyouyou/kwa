@@ -20,6 +20,8 @@ section{scroll-margin-top:84px}
 .kd-pic.pic-fill{fill:currentColor;stroke:none}
 .kd-pic.p-shield{color:var(--tr-guard)}.kd-pic.p-sword{color:var(--tr-skill)}.kd-pic.p-hook{color:var(--tr-hook)}.kd-pic.p-agent{color:var(--kd-violet)}
 .kd-sk h3 .kd-pic{width:16px;height:16px;margin-right:6px;vertical-align:-2px}
+.kd-solo .kd-section{padding-top:36px}
+.kd-solo .kw-page-title{margin:0 0 14px}
 .kd-main strong{font-weight:600;color:var(--kw-fg)}
 .kd-lead{max-width:68ch;color:var(--kw-body);font-size:clamp(15px,1.4vw,17px);margin:0}
 .kd-head .kw-section-title{margin-bottom:20px}
@@ -153,9 +155,9 @@ footer.kw-footer{margin-top:128px}
   <h1 class="kw-title">Un kit de workflow et d'agents</h1>
   <p class="kw-lead">Un socle de process de développement pour travailler avec des agents de code : règles, garde-fous, skills, mémoire et workflow, les mêmes sur chaque projet. Ce qui change d'un projet à l'autre tient dans un fichier de politique.</p>
   <div class="kw-actions">
-    <a class="kw-btn kw-btn--primary" href="#carte">Voir la carte <span aria-hidden="true">↗</span></a>
-    <a class="kw-btn" href="#board">Suivre une demande</a>
-    <a class="kw-link" href="#terminal">Ouvrir le terminal <span aria-hidden="true">→</span></a>
+    <a class="kw-btn kw-btn--primary" href="skill-map.html">Voir la carte <span aria-hidden="true">→</span></a>
+    <a class="kw-btn" href="board.html">Suivre une demande</a>
+    <a class="kw-link" href="terminal.html">Ouvrir le terminal <span aria-hidden="true">→</span></a>
   </div>
   <div class="kd-term">
     <div class="top"><span>Terminal</span><button class="kd-copy" data-copy="kwa install ./mon-projet --dry-run">Copier</button></div>
@@ -186,27 +188,6 @@ footer.kw-footer{margin-top:128px}
   <div class="kd-ob" id="ob" style="margin-top:40px"></div>
 </section>
 
-
-<section class="kw-container kd-section kd-rv" id="carte">
-  <div class="kd-head"><div class="kd-eyebrow">{{pic:sword}}Carte des skills</div><h2 class="kw-section-title">Chaque skill, chaque garde, et comment ils s'enchaînent</h2>
-    <p class="kd-lead">Cliquer un nœud pour voir quoi, quand, comment, d'où vient l'idée et ce qui l'appelle. Double-clic sur une skill pour ses étapes. Les vues « Une session », « Une fonctionnalité », « Un bug » et « Livraison » montrent ce qui se déclenche, et dans quel ordre.</p></div>
-  <div id="map" style="margin-top:40px"></div>
-  <p class="kd-note"><a href="skill-map.html">Ouvrir la carte en plein écran ↗</a></p>
-</section>
-
-<section class="kw-container kd-section kd-rv" id="board">
-  <div class="kd-head"><div class="kd-eyebrow">{{pic:agent}}Le workflow</div><h2 class="kw-section-title">Une demande, de bout en bout</h2>
-    <p class="kd-lead">Chaque étape dit ce qui se passe, pourquoi, quelles briques se déclenchent, et qui décide. Choisissez un scénario, puis avancez avec les boutons ou les flèches du clavier : la fiche reste au même endroit.</p></div>
-  <div id="board-root" style="margin-top:40px"></div>
-  <p class="kd-note"><a href="board.html">Ouvrir le workflow en plein écran ↗</a></p>
-</section>
-
-<section class="kw-container kd-section kd-rv" id="terminal">
-  <div class="kd-head"><div class="kd-eyebrow">Le terminal</div><h2 class="kw-section-title">Comment on l'utilise, commande par commande</h2>
-    <p class="kd-lead">Chaque sortie ci-dessous a été <strong>produite en exécutant réellement</strong> Kwa sur un projet jetable. Rien n'est écrit à la main.</p></div>
-  <div id="term-root" style="margin-top:40px"></div>
-  <p class="kd-note"><a href="terminal.html">Ouvrir le terminal en plein écran ↗</a></p>
-</section>
 
 <section class="kw-container kd-section kd-rv" id="skills">
   <div class="kd-head"><div class="kd-eyebrow">{{pic:sword}}Skills</div><h2 class="kw-section-title"><span id="nskills"></span> skills, classées par famille</h2>
@@ -327,19 +308,17 @@ if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: re
   document.querySelectorAll('.kd-rv').forEach(n => io.observe(n));
 } else { document.querySelectorAll('.kd-rv').forEach(n => n.classList.add('in')); }
 
-$('#ver').textContent = $('#ver2').textContent = DATA.version;
+document.querySelectorAll('#ver, #ver2').forEach(n => n.textContent = DATA.version);
 $('#tests').textContent = `${DATA.tests} tests ${DATA.tests_ok ? 'au vert' : 'en échec'}`;
 
 /* chiffres */
+if ($('#stats')) {
 const nHooks = DATA.modules.reduce((n,m)=>n+m.files.filter(f=>f.includes('/hooks/')&&!f.includes('_kwa')).length,0);
 [[DATA.modules.length,'modules'],[nHooks,'hooks'],[DATA.catalog.length,'skills']].forEach(([n,l]) => $('#stats').append(el('div',{class:'kd-stat'},`<div class="n">${n}</div><div class="l">${l}</div>`)));
-
-/* widgets */
-DATA.map && window.KwaMap && KwaMap.mount($('#map'), DATA.map);
-window.KwaCircuit && KwaCircuit.mount($('#board-root'));
-DATA.terminal && window.KwaTerminal && KwaTerminal.mount($('#term-root'), DATA.terminal);
+}
 
 /* gardes */
+if ($('#tools')) {
 const cats = ['Tous', ...new Set(DATA.examples.map(e=>e.cat))];
 const decs = [['all','Toutes'],['deny','Refusées'],['ask','Demandées'],['allow','Autorisées']];
 let fc='Tous', fd='all', fq='';
@@ -353,8 +332,10 @@ function renderTable(){
   $('#gnote').textContent = `${rows.length} cas affichés sur ${DATA.examples.length}. Calculés par exécution réelle des gardes ; régénérer avec python3 docs/site/build.py.`;
 }
 renderTools(); renderTable();
+}
 
 /* skills */
+if ($('#sk')) {
 const FAMILIES = {cadrage:['interview','brainstorm','plan','tickets','questionnaire','prototype','architecture','rephrase'], faire:['execute','agents','parallel','tdd','simple','start-dev'], prouver:['debug','verify','review','review-feedback','audit'], livrer:['commit','ship','deploy','testflight','humanize'], memoire:['learn','handoff','agent-docs']};
 const FLAB = {cadrage:'Cadrer', faire:'Faire', prouver:'Prouver', livrer:'Livrer', memoire:'Mémoire'};
 const famOf = n => Object.keys(FAMILIES).find(f=>FAMILIES[f].includes(n)) || 'faire';
@@ -366,8 +347,10 @@ function renderSk(){
   $('#sk').innerHTML = DATA.catalog.filter(c=>ff==='all'||famOf(c.id)===ff).map(c=>{ const o=originsOf(c.id); return `<div class="kd-card"><span class="kd-fam">${FLAB[famOf(c.id)]}</span><h3>${PICTO.sword}/kwa-${c.id}</h3><p>${esc(c.description)}</p>${o.length?o.map(a=>`<span class="kd-origin"><img src="${esc(a.av)}" alt="" width="22" height="22">${esc(a.handle)}</span>`).join(''):'<span class="kd-origin kwa">Kwa</span>'}</div>`; }).join('');
 }
 renderSk();
+}
 
 /* onboarding */
+if ($('#ob')) {
 const OB = [
  ['Voir ce que Kwa détecte','kwa detect ./mon-projet',"Stack, modules proposés, politique déduite. N'écrit rien."],
  ["Simuler l'installation",'kwa install ./mon-projet --dry-run',"Liste ce qui serait ajouté, fusionné, sauvegardé. N'écrit rien."],
@@ -375,8 +358,10 @@ const OB = [
  ['Vérifier','kwa doctor ./mon-projet',"AGENTS.md, CLAUDE.md, hooks branchés, règles de politique, doublons avec l'outillage existant du projet."]
 ];
 OB.forEach(([t,c,d],i)=> $('#ob').append(el('div',{class:'item'},`<div class="num">${i+1}</div><div><h3>${t}</h3><p>${d}</p><div class="kd-term" style="margin-top:0"><div class="top"><span>Terminal</span><button class="kd-copy" data-copy="${esc(c)}">Copier</button></div><pre class="kd-code"><span class="p">$</span> ${esc(c)}</pre></div></div>`)));
+}
 
 /* migration d'un outillage existant */
+if ($('#maptable')) {
 const MAP = [
  ['Un hook shell qui refuse les commandes destructrices (reset de base, force-push, cibles de production)','guard-policy + guard-git ; règles <code>bash.deny</code> et <code>bash.ask</code> de la politique'],
  ["Heredoc : le corps est une donnée, sauf s'il est exécuté",'Repris dans le noyau, y compris pour les sous-shells'],
@@ -394,9 +379,12 @@ const MAP = [
 ];
 $('#maptable').innerHTML = '<tr><th>Outillage maison</th><th>Dans Kwa</th></tr>' + MAP.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('');
 $('#detect').textContent = DATA.detect.trim();
+}
 
 /* crédits */
+if ($('#src')) {
 $('#src').innerHTML = DATA.credits.sources.map(s=>`<div class="kd-card"><div><div class="who"><img class="kd-av" src="${esc((DATA.map.origins[s.id]||{}).avatar)}" alt="" width="24" height="24"><h3>${esc(s.author)}</h3></div><p class="sub"><a href="${esc(s.url)}">${esc(s.name)}</a> · ${esc(s.license)}</p></div><div><p>${rich(s.took)}</p><div>${s.skills.map(k=>`<span class="kd-tag">/kwa-${k}</span>`).join('')}</div></div></div>`).join('') + '<p class="kd-note">Kwa ne copie aucun fichier de ces projets : les textes sont réécrits, les mécanismes réimplémentés et testés. La ligne d\'origine figure à la fin de chaque skill concernée.</p>';
+}
 </script>
 <script src="src/shell.js"></script>
 </body>

@@ -145,9 +145,37 @@ def main():
     files = tree.project_files(man, kwa.module_files, {c["id"]: c["description"] for c in catalog})
     shown = [m for m in man if any(m in f["modules"] for f in files)]
     tpl = pictos.fill_placeholders(tpl).replace("/*PICTOS*/{}", pictos.as_json())
-    index_html = (tpl.replace("<!--EXTRA_CSS-->", css).replace("<!--EXTRA_JS-->", js).replace("<!--TOPBAR-->", shell.topbar())
-                  .replace("<!--SIDEBAR-->", shell.sidebar("index.html")).replace("<!--TREE-->", tree.section(files, shown, {m: man[m]["about"] for m in shown})))
+    tpl = tpl.replace("<!--EXTRA_CSS-->", "").replace("<!--EXTRA_JS-->", "").replace("<!--TOPBAR-->", shell.topbar())
+    tree_html = tree.section(files, shown, {m: man[m]["about"] for m in shown})
+
+    # pages dédiées : chaque section du gabarit qui n'est pas l'accueil devient sa propre page
+    SPLIT = {  # fichier : (id de la section, titre de l'onglet, description)
+        "skills.html": ("skills", "Les skills", "Le catalogue des skills de Kwa, classées par famille, avec leur origine."),
+        "gardes.html": ("gardes", "Les gardes en action", "Ce que Kwa refuse, demande ou laisse passer, calculé en exécutant les gardes."),
+        "memoire.html": ("memoire", "La mémoire", "Comment chaque session enrichit la suivante : capture, journal, filtre, tri, reprise."),
+        "methode.html": ("superpowers", "La méthode", "Les principes de discipline de superpowers, réécrits en français et branchés sur la politique du projet."),
+        "migrer.html": ("migrer", "Remplacer l'existant", "Remplacer un outillage maison par Kwa : correspondances et détection automatique."),
+        "limites.html": ("limites", "Limites et suite", "Les limites de Kwa, sans maquillage, et la feuille de route."),
+        "credits.html": ("credits", "Crédits", "Ce que Kwa doit aux autres projets, avec licence et référence."),
+    }
+    section_re = r'<section class="kw-container kd-section kd-rv" id="%s">.*?</section>\n\n?'
+    pieces = {}
+    for fname, (sid, _t, _d) in SPLIT.items():
+        m = re.search(section_re % sid, tpl, re.S)
+        if not m:
+            sys.exit(f"gabarit : section {sid} introuvable")
+        pieces[fname] = m.group(0).strip()
+        tpl = tpl.replace(m.group(0), "", 1)
+    index_html = tpl.replace("<!--SIDEBAR-->", shell.sidebar("index.html")).replace("<!--TREE-->", tree_html)
     open(os.path.join(HERE, "index.html"), "w", encoding="utf-8").write(index_html)
+    main_re = re.compile(r"<main>.*?</main>", re.S)
+    for fname, (sid, title, desc) in SPLIT.items():
+        sec = re.sub(r'<h2 class="kw-section-title">(.*?)</h2>', r'<h1 class="kw-page-title">\1</h1>', pieces[fname], count=1, flags=re.S)
+        page = main_re.sub(lambda _m: '<main class="kd-solo">\n' + sec + "\n</main>", tpl, count=1)
+        page = re.sub(r"<title>.*?</title>", f"<title>{title} | Kwa</title>", page, count=1)
+        page = re.sub(r'<meta name="description" content=".*?">', f'<meta name="description" content="{desc}">', page, count=1)
+        page = page.replace("<!--SIDEBAR-->", shell.sidebar(fname)).replace("<!--TREE-->", "")
+        open(os.path.join(HERE, fname), "w", encoding="utf-8").write(page)
 
     # pages plein écran : même coquille (barre, thème, logo, pied) autour d'un seul widget
     head = re.search(r"<style>.*?</style>", tpl, re.S).group(0)
@@ -198,7 +226,7 @@ $('#ver2').textContent = DATA.version; $('#tests').textContent = `${{DATA.tests}
     # contrôle de syntaxe des scripts inline des pages générées (une apostrophe oubliée casse toute la page)
     import shutil, tempfile
     if shutil.which("node"):
-        for page in ["index.html", "skill-map.html", "board.html", "terminal.html", "parcours.html", "parcours-culture.html", "parcours-contexte.html", "parcours-harness.html"]:
+        for page in ["index.html", "skill-map.html", "board.html", "terminal.html", "parcours.html", "parcours-culture.html", "parcours-contexte.html", "parcours-harness.html"] + list(SPLIT):
             for i, code in enumerate(re.findall(r"<script>(.*?)</script>", open(os.path.join(HERE, page), encoding="utf-8").read(), re.S)):
                 with tempfile.NamedTemporaryFile("w", suffix=".js", delete=False, encoding="utf-8") as f:
                     f.write(code)
