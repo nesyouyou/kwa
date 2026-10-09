@@ -219,7 +219,7 @@ def main():
 const DATA = window.KWA;
 const $ = (s, r=document) => r.querySelector(s);
 {theme_js}
-$('#ver2').textContent = DATA.version; $('#tests').textContent = `${{DATA.tests}} tests ${{DATA.tests_ok ? 'au vert' : 'en échec'}}`;
+$('#ver2').textContent = DATA.version;
 {mount_js}
 </script></body></html>"""
         open(os.path.join(HERE, fname), "w", encoding="utf-8").write(html)

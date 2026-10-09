@@ -164,7 +164,7 @@ footer.kw-footer{margin-top:128px}
 
 <footer class="kw-footer"><div class="kw-container kw-footer-grid">
   <div><b class="kd-word kd-word--big">kwa</b></div>
-  <div><h3>Kwa</h3><p>v<span id="ver2"></span><br><span id="tests"></span></p></div>
+  <div><h3>Kwa</h3><p>v<span id="ver2"></span></p></div>
   <div><h3>Documentation</h3><p>Régénérée par <code>docs/site/build.py</code> ; exemples calculés en exécutant les gardes.</p></div>
   <div><h3>Style</h3><p>Feuille de style écrite pour ce site ; polices Geist, licence SIL OFL.</p></div>
 </div></footer>
@@ -202,7 +202,6 @@ if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: re
 } else { document.querySelectorAll('.kd-rv').forEach(n => n.classList.add('in')); }
 
 document.querySelectorAll('#ver, #ver2').forEach(n => n.textContent = DATA.version);
-$('#tests').textContent = `${DATA.tests} tests ${DATA.tests_ok ? 'au vert' : 'en échec'}`;
 
 /* chiffres */
 if ($('#stats')) {
