@@ -122,3 +122,23 @@
 @media(prefers-reduced-motion:reduce){.tk-in{animation:none}.tk-bar i,.po-main .pc-stack i,.po-sub .pc-stack i,.po-pkt{transition:none}}
 
 .pc-presets{margin-bottom:6px}
+
+/* boucle d'un agent et flux d'un développeur */
+.pc-h3{font:600 17px/1.4 Geist,system-ui,sans-serif;margin:22px 0 6px}
+.lp-ring{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:14px 0}
+.lp-ring span{padding:10px 8px;text-align:center;font-size:13px;border:1px solid var(--kw-rule);border-radius:8px;color:var(--kw-mut);transition:background .3s ease,color .3s ease,border-color .3s ease,transform .3s ease}
+.lp-ring span.on{background:var(--acc,#8b5cf6);border-color:var(--acc,#8b5cf6);color:#fff;transform:translateY(-2px)}
+.pf-steps{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:8px}
+.pf-steps li{display:grid;grid-template-columns:28px minmax(0,1fr) auto;align-items:start;gap:12px;padding:10px 12px;border:1px solid var(--kw-rule);border-radius:8px;opacity:.55;transition:opacity .3s ease,background .3s ease,border-color .3s ease}
+.pf-steps li.done{opacity:.8}
+.pf-steps li.on{opacity:1;background:var(--kw-raise);border-color:var(--acc,#14b8a6)}
+.pf-steps b{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--kw-raise);font-size:12px;color:var(--kw-fg)}
+.pf-steps li.on b{background:var(--acc,#14b8a6);color:#fff}
+.pf-steps li[data-who="human"] b{border-radius:6px}
+.pf-steps strong{display:block;font-size:14px;color:var(--kw-fg)}
+.pf-steps span{display:none;margin-top:3px;font-size:13px;color:var(--kw-body)}
+.pf-steps li.on span{display:block}
+.pf-steps em{font-style:normal;font:500 11px 'Geist Mono',monospace;color:var(--kw-mut);padding:2px 6px;border:1px solid var(--kw-rule);border-radius:6px}
+.pf-steps li[data-who="human"] em{color:var(--k3,#f59e0b);border-color:var(--k3,#f59e0b)}
+@media(max-width:700px){.lp-ring{grid-template-columns:repeat(2,minmax(0,1fr))}.pf-steps li{grid-template-columns:28px minmax(0,1fr)}.pf-steps em{display:none}}
+@media(prefers-reduced-motion:reduce){.lp-ring span,.pf-steps li{transition:none}}

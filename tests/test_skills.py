@@ -191,8 +191,28 @@ class ParcoursVisuals(unittest.TestCase):
 
     def test_orchestrator_rules_and_skill_loading_are_taught(self):
         contexte = self.read("parcours-contexte.html")
-        for needle in ('id="orch"', 'id="skl"', "Les règles", "paths", "etape-7"):
+        for needle in ('id="orch"', 'id="skl"', "Les règles", "paths", "etape-10"):
             self.assertIn(needle, contexte, needle)
+
+    def test_everyday_tools_and_agent_flow_are_taught(self):
+        contexte = self.read("parcours-contexte.html")
+        for needle in ("Context7", "resolve-library-id", "query-docs", "Playwright", "browser_take_screenshot",
+                       "browser_run_code_unsafe", "/clear", "/rewind", "etape-8"):
+            self.assertIn(needle, contexte, needle)
+        harness = self.read("parcours-harness.html")
+        for needle in ('id="flow"', "PostToolUse", "stop_hook_active", "etape-9", "Playwright", "Context7"):
+            self.assertIn(needle, harness, needle)
+        culture = self.read("parcours-culture.html")
+        for needle in ('id="loop"', "Injection de prompt", "workflow"):
+            self.assertIn(needle, culture, needle)
+
+    def test_stage_numbers_match_the_navigation(self):
+        sys.path.insert(0, os.path.join(self.SITE, "src"))
+        import parcours_pages
+        for page, nav in (("culture", parcours_pages.CULTURE_NAV), ("contexte", parcours_pages.CONTEXTE_NAV), ("harness", parcours_pages.HARNESS_NAV)):
+            text = self.read(f"parcours-{page}.html")
+            ids = sorted(set(re.findall(r'<section class="pc-stage" id="etape-(\d+)"', text)), key=int)
+            self.assertEqual(ids, sorted([n for n, _ in nav], key=int), page)
 
     def test_each_parcours_has_its_own_accent(self):
         css = self.read("src", "parcours.css")

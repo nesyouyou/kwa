@@ -155,6 +155,44 @@
     setMain({ sys: 0, hist: 0, files: 0, sum: 0 });
   }
 
+  /* ---------- la boucle d'un agent ---------- */
+  var loop = $('#loop');
+  if (loop) {
+    var LP = [
+      [0, 'Le modèle lit la demande « corrige le test qui échoue » et décide : il faut d\'abord lancer les tests.'],
+      [1, 'Il appelle un outil : la commande de test.'],
+      [2, 'Le résultat (un test rouge, avec son message) entre dans le contexte.'],
+      [3, 'Est-ce terminé ? Non : le test est rouge. Il recommence.'],
+      [0, 'Il réfléchit : l\'erreur pointe vers un fichier, il faut le lire.'],
+      [1, 'Il appelle l\'outil de lecture, puis celui de modification.'],
+      [2, 'Il relance les tests : tout est vert. Le résultat entre dans le contexte.'],
+      [3, 'Terminé : le modèle juge que l\'objectif est atteint, la boucle s\'arrête et il répond. C\'est lui qui décide, d\'où l\'importance de lui donner un contrôle qu\'il peut lancer.']
+    ];
+    var lpI = -1, lpT = null, lpCap = $('#loop-cap'), lpNodes = loop.querySelectorAll('.lp-ring span');
+    var lpShow = function () {
+      var st = LP[lpI];
+      Array.prototype.forEach.call(lpNodes, function (n) { n.classList.toggle('on', Number(n.getAttribute('data-n')) === st[0]); });
+      lpCap.textContent = st[1];
+    };
+    var lpNext = function () { if (lpI < LP.length - 1) { lpI++; lpShow(); } else if (lpT) { clearInterval(lpT); lpT = null; } };
+    $('[data-loop-play]', loop).addEventListener('click', function () { if (lpT) clearInterval(lpT); lpI = -1; lpNext(); if (!reduced) lpT = setInterval(lpNext, 2200); });
+    $('[data-loop-next]', loop).addEventListener('click', function () { if (lpT) { clearInterval(lpT); lpT = null; } lpNext(); });
+  }
+
+  /* ---------- le flux d'un développeur ---------- */
+  var flow = $('#flow');
+  if (flow) {
+    var fl = flow.querySelectorAll('.pf-steps li'), fI = -1, fT = null, fCap = $('#flow-cap');
+    var fShow = function () {
+      Array.prototype.forEach.call(fl, function (li, i) { li.classList.toggle('on', i === fI); li.classList.toggle('done', i < fI); });
+      var who = fl[fI].getAttribute('data-who');
+      fCap.textContent = 'Étape ' + (fI + 1) + ' sur ' + fl.length + ' : ' + (who === 'human' ? 'une décision humaine.' : 'automatisé, avec sa preuve.');
+    };
+    var fNext = function () { if (fI < fl.length - 1) { fI++; fShow(); } else if (fT) { clearInterval(fT); fT = null; } };
+    $('[data-flow-play]', flow).addEventListener('click', function () { if (fT) clearInterval(fT); fI = -1; Array.prototype.forEach.call(fl, function (li) { li.classList.remove('on', 'done'); }); fNext(); if (!reduced) fT = setInterval(fNext, 2000); });
+    $('[data-flow-next]', flow).addEventListener('click', function () { if (fT) { clearInterval(fT); fT = null; } fNext(); });
+  }
+
   /* ---------- chargement progressif d'une skill ---------- */
   var skl = $('#skl');
   if (skl) {
