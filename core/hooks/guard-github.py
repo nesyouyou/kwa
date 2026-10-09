@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""PreToolUse Bash — le circuit issue → PR → preuve, en garantie.
+"""PreToolUse Bash — le workflow issue → PR → preuve, en garantie.
 
   gh pr create : refusé si le corps ne porte pas « Closes #N » (ou Fixes / Resolves).
   gh pr merge  : refusé si la PR n'est liée à aucune issue, ou si ni la PR ni ses issues ne portent de preuve

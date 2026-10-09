@@ -13,7 +13,7 @@ le résultat : conformité à la spec, puis qualité. Le plan vient de `/kwa-pla
 
 - Un plan `docs/plans/*.md` relu, avec pour chaque tâche : fichiers, étapes, critères d'acceptation vérifiables.
   Sinon, retourner à `/kwa-plan`. Ne jamais improviser un plan en route.
-- Le circuit de `/kwa-start-dev` est en place : issue, branche dédiée `<type>/<n°>-<slug>`, worktree. Jamais sur
+- Le workflow de `/kwa-start-dev` est en place : issue, branche dédiée `<type>/<n°>-<slug>`, worktree. Jamais sur
   `main`. Si tu es sur `main`, t'arrêter et lancer `/kwa-start-dev`.
 - Les commandes de vérification sont celles de `verify.commands` dans `.claude/kwa.policy.json`. Les lire une fois,
   les recopier dans chaque prompt d'agent. Ne jamais en inventer.

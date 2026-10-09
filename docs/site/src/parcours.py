@@ -123,7 +123,7 @@ def collect(pack: str, verdict, worst, make_repo, policy_example: str) -> list[d
         pending = sh([sys.executable, mem, "pending"], demo)
         expect("tests d'intégration" in pending, "une note capturée apparaît dans les notes en attente")
 
-        # étape 7 : le circuit
+        # étape 7 : le workflow
         start = os.path.join(demo, ".claude", "kwa", "bin", "kwa-start")
         started = sh([sys.executable, start, "feat", "status-filter", "Ajouter un filtre de statut", "--no-issue"], demo)
         trees = clean(sh(["git", "worktree", "list"], demo), tmp)
@@ -276,10 +276,10 @@ def render(c: dict) -> str:
 <p>En fin de session, <code>/kwa-learn</code> propose où chaque note devrait vivre (documentation, politique, mémoire de l'agent). <strong>Rien n'est appliqué sans votre accord.</strong></p>""",
          "Capturer une note et dire qui décide de son destin.",
          "Les notes locales ne sont pas versionnées : elles sont exclues via <code>.git/info/exclude</code>."),
-        ("8", "Le circuit complet", "Une demande, une branche, une preuve, une PR.",
+        ("8", "Le workflow complet", "Une demande, une branche, une preuve, une PR.",
          f"""<p>Démarrez un changement : une branche dans son propre worktree, à côté du dépôt, jamais sur <code>main</code>.</p>
 {start_cmd}{code(c["started"])}{code(c["trees"])}
-<p>La suite se joue avec les skills : <code>/kwa-brainstorm</code>, <code>/kwa-plan</code>, <code>/kwa-tdd</code>, <code>/kwa-verify</code>, <code>/kwa-review</code>, <code>/kwa-ship</code>. La page <a href="board.html">Board</a> déroule ce circuit sur une demande réelle, et le <a href="terminal.html">Terminal</a> montre les commandes.</p>""",
+<p>La suite se joue avec les skills : <code>/kwa-brainstorm</code>, <code>/kwa-plan</code>, <code>/kwa-tdd</code>, <code>/kwa-verify</code>, <code>/kwa-review</code>, <code>/kwa-ship</code>. La page <a href="board.html">Board</a> déroule ce workflow sur une demande réelle, et le <a href="terminal.html">Terminal</a> montre les commandes.</p>""",
          "Conduire un petit changement jusqu'à une PR, avec une preuve que quelqu'un d'autre peut rejouer.",
          "Versionner n'est pas publier, et un commit n'est pas un déploiement. Chaque étape reste une décision."),
         ("9", "Le flux d'un développeur aujourd'hui", "Tout mis ensemble : une journée où presque tout est automatisé, sauf les décisions.",
@@ -302,6 +302,6 @@ def render(c: dict) -> str:
 
 
 def stage(n: str, title: str, tag: str, body: str, proof: str, pitfall: str) -> str:
-    return (f'<section class="pc-stage" id="etape-{n}"><div class="pc-num">{n}</div><div class="pc-main">'
+    return (f'<section class="pc-stage" id="etape-{n}"><div class="pc-main"><p class="pc-kicker">Étape {n}</p>'
             f'<h2 class="pc-h">{esc(title)}</h2><p class="pc-tag">{esc(tag)}</p>{body}'
             f'<div class="pc-proof"><div><b>Preuve attendue</b><p>{proof}</p></div><div><b>Piège</b><p>{pitfall}</p></div></div></div></section>')

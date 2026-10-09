@@ -6,7 +6,7 @@ Kwa se lit **K**it · **W**orkflow · **A**gents (le K est aussi *Knowledge* : l
 ## Pourquoi ce dépôt
 
 Kwa est avant tout un **support pédagogique**. Il montre, avec de vrais fichiers qui tournent, comment encadrer un agent
-de code : règles, garde-fous, skills, mémoire, circuit de travail. Chaque pièce est lisible, testée, et expliquée sur le
+de code : règles, garde-fous, skills, mémoire, workflow. Chaque pièce est lisible, testée, et expliquée sur le
 site de documentation et dans trois parcours de formation (culture de l'IA générative, context engineering, harness).
 
 - **En français.** Presque tout ce qui existe sur le sujet est en anglais. Les skills, les règles, la documentation et les
@@ -40,7 +40,7 @@ bash tests/run-safety.sh                     # suite hors-ligne
 | `core` | gardes secrets / git / suppression / écriture / politique ; règles ; `/kwa-commit`, `/kwa-ship` |
 | `craft` | méthode : `/kwa-brainstorm`, `plan`, `execute`, `agents`, `parallel`, `tdd`, `debug`, `verify`, `review`, `review-feedback` + routage des skills au démarrage de session (remplace superpowers) |
 | `memory` | journal des sessions et reprise au démarrage, notes et signaux (corrections, « retiens : », refus de garde), invitation unique en fin de session, `/kwa-learn` (docs, politique, skill de projet, mémoire agent, base de connaissance) |
-| `issue-flow` | circuit issue → worktree → preuve → PR « Closes #N » → fusion gardée ; `/kwa-start-dev`, gabarits GitHub |
+| `issue-flow` | workflow issue → worktree → preuve → PR « Closes #N » → fusion gardée ; `/kwa-start-dev`, gabarits GitHub |
 | `verify` | formatage des fichiers nouveaux ; garde Stop opt-in (`KWA_STOP_VERIFY=1`) |
 | `deploy` | `/kwa-deploy` : pré-vol, déploiement, vérification, pilotés par `environments` |
 | `client-handover` | règle des 4 tests, `kwa-hygiene`, exceptions datées, job CI (jamais déduit : sur demande) |
@@ -65,7 +65,7 @@ Le spécifique d'un projet vit dans `.claude/kwa.policy.json` (créé une fois �
 ## Remplacer un outillage maison
 
 `tests/test_policy_example.py` rejoue contre Kwa des cas représentatifs d'un harnais de garde-fous réel (reset de
-base, force-push, cibles de production, circuit issue → PR → preuve, migrations, heredocs) avec la politique d'exemple.
+base, force-push, cibles de production, workflow issue → PR → preuve, migrations, heredocs) avec la politique d'exemple.
 `kwa doctor` signale, dans un projet existant, les hooks et skills maison qui font doublon avec Kwa.
 
 ## Origine

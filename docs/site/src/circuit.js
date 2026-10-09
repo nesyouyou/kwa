@@ -131,7 +131,7 @@
       right.appendChild(h('h4', { class: 'kc-rt', text: 'Ce qui se déclenche' }));
       var list = h('ul', { class: 'kc-bricks', 'aria-label': 'Briques déclenchées' });
       var shown = s.bricks.filter(function (b) { return b.type !== 'humain'; });
-      if (!shown.length) list.appendChild(h('li', { class: 'kc-none', text: 'Rien ne se déclenche : le circuit attend ta décision.' }));
+      if (!shown.length) list.appendChild(h('li', { class: 'kc-none', text: 'Rien ne se déclenche : le workflow attend ta décision.' }));
       shown.forEach(function (b) {
         list.appendChild(h('li', { class: 'kc-brick kc-brick--' + b.type }, [
           h('span', { class: 'kc-bt', text: D.TYPES[b.type] }),

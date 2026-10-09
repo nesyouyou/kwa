@@ -1,19 +1,19 @@
 ---
 name: kwa-start-dev
-description: Démarrer puis livrer tout développement selon le circuit issue → branche dédiée dans un worktree → preuve → PR liée à son issue (« Closes »). À utiliser DÈS qu'une demande implique de modifier le produit (correctif, fonctionnalité, retouche d'interface, web, mobile ou API), avant d'écrire la moindre ligne de code, même pour un petit changement.
+description: Démarrer puis livrer tout développement selon le workflow issue → branche dédiée dans un worktree → preuve → PR liée à son issue (« Closes »). À utiliser DÈS qu'une demande implique de modifier le produit (correctif, fonctionnalité, retouche d'interface, web, mobile ou API), avant d'écrire la moindre ligne de code, même pour un petit changement.
 allowed-tools: Bash(gh *) Bash(git *) Bash(python3 .claude/kwa/bin/kwa-start *) Bash(pnpm *)
 ---
 
 # Démarrer et livrer un développement
 
-Le circuit est décrit dans `.claude/rules/kwa-github-workflow.md`. Cette skill le déroule. Deux garde-fous le
+Le workflow est décrit dans `.claude/rules/kwa-github-workflow.md`. Cette skill le déroule. Deux garde-fous le
 tiennent : `guard-write` refuse d'écrire du code produit sur `main`, `guard-github` refuse une PR sans `Closes #N`
 et une fusion sans preuve. Les commandes de vérification, d'installation et les dossiers de code viennent de
 `.claude/kwa.policy.json` (`verify.commands`, `start.install`, `write.no_code_on_main`).
 
 ## Avec les skills de méthode Kwa (module craft)
 
-Cette skill porte ce qui est propre au circuit : issue, branche, preuve, PR. Pour le travail lui-même :
+Cette skill porte ce qui est propre au workflow : issue, branche, preuve, PR. Pour le travail lui-même :
 
 | Étape | Skill |
 |---|---|

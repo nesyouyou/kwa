@@ -1,6 +1,6 @@
 # Tout développement se trace sur GitHub, avec sa preuve (Kwa · issue-flow)
 
-Chaque demande (correctif, fonctionnalité, retouche d'interface, même petite) suit le même circuit, et rien n'est
+Chaque demande (correctif, fonctionnalité, retouche d'interface, même petite) suit le même workflow, et rien n'est
 déclaré « fait » sans preuve. `/kwa-start-dev` le déroule ; `guard-write` et `guard-github` le tiennent.
 
 1. **Issue d'abord** : le constat, la cause quand elle est connue, les décisions prises, des critères de réussite

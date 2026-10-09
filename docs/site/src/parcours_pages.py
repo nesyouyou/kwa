@@ -11,9 +11,9 @@ import sys
 
 from parcours import code, cmd, esc, pill, reveal, stage
 
-CULTURE_NAV = [("1", "Le modèle"), ("2", "Les jetons"), ("3", "Le contexte"), ("4", "L'agent"), ("5", "Les hallucinations"), ("6", "Le prompt"), ("7", "Risques")]
+CULTURE_NAV = [("1", "Le modèle"), ("2", "Les jetons"), ("3", "Les hallucinations"), ("4", "Le contexte"), ("5", "Le prompt"), ("6", "L'agent"), ("7", "Risques")]
 CONTEXTE_NAV = [("1", "Le contexte"), ("2", "La session"), ("3", "AGENTS.md"), ("4", "Règles"), ("5", "Skills"), ("6", "Agents"), ("7", "MCP"), ("8", "Context7 et Playwright"), ("9", "Permissions"), ("10", "Choisir")]
-HARNESS_NAV = [("0", "L'histoire"), ("1", "Instructions"), ("2", "Un garde"), ("3", "Branchement"), ("4", "Événements"), ("5", "Politique"), ("6", "Une skill"), ("7", "Mémoire"), ("8", "Circuit"), ("9", "Le flux"), ("10", "Limites")]
+HARNESS_NAV = [("0", "L'histoire"), ("1", "Instructions"), ("2", "Un garde"), ("3", "Branchement"), ("4", "Événements"), ("5", "Politique"), ("6", "Une skill"), ("7", "Mémoire"), ("8", "Workflow"), ("9", "Le flux"), ("10", "Limites")]
 TOC = {  # barre latérale : (ancre, libellé) sous la page courante
     "parcours-culture.html": [(f"etape-{n}", f"{n} · {t}") for n, t in CULTURE_NAV],
     "parcours-contexte.html": [(f"etape-{n}", f"{n} · {t}") for n, t in CONTEXTE_NAV],
@@ -137,22 +137,8 @@ def culture() -> str:
 <p>Choisissez une phrase, déplacez la température, puis tirez 20 fois. Ensuite, estimez un de vos textes : le résultat est un <strong>ordre de grandeur</strong>, le vrai compte dépend du modèle et l'API propose un compteur exact (voir les sources).</p>""" + tok,
          "Expliquer pourquoi une réponse est un tirage parmi des probabilités, et donner l'ordre de grandeur d'un document en jetons.",
          "Compter en pages ou en mots donne une idée, jamais le chiffre : deux textes de même longueur peuvent coûter des jetons différents."),
-        ("3", "La fenêtre de contexte", "Tout ce que le modèle peut voir à un instant donné, et rien d'autre.",
-         """<p>La fenêtre de contexte est la « mémoire de travail » du modèle : <strong>tout</strong> ce qu'il peut consulter pour répondre, sa réponse comprise. Elle contient bien plus que votre dernier message : consignes du système, fichiers d'instructions, définitions des outils, historique de la conversation, fichiers lus, résultats des outils. Le modèle n'a pas de mémoire en dehors de cette fenêtre : une nouvelle session repart de zéro.</p>
-<p>Plus grande ne veut pas dire meilleure. À mesure que le contexte grossit, la précision et le rappel peuvent baisser : c'est ce que la documentation appelle <em>context rot</em>. Choisir ce qui entre compte autant que la place disponible.</p>
-<p>Remplissez la jauge, puis essayez les trois situations types.</p>""" + gauge,
-         "Citer ce qui occupe une fenêtre en dehors de votre message, et dire pourquoi la remplir n'est pas un but.",
-         "Les valeurs de la jauge sont des exemples pour comprendre, pas des mesures. Une interface de chat peut aussi faire glisser la conversation en oubliant les débuts."),
-        ("4", "De l'assistant à l'agent", "Un modèle, des outils et une boucle.",
-         f"""<p>Un assistant de conversation répond puis s'arrête. Un <strong>agent</strong> reçoit un objectif et <strong>boucle</strong> : il réfléchit, appelle un outil (lire un fichier, lancer une commande, chercher), lit le résultat qui entre dans son contexte, puis décide de continuer ou de s'arrêter. Tout ce que vous venez de voir (jetons, fenêtre, probabilités) se rejoue à chaque tour de cette boucle.</p>
-{LOOP}
-<p>Deux familles de systèmes se distinguent : dans un <strong>workflow</strong>, le chemin est écrit à l'avance dans du code et le modèle remplit des étapes ; dans un <strong>agent</strong>, c'est le modèle qui décide des étapes et des outils. Le conseil constant de la documentation d'Anthropic : commencer par la solution la plus simple (un seul appel, bien contextualisé) et n'ajouter de l'autonomie que si la tâche l'exige, parce que l'autonomie coûte en latence, en argent et en risque d'erreurs qui s'accumulent.</p>
-<p>Deux conséquences pour la suite. D'abord, <strong>chaque outil est une porte ouverte</strong> : lire un fichier est bénin, lancer une commande ou écrire dans une base ne l'est pas, d'où les permissions du parcours suivant. Ensuite, <strong>ce qui entre dans la boucle</strong> (pages web, fichiers, résultats d'outils) est du texte que le modèle lit : s'il est hostile, il peut tenter de détourner l'agent (étape 7).</p>""" +
-         reveal("Question", "<p>Dans l'exemple, qu'est-ce qui décide que la boucle s'arrête ? Ce n'est pas un compteur : c'est le modèle qui juge que le test est vert. D'où l'intérêt de lui donner un contrôle qu'il peut lancer, plutôt que de lui faire confiance sur parole (parcours Harness).</p>"),
-         "Décrire la boucle d'un agent et dire ce qui distingue un workflow d'un agent.",
-         "Plus d'autonomie n'est pas mieux : une tâche à étapes connues se traite mieux avec un workflow, plus simple à contrôler."),
-        ("5", "Les hallucinations", "Un texte faux dit avec assurance.",
-         """<p>Un modèle peut produire une affirmation fausse ou une source qui n'existe pas, avec le même ton que le vrai. On parle d'<strong>hallucination</strong>. Elle ne se règle pas par une phrase magique : on la réduit par la manière de demander, puis on la contrôle.</p>
+        ("3", "Les hallucinations", "Un texte faux dit avec assurance.",
+         """<p>Puisque le modèle tire la suite la plus plausible, et non la plus vraie, il peut produire une affirmation fausse ou une source qui n'existe pas, avec le même ton que le vrai. On parle d'<strong>hallucination</strong> : c'est une conséquence directe de ce que vous venez de voir, pas un bogue rare. Elle ne se règle pas par une phrase magique : on la réduit par la manière de demander, puis on la contrôle.</p>
 <p>Quatre leviers documentés :</p>
 <ul class="pc-list">
 <li><strong>Autoriser le « je ne sais pas »</strong> : dire explicitement qu'admettre l'incertitude est une bonne réponse.</li>
@@ -162,11 +148,17 @@ def culture() -> str:
 </ul>
 <p>Réécrivez cette demande avec au moins deux leviers :</p>""" +
          pair("Avant", "Résume les risques juridiques de ce contrat et dis-moi ce qu'on doit négocier.", "Une version possible",
-              "Voici le contrat entre <contrat> et </contrat> (ces balises de délimitation sont expliquées à l'étape suivante).\n1. Extrais d'abord les passages exacts qui parlent de responsabilité, de résiliation et de pénalités. Si tu n'en trouves pas, écris « aucun passage trouvé ».\n2. Analyse les risques en citant le numéro de chaque passage. N'utilise rien d'autre que ce contrat.\n3. Si un point te semble manquer, dis « je ne peux pas l'affirmer à partir du document ».") +
+              "Voici le contrat entre <contrat> et </contrat> (ces balises de délimitation sont expliquées à l'étape 5).\n1. Extrais d'abord les passages exacts qui parlent de responsabilité, de résiliation et de pénalités. Si tu n'en trouves pas, écris « aucun passage trouvé ».\n2. Analyse les risques en citant le numéro de chaque passage. N'utilise rien d'autre que ce contrat.\n3. Si un point te semble manquer, dis « je ne peux pas l'affirmer à partir du document ».") +
          reveal("Ce que ça ne règle pas", "<p>Ces techniques réduisent les hallucinations, elles ne les suppriment pas. Pour une décision importante, une personne relit les passages cités dans le document d'origine. Un chiffre, une date, une référence légale ou une citation s'écrivent dans un texte seulement après vérification à la source.</p>"),
          "Réécrire une demande pour qu'elle autorise l'incertitude et exige des passages, puis vérifier un passage cité à la main.",
          "Une réponse bien rédigée n'est pas une réponse vraie. Le ton d'assurance ne dit rien sur l'exactitude."),
-        ("6", "Le prompt engineering", "Écrire pour un lecteur très compétent qui n'a aucun contexte.",
+        ("4", "La fenêtre de contexte", "Tout ce que le modèle peut voir à un instant donné, et rien d'autre.",
+         """<p>La fenêtre de contexte est la « mémoire de travail » du modèle : <strong>tout</strong> ce qu'il peut consulter pour répondre, sa réponse comprise. Elle contient bien plus que votre dernier message : consignes du système, fichiers d'instructions, définitions des outils, historique de la conversation, fichiers lus, résultats des outils. Le modèle n'a pas de mémoire en dehors de cette fenêtre : une nouvelle session repart de zéro.</p>
+<p>Plus grande ne veut pas dire meilleure. À mesure que le contexte grossit, la précision et le rappel peuvent baisser : c'est ce que la documentation appelle <em>context rot</em>. Choisir ce qui entre compte autant que la place disponible.</p>
+<p>Remplissez la jauge, puis essayez les trois situations types.</p>""" + gauge,
+         "Citer ce qui occupe une fenêtre en dehors de votre message, et dire pourquoi la remplir n'est pas un but.",
+         "Les valeurs de la jauge sont des exemples pour comprendre, pas des mesures. Une interface de chat peut aussi faire glisser la conversation en oubliant les débuts."),
+        ("5", "Le prompt engineering", "Écrire pour un lecteur très compétent qui n'a aucun contexte.",
          """<p>Un prompt est un texte de travail : on le rédige comme une consigne à un collègue brillant qui arrive ce matin. La règle d'or de la documentation : montrez votre consigne à quelqu'un qui n'a pas le contexte et demandez-lui de l'exécuter. S'il hésite, le modèle hésitera aussi.</p>
 <ul class="pc-list">
 <li><strong>Être clair et direct</strong> : le résultat attendu, son format, ses contraintes, les étapes dans l'ordre quand l'ordre compte.</li>
@@ -181,6 +173,14 @@ def culture() -> str:
          reveal("Pourquoi la seconde marche mieux", "<p>Elle dit pour qui on écrit, dans quelle situation, avec quel ton, quel format, et montre un exemple. Rien n'est laissé à deviner. Notez aussi ce qu'elle ne fait pas : elle n'empile pas vingt règles. Le but est le plus petit ensemble d'informations qui change vraiment le résultat.</p>"),
          "Transformer une demande vague en consigne qu'un collègue sans contexte pourrait exécuter.",
          "Un prompt plus long n'est pas un meilleur prompt. Ajoutez ce qui manque au lecteur, pas ce qui rassure l'auteur."),
+        ("6", "De l'assistant à l'agent", "Un modèle, des outils et une boucle.",
+         f"""<p>Un assistant de conversation répond puis s'arrête. Un <strong>agent</strong> reçoit un objectif et <strong>boucle</strong> : il réfléchit, appelle un outil (lire un fichier, lancer une commande, chercher), lit le résultat qui entre dans son contexte, puis décide de continuer ou de s'arrêter. Tout ce que vous venez de voir (jetons, fenêtre, probabilités) se rejoue à chaque tour de cette boucle.</p>
+{LOOP}
+<p>Deux familles de systèmes se distinguent : dans un <strong>workflow</strong>, le chemin est écrit à l'avance dans du code et le modèle remplit des étapes ; dans un <strong>agent</strong>, c'est le modèle qui décide des étapes et des outils. Le conseil constant de la documentation d'Anthropic : commencer par la solution la plus simple (un seul appel, bien contextualisé) et n'ajouter de l'autonomie que si la tâche l'exige, parce que l'autonomie coûte en latence, en argent et en risque d'erreurs qui s'accumulent.</p>
+<p>Deux conséquences pour la suite. D'abord, <strong>chaque outil est une porte ouverte</strong> : lire un fichier est bénin, lancer une commande ou écrire dans une base ne l'est pas, d'où les permissions du parcours suivant. Ensuite, <strong>ce qui entre dans la boucle</strong> (pages web, fichiers, résultats d'outils) est du texte que le modèle lit : s'il est hostile, il peut tenter de détourner l'agent (étape 7).</p>""" +
+         reveal("Question", "<p>Dans l'exemple, qu'est-ce qui décide que la boucle s'arrête ? Ce n'est pas un compteur : c'est le modèle qui juge que le test est vert. D'où l'intérêt de lui donner un contrôle qu'il peut lancer, plutôt que de lui faire confiance sur parole (parcours Harness).</p>"),
+         "Décrire la boucle d'un agent et dire ce qui distingue un workflow d'un agent.",
+         "Plus d'autonomie n'est pas mieux : une tâche à étapes connues se traite mieux avec un workflow, plus simple à contrôler."),
         ("7", "Risques et usages responsables", "Ce qu'on n'envoie pas, ce qu'on vérifie, qui décide.",
          """<ul class="pc-list">
 <li><strong>Données</strong> : ne pas coller de données personnelles, de secrets ni de données client réelles dans un outil que l'on ne maîtrise pas. Anonymiser ou fabriquer des exemples.</li>
@@ -200,7 +200,7 @@ def culture() -> str:
          "« C'est l'IA qui l'a dit » ne tient devant personne. La personne qui diffuse un texte en répond."),
     ]
     out = "\n".join(stage(*x) for x in s)
-    return (intro("Sept étapes pour comprendre ce que fait vraiment un modèle de langage : le texte, les jetons, la fenêtre de contexte, l'agent, les erreurs, la manière de demander, les risques. Aucun outil à installer ; un outil d'IA au choix suffit pour les exercices. Environ deux heures et demie, à calibrer en séance.") +
+    return (intro("Sept étapes pour comprendre ce que fait vraiment un modèle de langage : le texte, les jetons, les erreurs qui en découlent, la fenêtre de contexte, la manière de demander, l'agent, les risques. Aucun outil à installer ; un outil d'IA au choix suffit pour les exercices. Environ deux heures et demie, à calibrer en séance.") +
             nav(CULTURE_NAV) + out +
             checklist("Vous avez compris si vous savez", [
                 "dire pourquoi un modèle produit du texte plausible sans consulter une base de faits ;",
@@ -524,7 +524,7 @@ def history() -> str:
         ("Aujourd'hui", "Harness", "Un agent, dans un cadre", "Règles, gardes, skills, mémoire et preuve rebranchés autour de l'agent"),
     ]
     tr = "".join(f"<tr><td><b>{esc(a)}</b></td><td>{esc(b)}</td><td>{esc(c)}</td><td>{esc(d)}</td></tr>" for a, b, c, d in rows)
-    return f"""<section class="pc-stage" id="etape-0"><div class="pc-num">0</div><div class="pc-main">
+    return f"""<section class="pc-stage" id="etape-0"><div class="pc-main"><p class="pc-kicker">Introduction</p>
 <h2 class="pc-h">D'où vient le harness</h2><p class="pc-tag">Le processus protégeait la qualité. L'agent l'a contourné par vitesse.</p>
 <p>Pendant cinquante ans, la qualité d'un logiciel ne dépendait pas que du talent de chacun : elle venait d'un <strong>processus</strong> (spécifier, tester, relire, intégrer, déployer). Chaque époque a ajouté une couche de vérification. Un agent de code écrit et exécute plus vite que ce processus ne peut suivre : sans cadre, il décide et agit seul. Le <strong>harness</strong> est ce cadre : tout ce qui entoure le modèle pour qu'il travaille dans le processus, et non à côté.</p>
 <table class="pc-table"><thead><tr><th>Époque</th><th>Pratique</th><th>Qui écrit</th><th>Ce qui protège la qualité</th></tr></thead><tbody>{tr}</tbody></table>
@@ -562,11 +562,11 @@ def hub() -> str:
          "Le contexte et la session, AGENTS.md, les règles, les skills, les sous-agents, MCP avec Context7 et Playwright, les permissions, et comment choisir.",
          "Avoir utilisé un assistant d'IA. Un terminal est un plus."),
         ("3", "Harness", "parcours-harness.html", "Environ 4 h",
-         "De l'histoire du processus de développement jusqu'à Kwa : gardes, événements de hooks, politique, skills, mémoire, circuit, et le flux complet d'un développeur aujourd'hui.",
+         "De l'histoire du processus de développement jusqu'à Kwa : gardes, événements de hooks, politique, skills, mémoire, workflow, et le flux complet d'un développeur aujourd'hui.",
          "Les parcours 1 et 2, Python 3, git, un terminal."),
     ]
     c = "".join(
-        f'<a class="pc-card" data-acc="{u[9:-5]}" href="{u}"><div class="pc-num">{n}</div><h2>{esc(t)}</h2><p class="pc-tag">{esc(d)}</p><p>{esc(txt)}</p><p class="kd-note">{esc(pre)}</p></a>'
+        f'<a class="pc-card" data-acc="{u[9:-5]}" href="{u}"><p class="pc-kicker">Parcours {n}</p><h2>{esc(t)}</h2><p class="pc-tag">{esc(d)}</p><p>{esc(txt)}</p><p class="kd-note">{esc(pre)}</p></a>'
         for n, t, u, d, txt, pre in cards)
     return (intro("Trois parcours qui s'enchaînent : comprendre le modèle, apprendre à lui donner le bon contexte, puis l'encadrer avec un harness. Chacun se lit seul, mais l'ordre est celui d'une progression. Les durées sont des estimations de conception, à ajuster après une première séance.") +
             f'<div class="pc-cards">{c}</div>' +
