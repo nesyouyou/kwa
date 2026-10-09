@@ -425,7 +425,7 @@ class MotionRespect(unittest.TestCase):
 
     def test_reduced_motion_is_honoured_wherever_there_is_animation(self):
         site = os.path.join(PACK, "docs", "site")
-        for rel in ("src/circuit.css", "src/parcours.css"):
+        for rel in ("src/circuit.css", "src/parcours.css", "src/map.css", "src/shell.css"):
             text = open(os.path.join(site, rel), encoding="utf-8").read()
             if "@keyframes" in text or "transition:" in text:
                 self.assertIn("prefers-reduced-motion", text, rel)

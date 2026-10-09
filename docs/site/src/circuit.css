@@ -107,3 +107,9 @@ html[data-theme="dark"] .kc { --kc-feature: #7aa7ff; --kc-bug: #ff8585; --kc-del
   .kc *, .kc *::before, .kc *::after { transition: none !important; animation: none !important; }
 }
 .kc-sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+/* la fiche d'étape : ses deux colonnes se recréent à chaque étape, elles apparaissent en douceur */
+@keyframes kc-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.kc-fiche > * { animation: kc-rise .38s cubic-bezier(.22, 1, .36, 1) both; }
+.kc-fiche > *:nth-child(2) { animation-delay: .06s; }
+@media (prefers-reduced-motion: reduce) { .kc-fiche > * { animation: none; } }

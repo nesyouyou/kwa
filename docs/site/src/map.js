@@ -281,9 +281,21 @@
 
     /* ---------- sélection et panneau ---------- */
     function chip(id) { var n = node(id); if (!n) return ''; return '<button type="button" class="km-chip" data-go="' + esc(id) + '">' + esc(n.label) + '</button>'; }
+    var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function closePanel() {
+      if (el.panel.hidden) return;
+      if (reduceMotion) { el.panel.hidden = true; return; }
+      el.panel.classList.add('km-out');
+      el.panel.addEventListener('animationend', function done(e) {
+        if (e.target !== el.panel) return;
+        el.panel.removeEventListener('animationend', done);
+        if (el.panel.classList.contains('km-out')) { el.panel.hidden = true; el.panel.classList.remove('km-out'); }
+      });
+    }
     function select(id) {
       state.sel = id; applySel();
-      if (!id) { el.panel.hidden = true; hash(); return; }
+      if (!id) { closePanel(); hash(); return; }
+      el.panel.classList.remove('km-out');
       var n = node(id), rel = related(id), od = (n.origin || []).filter(function (o) { return o !== 'kwa'; });
       var html = '<button type="button" class="km-x" aria-label="Fermer">×</button><div class="km-kindtag">' + KIND_LABEL[n.kind] + '</div><h3>' + esc(n.label) + '</h3>';
       if (n.what) html += '<h4>Quoi</h4><p>' + esc(n.what) + '</p>';
