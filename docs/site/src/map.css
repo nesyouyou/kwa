@@ -127,3 +127,16 @@
 }
 @media (prefers-reduced-motion:reduce){.km-edge.is-on{animation:none}.km-world,.km-node{transition:none!important}}
 @media print{.km-bar,.km-panel,.km-zoom,.km-mini,.km-hint{display:none}.km-stage{height:600px}}
+
+/* panneau de détail : il glisse à l'ouverture, ses blocs apparaissent l'un après l'autre à chaque nœud */
+@keyframes km-panel-in{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
+@keyframes km-panel-out{to{opacity:0;transform:translateX(18px)}}
+@keyframes km-rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.km-panel{animation:km-panel-in .34s cubic-bezier(.22,1,.36,1) both}
+.km-panel.km-out{animation:km-panel-out .2s ease both}
+.km-panel>*{animation:km-rise .38s cubic-bezier(.22,1,.36,1) both}
+.km-panel>*:nth-child(2){animation-delay:.04s}.km-panel>*:nth-child(3){animation-delay:.08s}.km-panel>*:nth-child(4){animation-delay:.12s}
+.km-panel>*:nth-child(5){animation-delay:.16s}.km-panel>*:nth-child(6){animation-delay:.2s}.km-panel>*:nth-child(n+7){animation-delay:.24s}
+.km-zoom{transition:right .3s cubic-bezier(.22,1,.36,1),bottom .3s cubic-bezier(.22,1,.36,1)}
+@media(max-width:760px){@keyframes km-panel-in{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}@keyframes km-panel-out{to{opacity:0;transform:translateY(18px)}}}
+@media (prefers-reduced-motion:reduce){.km-panel,.km-panel>*,.km-panel.km-out{animation:none}.km-zoom{transition:none}}
