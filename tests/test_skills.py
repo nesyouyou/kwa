@@ -176,10 +176,12 @@ class ParcoursVisuals(unittest.TestCase):
 
     def test_token_and_context_widgets_have_their_elements(self):
         page = self.read("parcours-culture.html")
-        for needle in ("tk-chips", "tk-probs", "tk-draw", "tk-temp", "tok-input", "ctx-stack", "data-ctx-play", "data-ctx-compact", "Chiffres inventés"):
+        for needle in ("tk-chips", "tk-probs", "tk-draw", "tk-temp", "tok-input", "ctx-stack", "seg-sum", "Chiffres inventés"):
             self.assertIn(needle, page, needle)
-        for seg in ("sys", "rules", "tools", "hist", "files", "res"):
+        for seg in ("sys", "rules", "tools", "hist", "files", "res", "sum"):
             self.assertIn(f'id="seg-{seg}"', page, seg)
+        for gone in ("ctx-sys", "data-ctx-preset", "data-ctx-play", "Simuler une session"):
+            self.assertNotIn(gone, page, "la jauge n'est plus un formulaire : " + gone)
 
     def test_script_ids_exist_in_the_pages(self):
         js = self.read("src", "parcours.js")
@@ -196,6 +198,8 @@ class ParcoursVisuals(unittest.TestCase):
 
     def test_everyday_tools_and_agent_flow_are_taught(self):
         contexte = self.read("parcours-contexte.html")
+        for needle in ("tools/list", "tools/call", "resources/read", "prompts/get", "mcp-three", "JSON-RPC 2.0"):
+            self.assertIn(needle, contexte, needle)
         for needle in ("Context7", "resolve-library-id", "query-docs", "Playwright", "browser_take_screenshot",
                        "browser_run_code_unsafe", "/clear", "/rewind", "etape-8"):
             self.assertIn(needle, contexte, needle)

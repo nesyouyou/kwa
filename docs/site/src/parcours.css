@@ -53,7 +53,7 @@
 @media (prefers-reduced-motion: reduce) { .pc-reveal[open] > div { animation: none; } .pc-card, .pc-nav a, .pc-reveal { transition: none; } .pc-card:hover { transform: none; } }
 
 /* ---------- explications en couleurs ---------- */
-.pc-wrap{--k0:#3b82f6;--k1:#8b5cf6;--k2:#14b8a6;--k3:#f59e0b;--k4:#22c55e;--k5:#ef4444}
+.pc-wrap{--k0:#3b82f6;--k1:#8b5cf6;--k2:#14b8a6;--k3:#f59e0b;--k4:#22c55e;--k5:#ef4444;--k6:#64748b}
 .pc-actions{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
 .pc-hint{margin:8px 0 0;font-size:12px;color:var(--kw-mut)}
 .pc-chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:10px;min-height:32px;font:13px 'Geist Mono',monospace}
@@ -141,3 +141,24 @@
 @media(prefers-reduced-motion:reduce){.lp-ring span,.pf-steps li{transition:none}}
 
 .pc-kicker{margin:0 0 6px !important;font:500 12px/1.4 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--acc,var(--kw-mut)) !important}
+
+.pc-k6{background:var(--k6)}
+.pc-stack i:nth-child(7){background:var(--k6)}
+.pc-stack--big{height:34px;border-radius:10px}
+
+/* MCP : comparaison avec une API, trois choses exposées */
+.mcp-vs th:nth-child(2),.mcp-vs th:nth-child(3){font-weight:600}
+.mcp-vs td:first-child{font-weight:600;color:var(--kw-fg);white-space:nowrap}
+.mcp-duo{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:18px 0}
+.mcp-duo>div{min-width:0}
+.mcp-duo b{display:block;margin:0 0 6px;font-size:13px;color:var(--kw-fg)}
+.mcp-duo .kd-code{font-size:11.5px;margin:0}
+.mcp-three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:12px 0 20px}
+.mcp-card{padding:16px;border:1px solid var(--kw-rule);border-radius:12px;transition:transform .2s ease,background-color .2s ease}
+.mcp-card p{margin:0 0 8px !important;font-size:14px}
+.mcp-ex{color:var(--kw-mut) !important;font-size:13px !important}
+.mcp-tag{display:inline-block;margin:0 0 10px;padding:2px 8px;border-radius:6px;font:600 12px 'Geist Mono',monospace;color:#fff}
+.mcp-t0{background:var(--k0,#3b82f6)}.mcp-t1{background:var(--k4,#22c55e)}.mcp-t2{background:var(--k1,#8b5cf6)}
+@media (hover:hover){.mcp-card:hover{transform:translateY(-2px);background:var(--kw-raise)}}
+@media(max-width:900px){.mcp-duo,.mcp-three{grid-template-columns:minmax(0,1fr)}.mcp-vs td:first-child{white-space:normal}}
+@media(prefers-reduced-motion:reduce){.mcp-card{transition:none}.mcp-card:hover{transform:none}}
