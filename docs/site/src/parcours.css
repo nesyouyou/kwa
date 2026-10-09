@@ -53,7 +53,7 @@
 @media (prefers-reduced-motion: reduce) { .pc-reveal[open] > div { animation: none; } .pc-card, .pc-nav a, .pc-reveal { transition: none; } .pc-card:hover { transform: none; } }
 
 /* ---------- explications en couleurs ---------- */
-.pc-wrap{--k0:#3b82f6;--k1:#8b5cf6;--k2:#14b8a6;--k3:#f59e0b;--k4:#22c55e;--k5:#ef4444}
+.pc-wrap{--k0:#3b82f6;--k1:#8b5cf6;--k2:#14b8a6;--k3:#f59e0b;--k4:#22c55e;--k5:#ef4444;--k6:#64748b}
 .pc-actions{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
 .pc-hint{margin:8px 0 0;font-size:12px;color:var(--kw-mut)}
 .pc-chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:10px;min-height:32px;font:13px 'Geist Mono',monospace}
@@ -141,3 +141,7 @@
 @media(prefers-reduced-motion:reduce){.lp-ring span,.pf-steps li{transition:none}}
 
 .pc-kicker{margin:0 0 6px !important;font:500 12px/1.4 'Geist Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--acc,var(--kw-mut)) !important}
+
+.pc-k6{background:var(--k6)}
+.pc-stack i:nth-child(7){background:var(--k6)}
+.pc-stack--big{height:34px;border-radius:10px}

@@ -88,24 +88,10 @@ SKL = """<div class="pc-widget po" id="skl">
 
 def culture() -> str:
     gauge = """<div class="pc-widget" id="ctx-gauge">
-<div class="pc-presets"><span>Situations types</span>
-<button type="button" class="kd-copy" data-ctx-preset="chat">Discussion courte</button>
-<button type="button" class="kd-copy" data-ctx-preset="agent">Session d'agent</button>
-<button type="button" class="kd-copy" data-ctx-preset="long">Session trop longue</button></div>
-<div class="pc-fields">
-<label>Consignes du système<input id="ctx-sys" type="number" min="0" step="500" value="6000"></label>
-<label>Fichiers d'instructions<input id="ctx-rules" type="number" min="0" step="500" value="3000"></label>
-<label>Définitions d'outils<input id="ctx-tools" type="number" min="0" step="500" value="12000"></label>
-<label>Historique de la conversation<input id="ctx-hist" type="number" min="0" step="1000" value="30000"></label>
-<label>Fichiers lus<input id="ctx-files" type="number" min="0" step="1000" value="40000"></label>
-<label>Résultats d'outils<input id="ctx-res" type="number" min="0" step="1000" value="25000"></label>
-<label>Taille de la fenêtre<select id="ctx-win"><option value="200000">200 000</option><option value="1000000">1 000 000</option></select></label>
-</div>
-<div class="pc-actions"><button type="button" class="kd-copy" data-ctx-play>Simuler une session d'agent</button>
-<button type="button" class="kd-copy" data-ctx-compact>Compacter</button></div>
-<div class="pc-stack" id="ctx-stack"><i id="seg-sys"></i><i id="seg-rules"></i><i id="seg-tools"></i><i id="seg-hist"></i><i id="seg-files"></i><i id="seg-res"></i></div>
-<ul class="pc-legend"><li><i class="pc-k0"></i>Consignes</li><li><i class="pc-k1"></i>Instructions</li><li><i class="pc-k2"></i>Outils</li><li><i class="pc-k3"></i>Historique</li><li><i class="pc-k4"></i>Fichiers lus</li><li><i class="pc-k5"></i>Résultats</li></ul>
-<p id="ctx-txt" class="pc-big"></p><p id="ctx-msg"></p></div>"""
+<div class="pc-stack pc-stack--big" id="ctx-stack" role="img" aria-label="Fenêtre de contexte qui se remplit au fil d'une session d'agent, puis se compacte"><i id="seg-sys"></i><i id="seg-rules"></i><i id="seg-tools"></i><i id="seg-hist"></i><i id="seg-files"></i><i id="seg-res"></i><i id="seg-sum"></i></div>
+<ul class="pc-legend"><li><i class="pc-k0"></i>Consignes</li><li><i class="pc-k1"></i>Instructions</li><li><i class="pc-k2"></i>Outils</li><li><i class="pc-k3"></i>Historique</li><li><i class="pc-k4"></i>Fichiers lus</li><li><i class="pc-k5"></i>Résultats</li><li><i class="pc-k6"></i>Résumé</li></ul>
+<p id="ctx-txt" class="pc-big"></p><p id="ctx-msg" aria-live="polite"></p>
+<p class="pc-hint">Animation illustrative sur une fenêtre de 200 000 jetons : les quantités sont des exemples, pas des mesures.</p></div>"""
     tok = """<div class="pc-widget" id="tk">
 <div class="pc-presets"><span>Choisir une phrase</span>
 <button type="button" class="kd-copy" data-tk-s="0" aria-pressed="true">La capitale…</button>
@@ -155,9 +141,9 @@ def culture() -> str:
         ("4", "La fenêtre de contexte", "Tout ce que le modèle peut voir à un instant donné, et rien d'autre.",
          """<p>La fenêtre de contexte est la « mémoire de travail » du modèle : <strong>tout</strong> ce qu'il peut consulter pour répondre, sa réponse comprise. Elle contient bien plus que votre dernier message : consignes du système, fichiers d'instructions, définitions des outils, historique de la conversation, fichiers lus, résultats des outils. Le modèle n'a pas de mémoire en dehors de cette fenêtre : une nouvelle session repart de zéro.</p>
 <p>Une fenêtre plus grande n'améliore pas la réponse : à mesure que le contexte grossit, la précision et le rappel peuvent baisser : c'est ce que la documentation appelle <em>context rot</em>. Choisir ce qui entre compte autant que la place disponible.</p>
-<p>Remplissez la jauge, puis essayez les trois situations types.</p>""" + gauge,
+<p>Regardez la fenêtre se remplir au fil d'une session d'agent, puis se compacter.</p>""" + gauge,
          "Citer ce qui occupe une fenêtre en dehors de votre message, et dire pourquoi la remplir n'est pas un but.",
-         "Les valeurs de la jauge sont des exemples pour comprendre, pas des mesures. Une interface de chat peut aussi faire glisser la conversation en oubliant les débuts."),
+         "Les valeurs de l'animation sont des exemples pour comprendre, pas des mesures. Une interface de chat peut aussi faire glisser la conversation en oubliant les débuts."),
         ("5", "Le prompt engineering", "Écrire pour un lecteur très compétent qui n'a aucun contexte.",
          """<p>Un prompt est un texte de travail : on le rédige comme une consigne à un collègue brillant qui arrive ce matin. La règle d'or de la documentation : montrez votre consigne à quelqu'un qui n'a pas le contexte et demandez-lui de l'exécuter. S'il hésite, le modèle hésitera aussi.</p>
 <ul class="pc-list">
@@ -360,7 +346,7 @@ def contexte() -> str:
 <tr><td>Résumer quand la fenêtre se remplit</td><td>La compaction de la conversation</td></tr>
 <tr><td>Écrire des notes hors de la fenêtre</td><td>Les fichiers d'instructions, la mémoire automatique, les notes de session</td></tr>
 <tr><td>Déléguer à un contexte propre</td><td>Les sous-agents, qui renvoient un résumé</td></tr></tbody></table>
-<p>Retournez à la jauge du parcours précédent, préréglage « Session d'agent », et repérez les deux postes que vous contrôlez le mieux.</p>""",
+<p>Revoyez l'animation de la fenêtre dans le parcours précédent et repérez les deux postes que vous contrôlez le mieux.</p>""",
          "Nommer les six sources du contexte d'une session d'agent et associer une technique à chacun de ses problèmes.",
          "Ajouter des informations « au cas où » alourdit le contexte. Ce qui n'aide pas la tâche la dessert."),
         ("2", "Piloter la session", "Une session est un outil qu'on conduit : l'effacer, la résumer, la rejouer.",
