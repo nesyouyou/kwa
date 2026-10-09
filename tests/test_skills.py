@@ -176,10 +176,12 @@ class ParcoursVisuals(unittest.TestCase):
 
     def test_token_and_context_widgets_have_their_elements(self):
         page = self.read("parcours-culture.html")
-        for needle in ("tk-chips", "tk-probs", "tk-draw", "tk-temp", "tok-input", "ctx-stack", "data-ctx-play", "data-ctx-compact", "Chiffres inventés"):
+        for needle in ("tk-chips", "tk-probs", "tk-draw", "tk-temp", "tok-input", "ctx-stack", "seg-sum", "Chiffres inventés"):
             self.assertIn(needle, page, needle)
-        for seg in ("sys", "rules", "tools", "hist", "files", "res"):
+        for seg in ("sys", "rules", "tools", "hist", "files", "res", "sum"):
             self.assertIn(f'id="seg-{seg}"', page, seg)
+        for gone in ("ctx-sys", "data-ctx-preset", "data-ctx-play", "Simuler une session"):
+            self.assertNotIn(gone, page, "la jauge n'est plus un formulaire : " + gone)
 
     def test_script_ids_exist_in_the_pages(self):
         js = self.read("src", "parcours.js")
@@ -196,6 +198,8 @@ class ParcoursVisuals(unittest.TestCase):
 
     def test_everyday_tools_and_agent_flow_are_taught(self):
         contexte = self.read("parcours-contexte.html")
+        for needle in ("tools/list", "tools/call", "resources/read", "prompts/get", "mcp-three", "JSON-RPC 2.0"):
+            self.assertIn(needle, contexte, needle)
         for needle in ("Context7", "resolve-library-id", "query-docs", "Playwright", "browser_take_screenshot",
                        "browser_run_code_unsafe", "/clear", "/rewind", "etape-8"):
             self.assertIn(needle, contexte, needle)
@@ -377,6 +381,36 @@ class ThemeIcon(unittest.TestCase):
             self.assertNotIn("Thème sombre</button>", text, name)
 
 
+class SplitPages(unittest.TestCase):
+    """L'accueil est court ; chaque grand sujet a sa page, atteignable depuis la barre latérale."""
+    SITE = os.path.join(PACK, "docs", "site")
+    PAGES = {"skills.html": "skills", "gardes.html": "gardes", "memoire.html": "memoire", "methode.html": "superpowers",
+             "migrer.html": "migrer", "limites.html": "limites", "credits.html": "credits"}
+
+    def read(self, name):
+        with open(os.path.join(self.SITE, name), encoding="utf-8") as f:
+            return f.read()
+
+    def test_home_keeps_only_the_short_story(self):
+        home = self.read("index.html")
+        for sid in ("pourquoi", "arborescence", "demarrer"):
+            self.assertIn(f'id="{sid}"', home, sid)
+        for sid in list(self.PAGES.values()) + ["carte", "board", "terminal"]:
+            self.assertNotIn(f'<section class="kw-container kd-section kd-rv" id="{sid}">', home, sid)
+
+    def test_each_topic_has_its_own_page_with_a_title_and_its_sidebar_entry(self):
+        for fname, sid in self.PAGES.items():
+            text = self.read(fname)
+            self.assertEqual(text.count("<h1"), 1, fname)
+            self.assertIn(f'id="{sid}"', text, fname)
+            self.assertIn(f'href="{fname}" aria-current="page"', text, fname)
+
+    def test_home_buttons_lead_to_dedicated_pages(self):
+        home = self.read("index.html")
+        for target in ("skill-map.html", "board.html", "terminal.html"):
+            self.assertIn(f'href="{target}"', home, target)
+
+
 class Circuit(unittest.TestCase):
     SITE = os.path.join(PACK, "docs", "site")
 
@@ -384,11 +418,11 @@ class Circuit(unittest.TestCase):
         return open(os.path.join(self.SITE, *p), encoding="utf-8").read()
 
     def test_pages_mount_the_circuit_not_the_animated_board(self):
-        for name in ("board.html", "index.html"):
-            text = self.read(name)
-            self.assertIn("circuit.js", text, name)
-            self.assertIn("KwaCircuit.mount", text, name)
-            self.assertNotIn("KwaBoard.mount", text, name)
+        text = self.read("board.html")
+        self.assertIn("circuit.js", text)
+        self.assertIn("KwaCircuit.mount", text)
+        self.assertNotIn("KwaBoard.mount", text)
+        self.assertNotIn("circuit.js", self.read("index.html"), "l'accueil ne charge plus les widgets des pages dédiées")
 
     def test_no_autoplay_and_every_step_has_a_label(self):
         js = self.read("src", "circuit.js")

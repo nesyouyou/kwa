@@ -1,9 +1,14 @@
 <!doctype html>
-<html lang="fr" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<html lang="fr" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
-<title>Le workflow | Kwa</title>
+<title>La mémoire | Kwa</title>
+<meta name="description" content="Comment chaque session enrichit la suivante : capture, journal, filtre, tri, reprise.">
 <script>try{if(localStorage.getItem('kwa-docs-theme')==='light')document.documentElement.dataset.theme='light'}catch(e){}</script>
-<link rel="stylesheet" href="style/fonts.css"><link rel="stylesheet" href="style/tokens.css"><link rel="stylesheet" href="style/base.css"><link rel="stylesheet" href="src/shell.css"><link rel="stylesheet" href="src/circuit.css">
+<link rel="stylesheet" href="style/fonts.css"><link rel="stylesheet" href="style/tokens.css"><link rel="stylesheet" href="style/base.css"><link rel="stylesheet" href="src/shell.css">
+
 <style>
 /* Extensions propres à la documentation Kwa. Uniquement les tokens du design system : aucune couleur ajoutée. */
 html{scroll-behavior:smooth;overflow-x:clip}
@@ -139,26 +144,51 @@ footer.kw-footer{margin-top:128px}
   .kd-ob .item{grid-template-columns:minmax(0,1fr);padding:18px}.kd-ob .num{display:none}.kd-section{padding-top:88px}.kd-brand span{display:none}
 }
 @media (prefers-reduced-motion:reduce){.js .kd-rv{opacity:1;transform:none;transition:none}}
-@media print{</style></head>
+@media print{</style>
+</head>
 <body class="kw">
 <header class="kd-top"><button type="button" class="kd-menu" id="menu" aria-label="Ouvrir la navigation" aria-expanded="false" aria-controls="side"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><a class="kd-brand" href="index.html" aria-label="Kwa, accueil"><b class="kd-word">kwa</b><span>/ harness</span></a><span class="kd-spacer"></span><button type="button" class="kd-theme" id="theme" aria-label="Passer en thème clair" title="Changer de thème"><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></svg><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 14.6A8.4 8.4 0 0 1 9.4 3.8a8.4 8.4 0 1 0 10.8 10.8z"/></svg></button></header>
-<div class="kd-layout"><aside class="kd-side" id="side" aria-label="Navigation"><nav><div class="kd-sg"><h2><svg class="kd-ico" style="--dot:var(--kd-blue)" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>Kwa</h2><ul><li><a href="index.html#top">Présentation</a></li><li><a href="index.html#pourquoi">Pourquoi ce projet</a></li><li><a href="index.html#arborescence">Arborescence</a></li><li><a href="index.html#demarrer">Démarrer</a></li></ul></div><div class="kd-sg"><h2><svg class="kd-ico" style="--dot:var(--kd-violet)" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg>Explorer</h2><ul><li><a href="skill-map.html">Carte des skills</a></li><li><a href="board.html" aria-current="page">Workflow d&#x27;une demande</a></li><li><a href="terminal.html">Terminal</a></li><li><a href="skills.html">Skills</a></li><li><a href="gardes.html">Gardes en action</a></li><li><a href="memoire.html">Mémoire</a></li></ul></div><div class="kd-sg"><h2><svg class="kd-ico" style="--dot:var(--kd-green)" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11.5V16c0 1.2 2.7 3 6 3s6-1.8 6-3v-4.5"/></svg>Apprendre</h2><ul><li><a href="parcours.html">Les trois parcours</a></li><li><a href="parcours-culture.html">1 · Culture IA générative</a></li><li><a href="parcours-contexte.html">2 · Context engineering</a></li><li><a href="parcours-harness.html">3 · Harness</a></li></ul></div><div class="kd-sg"><h2><svg class="kd-ico" style="--dot:var(--kd-amber)" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/></svg>Référence</h2><ul><li><a href="methode.html">Méthode</a></li><li><a href="migrer.html">Remplacer l&#x27;existant</a></li><li><a href="limites.html">Limites et suite</a></li><li><a href="credits.html">Crédits</a></li></ul></div></nav></aside><div class="kd-scrim" id="scrim"></div><div class="kd-main">
-<main class="kw-container pc-wrap" data-acc="board" style="padding-top:32px">
-  <div class="kd-eyebrow">Une demande, de bout en bout</div>
-  <h1 class="kw-page-title">Le workflow</h1>
-  <div id="board-root"></div>
+<div class="kd-layout"><aside class="kd-side" id="side" aria-label="Navigation"><nav><div class="kd-sg"><h2><svg class="kd-ico" style="--dot:var(--kd-blue)" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>Kwa</h2><ul><li><a href="index.html#top">Présentation</a></li><li><a href="index.html#pourquoi">Pourquoi ce projet</a></li><li><a href="index.html#arborescence">Arborescence</a></li><li><a href="index.html#demarrer">Démarrer</a></li></ul></div><div class="kd-sg"><h2><svg class="kd-ico" style="--dot:var(--kd-violet)" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg>Explorer</h2><ul><li><a href="skill-map.html">Carte des skills</a></li><li><a href="board.html">Workflow d&#x27;une demande</a></li><li><a href="terminal.html">Terminal</a></li><li><a href="skills.html">Skills</a></li><li><a href="gardes.html">Gardes en action</a></li><li><a href="memoire.html" aria-current="page">Mémoire</a></li></ul></div><div class="kd-sg"><h2><svg class="kd-ico" style="--dot:var(--kd-green)" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11.5V16c0 1.2 2.7 3 6 3s6-1.8 6-3v-4.5"/></svg>Apprendre</h2><ul><li><a href="parcours.html">Les trois parcours</a></li><li><a href="parcours-culture.html">1 · Culture IA générative</a></li><li><a href="parcours-contexte.html">2 · Context engineering</a></li><li><a href="parcours-harness.html">3 · Harness</a></li></ul></div><div class="kd-sg"><h2><svg class="kd-ico" style="--dot:var(--kd-amber)" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/></svg>Référence</h2><ul><li><a href="methode.html">Méthode</a></li><li><a href="migrer.html">Remplacer l&#x27;existant</a></li><li><a href="limites.html">Limites et suite</a></li><li><a href="credits.html">Crédits</a></li></ul></div></nav></aside><div class="kd-scrim" id="scrim"></div><div class="kd-main">
+<main class="kd-solo">
+<section class="kw-container kd-section kd-rv" id="memoire">
+  <div class="kd-head"><div class="kd-eyebrow">Mémoire</div><h1 class="kw-page-title">Chaque session enrichit la suivante</h1>
+    <p class="kd-lead">D'autres projets captent des corrections ou des découvertes. Kwa y ajoute le <strong>journal des sessions</strong>, qui dit au démarrage où l'on en était, le <strong>refus d'un garde comme signal d'apprentissage</strong>, et le rangement dans la documentation partagée du projet. Rien n'est écrit sans votre accord.</p></div>
+  <div class="kd-loop" style="margin-top:40px">
+    <div class="kd-node"><b>1. Capture</b><span>Sans y penser : vos corrections, vos « retiens : » et chaque refus de garde deviennent des candidats. Ou à la main : <code>kwa-memory capture gotcha "…"</code></span></div>
+    <div class="kd-node"><b>2. Journal</b><span>En fin de session substantielle, huit lignes : objectif, fait, décisions, reste à faire, pièges. Si vous fermez sans rien dire, un filet écrit au moins les faits.</span></div>
+    <div class="kd-node"><b>3. Filtre</b><span>Seulement le non-dérivable du code et de git. Chaque affirmation est revérifiée.</span></div>
+    <div class="kd-node"><b>4. Tri</b><span>Chaque apprentissage est routé vers la bonne destination, avec le diff exact.</span></div>
+    <div class="kd-node"><b>5. Reprise</b><span>Au démarrage suivant : la dernière session de la branche, l'état git et les notes en attente, en 2 000 caractères au plus.</span></div>
+  </div>
+  <div class="kd-grid kd-g4" style="margin-top:34px">
+    <div class="kd-card"><h3>Docs du projet</h3><p><strong>Décisions</strong> en ADR, <strong>pièges</strong> datés, <strong>conventions</strong> dans <code>AGENTS.md</code>. Versionné, lu par tout agent et tout collègue.</p></div>
+    <div class="kd-card"><h3>Garde-fous</h3><p>Une erreur répétable devient une <strong>règle de la politique</strong>, avec son cas de test.</p></div>
+    <div class="kd-card"><h3>Mémoire de l'agent</h3><p><strong>Préférences</strong> de collaboration, retours sur la façon de faire.</p></div>
+    <div class="kd-card"><h3>Base de connaissance</h3><p><strong>Transverse aux projets</strong> : capture rapide dans la boîte de réception de l'équipe (<code>KWA_VAULT_INBOX</code>), jamais dans un fichier protégé.</p></div>
+  </div>
+  <div class="kd-gate"><b>Accord requis</b><span>Un tableau de sept lignes maximum est présenté avec les diffs. Rien n'est appliqué sans « tout », « 1 et 3 » ou « rien ». « Rien à capitaliser » est une réponse valable.</span></div>
+</section>
 </main>
 </div></div>
+
 <footer class="kw-footer"><div class="kw-container kw-footer-grid">
   <div><b class="kd-word kd-word--big">kwa</b></div>
   <div><h3>Kwa</h3><p>v<span id="ver2"></span><br><span id="tests"></span></p></div>
   <div><h3>Documentation</h3><p>Régénérée par <code>docs/site/build.py</code> ; exemples calculés en exécutant les gardes.</p></div>
   <div><h3>Style</h3><p>Feuille de style écrite pour ce site ; polices Geist, licence SIL OFL.</p></div>
 </div></footer>
-<script src="data.js"></script><script src="src/board.js"></script><script src="src/circuit.js"></script><script src="src/shell.js"></script>
+
+<script src="data.js"></script>
+
 <script>
 const DATA = window.KWA;
+document.documentElement.classList.add('js');
 const $ = (s, r=document) => r.querySelector(s);
+const PICTO = {"shield": "<svg class=\"kd-pic p-shield\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M12 3l7.5 3v5.2c0 4.6-3.1 8.2-7.5 9.8-4.4-1.6-7.5-5.2-7.5-9.8V6z\"/><path d=\"m8.8 12 2.3 2.3 4.2-4.6\"/></svg>", "sword": "<svg class=\"kd-pic p-sword\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M21 3 10.2 16.2 7.8 13.8z\"/><path d=\"M5.5 11.5l7 7\"/><path d=\"M9 15l-3.5 3.5\"/><circle cx=\"4.6\" cy=\"19.4\" r=\"1.1\"/></svg>", "hook": "<svg class=\"kd-pic p-hook\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M12 3v11\"/><path d=\"M6 14a6 6 0 0 0 12 0\"/><circle cx=\"12\" cy=\"5\" r=\"1.6\"/></svg>", "agent": "<svg class=\"kd-pic p-agent pic-fill\" viewBox=\"0 0 16 16\" aria-hidden=\"true\"><path fill-rule=\"evenodd\" d=\"M7 1h2v3h4v1h1v1h1v4h-1v1h-1v1H3v-1H2v-1H1V6h1V5h1V4h4zM5 6h2v3H5zM9 6h2v3H9zM7 10h2v1H7zM3 9h1v1H3zM12 9h1v1h-1z\"/></svg>"};
+const rich = t => esc(t).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+const el = (t, a={}, h='') => { const e=document.createElement(t); for(const k in a){ if(k==='class') e.className=a[k]; else e.setAttribute(k,a[k]); } e.innerHTML=h; return e; };
+const esc = s => String(s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
 /* thème : clair par défaut, seul un choix explicite est enregistré */
 const root = document.documentElement, tbtn = $('#theme');
 function syncTheme(){ const dark = root.dataset.theme==='dark'; tbtn.setAttribute('aria-label', dark ? 'Passer en thème clair' : 'Passer en thème sombre'); }
@@ -174,6 +204,90 @@ document.addEventListener('click', e => { const b = e.target.closest('[data-copy
 
 /* fin du bloc thème */
 
-$('#ver2').textContent = DATA.version; $('#tests').textContent = `${DATA.tests} tests ${DATA.tests_ok ? 'au vert' : 'en échec'}`;
-KwaCircuit.mount($('#board-root'));
-</script></body></html>
+/* entrées au scroll, une seule fois ; tout est visible sans JS ni en mouvement réduit */
+if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), {rootMargin:'0px 0px -8% 0px'});
+  document.querySelectorAll('.kd-rv').forEach(n => io.observe(n));
+} else { document.querySelectorAll('.kd-rv').forEach(n => n.classList.add('in')); }
+
+document.querySelectorAll('#ver, #ver2').forEach(n => n.textContent = DATA.version);
+$('#tests').textContent = `${DATA.tests} tests ${DATA.tests_ok ? 'au vert' : 'en échec'}`;
+
+/* chiffres */
+if ($('#stats')) {
+const nHooks = DATA.modules.reduce((n,m)=>n+m.files.filter(f=>f.includes('/hooks/')&&!f.includes('_kwa')).length,0);
+[[DATA.modules.length,'modules'],[nHooks,'hooks'],[DATA.catalog.length,'skills']].forEach(([n,l]) => $('#stats').append(el('div',{class:'kd-stat'},`<div class="n">${n}</div><div class="l">${l}</div>`)));
+}
+
+/* gardes */
+if ($('#tools')) {
+const cats = ['Tous', ...new Set(DATA.examples.map(e=>e.cat))];
+const decs = [['all','Toutes'],['deny','Refusées'],['ask','Demandées'],['allow','Autorisées']];
+let fc='Tous', fd='all', fq='';
+const tools = $('#tools');
+function chips(list, get, set){ const w = el('span'); w.style.cssText='display:flex;gap:8px;flex-wrap:wrap'; list.forEach(x=>{ const v = Array.isArray(x)?x[0]:x, l = Array.isArray(x)?x[1]:x; const b = el('button',{class:'kd-chip',type:'button','aria-pressed': get()===v},l); b.onclick=()=>{ set(v); renderTools(); renderTable(); }; w.append(b); }); return w; }
+function renderTools(){ tools.innerHTML=''; tools.append(chips(decs,()=>fd,v=>fd=v)); tools.append(chips(cats,()=>fc,v=>fc=v)); const i = el('input',{class:'kd-search',placeholder:'Chercher une commande…','aria-label':'Chercher une commande',type:'search'}); i.value=fq; i.oninput=()=>{fq=i.value; renderTable();}; tools.append(i); }
+const LAB = {deny:'Refusé', ask:'Demande', allow:'Autorisé'};
+function renderTable(){
+  const rows = DATA.examples.filter(e => (fc==='Tous'||e.cat===fc) && (fd==='all'||e.decision===fd) && (!fq || (e.input+e.why).toLowerCase().includes(fq.toLowerCase())));
+  $('#table').innerHTML = rows.map(e=>`<div class="kd-row"><div><span class="kd-pill ${e.decision}">${LAB[e.decision]}</span></div><div><div class="cmd">${esc(e.input)}<span class="meta">${e.cat} · ${esc(e.branch)}</span></div></div><div class="why">${e.why?esc(e.why):'Passe sans message.'}</div></div>`).join('') || '<div class="kd-row"><div></div><div class="why">Aucun résultat.</div></div>';
+  $('#gnote').textContent = `${rows.length} cas affichés sur ${DATA.examples.length}. Calculés par exécution réelle des gardes ; régénérer avec python3 docs/site/build.py.`;
+}
+renderTools(); renderTable();
+}
+
+/* skills */
+if ($('#sk')) {
+const FAMILIES = {cadrage:['interview','brainstorm','plan','tickets','questionnaire','prototype','architecture','rephrase'], faire:['execute','agents','parallel','tdd','simple','start-dev'], prouver:['debug','verify','review','review-feedback','audit'], livrer:['commit','ship','deploy','testflight','humanize'], memoire:['learn','handoff','agent-docs']};
+const FLAB = {cadrage:'Cadrer', faire:'Faire', prouver:'Prouver', livrer:'Livrer', memoire:'Mémoire'};
+const famOf = n => Object.keys(FAMILIES).find(f=>FAMILIES[f].includes(n)) || 'faire';
+let ff='all';
+$('#nskills').textContent = DATA.catalog.length;
+const originsOf = n => DATA.credits.sources.filter(s=>s.skills.includes(n)).map(s=>({name:s.author, av:(DATA.map.origins[s.id]||{}).avatar, handle:(DATA.map.origins[s.id]||{}).handle}));
+function renderSk(){
+  const t = $('#sk-tools'); t.innerHTML=''; [['all','Toutes'],...Object.entries(FLAB)].forEach(([k,l])=>{ const b=el('button',{class:'kd-chip',type:'button','aria-pressed':ff===k},l); b.onclick=()=>{ff=k;renderSk();}; t.append(b); });
+  $('#sk').innerHTML = DATA.catalog.filter(c=>ff==='all'||famOf(c.id)===ff).map(c=>{ const o=originsOf(c.id); return `<div class="kd-card"><span class="kd-fam">${FLAB[famOf(c.id)]}</span><h3>${PICTO.sword}/kwa-${c.id}</h3><p>${esc(c.description)}</p>${o.length?o.map(a=>`<span class="kd-origin"><img src="${esc(a.av)}" alt="" width="22" height="22">${esc(a.handle)}</span>`).join(''):'<span class="kd-origin kwa">Kwa</span>'}</div>`; }).join('');
+}
+renderSk();
+}
+
+/* onboarding */
+if ($('#ob')) {
+const OB = [
+ ['Voir ce que Kwa détecte','kwa detect ./mon-projet',"Stack, modules proposés, politique déduite. N'écrit rien."],
+ ["Simuler l'installation",'kwa install ./mon-projet --dry-run',"Liste ce qui serait ajouté, fusionné, sauvegardé. N'écrit rien."],
+ ['Installer','kwa install ./mon-projet --with client-handover --codex',"Ajouter <code>--with client-handover</code> si le dépôt sera remis au client, <code>--codex</code> pour la parité Codex. Puis relire <code>.claude/kwa.policy.json</code> : c'est là que se met le spécifique du projet."],
+ ['Vérifier','kwa doctor ./mon-projet',"AGENTS.md, CLAUDE.md, hooks branchés, règles de politique, doublons avec l'outillage existant du projet."]
+];
+OB.forEach(([t,c,d],i)=> $('#ob').append(el('div',{class:'item'},`<div class="num">${i+1}</div><div><h3>${t}</h3><p>${d}</p><div class="kd-term" style="margin-top:0"><div class="top"><span>Terminal</span><button class="kd-copy" data-copy="${esc(c)}">Copier</button></div><pre class="kd-code"><span class="p">$</span> ${esc(c)}</pre></div></div>`)));
+}
+
+/* migration d'un outillage existant */
+if ($('#maptable')) {
+const MAP = [
+ ['Un hook shell qui refuse les commandes destructrices (reset de base, force-push, cibles de production)','guard-policy + guard-git ; règles <code>bash.deny</code> et <code>bash.ask</code> de la politique'],
+ ["Heredoc : le corps est une donnée, sauf s'il est exécuté",'Repris dans le noyau, y compris pour les sous-shells'],
+ ['Un hook qui exige « Closes #N » et une preuve avant fusion','guard-github (module issue-flow), testé avec un faux gh'],
+ ['Un hook qui protège les migrations, les .env et interdit le code sur main','guard-write : <code>write.deny</code> et <code>write.no_code_on_main</code>'],
+ ['Formatage à la sauvegarde, vérification à la fin de session','format-after-edit et verify-stop (module verify), commandes lues dans la politique'],
+ ['Une skill « démarrer un développement » + un script de worktree','/kwa-start-dev + kwa-start'],
+ ['Des skills de déploiement par environnement avec pré-vol','/kwa-deploy piloté par <code>environments</code> ; pré-vol et rationalisations dans la politique'],
+ ['Une skill TestFlight (Release sur simulateur avant build EAS)','/kwa-testflight, profils lus dans <code>mobile</code> et eas.json (React Native / Expo)'],
+ ['Une règle de remise au client et un contrôle d\'hygiène en CI',"module client-handover : règle, kwa-hygiene, liste d'exceptions, job CI"],
+ ["Modèles d'issues et de PR",'Gabarits copiés une fois (seed), puis au projet'],
+ ['.agents/skills et .codex/hooks.json','<code>kwa install --codex</code>'],
+ ["Une section « conventions de collaboration » dans AGENTS.md",'Dans le bloc commun : langue, simplicité, changements chirurgicaux, confidentialité'],
+ ['Les scripts propres au projet (statut, jetons de thème, CI)','Conservés tels quels : Kwa ne touche que ses propres fichiers']
+];
+$('#maptable').innerHTML = '<tr><th>Outillage maison</th><th>Dans Kwa</th></tr>' + MAP.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('');
+$('#detect').textContent = DATA.detect.trim();
+}
+
+/* crédits */
+if ($('#src')) {
+$('#src').innerHTML = DATA.credits.sources.map(s=>`<div class="kd-card"><div><div class="who"><img class="kd-av" src="${esc((DATA.map.origins[s.id]||{}).avatar)}" alt="" width="24" height="24"><h3>${esc(s.author)}</h3></div><p class="sub"><a href="${esc(s.url)}">${esc(s.name)}</a> · ${esc(s.license)}</p></div><div><p>${rich(s.took)}</p><div>${s.skills.map(k=>`<span class="kd-tag">/kwa-${k}</span>`).join('')}</div></div></div>`).join('') + '<p class="kd-note">Kwa ne copie aucun fichier de ces projets : les textes sont réécrits, les mécanismes réimplémentés et testés. La ligne d\'origine figure à la fin de chaque skill concernée.</p>';
+}
+</script>
+<script src="src/shell.js"></script>
+</body>
+</html>

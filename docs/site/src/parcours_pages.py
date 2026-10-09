@@ -89,24 +89,10 @@ SKL = """<div class="pc-widget po" id="skl">
 
 def culture() -> str:
     gauge = """<div class="pc-widget" id="ctx-gauge">
-<div class="pc-presets"><span>Situations types</span>
-<button type="button" class="kd-copy" data-ctx-preset="chat">Discussion courte</button>
-<button type="button" class="kd-copy" data-ctx-preset="agent">Session d'agent</button>
-<button type="button" class="kd-copy" data-ctx-preset="long">Session trop longue</button></div>
-<div class="pc-fields">
-<label>Consignes du système<input id="ctx-sys" type="number" min="0" step="500" value="6000"></label>
-<label>Fichiers d'instructions<input id="ctx-rules" type="number" min="0" step="500" value="3000"></label>
-<label>Définitions d'outils<input id="ctx-tools" type="number" min="0" step="500" value="12000"></label>
-<label>Historique de la conversation<input id="ctx-hist" type="number" min="0" step="1000" value="30000"></label>
-<label>Fichiers lus<input id="ctx-files" type="number" min="0" step="1000" value="40000"></label>
-<label>Résultats d'outils<input id="ctx-res" type="number" min="0" step="1000" value="25000"></label>
-<label>Taille de la fenêtre<select id="ctx-win"><option value="200000">200 000</option><option value="1000000">1 000 000</option></select></label>
-</div>
-<div class="pc-actions"><button type="button" class="kd-copy" data-ctx-play>Simuler une session d'agent</button>
-<button type="button" class="kd-copy" data-ctx-compact>Compacter</button></div>
-<div class="pc-stack" id="ctx-stack"><i id="seg-sys"></i><i id="seg-rules"></i><i id="seg-tools"></i><i id="seg-hist"></i><i id="seg-files"></i><i id="seg-res"></i></div>
-<ul class="pc-legend"><li><i class="pc-k0"></i>Consignes</li><li><i class="pc-k1"></i>Instructions</li><li><i class="pc-k2"></i>Outils</li><li><i class="pc-k3"></i>Historique</li><li><i class="pc-k4"></i>Fichiers lus</li><li><i class="pc-k5"></i>Résultats</li></ul>
-<p id="ctx-txt" class="pc-big"></p><p id="ctx-msg"></p></div>"""
+<div class="pc-stack pc-stack--big" id="ctx-stack" role="img" aria-label="Fenêtre de contexte qui se remplit au fil d'une session d'agent, puis se compacte"><i id="seg-sys"></i><i id="seg-rules"></i><i id="seg-tools"></i><i id="seg-hist"></i><i id="seg-files"></i><i id="seg-res"></i><i id="seg-sum"></i></div>
+<ul class="pc-legend"><li><i class="pc-k0"></i>Consignes</li><li><i class="pc-k1"></i>Instructions</li><li><i class="pc-k2"></i>Outils</li><li><i class="pc-k3"></i>Historique</li><li><i class="pc-k4"></i>Fichiers lus</li><li><i class="pc-k5"></i>Résultats</li><li><i class="pc-k6"></i>Résumé</li></ul>
+<p id="ctx-txt" class="pc-big"></p><p id="ctx-msg" aria-live="polite"></p>
+<p class="pc-hint">Animation illustrative sur une fenêtre de 200 000 jetons : les quantités sont des exemples, pas des mesures.</p></div>"""
     tok = """<div class="pc-widget" id="tk">
 <div class="pc-presets"><span>Choisir une phrase</span>
 <button type="button" class="kd-copy" data-tk-s="0" aria-pressed="true">La capitale…</button>
@@ -156,9 +142,9 @@ def culture() -> str:
         ("4", "La fenêtre de contexte", "Tout ce que le modèle peut voir à un instant donné, et rien d'autre.",
          """<p>La fenêtre de contexte est la « mémoire de travail » du modèle : <strong>tout</strong> ce qu'il peut consulter pour répondre, sa réponse comprise. Elle contient bien plus que votre dernier message : consignes du système, fichiers d'instructions, définitions des outils, historique de la conversation, fichiers lus, résultats des outils. Le modèle n'a pas de mémoire en dehors de cette fenêtre : une nouvelle session repart de zéro.</p>
 <p>Une fenêtre plus grande n'améliore pas la réponse : à mesure que le contexte grossit, la précision et le rappel peuvent baisser : c'est ce que la documentation appelle <em>context rot</em>. Choisir ce qui entre compte autant que la place disponible.</p>
-<p>Remplissez la jauge, puis essayez les trois situations types.</p>""" + gauge,
+<p>Regardez la fenêtre se remplir au fil d'une session d'agent, puis se compacter.</p>""" + gauge,
          "Citer ce qui occupe une fenêtre en dehors de votre message, et dire pourquoi la remplir n'est pas un but.",
-         "Les valeurs de la jauge sont des exemples pour comprendre, pas des mesures. Une interface de chat peut aussi faire glisser la conversation en oubliant les débuts."),
+         "Les valeurs de l'animation sont des exemples pour comprendre, pas des mesures. Une interface de chat peut aussi faire glisser la conversation en oubliant les débuts."),
         ("5", "Le prompt engineering", "Écrire pour un lecteur très compétent qui n'a aucun contexte.",
          """<p>Un prompt est un texte de travail : on le rédige comme une consigne à un collègue brillant qui arrive ce matin. La règle d'or de la documentation : montrez votre consigne à quelqu'un qui n'a pas le contexte et demandez-lui de l'exécuter. S'il hésite, le modèle hésitera aussi.</p>
 <ul class="pc-list">
@@ -332,6 +318,54 @@ def parse_front(text: str) -> dict:
     return {k.strip(): v.strip() for k, v in (l.split(":", 1) for l in m.group(1).splitlines() if ":" in l)}
 
 
+MCP_REST = """GET /orders/42 HTTP/1.1
+Authorization: Bearer <jeton>
+
+200 OK
+{ "id": 42, "status": "shipped" }"""
+
+MCP_LIST = """-> {"jsonrpc": "2.0", "id": 1, "method": "tools/list"}
+
+<- {"jsonrpc": "2.0", "id": 1, "result": {"tools": [{
+     "name": "get_order",
+     "description": "Retourne une commande à partir de son numéro.",
+     "inputSchema": {"type": "object",
+       "properties": {"id": {"type": "integer"}}, "required": ["id"]}
+   }]}}"""
+
+MCP_CALL = """-> {"jsonrpc": "2.0", "id": 2, "method": "tools/call",
+    "params": {"name": "get_order", "arguments": {"id": 42}}}
+
+<- {"jsonrpc": "2.0", "id": 2, "result": {
+     "content": [{"type": "text", "text": "Commande 42 : expédiée"}],
+     "isError": false}}"""
+
+MCP_VS = """<h3 class="pc-h3">Une API, pour un agent</h3>
+<p>Vous connaissez déjà le principe : un service expose des opérations, un client les appelle. MCP est ce contrat, pensé pour un <strong>agent</strong> plutôt que pour votre code. Les différences tiennent à une idée : <strong>c'est le modèle qui découvre les opérations et décide de les appeler pendant la session</strong>, au lieu d'un développeur qui les a codées à l'avance.</p>
+<table class="pc-table mcp-vs"><thead><tr><th></th><th>API classique (REST)</th><th>Serveur MCP</th></tr></thead><tbody>
+<tr><td>Qui appelle</td><td>Votre code, écrit à l'avance</td><td>Le modèle, qui décide en cours de session</td></tr>
+<tr><td>Découverte</td><td>Vous lisez la documentation (OpenAPI) avant de coder</td><td>Le client demande la liste au serveur, à la connexion (<code>tools/list</code>)</td></tr>
+<tr><td>Description</td><td>Pour un humain : pages de doc, exemples</td><td>Pour le modèle : une phrase en langage naturel et un schéma JSON des paramètres</td></tr>
+<tr><td>Forme d'un appel</td><td><code>GET /orders/42</code></td><td><code>tools/call</code> avec le nom de l'outil et ses arguments</td></tr>
+<tr><td>Données</td><td>Des URL de ressources</td><td><code>resources/list</code> et <code>resources/read</code>, par URI</td></tr>
+<tr><td>Modèles de demande</td><td>Aucun</td><td><code>prompts/list</code> et <code>prompts/get</code></td></tr>
+<tr><td>Format</td><td>Libre (JSON, XML, formulaire)</td><td>Toujours du JSON-RPC 2.0</td></tr>
+<tr><td>Transport</td><td>HTTP</td><td>Un processus local en entrée et sortie standard, ou HTTP</td></tr>
+<tr><td>Authentification</td><td>Clé ou OAuth gérés par votre code</td><td>En-têtes ou OAuth déclarés dans la configuration du client</td></tr>
+<tr><td>Résultat</td><td>Code HTTP et corps de réponse</td><td>Du contenu lisible par le modèle, qui entre dans le contexte</td></tr></tbody></table>
+<div class="mcp-duo">
+<div><b>REST : un appel codé en dur</b>""" + code(MCP_REST) + """</div>
+<div><b>MCP : l'agent découvre la liste</b>""" + code(MCP_LIST) + """</div>
+<div><b>MCP : puis il appelle un outil</b>""" + code(MCP_CALL) + """</div>
+</div>
+<p>Un serveur MCP expose trois choses, chacune déclenchée par quelqu'un de différent :</p>
+<div class="mcp-three">
+<div class="mcp-card"><span class="mcp-tag mcp-t0">Outils</span><p>Des <strong>actions</strong> : chercher, créer, lancer. Elles sont décrites au modèle, qui décide de les appeler.</p><p class="mcp-ex">Exemples : <code>get_order</code>, <code>browser_click</code></p></div>
+<div class="mcp-card"><span class="mcp-tag mcp-t1">Ressources</span><p>Des <strong>données à lire</strong>, désignées par une URI. Dans Claude Code, vous les référencez vous-même avec <code>@</code>.</p><p class="mcp-ex">Exemple : <code>@postgres:schema://users</code></p></div>
+<div class="mcp-card"><span class="mcp-tag mcp-t2">Prompts</span><p>Des <strong>modèles de demande</strong> avec des arguments, qui deviennent des commandes que vous tapez.</p><p class="mcp-ex">Exemple : <code>/mcp__github__pr_review 456</code></p></div>
+</div>
+"""
+
 def contexte() -> str:
     # contrôles du build : les exemples doivent être corrects
     for must in ("name", "description"):
@@ -361,7 +395,7 @@ def contexte() -> str:
 <tr><td>Résumer quand la fenêtre se remplit</td><td>La compaction de la conversation</td></tr>
 <tr><td>Écrire des notes hors de la fenêtre</td><td>Les fichiers d'instructions, la mémoire automatique, les notes de session</td></tr>
 <tr><td>Déléguer à un contexte propre</td><td>Les sous-agents, qui renvoient un résumé</td></tr></tbody></table>
-<p>Retournez à la jauge du parcours précédent, préréglage « Session d'agent », et repérez les deux postes que vous contrôlez le mieux.</p>""",
+<p>Revoyez l'animation de la fenêtre dans le parcours précédent et repérez les deux postes que vous contrôlez le mieux.</p>""",
          "Nommer les six sources du contexte d'une session d'agent et associer une technique à chacun de ses problèmes.",
          "Ajouter des informations « au cas où » alourdit le contexte. Ce qui n'aide pas la tâche la dessert."),
         ("2", "Piloter la session", "Une session est un outil qu'on conduit : l'effacer, la résumer, la rejouer.",
@@ -440,7 +474,9 @@ def contexte() -> str:
          "Dire ce qu'un sous-agent gagne (un contexte propre) et ce qu'il perd (la conversation).",
          "Restreindre les outils est une protection réelle pour un relecteur. Un agent qui peut tout modifier relit mal ce qu'il peut aussi corriger."),
         ("7", "MCP : brancher des outils", "Un protocole commun pour donner à l'agent l'accès à des données et à des services.",
-         f"""<p>Le <strong>Model Context Protocol</strong> permet à l'agent d'utiliser des serveurs externes : base de données, tracker, documentation, navigateur. Chaque serveur expose des outils que l'agent appelle. Deux conséquences. Leurs outils <strong>coûtent du contexte</strong>, mais peu : par défaut, la recherche d'outils ne charge au démarrage que les noms, et les définitions complètes seulement au moment du besoin. Et ils <strong>peuvent agir</strong> (lire des données, écrire, supprimer) : on n'installe donc que des serveurs de confiance, avec l'accès minimal.</p>
+         f"""<p>Le <strong>Model Context Protocol</strong> (MCP) permet à l'agent d'utiliser des serveurs externes : base de données, tracker, documentation, navigateur.</p>
+{MCP_VS}
+<p>Deux conséquences pour vous. Leurs outils <strong>coûtent du contexte</strong>, mais peu : par défaut, la recherche d'outils ne charge au démarrage que les noms, et les définitions complètes seulement au moment du besoin. Et ils <strong>peuvent agir</strong> (lire des données, écrire, supprimer) : on n'installe donc que des serveurs de confiance, avec l'accès minimal.</p>
 <table class="pc-table"><thead><tr><th>Portée</th><th>Visible</th><th>Stockée dans</th></tr></thead><tbody>
 <tr><td>Locale (par défaut)</td><td>Ce projet, vous seul</td><td><code>~/.claude.json</code></td></tr>
 <tr><td>Projet</td><td>Ce projet, toute l'équipe</td><td><code>.mcp.json</code> à la racine, versionné</td></tr>

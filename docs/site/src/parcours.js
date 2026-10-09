@@ -209,72 +209,60 @@
     applySk(0);
   }
 
-  /* ---------- fenêtre de contexte : barre empilée, simulation, compaction ---------- */
+  /* ---------- fenêtre de contexte : une session qui se remplit, puis se compacte ---------- */
   var gauge = $('#ctx-gauge');
   if (gauge) {
-    var F = ['sys', 'rules', 'tools', 'hist', 'files', 'res'];
-    var win = $('#ctx-win'), txt = $('#ctx-txt'), msg = $('#ctx-msg'), stack = $('#ctx-stack');
-    var PRESETS = {
-      chat: { sys: 1500, rules: 0, tools: 0, hist: 6000, files: 0, res: 0 },
-      agent: { sys: 6000, rules: 3000, tools: 12000, hist: 30000, files: 40000, res: 25000 },
-      long: { sys: 6000, rules: 3000, tools: 25000, hist: 180000, files: 150000, res: 220000 }
-    };
-    var STAGES = [
-      [{ sys: 6000, rules: 3000, tools: 12000, hist: 0, files: 0, res: 0 }, 'Au démarrage, les consignes, les instructions et les outils occupent déjà la fenêtre, avant votre premier message.'],
-      [{ hist: 8000 }, 'Vous posez une question, l\'agent répond : l\'historique commence à grossir.'],
-      [{ files: 40000 }, 'L\'agent lit des fichiers pour comprendre le code : chaque fichier lu reste dans la fenêtre.'],
-      [{ hist: 25000, res: 45000 }, 'Les résultats d\'outils (tests, recherches, commandes) s\'accumulent.'],
-      [{ hist: 45000, files: 50000, res: 60000 }, 'La session s\'allonge : la fenêtre est presque pleine, et la précision peut baisser avant même qu\'elle ne déborde.']
+    var F = ['sys', 'rules', 'tools', 'hist', 'files', 'res', 'sum'], WIN = 200000;
+    var cur = { sys: 0, rules: 0, tools: 0, hist: 0, files: 0, res: 0, sum: 0 };
+    var gtxt = $('#ctx-txt'), gmsg = $('#ctx-msg'), gstack = $('#ctx-stack');
+    var FRAMES = [
+      [{ sys: 6000, rules: 3000, tools: 12000 }, 1100, 'Au démarrage, les consignes, les instructions et les outils occupent déjà la fenêtre, avant votre premier message.'],
+      [{ hist: 14000 }, 1300, 'Vous échangez avec l\'agent : l\'historique grossit.'],
+      [{ files: 42000 }, 1500, 'Il lit des fichiers pour comprendre le code : chacun reste dans la fenêtre.'],
+      [{ hist: 30000, res: 48000 }, 1500, 'Les résultats des outils (tests, recherches, commandes) s\'accumulent.'],
+      [{ hist: 52000, files: 58000, res: 64000 }, 1600, 'La fenêtre est presque pleine : la précision peut baisser avant même qu\'elle déborde.'],
+      [{ hist: 3000, files: 7000, res: 2500, sum: 6000 }, 2000, 'Compaction : un agent résume l\'historique et les résultats, la session repart avec un contexte court.']
     ];
-    var COMPACT = [{ hist: 4000, files: 8000, res: 3000 }, 'Compaction : l\'historique et les résultats sont résumés, la session continue avec un contexte court.'];
-    var run = 0;
-    var get = function () { var v = {}; F.forEach(function (f) { v[f] = Number($('#ctx-' + f).value) || 0; }); return v; };
-    var set = function (v) { F.forEach(function (f) { if (f in v) $('#ctx-' + f).value = Math.round(v[f]); }); read(); };
-    function read(note) {
-      var v = get(), total = 0, w = Number(win.value);
-      F.forEach(function (f) { total += v[f]; });
-      var scale = total > w ? total : w;
-      F.forEach(function (f) { $('#seg-' + f).style.width = (v[f] / scale * 100) + '%'; });
-      stack.classList.toggle('pc-over', total > w);
-      var pct = total / w * 100;
-      txt.textContent = fmt(total) + ' jetons sur ' + fmt(w) + ' (' + Math.round(pct) + ' %)';
-      if (note) { msg.textContent = note; return; }
-      msg.textContent = total > w ? 'Ça ne rentre pas : il faut résumer (compaction), repartir d\'une session neuve ou déléguer à un sous-agent.'
-        : (pct > 60 ? 'Beaucoup de place est prise. Plus de contexte n\'est pas mieux : la précision peut baisser quand il grossit.' : 'Il reste de la marge, mais regardez la composition : ce qui est là sans servir coûte quand même.');
-    }
-    function tween(target, ms, done) {
-      var from = get(), t0 = null, id = run;
-      if (reduced || ms <= 0) { set(Object.assign({}, from, target)); if (done) done(); return; }
+    var gpaint = function (note) {
+      var tot = 0;
+      F.forEach(function (f) { tot += cur[f]; $('#seg-' + f).style.width = (cur[f] / WIN * 100) + '%'; });
+      gstack.classList.toggle('pc-over', tot / WIN > 0.9);
+      gtxt.textContent = fmt(tot) + ' jetons sur ' + fmt(WIN) + ' (' + Math.round(tot / WIN * 100) + ' %)';
+      if (note) gmsg.textContent = note;
+    };
+    var gtween = function (target, ms, done) {
+      var from = {}; F.forEach(function (f) { from[f] = cur[f]; });
+      if (reduced || ms <= 0) { F.forEach(function (f) { if (f in target) cur[f] = target[f]; }); gpaint(); if (done) done(); return; }
+      var t0 = null;
       (function step(ts) {
-        if (id !== run) return;
+        if (!gstate.on) return;
         if (t0 === null) t0 = ts;
-        var k = Math.min(1, (ts - t0) / ms), e = 1 - Math.pow(1 - k, 3), v = {};
-        F.forEach(function (f) { v[f] = from[f] + ((f in target ? target[f] : from[f]) - from[f]) * e; });
-        set(v);
+        var k = Math.min(1, (ts - t0) / ms), e = 1 - Math.pow(1 - k, 3);
+        F.forEach(function (f) { if (f in target) cur[f] = from[f] + (target[f] - from[f]) * e; });
+        gpaint();
         if (k < 1) requestAnimationFrame(step); else if (done) done();
       })(performance.now());
+    };
+    var gstate = { on: false, i: 0, timer: null };
+    var gnext = function () {
+      if (!gstate.on) return;
+      if (gstate.i >= FRAMES.length) {
+        gstate.timer = setTimeout(function () { F.forEach(function (f) { cur[f] = 0; }); gpaint(); gmsg.textContent = ''; gstate.i = 0; gstate.timer = setTimeout(gnext, 700); }, 3200);
+        return;
+      }
+      var fr = FRAMES[gstate.i++];
+      gmsg.textContent = fr[2];
+      gtween(fr[0], fr[1], function () { gstate.timer = setTimeout(gnext, 900); });
+    };
+    gpaint();
+    if (reduced || !('IntersectionObserver' in window)) {
+      FRAMES.slice(0, 5).forEach(function (fr) { F.forEach(function (f) { if (f in fr[0]) cur[f] = fr[0][f]; }); });
+      gpaint(FRAMES[4][2]);
+    } else {
+      new IntersectionObserver(function (es) {
+        if (es[0].isIntersecting && !gstate.on) { gstate.on = true; gnext(); }
+        else if (!es[0].isIntersecting && gstate.on) { gstate.on = false; clearTimeout(gstate.timer); }
+      }, { threshold: 0.5 }).observe(gauge);
     }
-    function play() {
-      var id = ++run, i = 0;
-      set({ sys: 0, rules: 0, tools: 0, hist: 0, files: 0, res: 0 });
-      (function next() {
-        if (id !== run || i >= STAGES.length) return;
-        var s = STAGES[i++];
-        tween(s[0], 800, function () { read(s[1]); setTimeout(next, reduced ? 200 : 900); });
-      })();
-    }
-    function compact() {
-      var id = ++run;
-      tween(COMPACT[0], 900, function () { if (id === run) read(COMPACT[1]); });
-    }
-    F.forEach(function (f) { $('#ctx-' + f).addEventListener('input', function () { run++; read(); }); });
-    win.addEventListener('change', function () { run++; read(); });
-    Array.prototype.forEach.call(document.querySelectorAll('[data-ctx-preset]'), function (b) {
-      b.addEventListener('click', function () { run++; set(PRESETS[b.getAttribute('data-ctx-preset')]); });
-    });
-    var bp = $('[data-ctx-play]'), bc = $('[data-ctx-compact]');
-    if (bp) bp.addEventListener('click', play);
-    if (bc) bc.addEventListener('click', compact);
-    read();
   }
 })();

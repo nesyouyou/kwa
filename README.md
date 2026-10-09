@@ -20,8 +20,9 @@ site de documentation et dans trois parcours de formation (culture de l'IA gén�
 
 **Parcours d'apprentissage** : `docs/site/parcours.html`, trois parcours qui s'enchaînent. 1) Culture IA générative (modèle, jetons et probabilités, fenêtre de contexte, agent, hallucinations, prompt engineering, risques). 2) Context engineering (session, AGENTS.md et CLAUDE.md, règles, skills, sous-agents, MCP avec Context7 et Playwright, permissions). 3) Harness (de l'histoire du processus de développement à Kwa, avec dix étapes sur un dépôt jetable dont les sorties viennent de l'exécution réelle, et le flux complet d'un développeur aujourd'hui).
 
-**Documentation illustrée** : `docs/site/index.html` (workflow cliquable, briques de déclenchement, gardes en action,
-modules, skills et origines, mémoire, onboarding, crédits), avec une feuille de style propre (polices dans
+**Documentation illustrée** : `docs/site/index.html` (présentation, arborescence, démarrage) et une page par sujet
+(carte des skills, workflow d'une demande, terminal, skills, gardes en action, mémoire, méthode, remplacement de
+l'existant, limites, crédits), avec une feuille de style propre (polices dans
 `docs/site/style/`, avec leur licence). Régénérer avec `python3 docs/site/build.py` : les exemples sont
 calculés en exécutant les gardes.
 
