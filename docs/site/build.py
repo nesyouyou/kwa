@@ -62,7 +62,7 @@ def examples():
         ("Politique", feat, "npx eas-cli submit --platform ios --latest"), ("Politique", feat, "grep -rn PROD_RESET_TOKEN docs/"),
         ("Politique", feat, "cat > note.md <<'EOF'\nun `prisma migrate reset` cité en doc\nEOF"),
         ("Politique", feat, "bash <<'EOF'\nnpx prisma migrate reset\nEOF"),
-        ("Circuit PR", feat, "gh pr create --title t --body 'rien'"), ("Circuit PR", feat, "gh pr create --title t --body 'Closes #12'"),
+        ("Workflow PR", feat, "gh pr create --title t --body 'rien'"), ("Workflow PR", feat, "gh pr create --title t --body 'Closes #12'"),
     ]
     out = []
     for cat, repo, cmd in bash_cases:
@@ -156,7 +156,7 @@ def main():
     pages = {
         "skill-map.html": ("Carte des skills", "Carte interactive", "map", '<div id="map" data-deeplink></div>',
                            "DATA.map && KwaMap.mount($('#map'), DATA.map);"),
-        "board.html": ("Le circuit", "Une demande, de bout en bout", "board+circuit", '<div id="board-root"></div>', "KwaCircuit.mount($('#board-root'));"),
+        "board.html": ("Le workflow", "Une demande, de bout en bout", "board+circuit", '<div id="board-root"></div>', "KwaCircuit.mount($('#board-root'));"),
         "terminal.html": ("Le terminal", "Comment on l'utilise", "terminal", '<div id="term-root"></div>', "KwaTerminal.mount($('#term-root'), DATA.terminal);"),
     }
     sys.path.insert(0, src)

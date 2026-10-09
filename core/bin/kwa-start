@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""kwa-start — démarre un développement selon le circuit issue-flow.
+"""kwa-start — démarre un développement selon le workflow issue-flow.
 
     kwa-start <fix|feat|chore|docs> <slug> "<titre>" [--issue N | --no-issue] [--base B] [--body-file f]
 

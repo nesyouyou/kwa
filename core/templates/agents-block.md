@@ -10,7 +10,7 @@ Tout ce qui est propre au projet va **au-dessus ou en dessous** des marqueurs, o
 - Règles propres au projet (commandes interdites, chemins protégés, vérifications, environnements) :
   `.claude/kwa.policy.json`, propriété du projet.
 - Skills : `/kwa-commit`, `/kwa-ship` ; selon les modules : méthode (`/kwa-brainstorm`, `/kwa-plan`, `/kwa-execute`,
-  `/kwa-agents`, `/kwa-parallel`, `/kwa-tdd`, `/kwa-debug`, `/kwa-verify`, `/kwa-review`), circuit (`/kwa-start-dev`),
+  `/kwa-agents`, `/kwa-parallel`, `/kwa-tdd`, `/kwa-debug`, `/kwa-verify`, `/kwa-review`), workflow (`/kwa-start-dev`),
   livraison (`/kwa-deploy`, `/kwa-testflight`), mémoire (`/kwa-learn`). Un rappel de routage est injecté à chaque session.
 {{KNOWLEDGE_LINE}}
 

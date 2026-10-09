@@ -5,7 +5,7 @@ import html
 
 SIDE = [  # (groupe, couleur du repère, [(libellé, cible)])
     ("Kwa", "blue", [("Présentation", "index.html#top"), ("Pourquoi ce projet", "index.html#pourquoi"), ("Arborescence", "index.html#arborescence")]),
-    ("Explorer", "violet", [("Carte des skills", "skill-map.html"), ("Circuit d'une demande", "board.html"), ("Terminal", "terminal.html")]),
+    ("Explorer", "violet", [("Carte des skills", "skill-map.html"), ("Workflow d'une demande", "board.html"), ("Terminal", "terminal.html")]),
     ("Apprendre", "green", [("Les trois parcours", "parcours.html"), ("1 · Culture IA générative", "parcours-culture.html"),
                             ("2 · Context engineering", "parcours-contexte.html"), ("3 · Harness", "parcours-harness.html")]),
     ("Référence", "amber", [("Démarrer", "index.html#demarrer"), ("Skills", "index.html#skills"), ("Gardes en action", "index.html#gardes"),

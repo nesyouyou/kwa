@@ -7,7 +7,7 @@ description: Écrire du code produit en test d'abord (rouge, vert, refactor). À
 
 Un test qu'on n'a jamais vu échouer ne prouve rien : il peut passer pour une mauvaise raison, ou ne rien tester.
 Cette skill s'applique à tout code produit : fonctionnalité, correctif, changement de comportement, refactor.
-Elle s'emboîte dans `/kwa-start-dev` (circuit) et se complète de `/kwa-debug` (cause racine) et `/kwa-verify` (preuve finale).
+Elle s'emboîte dans `/kwa-start-dev` (workflow) et se complète de `/kwa-debug` (cause racine) et `/kwa-verify` (preuve finale).
 
 ## La loi
 

@@ -292,7 +292,7 @@
       }
     },
     "issue-flow": {
-      "about": "Circuit issue → branche/worktree → preuve → PR « Closes #N » → fusion gardée ; /kwa-start-dev, gabarits GitHub",
+      "about": "Workflow issue → branche/worktree → preuve → PR « Closes #N » → fusion gardée ; /kwa-start-dev, gabarits GitHub",
       "files": {
         "core/hooks/guard-github.py": {
           "dest": ".claude/kwa/hooks/guard-github.py",
