@@ -222,7 +222,7 @@ FAILED (failures=2)</pre>
 <section class="pc-stage" id="etape-6"><div class="pc-num">6</div><div class="pc-main"><h2 class="pc-h">La mémoire qui s'enrichit</h2><p class="pc-tag">Noter pendant, trier à la fin, valider soi-même.</p><p>Capturez un piège rencontré pendant le travail, sans rien écrire dans la documentation :</p>
 <pre class="kd-code"><span class="p">$</span> kwa-memory capture gotcha "Les tests d'intégration ont besoin du fichier d'environnement local"</pre>
 <pre class="kd-code"><span class="p">$</span> kwa-memory pending</pre><pre class="kd-code">1 note(s) en attente
-- [2026-10-08] [gotcha] Les tests d'intégration ont besoin du fichier d'environnement local</pre>
+- [2026-10-09] [gotcha] Les tests d'intégration ont besoin du fichier d'environnement local</pre>
 <p>En fin de session, <code>/kwa-learn</code> propose où chaque note devrait vivre (documentation, politique, mémoire de l'agent). <strong>Rien n'est appliqué sans votre accord.</strong></p><div class="pc-proof"><div><b>Preuve attendue</b><p>Capturer une note et dire qui décide de son destin.</p></div><div><b>Piège</b><p>Les notes locales ne sont pas versionnées : elles sont exclues via <code>.git/info/exclude</code>.</p></div></div></div></section>
 <section class="pc-stage" id="etape-7"><div class="pc-num">7</div><div class="pc-main"><h2 class="pc-h">Le circuit complet</h2><p class="pc-tag">Une demande, une branche, une preuve, une PR.</p><p>Démarrez un changement : une branche dans son propre worktree, à côté du dépôt, jamais sur <code>main</code>.</p>
 <pre class="kd-code"><span class="p">$</span> kwa-start feat status-filter "Ajouter un filtre de statut" --no-issue</pre><pre class="kd-code">aucune issue créée (flow.auto_issue: false ou --no-issue)

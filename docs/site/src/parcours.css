@@ -81,3 +81,44 @@
 .pc-js .pc-stage{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s cubic-bezier(.22,1,.36,1)}
 .pc-js .pc-stage.is-in{opacity:1;transform:none}
 @media(prefers-reduced-motion:reduce){.pc-anim .pc-tok{animation:none}.pc-js .pc-stage{opacity:1;transform:none;transition:none}}
+
+/* ---------- jetons et probabilités ---------- */
+.pc-step{margin:16px 0 8px;font-size:14px;color:var(--kw-body)}
+.pc-step b{display:inline-grid;place-items:center;width:20px;height:20px;margin-right:8px;border-radius:50%;background:var(--acc,var(--kw-fg));color:#fff;font-size:12px}
+.pc-presets .kd-copy[aria-pressed="true"]{background:var(--kw-invert-bg);color:var(--kw-invert-fg)}
+.tk-chips{gap:6px}
+.tk-chip{display:inline-flex;flex-direction:column;align-items:center;gap:2px}
+.tk-chip small{font:11px 'Geist Mono',monospace;color:var(--kw-mut)}
+.tk-chip b{font-weight:400}
+.tk-in{animation:pc-pop .35s cubic-bezier(.22,1,.36,1) both}
+.tk-probs{display:grid;gap:6px}
+.tk-row{display:grid;grid-template-columns:110px minmax(0,1fr) 56px;align-items:center;gap:10px;font-size:13px}
+.tk-w{font:13px 'Geist Mono',monospace;color:var(--kw-body);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tk-bar{height:10px;border-radius:5px;background:var(--kw-raise);overflow:hidden}
+.tk-bar i{display:block;height:100%;width:0;border-radius:5px;background:var(--k1,#8b5cf6);transition:width .6s cubic-bezier(.22,1,.36,1)}
+.tk-top .tk-bar i{background:var(--k0,#3b82f6)}
+.tk-row:last-child .tk-bar i{background:var(--kw-dim)}
+.tk-p{text-align:right;font:12px 'Geist Mono',monospace;color:var(--kw-mut)}
+.tk-ctl{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;margin:14px 0 4px;font-size:13px;color:var(--kw-body)}
+.tk-ctl input[type=range]{width:160px;padding:0;accent-color:var(--acc,#3b82f6)}
+.tk-draws{display:flex;flex-wrap:wrap;gap:6px;min-height:28px}
+/* orchestrateur */
+.po-t{font-size:13px;font-weight:600;color:var(--kw-fg);margin-bottom:6px}
+.po-t small{font-weight:400;color:var(--kw-mut);margin-left:6px}
+.po-v{margin-top:6px;font:12px 'Geist Mono',monospace;color:var(--kw-mut)}
+.po-main .pc-stack i,.po-sub .pc-stack i{transition:width .8s cubic-bezier(.22,1,.36,1)}
+#pm-sys{background:var(--k0)}#pm-hist{background:var(--k3)}#pm-files{background:var(--k4)}#pm-sum{background:var(--k2)}
+.po-sub .ps{background:var(--k4)}
+.po-subs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.po-lane{position:relative;height:56px}
+.po-lane::before{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:1px dashed var(--kw-rule)}
+.po-pkt{position:absolute;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;color:#fff;opacity:0;transition:transform .9s cubic-bezier(.22,1,.36,1),opacity .4s ease}
+.po-down{left:calc(50% - 44px);top:0;background:var(--k0);transform:translateY(0)}
+.po-up{left:calc(50% + 6px);bottom:0;background:var(--k2);transform:translateY(0)}
+.po-down.po-go{opacity:1;transform:translateY(34px)}
+.po-up.po-go{opacity:1;transform:translateY(-34px)}
+.po-cap{min-height:44px;margin:14px 0 4px;font-size:14px;color:var(--kw-fg)}
+@media(max-width:700px){.po-subs{gap:6px}.po-t small{display:block;margin:0}.tk-row{grid-template-columns:84px minmax(0,1fr) 48px}}
+@media(prefers-reduced-motion:reduce){.tk-in{animation:none}.tk-bar i,.po-main .pc-stack i,.po-sub .pc-stack i,.po-pkt{transition:none}}
+
+.pc-presets{margin-bottom:6px}

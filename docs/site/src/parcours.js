@@ -14,43 +14,161 @@
     Array.prototype.forEach.call(stages, function (s) { io.observe(s); });
   }
 
-  /* ---------- jetons : un découpage illustratif, en couleurs ---------- */
+  /* ---------- jetons : découper, calculer des probabilités, tirer au sort ---------- */
+  var cut = function (text) {
+    var parts = text.match(/\s*[\p{L}\p{N}'’-]+|\s*[^\s\p{L}\p{N}]/gu) || [], toks = [];
+    parts.forEach(function (p) {
+      var lead = (p.match(/^\s*/) || [''])[0], core = p.slice(lead.length);
+      if (core.length <= 6) { toks.push(lead + core); return; }
+      for (var i = 0; i < core.length; i += 5) toks.push((i === 0 ? lead : '') + core.slice(i, i + 5));
+    });
+    return toks;
+  };
+  var fakeId = function (t) { var h = 7; for (var i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) % 49999; return h + 1; };
+
+  var tk = $('#tk');
+  if (tk) {
+    var SENT = [
+      { text: 'La capitale de la France est', next: [[' Paris', .90], [' une', .03], [' la', .02], [' située', .02], [' Lyon', .004]] },
+      { text: 'Il était une fois', next: [[' un', .34], [',', .26], [' dans', .12], [' une', .09], [' deux', .04]] },
+      { text: 'Pour limiter les hallucinations, il faut', next: [[' vérifier', .23], [' citer', .17], [' donner', .14], [' demander', .11], [' limiter', .09]] }
+    ];
+    var cur = 0, temp = 1, tChips = $('#tk-chips'), tProbs = $('#tk-probs'), tDraws = $('#tk-draws');
+    var dist = function () {
+      var next = SENT[cur].next, rest = Math.max(0, 1 - next.reduce(function (a, n) { return a + n[1]; }, 0));
+      var all = next.concat([['autres jetons', rest]]);
+      var w = all.map(function (n) { return Math.pow(Math.max(n[1], 1e-6), 1 / temp); }), tot = w.reduce(function (a, b) { return a + b; }, 0);
+      return all.map(function (n, i) { return [n[0], w[i] / tot]; });
+    };
+    var pct = function (x) { return (x * 100 < 10 ? (x * 100).toFixed(1) : Math.round(x * 100)).toString().replace('.', ',') + ' %'; };
+    var drawProbs = function (animate) {
+      tProbs.textContent = '';
+      dist().forEach(function (d, i) {
+        var row = document.createElement('div'); row.className = 'tk-row' + (i === 0 ? ' tk-top' : '');
+        row.innerHTML = '<span class="tk-w"></span><span class="tk-bar"><i></i></span><span class="tk-p"></span>';
+        row.firstChild.textContent = d[0].replace(/^ /, '·');
+        row.lastChild.textContent = pct(d[1]);
+        tProbs.appendChild(row);
+        var bar = row.querySelector('i');
+        if (animate && !reduced) { bar.style.width = '0'; setTimeout(function () { bar.style.width = (d[1] * 100) + '%'; }, 60 + i * 70); }
+        else bar.style.width = (d[1] * 100) + '%';
+      });
+    };
+    var drawChips = function (animate) {
+      tChips.textContent = '';
+      cut(SENT[cur].text).forEach(function (t, i) {
+        var c = document.createElement('span'); c.className = 'tk-chip';
+        c.innerHTML = '<b class="pc-tok pc-t' + (i % 6) + '"></b><small></small>';
+        c.firstChild.textContent = t.replace(/ /g, '·'); c.lastChild.textContent = fakeId(t);
+        if (animate && !reduced) { c.style.animationDelay = (i * 160) + 'ms'; c.classList.add('tk-in'); }
+        tChips.appendChild(c);
+      });
+    };
+    var show = function (animate) {
+      drawChips(animate); tDraws.textContent = '';
+      var delay = animate && !reduced ? cut(SENT[cur].text).length * 160 + 200 : 0;
+      setTimeout(function () { drawProbs(animate); }, delay);
+    };
+    Array.prototype.forEach.call(tk.querySelectorAll('[data-tk-s]'), function (b) {
+      b.addEventListener('click', function () {
+        cur = Number(b.getAttribute('data-tk-s'));
+        Array.prototype.forEach.call(tk.querySelectorAll('[data-tk-s]'), function (o) { o.setAttribute('aria-pressed', String(o === b)); });
+        show(true);
+      });
+    });
+    $('#tk-temp').addEventListener('input', function (e) { temp = Number(e.target.value); $('#tk-tv').textContent = String(temp.toFixed(1)).replace('.', ','); drawProbs(false); tDraws.textContent = ''; });
+    $('#tk-draw').addEventListener('click', function () {
+      var d = dist(), counts = {};
+      for (var n = 0; n < 20; n++) { var r = Math.random(), acc = 0, k = d[d.length - 1][0]; for (var i = 0; i < d.length; i++) { acc += d[i][1]; if (r <= acc) { k = d[i][0]; break; } } counts[k] = (counts[k] || 0) + 1; }
+      tDraws.textContent = '';
+      Object.keys(counts).sort(function (a, b) { return counts[b] - counts[a]; }).forEach(function (k, i) {
+        var c = document.createElement('span'); c.className = 'pc-tok pc-t' + (i % 6); c.textContent = k.replace(/^ /, '·') + ' × ' + counts[k];
+        if (!reduced) { c.style.animation = 'pc-pop .3s both'; c.style.animationDelay = (i * 90) + 'ms'; }
+        tDraws.appendChild(c);
+      });
+    });
+    show(false);
+    if ('IntersectionObserver' in window && !reduced) {
+      var seenT = new IntersectionObserver(function (es) { if (es[0].isIntersecting) { show(true); seenT.disconnect(); } }, { threshold: 0.4 });
+      seenT.observe(tk);
+    }
+  }
+
+  /* estimation sur un texte libre */
   var area = $('#tok-input');
   if (area) {
-    var chips = $('#tok-chips'), out = $('#tok-out'), MAX = 700;
-    var cut = function (text) {
-      var parts = text.match(/\s*[\p{L}\p{N}'’-]+|\s*[^\s\p{L}\p{N}]/gu) || [], toks = [];
-      parts.forEach(function (p) {
-        var lead = (p.match(/^\s*/) || [''])[0], core = p.slice(lead.length);
-        if (core.length <= 6) { toks.push(lead + core); return; }
-        for (var i = 0; i < core.length; i += 5) toks.push((i === 0 ? lead : '') + core.slice(i, i + 5));
-      });
-      return toks;
-    };
-    var render = function (animate) {
+    var chips = $('#tok-chips'), out = $('#tok-out'), MAX = 400;
+    var render = function () {
       var text = area.value, toks = cut(text), chars = text.length, words = (text.trim().match(/\S+/g) || []).length;
       chips.textContent = '';
-      chips.classList.toggle('pc-anim', !!animate && !reduced);
-      toks.slice(0, MAX).forEach(function (t, i) {
-        var c = document.createElement('span');
-        c.className = 'pc-tok pc-t' + (i % 6);
-        c.textContent = t.replace(/\n/g, '↵');
-        if (animate && !reduced) c.style.animationDelay = Math.min(i * 14, 900) + 'ms';
-        chips.appendChild(c);
-      });
+      toks.slice(0, MAX).forEach(function (t, i) { var c = document.createElement('span'); c.className = 'pc-tok pc-t' + (i % 6); c.textContent = t.replace(/\n/g, '↵'); chips.appendChild(c); });
       if (toks.length > MAX) { var more = document.createElement('span'); more.className = 'pc-tok pc-more'; more.textContent = '… ' + fmt(toks.length - MAX) + ' de plus'; chips.appendChild(more); }
       var lo = Math.min(chars / 4, words * 1.3), hi = Math.max(chars / 4, words * 1.3);
-      out.innerHTML = '<div><b>' + fmt(toks.length) + '</b> jetons dans ce découpage</div><div><b>' + fmt(chars) + '</b> caractères, <b>' + fmt(words) + '</b> mots</div>' +
+      out.innerHTML = '<div><b>' + fmt(toks.length) + '</b> jetons dans ce découpage illustratif</div><div><b>' + fmt(chars) + '</b> caractères, <b>' + fmt(words) + '</b> mots</div>' +
         '<div>Ordre de grandeur d\'un vrai compte : <b>' + fmt(lo) + ' à ' + fmt(hi) + '</b></div>';
     };
-    area.addEventListener('input', function () { render(false); });
-    var replay = $('#tok-replay');
-    if (replay) replay.addEventListener('click', function () { render(true); });
-    render(false);
-    if ('IntersectionObserver' in window) {
-      var seen = new IntersectionObserver(function (es) { if (es[0].isIntersecting) { render(true); seen.disconnect(); } }, { threshold: 0.4 });
-      seen.observe(chips);
-    }
+    area.addEventListener('input', render);
+    render();
+  }
+
+  /* ---------- orchestrateur et sous-agents ---------- */
+  var orch = $('#orch');
+  if (orch) {
+    var main = { sys: $('#pm-sys'), hist: $('#pm-hist'), files: $('#pm-files'), sum: $('#pm-sum') };
+    var subs = Array.prototype.slice.call(orch.querySelectorAll('.ps')), downs = orch.querySelectorAll('.po-down'), ups = orch.querySelectorAll('.po-up');
+    var cap = $('#po-cap'), val = $('#po-v'), mode = null, step = 0, timer = null;
+    var setMain = function (v) {
+      var tot = 0; ['sys', 'hist', 'files', 'sum'].forEach(function (k) { main[k].style.width = v[k] + '%'; tot += v[k]; });
+      $('#po-main').classList.toggle('pc-over', tot > 85);
+      val.textContent = 'Fenêtre principale : ' + Math.round(tot) + ' %';
+    };
+    var setSubs = function (w) { subs.forEach(function (e, i) { e.style.width = (w[i] || 0) + '%'; }); };
+    var fly = function (list, on) { Array.prototype.forEach.call(list, function (e, i) { e.classList.toggle('po-go', on); e.style.transitionDelay = on && !reduced ? (i * 120) + 'ms' : '0ms'; }); };
+    var SCRIPT = {
+      team: [
+        function () { fly(downs, false); fly(ups, false); setSubs([0, 0, 0]); setMain({ sys: 10, hist: 4, files: 0, sum: 0 }); return 'L\'agent principal reçoit la demande : « refactorer l\'authentification ». Il a déjà ses consignes et l\'historique.'; },
+        function () { fly(downs, true); setMain({ sys: 10, hist: 6, files: 0, sum: 0 }); return 'Il envoie à chacun seulement un brief : la tâche, les critères de réussite, les fichiers utiles. Pas la conversation, pas le reste du code.'; },
+        function () { setSubs([72, 86, 58]); return 'Chaque sous-agent lit ce qu\'il lui faut dans sa propre fenêtre. La fenêtre principale ne bouge pas.'; },
+        function () { fly(downs, false); fly(ups, true); setSubs([0, 0, 0]); setMain({ sys: 10, hist: 6, files: 0, sum: 6 }); return 'Seul un résumé remonte. Les fenêtres des sous-agents sont jetées avec ce qu\'elles ont lu.'; },
+        function () { return 'Résultat : la fenêtre principale reste autour de 22 %, alors que trois sous-agents ont lu des dizaines de fichiers. Contrepartie : un résumé vague donne une suite vague.'; }
+      ],
+      solo: [
+        function () { fly(downs, false); fly(ups, false); setSubs([0, 0, 0]); setMain({ sys: 10, hist: 4, files: 0, sum: 0 }); return 'Le même agent reçoit la même demande, mais travaille seul.'; },
+        function () { setMain({ sys: 10, hist: 8, files: 25, sum: 0 }); return 'Il lit les fichiers des routes : tout entre dans la même fenêtre.'; },
+        function () { setMain({ sys: 10, hist: 12, files: 55, sum: 0 }); return 'Puis les tests : la fenêtre se remplit, l\'historique grossit.'; },
+        function () { setMain({ sys: 10, hist: 15, files: 70, sum: 0 }); return 'Puis la documentation. Rien n\'est jeté.'; },
+        function () { return 'Résultat : la fenêtre approche de 95 %. La précision peut baisser avant même la saturation, et une compaction devient nécessaire.'; }
+      ]
+    };
+    var go = function () { var f = SCRIPT[mode][step]; cap.textContent = f(); };
+    var next = function () { if (!mode) return; if (step < SCRIPT[mode].length - 1) { step++; go(); } else if (timer) { clearInterval(timer); timer = null; } if (step >= SCRIPT[mode].length - 1 && timer) { clearInterval(timer); timer = null; } };
+    Array.prototype.forEach.call(orch.querySelectorAll('[data-orch]'), function (b) {
+      b.addEventListener('click', function () {
+        mode = b.getAttribute('data-orch'); step = 0; if (timer) clearInterval(timer);
+        Array.prototype.forEach.call(orch.querySelectorAll('[data-orch]'), function (o) { o.setAttribute('aria-pressed', String(o === b)); });
+        go();
+        if (!reduced) timer = setInterval(next, 2600);
+      });
+    });
+    var nb = $('[data-orch-next]', orch);
+    if (nb) nb.addEventListener('click', function () { if (timer) { clearInterval(timer); timer = null; } next(); });
+    setMain({ sys: 0, hist: 0, files: 0, sum: 0 });
+  }
+
+  /* ---------- chargement progressif d'une skill ---------- */
+  var skl = $('#skl');
+  if (skl) {
+    var SK = [
+      [{ desc: 3, body: 0, ann: 0 }, 'Au démarrage, seules les descriptions courtes des skills sont dans le contexte : de quoi savoir quand en appeler une.'],
+      [{ desc: 3, body: 14, ann: 0 }, 'L\'agent juge que la skill convient : son corps (les étapes) est chargé, et seulement celui-là.'],
+      [{ desc: 3, body: 14, ann: 24 }, 'Une étape demande un gabarit : l\'agent lit ce fichier annexe à ce moment-là. Les autres annexes restent sur le disque.']
+    ];
+    var applySk = function (i) {
+      var v = SK[i][0]; $('#sk-desc').style.width = v.desc + '%'; $('#sk-body').style.width = v.body + '%'; $('#sk-ann').style.width = v.ann + '%'; $('#sk-cap').textContent = SK[i][1];
+      Array.prototype.forEach.call(skl.querySelectorAll('[data-skl]'), function (b) { b.setAttribute('aria-pressed', String(Number(b.getAttribute('data-skl')) === i)); });
+    };
+    Array.prototype.forEach.call(skl.querySelectorAll('[data-skl]'), function (b) { b.addEventListener('click', function () { applySk(Number(b.getAttribute('data-skl'))); }); });
+    applySk(0);
   }
 
   /* ---------- fenêtre de contexte : barre empilée, simulation, compaction ---------- */

@@ -176,16 +176,23 @@ class ParcoursVisuals(unittest.TestCase):
 
     def test_token_and_context_widgets_have_their_elements(self):
         page = self.read("parcours-culture.html")
-        for needle in ("tok-chips", "tok-replay", "ctx-stack", "data-ctx-play", "data-ctx-compact", "Découpage illustratif"):
+        for needle in ("tk-chips", "tk-probs", "tk-draw", "tk-temp", "tok-input", "ctx-stack", "data-ctx-play", "data-ctx-compact", "Chiffres inventés"):
             self.assertIn(needle, page, needle)
         for seg in ("sys", "rules", "tools", "hist", "files", "res"):
             self.assertIn(f'id="seg-{seg}"', page, seg)
 
-    def test_script_ids_exist_in_the_page(self):
+    def test_script_ids_exist_in_the_pages(self):
         js = self.read("src", "parcours.js")
-        page = self.read("parcours-culture.html")
-        for ident in set(re.findall(r"\$\('#([a-z-]+)'\)", js)):
-            self.assertIn(f'id="{ident}"', page, ident)
+        pages = "".join(self.read(f"parcours-{n}.html") for n in ("culture", "contexte", "harness"))
+        idents = set(re.findall(r"\$\('#([a-z-]+)'\)", js))
+        self.assertGreater(len(idents), 10)
+        for ident in idents:
+            self.assertIn(f'id="{ident}"', pages, ident)
+
+    def test_orchestrator_rules_and_skill_loading_are_taught(self):
+        contexte = self.read("parcours-contexte.html")
+        for needle in ('id="orch"', 'id="skl"', "Les règles", "paths", "etape-7"):
+            self.assertIn(needle, contexte, needle)
 
     def test_each_parcours_has_its_own_accent(self):
         css = self.read("src", "parcours.css")

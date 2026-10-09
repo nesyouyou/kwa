@@ -12,7 +12,7 @@ import sys
 from parcours import code, cmd, esc, pill, reveal, stage
 
 CULTURE_NAV = [("1", "Le modèle"), ("2", "Les jetons"), ("3", "Le contexte"), ("4", "Les hallucinations"), ("5", "Le prompt"), ("6", "Usages")]
-CONTEXTE_NAV = [("1", "Le contexte"), ("2", "AGENTS.md"), ("3", "Skills"), ("4", "Agents"), ("5", "MCP"), ("6", "Permissions")]
+CONTEXTE_NAV = [("1", "Le contexte"), ("2", "AGENTS.md"), ("3", "Règles"), ("4", "Skills"), ("5", "Agents"), ("6", "MCP"), ("7", "Permissions")]
 HARNESS_NAV = [("0", "L'histoire"), ("1", "Instructions"), ("2", "Un garde"), ("3", "Branchement"), ("4", "Politique"), ("5", "Une skill"), ("6", "Mémoire"), ("7", "Circuit"), ("8", "Limites")]
 TOC = {  # barre latérale : (ancre, libellé) sous la page courante
     "parcours-culture.html": [(f"etape-{n}", f"{n} · {t}") for n, t in CULTURE_NAV],
@@ -56,6 +56,30 @@ def pair(bad_title: str, bad: str, good_title: str, good: str) -> str:
 # Parcours 1 : culture IA générative
 # ---------------------------------------------------------------------------------------------------------------------
 
+ORCH = """<div class="pc-widget po" id="orch">
+<div class="pc-actions"><button type="button" class="kd-copy" data-orch="team">Avec sous-agents</button>
+<button type="button" class="kd-copy" data-orch="solo">Sans sous-agents</button>
+<button type="button" class="kd-copy" data-orch-next>Étape suivante</button></div>
+<div class="po-main"><div class="po-t">Agent principal (l'orchestrateur)</div>
+<div class="pc-stack" id="po-main"><i id="pm-sys"></i><i id="pm-hist"></i><i id="pm-files"></i><i id="pm-sum"></i></div>
+<div class="po-v" id="po-v">Fenêtre principale : 0 %</div></div>
+<div class="po-subs">
+<div class="po-col"><div class="po-lane"><span class="po-pkt po-down">brief</span><span class="po-pkt po-up">résumé</span></div><div class="po-sub"><div class="po-t">Sous-agent A <small>les routes</small></div><div class="pc-stack"><i class="ps"></i></div></div></div>
+<div class="po-col"><div class="po-lane"><span class="po-pkt po-down">brief</span><span class="po-pkt po-up">résumé</span></div><div class="po-sub"><div class="po-t">Sous-agent B <small>les tests</small></div><div class="pc-stack"><i class="ps"></i></div></div></div>
+<div class="po-col"><div class="po-lane"><span class="po-pkt po-down">brief</span><span class="po-pkt po-up">résumé</span></div><div class="po-sub"><div class="po-t">Sous-agent C <small>la doc</small></div><div class="pc-stack"><i class="ps"></i></div></div></div>
+</div>
+<p class="po-cap" id="po-cap" aria-live="polite">Choisissez un mode pour lancer la scène.</p>
+<p class="pc-hint">Pourcentages illustratifs : ils montrent la logique, pas des mesures.</p></div>"""
+
+SKL = """<div class="pc-widget po" id="skl">
+<div class="pc-actions"><button type="button" class="kd-copy" data-skl="0" aria-pressed="true">Au démarrage</button>
+<button type="button" class="kd-copy" data-skl="1" aria-pressed="false">L'agent appelle la skill</button>
+<button type="button" class="kd-copy" data-skl="2" aria-pressed="false">Il lit une annexe</button></div>
+<div class="pc-stack" id="sk-bar"><i id="sk-desc"></i><i id="sk-body"></i><i id="sk-ann"></i></div>
+<ul class="pc-legend"><li><i class="pc-k0"></i>Descriptions des skills (toujours là)</li><li><i class="pc-k1"></i>Corps de la skill appelée</li><li><i class="pc-k4"></i>Fichier annexe</li></ul>
+<p class="po-cap" id="sk-cap" aria-live="polite"></p>
+<p class="pc-hint">Largeurs agrandies pour être lisibles : une skill pèse peu devant la fenêtre.</p></div>"""
+
 def culture() -> str:
     gauge = """<div class="pc-widget" id="ctx-gauge">
 <div class="pc-presets"><span>Situations types</span>
@@ -76,11 +100,23 @@ def culture() -> str:
 <div class="pc-stack" id="ctx-stack"><i id="seg-sys"></i><i id="seg-rules"></i><i id="seg-tools"></i><i id="seg-hist"></i><i id="seg-files"></i><i id="seg-res"></i></div>
 <ul class="pc-legend"><li><i class="pc-k0"></i>Consignes</li><li><i class="pc-k1"></i>Instructions</li><li><i class="pc-k2"></i>Outils</li><li><i class="pc-k3"></i>Historique</li><li><i class="pc-k4"></i>Fichiers lus</li><li><i class="pc-k5"></i>Résultats</li></ul>
 <p id="ctx-txt" class="pc-big"></p><p id="ctx-msg"></p></div>"""
-    tok = """<div class="pc-widget"><label class="pc-lbl" for="tok-input">Collez un texte de votre travail (il reste dans votre navigateur)</label>
-<textarea id="tok-input" rows="5" placeholder="Un paragraphe d'un rapport, un e-mail, une page de documentation..."></textarea>
-<p class="pc-hint">Découpage illustratif : un vrai modèle coupe autrement.</p>
+    tok = """<div class="pc-widget" id="tk">
+<div class="pc-presets"><span>Choisir une phrase</span>
+<button type="button" class="kd-copy" data-tk-s="0" aria-pressed="true">La capitale…</button>
+<button type="button" class="kd-copy" data-tk-s="1" aria-pressed="false">Il était une fois…</button>
+<button type="button" class="kd-copy" data-tk-s="2" aria-pressed="false">Pour limiter…</button></div>
+<p class="pc-step"><b>1</b> Le texte est découpé en jetons, chacun repéré par un numéro.</p>
+<div id="tk-chips" class="pc-chips tk-chips" aria-live="polite"></div>
+<p class="pc-step"><b>2</b> Le modèle calcule une probabilité pour chacun des jetons possibles à la suite.</p>
+<div id="tk-probs" class="tk-probs"></div>
+<div class="tk-ctl"><label for="tk-temp">Température <b id="tk-tv">1,0</b></label><input id="tk-temp" type="range" min="0.2" max="2" step="0.1" value="1">
+<button type="button" class="kd-copy" id="tk-draw">Tirer 20 fois</button></div>
+<p class="pc-step"><b>3</b> Un jeton est tiré au sort selon ces probabilités, puis le calcul recommence avec lui en plus.</p>
+<div id="tk-draws" class="tk-draws"></div>
+<p class="pc-hint">Chiffres inventés pour illustrer : un vrai modèle calcule sur des dizaines de milliers de jetons possibles, et découpe autrement. La formule est réelle : probabilité = softmax(score ÷ température).</p></div>
+<div class="pc-widget"><label class="pc-lbl" for="tok-input">Estimer vos propres textes (ils restent dans votre navigateur)</label>
+<textarea id="tok-input" rows="4" placeholder="Un paragraphe d'un rapport, un e-mail, une page de documentation..."></textarea>
 <div id="tok-chips" class="pc-chips" aria-hidden="true"></div>
-<div class="pc-actions"><button type="button" class="kd-copy" id="tok-replay">Rejouer l'animation</button></div>
 <div id="tok-out" class="pc-out"></div></div>"""
     s = [
         ("1", "Ce qu'est un modèle de langage", "Un outil qui prolonge un texte, pas une base de connaissances.",
@@ -91,8 +127,9 @@ def culture() -> str:
          "« Il sait » ou « il a cherché » : le modèle ne cherche pas, il produit. Les outils de recherche ou de lecture de fichiers sont ajoutés à côté."),
         ("2", "Les jetons", "L'unité de texte que le modèle lit, écrit, et que l'on compte.",
          """<p>Le modèle ne lit pas des lettres ni des mots entiers : il découpe le texte en morceaux appelés <strong>jetons</strong> (tokens). Tout se mesure en jetons : la longueur de ce qu'il peut lire, la longueur de sa réponse, les limites d'usage et le coût d'un appel à l'API. Un texte plus long, ou une langue découpée plus finement, consomme plus de jetons.</p>
-<p>Estimez les jetons d'un de vos textes. Le résultat est un <strong>ordre de grandeur</strong> : le vrai compte dépend du modèle, et l'API propose un compteur exact (voir les sources).</p>""" + tok,
-         "Donner l'ordre de grandeur d'un document de votre travail en jetons, et dire ce qui le rend plus ou moins gros.",
+<p>Ce découpage a une conséquence importante : le modèle ne « comprend » pas une phrase puis répond. À chaque pas, il calcule <strong>une probabilité pour chaque jeton qui pourrait suivre</strong>, en tire un, l'ajoute, et recommence. Ce sont des statistiques sur des quantités énormes de texte, appliquées par des calculs mathématiques. Deux phrases possibles après « Il était une fois » : la plus probable n'est pas toujours tirée, d'où des réponses différentes à chaque essai.</p>
+<p>Choisissez une phrase, déplacez la température, puis tirez 20 fois. Ensuite, estimez un de vos textes : le résultat est un <strong>ordre de grandeur</strong>, le vrai compte dépend du modèle et l'API propose un compteur exact (voir les sources).</p>""" + tok,
+         "Expliquer pourquoi une réponse est un tirage parmi des probabilités, et donner l'ordre de grandeur d'un document en jetons.",
          "Compter en pages ou en mots donne une idée, jamais le chiffre : deux textes de même longueur peuvent coûter des jetons différents."),
         ("3", "La fenêtre de contexte", "Tout ce que le modèle peut voir à un instant donné, et rien d'autre.",
          """<p>La fenêtre de contexte est la « mémoire de travail » du modèle : <strong>tout</strong> ce qu'il peut consulter pour répondre, sa réponse comprise. Elle contient bien plus que votre dernier message : consignes du système, fichiers d'instructions, définitions des outils, historique de la conversation, fichiers lus, résultats des outils. Le modèle n'a pas de mémoire en dehors de cette fenêtre : une nouvelle session repart de zéro.</p>
@@ -111,7 +148,7 @@ def culture() -> str:
 </ul>
 <p>Réécrivez cette demande avec au moins deux leviers :</p>""" +
          pair("Avant", "Résume les risques juridiques de ce contrat et dis-moi ce qu'on doit négocier.", "Une version possible",
-              "Voici le contrat entre <contrat> et </contrat>.\n1. Extrais d'abord les passages exacts qui parlent de responsabilité, de résiliation et de pénalités. Si tu n'en trouves pas, écris « aucun passage trouvé ».\n2. Analyse les risques en citant le numéro de chaque passage. N'utilise rien d'autre que ce contrat.\n3. Si un point te semble manquer, dis « je ne peux pas l'affirmer à partir du document ».") +
+              "Voici le contrat entre <contrat> et </contrat> (ces balises de délimitation sont expliquées à l'étape suivante).\n1. Extrais d'abord les passages exacts qui parlent de responsabilité, de résiliation et de pénalités. Si tu n'en trouves pas, écris « aucun passage trouvé ».\n2. Analyse les risques en citant le numéro de chaque passage. N'utilise rien d'autre que ce contrat.\n3. Si un point te semble manquer, dis « je ne peux pas l'affirmer à partir du document ».") +
          reveal("Ce que ça ne règle pas", "<p>Ces techniques réduisent les hallucinations, elles ne les suppriment pas. Pour une décision importante, une personne relit les passages cités dans le document d'origine. Un chiffre, une date, une référence légale ou une citation s'écrivent dans un texte seulement après vérification à la source.</p>"),
          "Réécrire une demande pour qu'elle autorise l'incertitude et exige des passages, puis vérifier un passage cité à la main.",
          "Une réponse bien rédigée n'est pas une réponse vraie. Le ton d'assurance ne dit rien sur l'exactitude."),
@@ -180,6 +217,17 @@ AGENTS_BAD = """# AGENTS.md
 
 Tu es un expert senior. Écris du code propre, performant et maintenable.
 Fais attention à la sécurité. Teste bien ton code. Sois prudent."""
+
+RULE_EX = """---
+paths:
+  - "src/api/**/*.ts"
+---
+
+# Règles de l'API
+
+- Valider toute entrée avant de l'utiliser.
+- Répondre aux erreurs avec le format commun (code, message, identifiant de requête).
+- Un endpoint nouveau a un test qui échoue avant d'être écrit."""
 
 SKILL_EX = """---
 name: relance-client
@@ -269,17 +317,37 @@ def contexte() -> str:
         ("2", "Les fichiers d'instructions", "CLAUDE.md et AGENTS.md : du contexte persistant, pas une contrainte.",
          """<p>Chaque session démarre avec une fenêtre vide. Deux mécanismes transmettent la connaissance d'une session à l'autre : les fichiers d'instructions que <strong>vous</strong> écrivez (<code>CLAUDE.md</code>, ou <code>AGENTS.md</code> que Claude Code peut lire à la place), et la <strong>mémoire automatique</strong> que Claude écrit lui-même d'après vos corrections.</p>
 <p>Deux faits à retenir. D'abord, ces fichiers sont du <strong>contexte</strong> : l'agent les lit et peut s'en écarter. Pour interdire une action quelle que soit sa décision, il faut un hook (parcours suivant). Ensuite, plus une instruction est précise et courte, plus elle est suivie de manière constante.</p>
-<p>Le projet de ce site utilise un seul fichier commun et un pointeur : <code>AGENTS.md</code> porte les règles, <code>CLAUDE.md</code> contient une ligne <code>@AGENTS.md</code>. Des règles par type de fichier peuvent vivre dans <code>.claude/rules/</code>.</p>
+<p>Si <code>CLAUDE.md</code> et <code>AGENTS.md</code> existent tous les deux, Claude Code lit <code>CLAUDE.md</code> ; pour partager un seul fichier avec d'autres outils, <code>CLAUDE.md</code> importe l'autre avec une ligne <code>@AGENTS.md</code>. C'est ce que fait ce projet : <code>AGENTS.md</code> porte les consignes, <code>CLAUDE.md</code> n'est qu'un pointeur. Des consignes qui ne concernent qu'une partie du code se rangent à part : c'est l'étape suivante, les règles.</p>
 <p>Lequel de ces deux fichiers est le plus utile à un agent qui arrive sur le projet ?</p>""" +
          pair("Fichier A", AGENTS_BAD, "Fichier B", AGENTS_GOOD) +
          reveal("Réponse", "<p>Le B. Il contient ce que l'agent ne peut pas deviner en lisant le code : les commandes de vérification, les pièges, ce qui est interdit. Le A dit des intentions que n'importe quel modèle suit déjà (« écris du code propre ») sans rien de vérifiable. Une bonne instruction se teste : on peut dire si elle a été suivie.</p>") +
          "<p><strong>Exercice</strong> : écrivez dix lignes d'<code>AGENTS.md</code> pour un projet que vous connaissez, avec uniquement des commandes, des pièges et des interdits.</p>",
          "Produire dix lignes d'instructions vérifiables, et expliquer pourquoi elles ne remplacent pas un garde-fou.",
          "Un fichier trop long ou contradictoire dilue ce qui compte. Deux sources qui se contredisent valent pire qu'une seule."),
-        ("3", "Les skills", "Une procédure chargée seulement quand elle sert.",
+        ("3", "Les règles", "Des instructions rangées par sujet, chargées au bon moment.",
+         f"""<p>Quand <code>AGENTS.md</code> grossit, tout y est lu à chaque session, même ce qui ne concerne qu'une partie du code. Les <strong>règles</strong> règlent ce problème : un fichier Markdown par sujet dans <code>.claude/rules/</code> (<code>tests.md</code>, <code>api.md</code>, <code>securite.md</code>), découverts récursivement. Elles sont du contexte, comme les fichiers d'instructions : l'agent les lit et peut s'en écarter.</p>
+<p>Deux comportements, selon l'en-tête du fichier :</p>
+<table class="pc-table"><thead><tr><th>Règle</th><th>Quand elle entre dans le contexte</th></tr></thead><tbody>
+<tr><td>Sans <code>paths</code></td><td>Au lancement de la session, avec la même priorité que <code>.claude/CLAUDE.md</code></td></tr>
+<tr><td>Avec <code>paths</code> (motifs de fichiers)</td><td>Seulement quand l'agent lit, écrit ou modifie un fichier qui correspond</td></tr></tbody></table>
+{code(RULE_EX)}
+<p>Le champ <code>paths</code> accepte des motifs comme <code>src/**/*.{{ts,tsx}}</code> ; c'est le seul champ que Claude Code lit dans une règle. Vos règles personnelles vont dans <code>~/.claude/rules/</code> et s'appliquent à tous vos projets ; elles sont chargées avant celles du projet, et si les deux se contredisent, l'agent peut suivre l'une ou l'autre : gardez-les cohérentes.</p>
+<p>Où ranger quoi ? Lisez les cinq cas puis pronostiquez :</p>
+<table class="pc-table"><thead><tr><th>Cas</th><th>Où</th></tr></thead><tbody>
+<tr><td>« Les tests se lancent avec <code>pnpm test</code> »</td><td>{reveal("Mon pronostic", "<p><code>AGENTS.md</code> : valable partout, court, utile à chaque session.</p>")}</td></tr>
+<tr><td>« Les endpoints valident toute entrée »</td><td>{reveal("Mon pronostic", "<p>Une règle avec <code>paths: src/api/**</code> : elle ne pèse sur le contexte que quand on touche à l'API.</p>")}</td></tr>
+<tr><td>« Pour publier une version, suivre ces onze étapes »</td><td>{reveal("Mon pronostic", "<p>Une skill : c'est une procédure appelée pour une tâche, pas une consigne permanente.</p>")}</td></tr>
+<tr><td>« Ne jamais pousser sur <code>main</code> »</td><td>{reveal("Mon pronostic", "<p>Un hook (parcours Harness) : une interdiction doit être appliquée par l'outil, pas suggérée au modèle. On peut aussi l'écrire en règle pour l'expliquer, mais elle ne suffit pas.</p>")}</td></tr>
+<tr><td>« Je préfère des réponses courtes »</td><td>{reveal("Mon pronostic", "<p><code>~/.claude/rules/</code> : une préférence personnelle, indépendante du projet.</p>")}</td></tr></tbody></table>
+<p><strong>À ne pas confondre</strong> : les « règles de permission » (deny, ask, allow) de l'étape 7 sont appliquées par l'outil, dans les réglages. Les règles de cette étape sont des instructions lues par le modèle.</p>
+<p><strong>Exercice</strong> : prenez votre <code>AGENTS.md</code> et repérez deux paragraphes qui ne concernent qu'un type de fichier. Déplacez-les dans une règle avec <code>paths</code>.</p>""",
+         "Écrire une règle avec <code>paths</code> et dire pourquoi elle ne se charge pas à chaque session.",
+         "Une règle n'est pas plus contraignante qu'une ligne d'AGENTS.md : c'est un rangement, pas une garantie."),
+        ("4", "Les skills", "Une procédure chargée seulement quand elle sert.",
          f"""<p>Une skill est un dossier avec un fichier <code>SKILL.md</code> : un en-tête qui dit <strong>quand</strong> l'appeler, un corps qui dit <strong>comment</strong>. Claude l'invoque quand la description correspond à la conversation, ou vous la tapez avec <code>/nom</code>.</p>
 {code(SKILL_EX)}
 <p>Le point clé est le <strong>chargement progressif</strong> : seule la description reste toujours dans le contexte ; le corps n'est lu qu'à l'appel, et les fichiers annexes seulement au besoin. Une skill volumineuse ne coûte donc rien tant qu'on ne s'en sert pas.</p>
+{SKL}
 <table class="pc-table"><thead><tr><th>Emplacement</th><th>Portée</th></tr></thead><tbody>
 <tr><td><code>~/.claude/skills/&lt;nom&gt;/SKILL.md</code></td><td>Personnel : tous vos projets</td></tr>
 <tr><td><code>.claude/skills/&lt;nom&gt;/SKILL.md</code></td><td>Ce dépôt, partagé en le versionnant</td></tr>
@@ -288,17 +356,19 @@ def contexte() -> str:
 <p><strong>Exercice</strong> : transformez une tâche que vous répétez (relance, compte rendu, revue) en skill. Écrivez d'abord la description : elle doit dire quand, jamais le déroulé.</p>""",
          "Écrire une skill dont la description déclenche au bon moment et dont le corps tient en dix lignes.",
          "Une description qui résume les étapes pousse l'agent à les suivre sans lire le corps. Elle sert à choisir, pas à exécuter."),
-        ("4", "Les agents", "Un second collaborateur avec sa propre fenêtre de contexte.",
+        ("5", "Les agents", "Un second collaborateur avec sa propre fenêtre de contexte.",
          f"""<p>Un <strong>sous-agent</strong> est un assistant spécialisé qui travaille dans une fenêtre de contexte isolée, avec ses propres consignes, ses propres outils et éventuellement un autre modèle. Il fait la tâche et ne renvoie qu'un résumé : la lecture de trente fichiers ne pollue pas la conversation principale. C'est la technique « déléguer à un contexte propre » du début du parcours.</p>
+<p>Dans un schéma <strong>orchestrateur</strong>, l'agent principal ne lit pas tout : il distribue à chaque sous-agent le <em>minimum</em> dont il a besoin (la tâche, les critères, les fichiers utiles), puis ne reçoit que des résumés. Comparez les deux modes :</p>
+{ORCH}
 {code(AGENT_EX)}
 <p>Le fichier vit dans <code>.claude/agents/</code> (projet) ou <code>~/.claude/agents/</code> (personnel). Les champs obligatoires sont <code>name</code> et <code>description</code> ; <code>tools</code> restreint ses outils (ici, lecture seule) et hérite de tout si on l'omet. On l'invoque en le nommant, par @-mention, ou pour toute la session.</p>
-<p>Limites à connaître : chaque appel repart de zéro, il consomme du quota comme la session principale, et le nombre d'agents simultanés et la profondeur d'imbrication sont bornés.</p>
+<p>Limites à connaître : un sous-agent n'a pas votre conversation et un nouvel appel repart d'un contexte vide (un sous-agent terminé peut toutefois être repris), il consomme du quota comme la session principale, et le nombre d'agents simultanés et la profondeur d'imbrication sont bornés.</p>
 <p><strong>Exercice</strong> : écrivez un agent « relecteur » en lecture seule pour votre projet. Quelles sont les trois informations que vous lui donnez avec sa tâche, puisqu'il n'a pas votre conversation ?</p>""" +
          reveal("Piste", "<p>La demande d'origine et ses critères de réussite, le diff ou les fichiers touchés, et les résultats des vérifications déjà faites. Un agent ne voit que ce qu'on lui envoie : un résumé vague produit une relecture vague.</p>"),
          "Dire ce qu'un sous-agent gagne (un contexte propre) et ce qu'il perd (la conversation).",
          "Restreindre les outils est une protection réelle pour un relecteur. Un agent qui peut tout modifier relit mal ce qu'il peut aussi corriger."),
-        ("5", "MCP : brancher des outils", "Un protocole commun pour donner à l'agent l'accès à des données et à des services.",
-         f"""<p>Le <strong>Model Context Protocol</strong> permet à l'agent d'utiliser des serveurs externes : base de données, tracker, documentation, navigateur. Chaque serveur expose des outils que l'agent appelle. Deux conséquences : ils <strong>entrent dans le contexte</strong> (leurs définitions comptent dans la fenêtre) et ils <strong>peuvent agir</strong> (lire des données, écrire, supprimer). On n'installe donc que des serveurs de confiance, avec l'accès minimal.</p>
+        ("6", "MCP : brancher des outils", "Un protocole commun pour donner à l'agent l'accès à des données et à des services.",
+         f"""<p>Le <strong>Model Context Protocol</strong> permet à l'agent d'utiliser des serveurs externes : base de données, tracker, documentation, navigateur. Chaque serveur expose des outils que l'agent appelle. Deux conséquences : leurs outils <strong>coûtent du contexte</strong> (par défaut, la recherche d'outils ne charge au démarrage que les noms, et les définitions complètes seulement au moment du besoin, donc l'ajout d'un serveur pèse peu tant qu'on ne s'en sert pas) et ils <strong>peuvent agir</strong> (lire des données, écrire, supprimer). On n'installe donc que des serveurs de confiance, avec l'accès minimal.</p>
 <table class="pc-table"><thead><tr><th>Portée</th><th>Visible</th><th>Stockée dans</th></tr></thead><tbody>
 <tr><td>Locale (par défaut)</td><td>Ce projet, vous seul</td><td><code>~/.claude.json</code></td></tr>
 <tr><td>Projet</td><td>Ce projet, toute l'équipe</td><td><code>.mcp.json</code> à la racine, versionné</td></tr>
@@ -306,12 +376,12 @@ def contexte() -> str:
 <p>Un fichier <code>.mcp.json</code> de projet :</p>{code(mcp_json)}
 <p>Remarquez les <code>${{...}}</code> : les secrets viennent de variables d'environnement, jamais du fichier versionné. Un serveur de portée projet demande une approbation avant son premier usage.</p>
 {cmd("claude mcp add --transport http <nom> <url>")}{cmd("claude mcp list")}{cmd("claude mcp remove <nom>")}
-<p>Dans les règles de permission, un outil MCP se nomme <code>mcp__&lt;serveur&gt;__&lt;outil&gt;</code> (par exemple <code>mcp__notion__.*</code> pour tous les outils d'un serveur).</p>
+<p>Dans les règles de permission, un outil MCP se nomme <code>mcp__&lt;serveur&gt;__&lt;outil&gt;</code> (par exemple <code>mcp__notion__*</code> ou simplement <code>mcp__notion</code> pour tous les outils d'un serveur ; une règle <code>mcp__</code> avec des parenthèses est ignorée).</p>
 <p><strong>Exercice</strong> : écrivez le <code>.mcp.json</code> d'un serveur en lecture seule sur une base de test. Où va le mot de passe ?</p>""" +
          reveal("Réponse", "<p>Dans une variable d'environnement, référencée par <code>${NOM}</code>, définie hors du dépôt. Le fichier versionné ne contient aucun secret. Pour la base elle-même, un compte en lecture seule : la permission la plus étroite possible est la première protection.</p>"),
          "Choisir la bonne portée d'un serveur MCP et écrire sa configuration sans secret en clair.",
          "Un serveur MCP n'est pas une simple lecture : il agit avec vos droits. Chaque serveur ajouté alourdit aussi le contexte."),
-        ("6", "Permissions et réglages", "Ce que l'agent peut faire, décidé hors de son texte.",
+        ("7", "Permissions et réglages", "Ce que l'agent peut faire, décidé hors de son texte.",
          f"""<p>Contrairement aux fichiers d'instructions, les <strong>règles de permission</strong> sont appliquées par l'outil, pas suggérées au modèle. Elles vivent dans les fichiers de réglages : <code>.claude/settings.json</code> (projet, partagé), <code>.claude/settings.local.json</code> (vos choix locaux, à garder hors du dépôt), <code>~/.claude/settings.json</code> (personnel), et des réglages d'organisation qui priment.</p>
 {code(settings_json)}
 <p>Trois listes, évaluées dans cet ordre : <strong>deny</strong>, puis <strong>ask</strong>, puis <strong>allow</strong>. La première qui correspond décide, quelle que soit la précision des règles. Pronostiquez :</p>
@@ -323,15 +393,16 @@ def contexte() -> str:
          "Mettre le mode le plus permissif « pour aller vite » retire justement la couche qui rattrape les erreurs. Il se réserve aux environnements jetables."),
     ]
     out = "\n".join(stage(*x) for x in s)
-    return (intro("Du prompt isolé à un contexte entretenu : fichiers d'instructions, skills, agents, serveurs MCP et permissions, avec les vrais fichiers de configuration. Les exemples sont des configurations valides, vérifiées à la génération de la page. Prérequis : le parcours Culture, ou une bonne pratique d'un assistant d'IA. Environ trois heures, à calibrer en séance.") +
+    return (intro("Du prompt isolé à un contexte entretenu : fichiers d'instructions, règles, skills, agents, serveurs MCP et permissions, avec les vrais fichiers de configuration. Les exemples sont des configurations valides, vérifiées à la génération de la page. Prérequis : le parcours Culture, ou une bonne pratique d'un assistant d'IA. Environ trois heures, à calibrer en séance.") +
             nav(CONTEXTE_NAV) + out +
             checklist("Vous avez compris si vous savez", [
                 "lister ce qui remplit la fenêtre d'une session d'agent, et la technique qui répond à chaque problème ;",
                 "écrire des instructions vérifiables et dire pourquoi elles ne contraignent pas ;",
+                "ranger une consigne au bon endroit : AGENTS.md, règle avec ou sans paths, skill ou hook ;",
                 "écrire une skill, un sous-agent, et choisir leur emplacement ;",
                 "configurer un serveur MCP sans secret en clair, avec la bonne portée ;",
                 "prédire le résultat de règles deny, ask et allow, et nommer ce qu'elles ne garantissent pas."]) +
-            sources([(DOC + "memory", "Instructions et mémoire (CLAUDE.md, AGENTS.md)"), (DOC + "skills", "Skills"), (DOC + "sub-agents", "Sous-agents"),
+            sources([(DOC + "memory", "Instructions, mémoire et règles (CLAUDE.md, AGENTS.md, .claude/rules)"), (DOC + "skills", "Skills"), (DOC + "sub-agents", "Sous-agents"),
                      (DOC + "mcp", "MCP : portées et configuration"), (DOC + "permissions", "Permissions"),
                      ("https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents", "Effective context engineering for AI agents")]))
 
