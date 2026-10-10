@@ -11,10 +11,10 @@ Kwa assemble des idées éprouvées par d'autres projets, tous sous licence MIT.
 
 ## skills (Matt Pocock, MIT)
 
-- Dépôt : https://github.com/mattpocock/skills (référence : f3fc563)
+- Dépôt : https://github.com/mattpocock/skills (références : f3fc563 ; 49dd158 pour /kwa-conflicts, /kwa-research, /kwa-domain, /kwa-teach)
 - Licence : `licenses/mattpocock-skills-MIT.txt`
-- Ce que Kwa en a pris : L'interrogatoire sans relâche d'un plan, la reprise de session, le questionnaire pour un tiers, le prototype jetable, l'approfondissement des modules, les tickets en balles traçantes, la preuve par mutation, la rétrospective.
-- Skills ou éléments concernés : /kwa-interview, /kwa-handoff, /kwa-questionnaire, /kwa-rephrase, /kwa-prototype, /kwa-agent-docs, /kwa-architecture, /kwa-tickets, /kwa-debug, /kwa-learn
+- Ce que Kwa en a pris : L'interrogatoire sans relâche d'un plan, la reprise de session, le questionnaire pour un tiers, le prototype jetable, l'approfondissement des modules, les tickets en balles traçantes, la preuve par mutation, la rétrospective, la résolution de conflits par l'intention de chaque côté, la recherche limitée aux sources primaires, le glossaire du domaine et ses ADR, l'espace d'apprentissage sur plusieurs sessions.
+- Skills ou éléments concernés : /kwa-interview, /kwa-handoff, /kwa-questionnaire, /kwa-rephrase, /kwa-prototype, /kwa-agent-docs, /kwa-architecture, /kwa-tickets, /kwa-debug, /kwa-learn, /kwa-conflicts, /kwa-research, /kwa-domain, /kwa-teach
 
 ## ponytail (DietrichGebert, MIT)
 

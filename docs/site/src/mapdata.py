@@ -36,11 +36,11 @@ KINDS = {
 }
 
 FAMILIES = {
-    "cadrer": ["brainstorm", "interview", "plan", "tickets", "prototype", "questionnaire", "architecture", "rephrase"],
+    "cadrer": ["brainstorm", "interview", "plan", "tickets", "prototype", "questionnaire", "architecture", "rephrase", "research", "domain"],
     "faire": ["start-dev", "tdd", "execute", "agents", "parallel", "simple"],
     "prouver": ["debug", "verify", "review", "review-feedback", "audit"],
-    "livrer": ["commit", "ship", "deploy", "testflight", "humanize"],
-    "mémoire": ["learn", "handoff", "agent-docs"],
+    "livrer": ["commit", "ship", "deploy", "testflight", "humanize", "conflicts"],
+    "mémoire": ["learn", "handoff", "agent-docs", "teach"],
 }
 FAMILY_LABEL = {"cadrer": "Cadrer", "faire": "Faire", "prouver": "Prouver", "livrer": "Livrer", "mémoire": "Mémoire"}
 
@@ -227,7 +227,8 @@ def build(catalog_ids: list[str], credits: dict, wf_text: dict) -> dict:
     for a, b, kind in [("brainstorm", "plan", "calls"), ("interview", "brainstorm", "feeds"), ("plan", "start-dev", "calls"), ("plan", "execute", "calls"),
                        ("plan", "agents", "calls"), ("start-dev", "tdd", "calls"), ("tdd", "verify", "calls"), ("debug", "tdd", "calls"),
                        ("agents", "review", "calls"), ("verify", "commit", "calls"), ("review", "review-feedback", "calls"),
-                       ("commit", "ship", "calls"), ("ship", "deploy", "calls"), ("deploy", "learn", "calls"), ("learn", "handoff", "feeds")]:
+                       ("commit", "ship", "calls"), ("ship", "deploy", "calls"), ("deploy", "learn", "calls"), ("learn", "handoff", "feeds"),
+                       ("research", "brainstorm", "feeds"), ("domain", "interview", "feeds"), ("conflicts", "verify", "calls")]:
         edges.append({"from": f"s:{a}", "to": f"s:{b}", "kind": kind})
     edges.append({"from": "s:learn", "to": "s:brainstorm", "kind": "loop", "label": "la connaissance revient au cadrage"})
     views["pack"] = {"title": "Le pack Kwa", "nodes": items, "groups": groups, "edges": edges,
