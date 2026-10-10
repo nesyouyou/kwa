@@ -16,10 +16,10 @@ class Credits(unittest.TestCase):
                 with self.subTest(source=src["id"], skill=sk):
                     path = os.path.join(SKILLS, sk, "SKILL.md")
                     self.assertTrue(os.path.isfile(path), f"{sk} n'existe pas")
-                    self.assertIn(src["credit_line"], open(path, encoding="utf-8").read())
+                    self.assertIn(src.get("credit_lines", {}).get(sk, src["credit_line"]), open(path, encoding="utf-8").read())
 
     def test_every_credit_line_in_a_skill_is_declared(self):
-        declared = {(s["credit_line"], sk) for s in CREDITS["sources"] for sk in s["skills"]}
+        declared = {(s.get("credit_lines", {}).get(sk, s["credit_line"]), sk) for s in CREDITS["sources"] for sk in s["skills"]}
         for d in os.listdir(SKILLS):
             f = os.path.join(SKILLS, d, "SKILL.md")
             if not os.path.isfile(f):

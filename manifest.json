@@ -99,7 +99,7 @@
       }
     },
     "craft": {
-      "about": "Méthode de travail (cadrer, faire, prouver, relire) : brainstorm, interview, plan, execute, agents, parallel, tdd, debug, verify, review, simple, audit, architecture, prototype, handoff, questionnaire… + routage des skills au démarrage",
+      "about": "Méthode de travail (cadrer, faire, prouver, relire) : brainstorm, interview, plan, execute, agents, parallel, tdd, debug, verify, review, simple, audit, architecture, prototype, handoff, questionnaire, conflits de fusion, recherche sourcée, vocabulaire du domaine, enseignement… + routage des skills au démarrage",
       "files": {
         "core/templates/skills-router.md": {
           "dest": ".claude/kwa/router.md"
@@ -167,6 +167,18 @@
         },
         "core/skills/architecture/*": {
           "dest": ".claude/skills/kwa-architecture"
+        },
+        "core/skills/conflicts/*": {
+          "dest": ".claude/skills/kwa-conflicts"
+        },
+        "core/skills/research/*": {
+          "dest": ".claude/skills/kwa-research"
+        },
+        "core/skills/domain/*": {
+          "dest": ".claude/skills/kwa-domain"
+        },
+        "core/skills/teach/*": {
+          "dest": ".claude/skills/kwa-teach"
         }
       },
       "hooks": {
