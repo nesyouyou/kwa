@@ -1,5 +1,5 @@
 import { expect, test } from 'claude-code/testing'
-import { classify, isOver, model, openBrick, svg } from '../hooks/workflow'
+import { classify, fromJournal, isOver, model, openBrick, svg } from '../hooks/workflow'
 
 const step = (id: string, kind: 'skill' | 'agent' | 'garde', name: string, brick: 'cadrer' | 'faire' | 'prouver' | 'relire' | 'livrer' | 'capitaliser', endedAt: number | null) =>
   ({ id, kind, name, task: '', brick, startedAt: 0, endedAt, isAborted: false })
@@ -165,4 +165,36 @@ test('sans skill en cours, la brique ouverte suit l’activité des outils', asy
   expect(out).not.toContain('stroke:#6366f1" stroke-opacity="0.25" stroke-dasharray')   // Cadrer touchée : plus en pointillés
   // une skill qui tourne garde la main sur la brique ouverte
   expect(openBrick(model([step('1', 'skill', '/kwa:tdd', 'prouver', null)], 5, null, { touched: ['faire'], current: 'faire' }))).toBe('prouver')
+})
+
+test('le journal de Kwa redevient des étapes du Mod, et la branche dit le workflow sans skill', async () => {
+  const lines = [
+    { ts: 100, kind: 'session', branch: 'fix/14-panier-promo' },
+    { ts: 101, kind: 'tool', brick: 'cadrer' },
+    { ts: 102, kind: 'skill', name: 'kwa:debug' },
+    { ts: 103, kind: 'skill', name: 'frontend-design' },
+    { ts: 104, kind: 'agent', name: 'kwa:reviewer', target: 'relire le diff' },
+    { ts: 105, kind: 'deny', reason: 'Kwa — écrire du code sur main est refusé' },
+    { ts: 106, kind: 'tool', brick: 'faire' },
+    { ts: 107, kind: 'agent-end', name: 'kwa:reviewer' },
+    { ts: 108, kind: 'turn' },
+    { ts: 109, kind: 'skill', name: 'kwa:tdd' },
+    { ts: 110, kind: 'tool', brick: 'cadrer' },
+  ].map(x => JSON.stringify(x)).join('\n') + '\n{"ts": 111, "ki'
+  const r = fromJournal(lines)
+  expect(r.branch).toBe('fix/14-panier-promo')
+  expect(r.first).toBe('/kwa:debug')
+  expect(r.touched).toEqual(['faire', 'cadrer'])
+  expect(r.steps.map(s => `${s.kind}:${s.name}:${s.brick}:${s.endedAt}`)).toEqual([
+    'skill:/kwa:debug:cadrer:108000', 'agent:kwa:reviewer:relire:107000', 'garde:guard-write:faire:105000',
+    'skill:/kwa:tdd:prouver:110000',   // sans fin dans le journal : close à son dernier événement
+  ])
+  expect(fromJournal('').steps).toEqual([])
+
+  const byBranch = model([], 0, null, undefined, 'fix/14-panier-promo')
+  expect(byBranch.title).toBe('Corriger un bug')
+  expect(byBranch.detected).toBe(true)
+  expect(byBranch.why).toContain('branche fix/14-panier-promo')
+  expect(model([], 0, '/kwa:review', undefined, 'fix/14-x').title).toBe('Relire')   // la skill prime sur la branche
+  expect(model([], 0, null, undefined, 'main').detected).toBe(false)
 })

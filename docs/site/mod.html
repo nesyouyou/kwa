@@ -182,8 +182,9 @@ le schéma, Desktop ajoute en texte la ligne « En direct », les chronomètres 
 <ul class="pn-list">
 <li><b>Les cinq workflows</b>, en haut : Feature, Bug, Relire, Livrer, Capitaliser. Celui qui est détecté s'allume.
 La première skill Kwa de la session le désigne : <code>/kwa:debug</code> pour un bug, <code>/kwa:review</code> pour une
-relecture, <code>/kwa:ship</code> ou <code>/kwa:commit</code> pour une livraison, <code>/kwa:learn</code> pour capitaliser ;
-sinon, une fonctionnalité. Ce sont les cinq <a href="board.html">workflows animés</a> du site.</li>
+relecture, <code>/kwa:ship</code> ou <code>/kwa:commit</code> pour une livraison, <code>/kwa:learn</code> pour capitaliser.
+Sans skill, la branche de la session le dit : <code>fix/…</code> pour un bug, <code>feat/…</code> pour une
+fonctionnalité. Ce sont les cinq <a href="board.html">workflows animés</a> du site.</li>
 <li><b>Une brique ouverte à la fois</b>, celle où l'on est. Les autres restent fermées, avec une pastille par étape.
 Quand la session entre dans une nouvelle brique, elle se déplie.</li>
 <li><b>En direct</b>, sous le schéma : la dernière action de l'agent ou d'un sous-agent, par exemple « modifie
@@ -211,6 +212,12 @@ fini, au cas où leur fin n'aurait pas été signalée.</li>
 <li><b>Un garde de Kwa refuse</b> : une étape rouge. L'action refusée n'a pas eu lieu, elle ne compte pas comme activité.</li>
 <li><b>Un tour se termine</b> : l'étape en cours se clôt et le coût est relevé.</li>
 </ul>
+<p>Le Mod lit aussi le <b>journal d'activité</b> que les hooks de Kwa écrivent pour chaque session (module
+<code>memory</code>, voir <a href="memoire.html">Mémoire</a>). Il y trouve la branche de la session, et ce qui s'est
+passé avant lui : une session reprise ou un Mod installé en cours de route retrouve ses skills, ses sous-agents et ses
+refus. Après un <code>/clear</code>, qui ouvre une nouvelle session dans le même processus, le Mod oublie l'ancienne et
+repart du journal de la nouvelle. Sans journal (Kwa sans le module <code>memory</code>), il suit la session en direct
+seulement. Pour relire une session terminée, ou celle d'un autre agent : <code>kwa activity</code>.</p>
 <div class="kd-wrap"><table class="dg-table"><thead><tr><th>Ce que fait l'outil</th><th>Brique</th></tr></thead><tbody><tr><td>Lire un fichier, chercher dans le code, consulter le web</td><td>Cadrer</td></tr><tr><td>Écrire ou modifier un fichier</td><td>Faire</td></tr><tr><td>Lancer une commande de vérification de la politique du projet, ou une commande de test ou de build connue (<code>unittest</code>, <code>pytest</code>, <code>jest</code>, <code>tsc</code>, <code>dotnet test</code>…)</td><td>Prouver</td></tr><tr><td><code>git commit</code>, <code>git push</code>, ouvrir ou fusionner une PR</td><td>Livrer</td></tr><tr><td>Une autre commande (<code>ls</code>, <code>cat</code>…)</td><td>aucune : elle s'affiche seulement en direct</td></tr></tbody></table></div>
 <p>Puis il compare ce qu'il a vu au parcours type du workflow : ce qui est fait, en cours, passé ou à venir. Le
 schéma est un dessin vectoriel (SVG) qui ne change qu'avec les étapes, pour ne pas clignoter ; tout ce qui bouge sans
