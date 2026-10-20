@@ -52,6 +52,81 @@ const FLOW_OF: Record<string, string> = {
   '/kwa:commit': 'ship', '/kwa:ship': 'ship', '/kwa:deploy': 'ship', '/kwa:learn': 'learn', '/kwa:handoff': 'learn',
 }
 
+// Sans skill, le préfixe de la branche dit le workflow (même table que `kwa activity`).
+const BRANCH_FLOW: Record<string, string> = { fix: 'bug', hotfix: 'bug', feat: 'feature', feature: 'feature' }
+export const flowOfBranch = (branch: string | null | undefined): string | null =>
+  (branch?.includes('/') && BRANCH_FLOW[branch.split('/')[0]!]) || null
+
+// Les mêmes briques que les workflows animés du site de Kwa (docs/site/src/flows.py)
+export const BRICK_OF: Record<string, Brick> = {
+  brainstorm: 'cadrer', interview: 'cadrer', plan: 'cadrer', debug: 'cadrer', prototype: 'cadrer', questionnaire: 'cadrer',
+  tickets: 'cadrer', research: 'cadrer', domain: 'cadrer', architecture: 'cadrer', rephrase: 'cadrer',
+  init: 'faire', 'start-dev': 'faire', agents: 'faire', execute: 'faire', parallel: 'faire', simple: 'faire', conflicts: 'faire',
+  tdd: 'prouver', verify: 'prouver', audit: 'prouver',
+  review: 'relire', 'review-feedback': 'relire',
+  commit: 'livrer', ship: 'livrer', deploy: 'livrer', testflight: 'livrer', humanize: 'livrer',
+  learn: 'capitaliser', handoff: 'capitaliser', 'agent-docs': 'capitaliser', teach: 'capitaliser',
+}
+
+// Un refus d'un garde de Kwa (« Kwa — … ») : quel garde, et la brique où il tombe.
+export const guardOf = (text: string) =>
+  /code sur main/.test(text) ? 'guard-write' : /PR|Closes|preuve/.test(text) ? 'guard-github' : /push|commit/.test(text) ? 'guard-git' : 'garde'
+export const guardBrick = (name: string, last?: Brick): Brick => (name === 'guard-write' ? 'faire' : name === 'garde' ? last ?? 'faire' : 'livrer')
+
+export type Restored = { steps: Step[]; first: string | null; touched: Brick[]; branch: string | null }
+
+// Le journal d'activité de Kwa (module memory : une ligne JSON par événement, écrite par ses hooks) relu en étapes
+// du Mod. Il sert quand l'état de session du Mod est vide alors que la session a déjà travaillé : session reprise,
+// Mod installé en cours de route. Ce qui n'a pas de fin dans le journal est clos à son dernier événement : rien
+// n'indique que cela tourne encore, et les étapes vues en direct prennent le relais.
+export function fromJournal(text: string): Restored {
+  const events: Record<string, unknown>[] = []
+  for (const line of text.split('\n')) {
+    if (!line.trim()) continue
+    try {
+      events.push(JSON.parse(line))
+    } catch {
+      // une ligne coupée (écriture en cours) est ignorée
+    }
+  }
+  const at = (e: Record<string, unknown>) => Math.round(Number(e.ts ?? 0) * 1000)
+  const steps: Step[] = []
+  const touched: Brick[] = []
+  let first: string | null = null
+  let branch: string | null = null
+  const lastSkill = () => [...steps].reverse().find(s => s.kind === 'skill')
+  const closeSkills = (t: number) => steps.forEach((s, k) => { if (s.kind === 'skill' && s.endedAt === null) steps[k] = { ...s, endedAt: t } })
+  events.forEach((e, i) => {
+    const t = at(e)
+    const name = String(e.name ?? '')
+    const base = { id: `j${i}-${t}`, task: '', startedAt: t, endedAt: null, isAborted: false }
+    if (e.kind === 'session') branch ??= (e.branch as string) || null
+    else if (e.kind === 'turn') closeSkills(t)
+    else if (e.kind === 'skill') {
+      const skill = name.replace(/^\//, '')
+      const brick = skill.startsWith('kwa:') ? BRICK_OF[skill.slice(4)] : undefined
+      if (!brick) return
+      closeSkills(t)
+      first ??= `/${skill}`
+      steps.push({ ...base, kind: 'skill', name: `/${skill}`, brick })
+    } else if (e.kind === 'agent') {
+      const n = name || 'agent'
+      steps.push({ ...base, kind: 'agent', name: n, task: String(e.target ?? ''), brick: /review/.test(n) ? 'relire' : lastSkill()?.brick ?? 'faire' })
+    } else if (e.kind === 'agent-end') {
+      const k = steps.findIndex(s => s.kind === 'agent' && s.endedAt === null && s.name === (name || 'agent'))
+      if (k >= 0) steps[k] = { ...steps[k]!, endedAt: t }
+    } else if (e.kind === 'deny') {
+      const g = guardOf(String(e.reason ?? ''))
+      steps.push({ ...base, kind: 'garde', name: g, brick: guardBrick(g, lastSkill()?.brick), endedAt: t })
+    } else if (e.kind === 'tool' && BRICKS.some(([b]) => b === e.brick)) {
+      const b = e.brick as Brick
+      if (touched[touched.length - 1] !== b) touched.splice(0, touched.length, ...touched.filter(x => x !== b), b)
+    }
+  })
+  const end = events.length ? at(events[events.length - 1]!) : 0
+  return { steps: steps.map(s => (s.endedAt === null ? { ...s, endedAt: end } : s)), first, touched, branch }
+}
+
 const matches = (row: [Brick, Kind, string], s: Step) =>
   // les sous-agents ne sont pas appariés ici : ils sont comptés à part, par brique
   (s.kind === 'skill' && row[2] === s.name) || (s.kind === 'garde' && row[1] === 'garde' && row[2] === s.name)
@@ -66,12 +141,13 @@ const insertAt = (rows: Row[], b: Brick) => {
 const stepStatus = (s: Step): Status => (s.kind === 'garde' ? 'denied' : s.endedAt === null ? 'run' : s.isAborted ? 'aborted' : 'done')
 
 // `first` : la première skill Kwa de la session, gardée à part pour que le workflow détecté ne change pas quand
-// la liste des étapes est tronquée.
+// la liste des étapes est tronquée. `branch` : la branche de la session, qui dit le workflow tant qu'aucune skill ne l'a fait.
 export function model(steps: Step[], now: number, first: string | null = steps.find(s => s.kind === 'skill')?.name ?? null,
-  activity: Activity = { touched: [], current: null }): Model {
-  const key = (first && FLOW_OF[first]) || 'feature'
+  activity: Activity = { touched: [], current: null }, branch: string | null = null): Model {
+  const byBranch = first ? null : flowOfBranch(branch)
+  const key = (first && FLOW_OF[first]) || byBranch || 'feature'
   const flow = FLOWS[key]!
-  const why = first ? `d'après ${first}` : 'en attente d’une skill'
+  const why = first ? `d'après ${first}` : byBranch ? `d'après la branche ${branch}` : 'en attente d’une skill'
   const used = new Set<Step>()
   const rows: Row[] = flow.steps.map(def => {
     const hit = [...steps].reverse().find(s => !used.has(s) && matches(def, s))
@@ -120,7 +196,7 @@ export function model(steps: Step[], now: number, first: string | null = steps.f
   let last = -1
   rows.forEach((r, i) => { if (!r.extra && r.status !== 'next') last = i })
   rows.forEach((r, i) => { if (r.status === 'next' && !r.extra && i < last) r.status = 'passed' })
-  return { key, title: flow.title, why, detected: first !== null, rows, swarm: swarm(steps, now), ...activity }
+  return { key, title: flow.title, why, detected: first !== null || byBranch !== null, rows, swarm: swarm(steps, now), ...activity }
 }
 
 // Ce que fait un appel d'outil, en une brique et quelques mots. `verify` : les commandes de vérification de la

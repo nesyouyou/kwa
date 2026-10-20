@@ -200,3 +200,39 @@ test('le Mod suit en direct ce que font les outils, même sans skill Kwa', async
   expect(await ui2.find({ type: 'Text', text: /lance python3 -m unittest/ })).toBeDefined()
   await ui2.unmount()
 })
+
+test('le Mod reprend le journal de Kwa de sa session, et repart de zéro après un /clear', async ($, on) => {
+  const clock = engine(on)
+  let session = 's-old'
+  const dir = '/repo/.claude/kwa/local/activity'
+  const files: Record<string, string> = {
+    's-old': [{ ts: 1, kind: 'session', branch: 'fix/14-panier' }, { ts: 2, kind: 'skill', name: 'kwa:debug' },
+      { ts: 3, kind: 'agent', name: 'kwa:reviewer', target: 'relire' }].map(x => JSON.stringify(x)).join('\n'),
+    's-new': JSON.stringify({ ts: 9, kind: 'session', source: 'clear', branch: 'feat/15-export' }),
+  }
+  on('session.id', () => ({ value: session }) as never)
+  on('session.repo', () => ({ value: { root: '/repo', remote: null, internal: false, name: null } }) as never)
+  on('fs.list', ($, e) => ({ value: e.path === dir ? Object.keys(files).map(k => ({ name: `2026-10-20-${k}.jsonl`, kind: 'file', size: 1, mtimeMs: 0, isLink: false })) : [] }) as never)
+  on('fs.read', ($, e) => {
+    const k = Object.keys(files).find(x => e.path === `${dir}/2026-10-20-${x}.jsonl`)
+    if (!k) throw new Error('ENOENT')
+    return { value: files[k] } as never
+  })
+  await $.session.start({ source: 'resume', cwd: '/repo', surface: 'desktop', isInteractive: true } as Parameters<typeof $.session.start>[0])
+  const term = async () => {
+    const ui = await $.ui.mount({ ...PANE, surface: 'terminal' })
+    const out = { debug: await ui.find({ type: 'Text', text: /\/kwa:debug/ }), agent: await ui.find({ type: 'Text', text: /↳ kwa:reviewer/ }) }
+    await ui.unmount()
+    return out
+  }
+  const before = await term()
+  expect(before.debug).toBeDefined()      // la skill d'avant la reprise
+  expect(before.agent).toBeDefined()      // et le sous-agent, clos avec le journal
+  session = 's-new'                       // /clear : même processus, autre session, sans session.start
+  await clock.advance(4000)
+  const after = await term()
+  expect(after.debug).toBeUndefined()
+  const desk = await $.ui.mount({ ...PANE, surface: 'desktop' })
+  expect(JSON.stringify(await desk.find({ type: 'Svg' }))).toContain('feat/15-export')   // le workflow, d'après la branche
+  await desk.unmount()
+})

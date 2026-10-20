@@ -20,6 +20,8 @@ declare module 'claude-code' {
     // first : la première skill Kwa de la session, qui dit le workflow ; elle survit à la troncature de steps
     'kwa-activity': { steps: Step[]; first: string | null; usage: Usage | null; frame: number; beat: number; isHidden: boolean
       // live : la dernière action ; touched : les briques où les outils du fil principal ont travaillé
-      live: Live | null; touched: Brick[] }
+      live: Live | null; touched: Brick[]
+      // sid : la session dont l'état est le reflet (un /clear en ouvre une autre) ; branch : sa branche, lue dans le journal Kwa
+      sid: string | null; branch: string | null }
   }
 }

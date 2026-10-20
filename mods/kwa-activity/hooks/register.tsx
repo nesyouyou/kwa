@@ -2,7 +2,7 @@ import { atom, read, update } from 'claude-code'
 import type { EngineInterface, Register, Timer } from 'claude-code'
 
 import type { Brick, Live, Step, Usage } from '../types'
-import { BRICKS, classify, duration, isOver, kilo, model, money, openBrick, svg } from './workflow'
+import { BRICK_OF, BRICKS, classify, duration, fromJournal, guardBrick, guardOf, isOver, kilo, model, money, openBrick, svg } from './workflow'
 
 // Rien de ce mod n'entre dans le contexte du modèle : il lit les événements et dessine, sans réécrire ni le prompt,
 // ni le texte des skills, ni celui des sous-agents.
@@ -15,19 +15,11 @@ const beat = atom({ plugin: 'kwa-activity', key: 'beat' } as const, 0)
 const isHidden = atom({ plugin: 'kwa-activity', key: 'isHidden' } as const, false)
 const live = atom({ plugin: 'kwa-activity', key: 'live' } as const, null)
 const touched = atom({ plugin: 'kwa-activity', key: 'touched' } as const, [])
+const sid = atom({ plugin: 'kwa-activity', key: 'sid' } as const, null)
+const branch = atom({ plugin: 'kwa-activity', key: 'branch' } as const, null)
 
 const PANE = 'kwa-progress'
 const KEEP = 200
-// Les mêmes briques que les workflows animés du site de Kwa (docs/site/src/flows.py)
-const BRICK_OF: Record<string, Brick> = {
-  brainstorm: 'cadrer', interview: 'cadrer', plan: 'cadrer', debug: 'cadrer', prototype: 'cadrer', questionnaire: 'cadrer',
-  tickets: 'cadrer', research: 'cadrer', domain: 'cadrer', architecture: 'cadrer', rephrase: 'cadrer',
-  init: 'faire', 'start-dev': 'faire', agents: 'faire', execute: 'faire', parallel: 'faire', simple: 'faire', conflicts: 'faire',
-  tdd: 'prouver', verify: 'prouver', audit: 'prouver',
-  review: 'relire', 'review-feedback': 'relire',
-  commit: 'livrer', ship: 'livrer', deploy: 'livrer', testflight: 'livrer', humanize: 'livrer',
-  learn: 'capitaliser', handoff: 'capitaliser', 'agent-docs': 'capitaliser', teach: 'capitaliser',
-}
 const SPIN = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏']
 
 let tick: Timer | null = null
@@ -39,6 +31,8 @@ let verify: string[] = []
 const returned = new Set<string>()
 // Par surface : la brique dessinée ouverte et l'instant où l'on y est entré, pour jouer le dépliage une fois.
 const unfold = new Map<string, { brick: Brick | null; at: number }>()
+// Lectures du journal faites pour la session en cours : la branche peut ne pas y être encore au tout premier relevé.
+let journalReads = 0
 
 const id = (prefix: string, now: number) => `${prefix}${now}-${++seq}`
 
@@ -66,7 +60,50 @@ async function openPane($: EngineInterface): Promise<{ isPlaced: boolean }> {
   }
 }
 
+const forget = ($: EngineInterface) => {
+  returned.clear()
+  unfold.clear()
+  return Promise.all([update($, steps, () => []), update($, first, () => null), update($, live, () => null), update($, touched, () => [])])
+}
+
+// Le journal d'activité de la session, écrit par les hooks de Kwa (module memory) dans le dépôt principal ; null
+// sans Kwa, sans module memory ou avant sa première ligne.
+async function readJournal($: EngineInterface, session: string): Promise<string | null> {
+  const root = (await $.session.repo())?.root ?? (await $.session.root())
+  const dir = `${root}/.claude/kwa/local/activity`
+  const name = `-${session.replace(/[^A-Za-z0-9_-]/g, '').slice(0, 64)}.jsonl`
+  const f = (await $.fs.list(dir)).find(x => x.kind === 'file' && x.name.endsWith(name))
+  return f ? String(await $.fs.read(`${dir}/${f.name}`)) : null
+}
+
+// Un /clear continue le processus sous une autre session, sans session.start : l'état du Mod la suivrait. Le relevé
+// voit l'identifiant changer, oublie l'ancienne et lit le journal de la nouvelle. Le journal rend aussi ce qui
+// précède le Mod (session reprise, Mod installé en cours de route) et la branche ; il n'est relu que tant que la
+// branche manque, trois fois au plus : le direct vient des événements, pas du fichier.
+async function syncJournal($: EngineInterface) {
+  const now = await $.session.id()
+  const prev = await read($, sid)
+  if (prev !== now) {
+    await update($, sid, () => now)
+    journalReads = 0
+    if (prev !== null) await Promise.all([forget($), update($, branch, () => null)])
+  }
+  if ((await read($, branch)) !== null || journalReads >= 3) return
+  journalReads++
+  const text = await readJournal($, now)
+  if (text === null) return
+  const r = fromJournal(text)
+  await update($, branch, b => b ?? r.branch)
+  if (r.steps.length && !(await read($, steps)).length) {
+    await update($, steps, () => r.steps.slice(-KEEP))
+    await update($, first, f => f ?? r.first)
+  }
+  if (r.touched.length) await update($, touched, l => (l.length ? l : r.touched))
+}
+
 async function refresh($: EngineInterface) {
+  // sans journal lisible (pas de Kwa, dossier absent), le Mod suit la session en direct, comme avant
+  await syncJournal($).catch(() => undefined)
   if (!(await read($, isHidden)) && !(await $.ui.panes()).some(p => p.id === PANE)) await openPane($)
   const u = await $.session.usage()
   const next: Usage = { usd: u.cost?.usd ?? null, tokens: u.context.tokens ?? null, window: u.context.window, percent: u.context.percent ?? null }
@@ -162,9 +199,9 @@ export const register: Register = on => {
     const text = r.deny ?? (r.isError ? r.text : undefined)
     if (text && text.includes('Kwa —')) {
       const now = await $.clock.now()
-      const name = /code sur main/.test(text) ? 'guard-write' : /PR|Closes|preuve/.test(text) ? 'guard-github' : /push|commit/.test(text) ? 'guard-git' : 'garde'
+      const name = guardOf(text)
       const last = [...(await read($, steps))].reverse().find(x => x.kind === 'skill')
-      const brick: Brick = name === 'guard-write' ? 'faire' : name === 'garde' ? last?.brick ?? 'faire' : 'livrer'
+      const brick = guardBrick(name, last?.brick)
       await update($, steps, l => [...l, { id: id('g', now), kind: 'garde' as const, name, task: '', brick, startedAt: now, endedAt: now, isAborted: false }].slice(-KEEP))
       return r
     }
@@ -201,7 +238,8 @@ export const register: Register = on => {
   on('ui.render', { component: 'Pane', requestId: PANE }, async ($, e) => {
     const list = await read($, steps)
     const u = await read($, usage)
-    const reset = () => { returned.clear(); return Promise.all([update($, steps, () => []), update($, first, () => null), update($, live, () => null), update($, touched, () => [])]) }
+    // recommencer, c'est aussi ne plus reprendre l'historique du journal
+    const reset = () => { journalReads = 3; return forget($) }
     const t = await read($, touched)
     const act = await read($, live)
     // la dernière action, dite en une ligne : ce qu'elle a fait, par qui, il y a combien de temps
@@ -210,7 +248,7 @@ export const register: Register = on => {
       const { Box, Svg, Button } = $.ui.resolve(e)
       const now = await $.clock.now()
       const started = (await $.session.usage()).startedAt
-      const m = model(list, now, (await read($, first)) ?? undefined, { touched: t, current: t[t.length - 1] ?? null })
+      const m = model(list, now, (await read($, first)) ?? undefined, { touched: t, current: t[t.length - 1] ?? null }, await read($, branch))
       const open = openBrick(m)
       const seen = unfold.get(e.surface)
       if (!seen || seen.brick !== open) unfold.set(e.surface, { brick: open, at: now })
