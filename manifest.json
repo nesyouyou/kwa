@@ -250,6 +250,10 @@
         "core/hooks/activity-log.py": {
           "dest": ".claude/kwa/hooks/activity-log.py",
           "mode": "755"
+        },
+        "core/bin/kwa-activity": {
+          "dest": ".claude/kwa/bin/kwa-activity",
+          "mode": "755"
         }
       },
       "hooks": {

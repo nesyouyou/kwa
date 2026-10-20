@@ -1095,11 +1095,11 @@ def cmd_init(a) -> int:
     return 0
 
 
-TOOLS = {"start": "kwa-start", "memory": "kwa-memory", "hygiene": "kwa-hygiene"}
+TOOLS = {"start": "kwa-start", "memory": "kwa-memory", "hygiene": "kwa-hygiene", "activity": "kwa-activity"}
 
 
 def run_tool(argv: list[str]) -> int:
-    """`kwa hook <nom>` (hooks de Codex) et `kwa start|memory|hygiene …` (outils appelés par les skills)."""
+    """`kwa hook <nom>` (hooks de Codex) et `kwa start|memory|hygiene|activity …` (outils appelés par les skills)."""
     if argv[0] == "hook":
         script = [str(PACK / "core" / "hooks" / "run.py")] + argv[1:2]
     else:

@@ -1,0 +1,114 @@
+#!/usr/bin/env python3
+"""kwa-activity — ce qui s'est passé dans les sessions du projet, d'après le journal d'activité (module memory).
+
+    kwa-activity                      les sessions récentes : workflow, branche, agent, étapes, en cours ou non
+    kwa-activity <session> | last     une session : workflow, skills, étapes par brique, sous-agents, refus, durée
+    kwa-activity --branch <branche>   les sessions d'une branche
+    kwa-activity --live               seulement les sessions en cours (activité des dix dernières minutes)
+    kwa-activity --json               la même chose en JSON, pour d'autres outils
+    kwa-activity --prune              purge le journal maintenant (comme au démarrage d'une session)
+
+Le journal vit dans .claude/kwa/local/activity/ du dépôt principal : un fichier par session, sans contenu de
+fichier ni de prompt. Rien n'est envoyé hors de la machine.
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import subprocess
+import sys
+import time
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "hooks"))
+import _activity  # noqa: E402  (installé avec ce script, dans .claude/kwa/hooks)
+
+LABEL = {"cadrer": "Cadrer", "faire": "Faire", "prouver": "Prouver", "relire": "Relire", "livrer": "Livrer",
+         "capitaliser": "Capitaliser"}
+
+
+def root() -> str:
+    r = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True)
+    return r.stdout.strip() if r.returncode == 0 else os.getcwd()
+
+
+def policy(r: str) -> dict:
+    try:
+        with open(os.path.join(r, ".claude", "kwa.policy.json"), encoding="utf-8") as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return {}
+
+
+def summary_of(s: dict) -> dict:
+    out = _activity.summarize(_activity.read_file(s["file"]), _activity.read_counts(s["file"]))
+    return {"session": s["session"], **out}
+
+
+def when(ts: float | None) -> str:
+    return time.strftime("%d/%m %H:%M", time.localtime(ts)) if ts else "—"
+
+
+def line(x: dict) -> str:
+    steps = sum(x["bricks"].values())
+    state = "en cours" if x["live"] else f"{x['minutes']} min"
+    branch = x["branch"] or "—"
+    return f"{when(x['start'])}  {x['session'][:8]}  {x['title']:<30} {branch:<34} {'/'.join(x['agents']) or '—':<8} {steps:>4} actions  {state}"
+
+
+def detail(x: dict) -> str:
+    out = [f"Session {x['session']} · {'en cours' if x['live'] else 'terminée'} · {when(x['start'])} → {when(x['end'])} ({x['minutes']} min)",
+           f"Workflow : {x['title']} (d'après {x['why']})",
+           f"Branche : {x['branch'] or '—'}" + (f" · issue #{x['issue']}" if x["issue"] else ""),
+           f"Agent : {', '.join(x['agents']) or '—'} · {x['turns']} tour(s)"]
+    out.append("Skills : " + (" → ".join(x["skills"]) if x["skills"] else "aucune"))
+    steps = " · ".join(f"{LABEL[b]} {n}" for b, n in x["bricks"].items() if n)
+    out.append(f"Étapes : {steps or 'aucune'}")
+    if x["subagents"]:
+        out.append(f"Sous-agents : {x['subagents']}")
+    if x["denials"]:
+        out.append(f"Refus des gardes : {len(x['denials'])}")
+        out += [f"  - {d}" for d in x["denials"][:5]]
+    return "\n".join(out)
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(prog="kwa activity", description=__doc__.split("\n")[0])
+    ap.add_argument("session", nargs="?", help="identifiant (ou son début) d'une session, ou « last »")
+    ap.add_argument("--branch")
+    ap.add_argument("--live", action="store_true")
+    ap.add_argument("--json", action="store_true")
+    ap.add_argument("--prune", action="store_true")
+    a = ap.parse_args()
+    r = root()
+    if a.prune:
+        n = _activity.prune(r, policy(r))
+        print(f"journal d'activité purgé : {n} fichier(s) supprimé(s)")
+        return 0
+    found = _activity.sessions(r)
+    if a.session:
+        pick = found[:1] if a.session == "last" else [s for s in found if s["session"].startswith(a.session)]
+        if not pick:
+            print(f"aucune session « {a.session} » dans le journal", file=sys.stderr)
+            return 1
+        x = summary_of(pick[0])
+        print(json.dumps(x, ensure_ascii=False, indent=2) if a.json else detail(x))
+        return 0
+    rows = [summary_of(s) for s in found]
+    if a.branch:
+        rows = [x for x in rows if x["branch"] == a.branch]
+    if a.live:
+        rows = [x for x in rows if x["live"]]
+    if a.json:
+        print(json.dumps(rows, ensure_ascii=False, indent=2))
+    elif not rows:
+        print("aucune session dans le journal d'activité" + (" pour ce filtre" if a.branch or a.live else ""))
+    else:
+        print("\n".join(line(x) for x in rows[:30]))
+        if len(rows) > 30:
+            print(f"… et {len(rows) - 30} de plus (--json pour tout)")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

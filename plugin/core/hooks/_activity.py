@@ -127,17 +127,7 @@ def _count(path: str, brick: str) -> None:
 
 def read_session(root: str, session: str) -> list[dict]:
     """Les événements d'une session, dans l'ordre ; une ligne illisible est ignorée."""
-    out: list[dict] = []
-    try:
-        with open(session_file(root, session, create=False), encoding="utf-8") as f:
-            for line in f:
-                try:
-                    out.append(json.loads(line))
-                except ValueError:
-                    continue
-    except OSError:
-        pass
-    return out
+    return read_file(session_file(root, session, create=False))
 
 
 def prune(root: str, policy: dict | None = None, now: float | None = None) -> int:
@@ -187,3 +177,94 @@ def _remove(p: str) -> int:
         return 1
     except OSError:
         return 0
+
+
+# --------------------------------------------------------------------------- lecture et résumé (kwa activity)
+
+WORKFLOWS = {"feature": "Développer une fonctionnalité", "bug": "Corriger un bug", "review": "Relire", "ship": "Livrer",
+             "learn": "Capitaliser"}
+# la première skill Kwa de la session dit le workflow (même table que le mod) ; les autres skills n'en disent rien
+FLOW_OF = {"debug": "bug", "review": "review", "review-feedback": "review", "commit": "ship", "ship": "ship",
+           "deploy": "ship", "learn": "learn", "handoff": "learn"}
+BRANCH_FLOW = {"fix": "bug", "hotfix": "bug", "feat": "feature", "feature": "feature"}
+BRICKS = ["cadrer", "faire", "prouver", "relire", "livrer", "capitaliser"]
+LIVE_SECONDS = 600   # une session dont le dernier événement a moins de dix minutes est dite en cours
+
+
+def sessions(root: str) -> list[dict]:
+    """Les sessions du projet, la plus récente d'abord : fichier, identifiant, date de dernière écriture."""
+    d = activity_dir(root, create=False)
+    out = []
+    try:
+        for name in os.listdir(d):
+            if name.endswith(".jsonl"):
+                p = os.path.join(d, name)
+                out.append({"file": p, "session": name[11:-6], "mtime": os.path.getmtime(p)})
+    except OSError:
+        pass
+    return sorted(out, key=lambda s: s["mtime"], reverse=True)
+
+
+def workflow(events: list[dict]) -> tuple[str, str]:
+    """(workflow, ce qui l'a désigné) : la première skill Kwa, sinon le préfixe de la branche, sinon une fonctionnalité."""
+    for e in events:
+        if e.get("kind") == "skill":
+            name = str(e.get("name") or "").removeprefix("/").removeprefix("kwa:")
+            return FLOW_OF.get(name, "feature"), f"skill {e.get('name')}"
+    branch = next((str(e["branch"]) for e in events if e.get("branch")), "")
+    prefix = branch.split("/", 1)[0] if "/" in branch else ""
+    if prefix in BRANCH_FLOW:
+        return BRANCH_FLOW[prefix], f"branche {branch}"
+    return "feature", "par défaut"
+
+
+def summarize(events: list[dict], counts: dict | None = None, now: float | None = None) -> dict:
+    """Ce que dit le journal d'une session : workflow, branche et issue, étapes par brique, skills, sous-agents,
+    refus, tours, durée, et si elle est encore en cours."""
+    now = time.time() if now is None else now
+    key, why = workflow(events)
+    branch = next((str(e["branch"]) for e in events if e.get("branch")), "")
+    issue = re.match(r"^[a-z]+/(\d+)-", branch)
+    bricks = {b: 0 for b in BRICKS}
+    for e in events:
+        if e.get("kind") == "tool" and e.get("brick") in bricks:
+            bricks[e["brick"]] += 1
+    for b, n in (counts or {}).items():   # au-delà du plafond, les outils ne sont plus que comptés
+        if b in bricks:
+            bricks[b] += int(n)
+    ts = [float(e["ts"]) for e in events if "ts" in e]
+    return {
+        "workflow": key, "title": WORKFLOWS[key], "why": why, "branch": branch,
+        "issue": int(issue.group(1)) if issue else None,
+        "agents": sorted({str(e.get("agent")) for e in events if e.get("agent")}),
+        "skills": [str(e.get("name")) for e in events if e.get("kind") == "skill"],
+        "bricks": bricks,
+        "subagents": sum(1 for e in events if e.get("kind") == "agent"),
+        "denials": [str(e.get("reason") or "") for e in events if e.get("kind") == "deny"],
+        "turns": sum(1 for e in events if e.get("kind") == "turn"),
+        "start": min(ts) if ts else None, "end": max(ts) if ts else None,
+        "minutes": round((max(ts) - min(ts)) / 60) if ts else 0,
+        "live": bool(ts) and now - max(ts) < LIVE_SECONDS,
+    }
+
+
+def read_counts(path: str) -> dict:
+    try:
+        with open(path + ".counts.json", encoding="utf-8") as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return {}
+
+
+def read_file(path: str) -> list[dict]:
+    out: list[dict] = []
+    try:
+        with open(path, encoding="utf-8") as f:
+            for line in f:
+                try:
+                    out.append(json.loads(line))
+                except ValueError:
+                    continue
+    except OSError:
+        pass
+    return out

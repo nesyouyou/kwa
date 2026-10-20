@@ -202,3 +202,60 @@ class Hook(unittest.TestCase):
     def test_off_with_the_journal(self):
         run_hook(self.repo, {"hook_event_name": "Stop"}, {"KWA_JOURNAL": "0"})
         self.assertEqual(self.events(), [])
+
+
+ACTIVITY = os.path.join(os.path.dirname(__file__), "..", "core", "bin", "kwa-activity")
+
+
+class Summary(unittest.TestCase):
+    def test_the_workflow_comes_from_the_first_skill_then_the_branch(self):
+        self.assertEqual(_activity.workflow([{"kind": "skill", "name": "kwa:debug"}, {"kind": "skill", "name": "kwa:ship"}]),
+                         ("bug", "skill kwa:debug"))
+        self.assertEqual(_activity.workflow([{"kind": "session", "branch": "fix/14-dark-navy-pills"}])[0], "bug")
+        self.assertEqual(_activity.workflow([{"kind": "session", "branch": "feat/82-kwa-activity"}])[0], "feature")
+        self.assertEqual(_activity.workflow([{"kind": "session", "branch": "main"}]), ("feature", "par défaut"))
+
+    def test_a_session_summary(self):
+        ev = [{"kind": "session", "ts": 1000, "agent": "claude", "branch": "fix/14-dark-navy-pills"},
+              {"kind": "skill", "ts": 1010, "name": "kwa:debug"},
+              {"kind": "tool", "ts": 1020, "brick": "faire"}, {"kind": "tool", "ts": 1030, "brick": "prouver"},
+              {"kind": "agent", "ts": 1040, "name": "kwa:reviewer"}, {"kind": "deny", "ts": 1050, "reason": "git commit sur main refusé"},
+              {"kind": "turn", "ts": 1300}]
+        x = _activity.summarize(ev, {"cadrer": 4}, now=1300 + 60)
+        self.assertEqual((x["workflow"], x["issue"], x["minutes"], x["turns"], x["subagents"]), ("bug", 14, 5, 1, 1))
+        self.assertEqual(x["bricks"]["cadrer"], 4)   # les outils comptés au-delà du plafond
+        self.assertEqual(x["denials"], ["git commit sur main refusé"])
+        self.assertTrue(x["live"])
+        self.assertFalse(_activity.summarize(ev, None, now=1300 + 3600)["live"])
+
+
+class Command(unittest.TestCase):
+    def setUp(self):
+        self.repo = git_repo({"README.md": "x"})
+        for sid, branch, skill in (("aaaa1111", "fix/14-x", "kwa:debug"), ("bbbb2222", "feat/82-y", None)):
+            _activity.record(self.repo, sid, "session", branch=branch)
+            if skill:
+                _activity.record(self.repo, sid, "skill", name=skill)
+            _activity.record(self.repo, sid, "tool", tool="Edit", brick="faire", target="src/a.py")
+
+    def kwa(self, *args):
+        return sh(sys.executable, ACTIVITY, *args, cwd=self.repo)
+
+    def test_list_detail_filters_and_json(self):
+        out = self.kwa().stdout
+        self.assertIn("Corriger un bug", out)
+        self.assertIn("Développer une fonctionnalité", out)
+        detail = self.kwa("aaaa").stdout
+        self.assertIn("Workflow : Corriger un bug (d'après skill kwa:debug)", detail)
+        self.assertIn("issue #14", detail)
+        self.assertIn("Étapes : Faire 1", detail)
+        rows = json.loads(self.kwa("--branch", "feat/82-y", "--json").stdout)
+        self.assertEqual([r["session"] for r in rows], ["bbbb2222"])
+        self.assertEqual(len(json.loads(self.kwa("--live", "--json").stdout)), 2)
+        self.assertNotEqual(self.kwa("zzzz").returncode, 0)
+
+    def test_prune_on_demand(self):
+        old = _activity.session_file(self.repo, "aaaa1111")
+        os.utime(old, (time.time() - 40 * 86400,) * 2)
+        self.assertIn("1 fichier", self.kwa("--prune").stdout)
+        self.assertFalse(os.path.exists(old))

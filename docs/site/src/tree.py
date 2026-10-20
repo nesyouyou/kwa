@@ -43,6 +43,7 @@ DESC = {  # fichiers installés : une ligne chacun
     "verify-stop.py": "Refuse de rendre la main sur du rouge (opt-in).",
     "kwa-start": "Ouvre l'issue, la branche et le worktree du workflow.",
     "kwa-memory": "Notes, journal des sessions et digest pour /kwa:learn.",
+    "kwa-activity": "Résumé des sessions d'après le journal d'activité : workflow, étapes, sous-agents, refus.",
     "kwa-hygiene": "Contrôle d'hygiène avant une remise (secrets, noms, mesures datées).",
     "router.md": "La table de routage des skills, injectée au démarrage.",
     "kwa-git-discipline.md": "Discipline git : branche de travail, commit et publication sur demande.",
