@@ -1,1 +1,1 @@
-{ "name": "kwa-activity", "version": "0.8.0", "description": "Mod Kwa, à droite de la conversation : le workflow détecté dessiné en vertical (briques, sous-étapes, gardes), le coût et le contexte de la session.", "types": "./types/index.d.ts" }
+{ "name": "kwa-activity", "version": "0.9.0", "description": "Mod Kwa, en barre au-dessus de la zone de saisie : le workflow détecté en pastilles, les sous-agents, le coût et le contexte ; le panneau détaillé à droite s'ouvre à la demande.", "types": "./types/index.d.ts" }

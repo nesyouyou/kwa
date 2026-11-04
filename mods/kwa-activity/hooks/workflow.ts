@@ -120,7 +120,7 @@ export function fromJournal(text: string): Restored {
       steps.push({ ...base, kind: 'garde', name: g, brick: guardBrick(g, lastSkill()?.brick), endedAt: t })
     } else if (e.kind === 'tool' && BRICKS.some(([b]) => b === e.brick)) {
       const b = e.brick as Brick
-      if (touched[touched.length - 1] !== b) touched.splice(0, touched.length, ...touched.filter(x => x !== b), b)
+      touched.splice(0, touched.length, ...touch(touched, b))
     }
   })
   const end = events.length ? at(events[events.length - 1]!) : 0
@@ -269,6 +269,36 @@ export function openBrick(m: Model): Brick | null {
   return reached.length ? reached[reached.length - 1]!.brick : null
 }
 
+const order = (b: Brick) => BRICKS.findIndex(([x]) => x === b)
+
+// La brique où les outils travaillent passe en dernier de `touched`, dont le dernier élément est la brique en cours.
+// Lire un fichier se fait à toutes les étapes : une lecture ne ramène pas la session en Cadrer depuis une brique
+// plus loin, elle ne fait qu'y compter Cadrer comme touchée.
+export function touch(list: Brick[], b: Brick): Brick[] {
+  const last = list[list.length - 1]
+  if (last === b) return list
+  if (b === 'cadrer' && last && order(last) > order(b)) return list.includes(b) ? list : [b, ...list]
+  return [...list.filter(x => x !== b), b]
+}
+
+// Une brique touchée par les outils ne compte comme atteinte que si elle ne dépasse pas la brique en cours : un
+// commit d'il y a une heure n'allume pas Livrer pendant qu'on modifie de nouveau le code.
+export const toolReached = (m: Model, b: Brick) => m.touched.includes(b) && m.current !== null && order(b) <= order(m.current)
+
+// La barre au-dessus du prompt : un pas à pas d'une ligne, une seule brique allumée à la fois. Les briques du
+// workflow (et celle en cours si elle n'y est pas), chacune derrière, en cours ou devant ; la brique en cours et
+// l'étape qui y tourne.
+export type Pos = 'behind' | 'current' | 'ahead'
+export type Stepper = { bricks: { brick: Brick; label: string; pos: Pos }[]; current: string | null; step: string | null }
+export function stepper(m: Model): Stepper {
+  const open = openBrick(m)
+  const at = open ? order(open) : -1
+  const bricks = BRICKS.filter(([b]) => b === open || m.rows.some(r => r.brick === b))
+    .map(([brick, label]) => ({ brick, label, pos: (brick === open ? 'current' : order(brick) < at ? 'behind' : 'ahead') as Pos }))
+  const run = m.rows.find(r => r.status === 'run' && r.brick === open)
+  return { bricks, current: open ? BRICKS[at]![1] : null, step: run ? (run.kind === 'agent' ? run.name.replace(/^kwa:/, '') : run.name) : null }
+}
+
 // Le dessin : un logigramme vertical. Chaque brique est un cadre ; fermée, elle montre une pastille par étape ;
 // ouverte, une boîte par étape, reliées par des flèches qui descendent.
 // `unfoldAgo` : depuis combien de millisecondes on est entré dans la brique ouverte. Tant que le dépliage n'est
@@ -345,7 +375,7 @@ export function svg(m: Model, u: Usage | null, sessionMs: number, { unfoldAgo = 
     const color = BRICK_COLOR[b]
     const isOpen = b === open
     const live = rows.some(r => r.status === 'run')
-    const reached = rows.some(reachedRow) || m.touched.includes(b)
+    const reached = rows.some(reachedRow) || toolReached(m, b)
     const isDone = !isOpen && rows.some(r => r.status === 'done') && rows.every(r => r.status === 'done' || r.status === 'passed')
     const denied = rows.reduce((n, r) => n + (r.status === 'denied' ? r.count ?? 1 : 0), 0)
     let out = ''
@@ -487,3 +517,47 @@ text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#18
     source: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">${style}${head}${before}<g>${slide}${after}</g></svg>`,
   }
 }
+
+// Les petits dessins de la barre, interactifs pour que leur <title> s'affiche en infobulle au survol.
+const WORD: Record<Status, string> = { done: 'faite', run: 'en cours', passed: 'passée', next: 'à venir', denied: 'refusée', aborted: 'interrompue' }
+const MARK: Record<Status, string> = { done: '✓', run: '●', passed: '–', next: '○', denied: '✕', aborted: '✕' }
+const POS_WORD: Record<Pos, string> = { behind: 'derrière', current: 'en cours', ahead: 'à venir' }
+
+// Un point par brique ; au survol, la brique, sa place et ses étapes avec leur état.
+export function dotsSvg(st: Stepper, m: Model, running = false): Drawing {
+  const R = 4.5, STEP = 16, H = 16
+  const width = st.bricks.length * STEP
+  const dots = st.bricks.map((b, i) => {
+    const cx = i * STEP + STEP / 2, cy = H / 2
+    const rows = m.rows.filter(r => r.brick === b.brick)
+    const tip = [`${b.label} — ${POS_WORD[b.pos]}`, ...rows.map(r => `${MARK[r.status]} ${r.name} · ${WORD[r.status]}${r.count && r.count > 1 ? ` (×${r.count})` : ''}`)].join('\n')
+    const c = BRICK_COLOR[b.brick]
+    const dot = b.pos === 'current'
+      ? `<circle cx="${cx}" cy="${cy}" r="${R + 1}" fill="${c}">${running ? '<animate attributeName="opacity" values="1;.45;1" dur="1.4s" repeatCount="indefinite"/>' : ''}</circle>`
+      : b.pos === 'behind'
+        ? `<circle cx="${cx}" cy="${cy}" r="${R}" fill="${c}" fill-opacity=".45"/>`
+        : `<circle cx="${cx}" cy="${cy}" r="${R - 0.5}" fill="none" stroke="#a1a1aa" stroke-opacity=".7" stroke-width="1.5"/>`
+    // une zone de survol plus large que le point, pour que l'infobulle vienne sans viser au pixel près
+    return `<g><title>${esc(tip)}</title><rect x="${i * STEP}" y="0" width="${STEP}" height="${H}" fill="transparent"/>${dot}</g>`
+  }).join('')
+  return { source: `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${H}" viewBox="0 0 ${width} ${H}">${dots}</svg>`, width, height: H }
+}
+
+// La jauge du contexte : un anneau qui se remplit, vert sous 50 %, orange jusqu'à 80 %, rouge au-delà.
+export function gaugeSvg(u: Usage | null): Drawing | null {
+  const pct = contextPercent(u)
+  if (pct == null) return null
+  const S = 16, R = 6, C = 2 * Math.PI * R
+  const tint = pct < 50 ? '#10b981' : pct < 80 ? '#f59e0b' : '#ef4444'
+  const dash = (C * Math.min(pct, 100)) / 100
+  const tip = `Contexte : ${Math.round(pct)} %${u?.tokens != null ? ` (${kilo(u.tokens)} / ${kilo(u.window)} jetons)` : ''}`
+  return {
+    source: `<svg xmlns="http://www.w3.org/2000/svg" width="${S}" height="${S}" viewBox="0 0 ${S} ${S}"><title>${esc(tip)}</title>` +
+      `<circle cx="8" cy="8" r="${R}" fill="none" stroke="#a1a1aa" stroke-opacity=".3" stroke-width="2.5"/>` +
+      `<circle cx="8" cy="8" r="${R}" fill="none" stroke="${tint}" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="${dash.toFixed(2)} ${C.toFixed(2)}" transform="rotate(-90 8 8)"/></svg>`,
+    width: S, height: S,
+  }
+}
+
+// Dans le terminal, la même jauge en un caractère.
+export const gaugeGlyph = (pct: number) => (pct < 12.5 ? '○' : pct < 37.5 ? '◔' : pct < 62.5 ? '◑' : pct < 87.5 ? '◕' : '●')
