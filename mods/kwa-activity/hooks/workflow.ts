@@ -517,3 +517,47 @@ text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#18
     source: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">${style}${head}${before}<g>${slide}${after}</g></svg>`,
   }
 }
+
+// Les petits dessins de la barre, interactifs pour que leur <title> s'affiche en infobulle au survol.
+const WORD: Record<Status, string> = { done: 'faite', run: 'en cours', passed: 'passée', next: 'à venir', denied: 'refusée', aborted: 'interrompue' }
+const MARK: Record<Status, string> = { done: '✓', run: '●', passed: '–', next: '○', denied: '✕', aborted: '✕' }
+const POS_WORD: Record<Pos, string> = { behind: 'derrière', current: 'en cours', ahead: 'à venir' }
+
+// Un point par brique ; au survol, la brique, sa place et ses étapes avec leur état.
+export function dotsSvg(st: Stepper, m: Model, running = false): Drawing {
+  const R = 4.5, STEP = 16, H = 16
+  const width = st.bricks.length * STEP
+  const dots = st.bricks.map((b, i) => {
+    const cx = i * STEP + STEP / 2, cy = H / 2
+    const rows = m.rows.filter(r => r.brick === b.brick)
+    const tip = [`${b.label} — ${POS_WORD[b.pos]}`, ...rows.map(r => `${MARK[r.status]} ${r.name} · ${WORD[r.status]}${r.count && r.count > 1 ? ` (×${r.count})` : ''}`)].join('\n')
+    const c = BRICK_COLOR[b.brick]
+    const dot = b.pos === 'current'
+      ? `<circle cx="${cx}" cy="${cy}" r="${R + 1}" fill="${c}">${running ? '<animate attributeName="opacity" values="1;.45;1" dur="1.4s" repeatCount="indefinite"/>' : ''}</circle>`
+      : b.pos === 'behind'
+        ? `<circle cx="${cx}" cy="${cy}" r="${R}" fill="${c}" fill-opacity=".45"/>`
+        : `<circle cx="${cx}" cy="${cy}" r="${R - 0.5}" fill="none" stroke="#a1a1aa" stroke-opacity=".7" stroke-width="1.5"/>`
+    // une zone de survol plus large que le point, pour que l'infobulle vienne sans viser au pixel près
+    return `<g><title>${esc(tip)}</title><rect x="${i * STEP}" y="0" width="${STEP}" height="${H}" fill="transparent"/>${dot}</g>`
+  }).join('')
+  return { source: `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${H}" viewBox="0 0 ${width} ${H}">${dots}</svg>`, width, height: H }
+}
+
+// La jauge du contexte : un anneau qui se remplit, vert sous 50 %, orange jusqu'à 80 %, rouge au-delà.
+export function gaugeSvg(u: Usage | null): Drawing | null {
+  const pct = contextPercent(u)
+  if (pct == null) return null
+  const S = 16, R = 6, C = 2 * Math.PI * R
+  const tint = pct < 50 ? '#10b981' : pct < 80 ? '#f59e0b' : '#ef4444'
+  const dash = (C * Math.min(pct, 100)) / 100
+  const tip = `Contexte : ${Math.round(pct)} %${u?.tokens != null ? ` (${kilo(u.tokens)} / ${kilo(u.window)} jetons)` : ''}`
+  return {
+    source: `<svg xmlns="http://www.w3.org/2000/svg" width="${S}" height="${S}" viewBox="0 0 ${S} ${S}"><title>${esc(tip)}</title>` +
+      `<circle cx="8" cy="8" r="${R}" fill="none" stroke="#a1a1aa" stroke-opacity=".3" stroke-width="2.5"/>` +
+      `<circle cx="8" cy="8" r="${R}" fill="none" stroke="${tint}" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="${dash.toFixed(2)} ${C.toFixed(2)}" transform="rotate(-90 8 8)"/></svg>`,
+    width: S, height: S,
+  }
+}
+
+// Dans le terminal, la même jauge en un caractère.
+export const gaugeGlyph = (pct: number) => (pct < 12.5 ? '○' : pct < 37.5 ? '◔' : pct < 62.5 ? '◑' : pct < 87.5 ? '◕' : '●')

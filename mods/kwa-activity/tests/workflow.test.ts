@@ -1,5 +1,5 @@
 import { expect, test } from 'claude-code/testing'
-import { classify, fromJournal, isOver, model, openBrick, stepper, svg, toolReached, touch } from '../hooks/workflow'
+import { classify, fromJournal, isOver, model, openBrick, stepper, svg, toolReached, touch, gaugeGlyph, gaugeSvg } from '../hooks/workflow'
 
 const step = (id: string, kind: 'skill' | 'agent' | 'garde', name: string, brick: 'cadrer' | 'faire' | 'prouver' | 'relire' | 'livrer' | 'capitaliser', endedAt: number | null) =>
   ({ id, kind, name, task: '', brick, startedAt: 0, endedAt, isAborted: false })
@@ -218,4 +218,13 @@ test('les outils ne laissent pas plusieurs briques allumées', async () => {
   expect(stepper(m).bricks.filter(b => b.pos === 'current').map(b => b.brick)).toEqual(['faire'])
   expect(toolReached(m, 'cadrer')).toBe(true)
   expect(toolReached(m, 'livrer')).toBe(false)   // ni dans la barre, ni dans le schéma du panneau
+})
+
+test('la jauge du contexte change de couleur avec le remplissage', async () => {
+  const g = (percent: number) => gaugeSvg({ usd: null, tokens: null, window: 200000, percent })!.source
+  expect(g(19)).toContain('#10b981')
+  expect(g(65)).toContain('#f59e0b')
+  expect(g(90)).toContain('#ef4444')
+  expect(gaugeSvg(null)).toBeNull()
+  expect([0, 19, 50, 70, 100].map(gaugeGlyph).join('')).toBe('○◔◑◕●')
 })

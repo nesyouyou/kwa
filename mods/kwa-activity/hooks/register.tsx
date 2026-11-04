@@ -3,7 +3,7 @@ import type { EngineInterface, Register, Timer } from 'claude-code'
 
 import type { Brick, Live, Step, Usage } from '../types'
 import type { Pos } from './workflow'
-import { BRICK_OF, BRICKS, classify, duration, fromJournal, guardBrick, guardOf, isOver, kilo, model, money, openBrick, stepper, svg, touch } from './workflow'
+import { BRICK_OF, BRICKS, classify, duration, fromJournal, guardBrick, guardOf, isOver, kilo, model, money, openBrick, stepper, svg, touch, dotsSvg, gaugeSvg, gaugeGlyph } from './workflow'
 
 // Rien de ce mod n'entre dans le contexte du modèle : il lit les événements et dessine, sans réécrire ni le prompt,
 // ni le texte des skills, ni celui des sous-agents.
@@ -360,31 +360,42 @@ export const register: Register = on => {
     // sans skill, sans branche parlante et sans activité, le parcours par défaut ne dirait rien : seulement le coût
     const st = m.detected || list.length > 0 || t.length > 0 ? stepper(m) : null
     const agents = list.filter(x => x.kind === 'agent' && x.endedAt === null).length
-    const cost = [u?.usd != null ? money(u.usd) : null, u?.percent != null ? `contexte ${Math.round(u.percent)} %` : null].filter(Boolean).join(' · ')
-    if (!st && !cost) return next(e)
+    const pct = u?.percent ?? null
+    if (!st && u?.usd == null && pct == null) return next(e)
     const running = list.some(x => x.endedAt === null)
-    const n = running && e.surface !== 'desktop' ? await read($, frame) : 0
     const { Box, Text, Button } = $.ui.resolve(e)
-    const line = (
-      <Text key="line" wrap="truncate">
-        {st && st.bricks.map((b, i) => (
-          <Text key={b.brick} color={b.pos === 'current' ? 'claude' : undefined} dimColor={b.pos !== 'current'}>
-            {i > 0 ? ' ' : ''}{b.pos === 'current' && running && e.surface !== 'desktop' ? SPIN[n % SPIN.length] : DOT[b.pos]}
-          </Text>
-        ))}
-        {st && (st.current
-          ? <Text>  <Text bold color="claude">{st.current}</Text>{st.step && <Text dimColor> · {st.step}</Text>}</Text>
-          : <Text dimColor>  {m.title}</Text>)}
-        {agents > 0 && <Text color="claude">  · {agents} sous-agent{agents > 1 ? 's' : ''}</Text>}
-      </Text>
-    )
-    if (e.surface !== 'desktop') return <Text wrap="truncate">{line}{cost && <Text dimColor>{st ? '  ·  ' : ''}{cost}</Text>}</Text>
+    const words = st && (st.current
+      ? <Text key="words" wrap="truncate"><Text bold color="claude">{st.current}</Text>{st.step && <Text dimColor> · {st.step}</Text>}{agents > 0 && <Text color="claude">  · {agents} sous-agent{agents > 1 ? 's' : ''}</Text>}</Text>
+      : <Text key="words" dimColor wrap="truncate">{m.title}</Text>)
+
+    if (e.surface !== 'desktop') {
+      const n = running ? await read($, frame) : 0
+      return (
+        <Text wrap="truncate">
+          {st && st.bricks.map((b, i) => (
+            <Text key={b.brick} color={b.pos === 'current' ? 'claude' : undefined} dimColor={b.pos !== 'current'}>
+              {i > 0 ? ' ' : ''}{b.pos === 'current' && running ? SPIN[n % SPIN.length] : DOT[b.pos]}
+            </Text>
+          ))}
+          {st && <Text>  </Text>}{words}
+          {pct != null && <Text dimColor>{st ? '  ·  ' : ''}{gaugeGlyph(pct)} {Math.round(pct)} %</Text>}
+          {u?.usd != null && <Text dimColor>  ·  {money(u.usd)}</Text>}
+        </Text>
+      )
+    }
+    const { Svg } = $.ui.resolve(e as typeof e & { surface: 'desktop' })
+    const dots = st ? dotsSvg(st, m, running) : null
+    const gauge = gaugeSvg(u)
     const paneOpen = await isPlaced($)
     return (
-      <Box flexDirection="row" alignItems="center" columnGap={2} width="100%">
-        <Box key="flow" flexShrink={1} minWidth={0}>{line}</Box>
+      <Box flexDirection="row" alignItems="center" columnGap={1} width="100%">
+        {dots && <Svg key="dots" source={dots.source} width={dots.width} height={dots.height} isInteractive
+          alt={st!.current ? `Brique en cours : ${st!.current}` : m.title} />}
+        {words && <Box key="words" flexShrink={1} minWidth={0} marginLeft={1}>{words}</Box>}
         <Box key="gap" flexGrow={1} />
-        {cost && <Text key="cost" dimColor>{cost}</Text>}
+        {gauge && <Svg key="gauge" source={gauge.source} width={gauge.width} height={gauge.height} isInteractive alt={`contexte ${Math.round(pct!)} %`} />}
+        {pct != null && <Text key="pct" dimColor>{Math.round(pct)} %</Text>}
+        {u?.usd != null && <Text key="cost" dimColor>  {money(u.usd)}</Text>}
         <Button key="pane" label={paneOpen ? 'Masquer' : 'Détail'} onPress={() => togglePane($)} />
       </Box>
     )

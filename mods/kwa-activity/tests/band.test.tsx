@@ -174,8 +174,16 @@ test('par défaut, la barre au-dessus du prompt montre le workflow pas à pas, s
   expect(await band.find({ type: 'Text', text: /^Prouver$/ })).toBeDefined()
   expect(await band.find({ type: 'Text', text: /\/kwa:tdd/ })).toBeDefined()
   expect(await band.find({ type: 'Text', text: /Cadrer|Livrer/ })).toBeUndefined()
-  expect(JSON.stringify(await band.find({ type: 'Text', text: /◉/ }))).toContain('claude')
-  expect(await band.find({ type: 'Text', text: /0,42 \$ · contexte 38 %/ })).toBeDefined()
+  // les points du workflow : une infobulle par brique, avec ses étapes
+  const dots = JSON.stringify(await band.find({ type: 'Svg' }))
+  expect(dots).toContain('Prouver — en cours')
+  expect(dots).toContain('/kwa:tdd · en cours')
+  expect(dots).toContain('Cadrer — derrière')
+  expect(dots).toContain('/kwa:debug · faite')
+  // la jauge du contexte et son infobulle, puis le coût
+  expect(JSON.stringify(await band.findAll({ type: 'Svg' }))).toContain('Contexte : 38 % (76 k / 200 k jetons)')
+  expect(await band.find({ type: 'Text', text: /^38 %$/ })).toBeDefined()
+  expect(await band.find({ type: 'Text', text: /0,42 \$/ })).toBeDefined()
   await band.press({ key: 'pane' })   // le bouton Détail ouvre le panneau latéral
   expect(opens).toBe(1)
   await band.unmount()
@@ -186,7 +194,7 @@ test('sans skill ni activité, la barre ne montre que le coût et le contexte', 
   await $.session.start({ source: 'startup', cwd: '/tmp', surface: 'desktop', isInteractive: true } as Parameters<typeof $.session.start>[0])
   const band = await $.ui.mount({ ...BAND, surface: 'desktop' })
   expect(await band.find({ type: 'Text', text: /Cadrer/ })).toBeUndefined()
-  expect(await band.find({ type: 'Text', text: /contexte 38 %/ })).toBeDefined()
+  expect(await band.find({ type: 'Text', text: /^38 %$/ })).toBeDefined()
   await band.unmount()
 })
 
