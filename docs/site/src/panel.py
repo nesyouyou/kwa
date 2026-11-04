@@ -36,7 +36,7 @@ def page() -> str:
     states = "".join(f'<li><span class="pn-dot {cls}" aria-hidden="true"></span><b>{name}</b><span>{what}</span></li>'
                      for cls, name, what in STATES)
     tools = "".join(f"<tr><td>{what}</td><td>{brick}</td></tr>" for what, brick in TOOLS)
-    return f"""<p class="kw-lead">Le Mod affiche, à droite de la conversation, où en est la session : le workflow en
+    return f"""<p class="kw-lead">Le Mod affiche, dans une barre au-dessus de la zone de saisie, où en est la session : le workflow en
 cours, brique par brique, ce que l'agent est en train de faire, les sous-agents qui tournent, la fenêtre de contexte
 et le coût. C'est un mod de Claude Code, séparé du plugin : il observe la session et dessine, sans rien écrire dans le
 contexte du modèle ni bloquer quoi que ce soit.</p>
@@ -99,16 +99,20 @@ cesse (chronomètres, coût, ligne en direct) est du texte natif de Claude Code,
 <p>Le mod est dans la même marketplace que Kwa. Dans Claude Code, une fois la marketplace <code>kwa</code> ajoutée
 (<a href="avant-de-commencer.html">Avant de commencer</a>) :</p>
 {code(INSTALL)}
-<p>Le Mod s'ouvre au démarrage de chaque session. La commande suivante le ferme ou le rouvre :</p>
+<p>La barre apparaît au-dessus de la zone de saisie dès le début de chaque session. Le panneau détaillé, à droite de
+la conversation, ne s'ouvre qu'à la demande : avec le bouton « Détail » de la barre, ou avec la commande suivante, qui
+l'ouvre ou le ferme :</p>
 {code(TOGGLE)}
 
 <h2 class="kw-section-title">Selon l'endroit</h2>
 <ul class="pn-list">
-<li><b>Claude Desktop et l'application mobile</b> : le dessin animé ci-dessus, en thème clair ou sombre, et les textes
-natifs dessous.</li>
-<li><b>Terminal</b> : la même information en texte, briques numérotées et étapes en dessous, avec la ligne en direct et
-un indicateur qui tourne. Quand le terminal est trop étroit pour l'afficher à droite, une ligne au-dessus du prompt la
-remplace : la brique, l'étape, les sous-agents en cours et le coût.</li>
+<li><b>Claude Desktop</b> : au-dessus de la zone de saisie, une pastille par brique du workflow (faite, en cours, à
+venir), les sous-agents qui tournent, la dernière action, le coût et le contexte. Le panneau détaillé montre le dessin
+animé ci-dessus, en thème clair ou sombre, et les textes natifs dessous.</li>
+<li><b>Terminal</b> : la même barre en une ligne de texte, avec un indicateur qui tourne sur la brique en cours. Le
+panneau détaillé y montre les briques numérotées et leurs étapes en dessous.</li>
+<li><b>Application mobile</b> : elle n'a pas de barre au-dessus du prompt ; le panneau détaillé s'y ouvre avec
+<code>/kwa-activity</code>.</li>
 </ul>
 
 <h2 class="kw-section-title">Ce qu'il ne fait pas</h2>

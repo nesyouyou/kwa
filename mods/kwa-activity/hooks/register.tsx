@@ -2,7 +2,8 @@ import { atom, read, update } from 'claude-code'
 import type { EngineInterface, Register, Timer } from 'claude-code'
 
 import type { Brick, Live, Step, Usage } from '../types'
-import { BRICK_OF, BRICKS, classify, duration, fromJournal, guardBrick, guardOf, isOver, kilo, model, money, openBrick, svg } from './workflow'
+import type { ChipState } from './workflow'
+import { BRICK_OF, BRICKS, chips, classify, duration, fromJournal, guardBrick, guardOf, isOver, kilo, model, money, openBrick, svg } from './workflow'
 
 // Rien de ce mod n'entre dans le contexte du modèle : il lit les événements et dessine, sans réécrire ni le prompt,
 // ni le texte des skills, ni celui des sous-agents.
@@ -12,7 +13,7 @@ const usage = atom({ plugin: 'kwa-activity', key: 'usage' } as const, null)
 const frame = atom({ plugin: 'kwa-activity', key: 'frame' } as const, 0)
 // une fois par seconde tant qu'une étape tourne : les chronomètres natifs du Mod (frame, 8 fois par seconde, sert au terminal)
 const beat = atom({ plugin: 'kwa-activity', key: 'beat' } as const, 0)
-const isHidden = atom({ plugin: 'kwa-activity', key: 'isHidden' } as const, false)
+const isPaneOpen = atom({ plugin: 'kwa-activity', key: 'isPaneOpen' } as const, false)
 const live = atom({ plugin: 'kwa-activity', key: 'live' } as const, null)
 const touched = atom({ plugin: 'kwa-activity', key: 'touched' } as const, [])
 const sid = atom({ plugin: 'kwa-activity', key: 'sid' } as const, null)
@@ -20,6 +21,7 @@ const branch = atom({ plugin: 'kwa-activity', key: 'branch' } as const, null)
 
 const PANE = 'kwa-progress'
 const KEEP = 200
+const GLYPH: Record<ChipState, string> = { run: '●', open: '●', done: '✓', denied: '✕', passed: '–', next: '○' }
 const SPIN = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏']
 
 let tick: Timer | null = null
@@ -51,7 +53,7 @@ async function animate($: EngineInterface) {
 }
 
 // Sans surface attachée (session lancée avant Desktop ou le terminal), l'ouverture peut échouer : le mod continue,
-// et le relevé périodique la retente tant que le panneau n'existe pas et que la personne ne l'a pas fermé.
+// et le relevé périodique la retente tant que le panneau est demandé et n'existe pas.
 async function openPane($: EngineInterface): Promise<{ isPlaced: boolean }> {
   try {
     return await $.ui.open({ id: PANE, title: 'Kwa · workflow' })
@@ -104,7 +106,8 @@ async function syncJournal($: EngineInterface) {
 async function refresh($: EngineInterface) {
   // sans journal lisible (pas de Kwa, dossier absent), le Mod suit la session en direct, comme avant
   await syncJournal($).catch(() => undefined)
-  if (!(await read($, isHidden)) && !(await $.ui.panes()).some(p => p.id === PANE)) await openPane($)
+  // la barre au-dessus du prompt est l'affichage par défaut ; le panneau latéral ne s'ouvre que demandé
+  if ((await read($, isPaneOpen)) && !(await $.ui.panes()).some(p => p.id === PANE)) await openPane($)
   const u = await $.session.usage()
   const next: Usage = { usd: u.cost?.usd ?? null, tokens: u.context.tokens ?? null, window: u.context.window, percent: u.context.percent ?? null }
   await update($, usage, prev => (prev && prev.usd === next.usd && prev.tokens === next.tokens ? prev : next))
@@ -124,9 +127,23 @@ async function refresh($: EngineInterface) {
 
 const isPlaced = async ($: EngineInterface) => (await $.ui.panes()).some(p => p.id === PANE && p.isPlaced)
 
+// /kwa-activity et le bouton de la barre : un panneau en attente de place (terminal étroit) n'est pas visible, la
+// demande l'affiche au lieu de le fermer.
+async function togglePane($: EngineInterface): Promise<string> {
+  if (await isPlaced($)) {
+    await $.ui.close({ id: PANE })
+    unfold.clear()  // le hook ui.close ne voit pas forcément la fermeture faite par ce mod lui-même
+    await update($, isPaneOpen, () => false)
+    return 'Panneau du Mod Kwa fermé : la barre au-dessus du prompt reste. /kwa-activity pour le rouvrir.'
+  }
+  await update($, isPaneOpen, () => true)
+  const r = await openPane($)
+  return r.isPlaced ? 'Panneau du Mod Kwa ouvert.' : 'Panneau du Mod Kwa demandé, en attente de place : la barre le remplace.'
+}
+
 export const register: Register = on => {
   on('session.start', async ($, e, next) => {
-    await $.command.register({ name: 'kwa-activity', description: 'Afficher le Mod Kwa (workflow et coût), ou le masquer' })
+    await $.command.register({ name: 'kwa-activity', description: 'Ouvrir ou fermer le panneau détaillé du Mod Kwa (la barre au-dessus du prompt reste)' })
     try {
       const policy = JSON.parse(await $.fs.read('.claude/kwa.policy.json'))
       verify = Array.isArray(policy?.verify?.commands) ? policy.verify.commands.filter((c: unknown) => typeof c === 'string') : []
@@ -139,26 +156,15 @@ export const register: Register = on => {
     return next(e)
   })
 
-  on('command.run', { command: 'kwa-activity' }, async $ => {
-    // un panneau en attente de place (terminal étroit) n'est pas visible : la commande l'affiche au lieu de le fermer
-    if (await isPlaced($)) {
-      await $.ui.close({ id: PANE })
-      unfold.clear()  // le hook ui.close ne voit pas forcément la fermeture faite par ce mod lui-même
-      await update($, isHidden, () => true)
-      return { text: 'Mod Kwa fermé. /kwa-activity pour le rouvrir.' }
-    }
-    await update($, isHidden, () => false)
-    const r = await openPane($)
-    return { text: r.isPlaced ? 'Mod Kwa ouvert.' : 'Mod Kwa ouvert, en attente de place : le bandeau le remplace.' }
-  })
+  on('command.run', { command: 'kwa-activity' }, async $ => ({ text: await togglePane($) }))
 
-  // Quelle que soit la façon de fermer le Mod (commande, marque, touche) : à la réouverture, l'anneau se remplit de
+  // Quelle que soit la façon de fermer le panneau (commande, marque, touche) : à la réouverture, l'anneau se remplit de
   // nouveau et rien ne se déplie pour une brique quittée entre-temps. Fermé à la main, il le reste
-  // jusqu'à /kwa-activity ou la prochaine session (isHidden est un état de session).
+  // jusqu'à /kwa-activity (isPaneOpen est un état de session).
   on('ui.close', async ($, e, next) => {
     if (e.id === PANE) {
       unfold.clear()
-      if (e.origin.kind === 'person') await update($, isHidden, () => true)
+      if (e.origin.kind === 'person') await update($, isPaneOpen, () => false)
     }
     return next(e)
   })
@@ -342,20 +348,68 @@ export const register: Register = on => {
     )
   })
 
-  // Secours : quand le panneau ne peut pas s'afficher, une ligne au-dessus du prompt dit l'essentiel.
+  // La barre au-dessus du prompt, l'affichage par défaut du Mod : le workflow en pastilles, ce qui tourne, la dernière
+  // action, le coût et le contexte. Le panneau latéral en est le détail, ouvert à la demande.
   on('ui.render', { component: 'AbovePrompt' }, async ($, e, next) => {
+    if (e.props.hasSurvey) return next(e)
     const list = await read($, steps)
-    if (e.props.hasSurvey || (await read($, isHidden)) || !list.length || (await isPlaced($))) return next(e)
-    const { Text } = $.ui.resolve(e)
-    const last = list[list.length - 1]!
-    const label = BRICKS.find(([b]) => b === last.brick)![1]
-    const running = list.filter(x => x.kind === 'agent' && x.endedAt === null).length
     const u = await read($, usage)
+    const t = await read($, touched)
+    const act = await read($, live)
+    const now = await $.clock.now()
+    const m = model(list, now, (await read($, first)) ?? undefined, { touched: t, current: t[t.length - 1] ?? null }, await read($, branch))
+    // sans skill, sans branche parlante et sans activité, le parcours par défaut ne dirait rien : seulement le coût
+    const shown = m.detected || list.length > 0 || t.length > 0 ? chips(m) : []
+    const agents = list.filter(x => x.kind === 'agent' && x.endedAt === null).length
+    const cost = [u?.usd != null ? money(u.usd) : null, u?.percent != null ? `contexte ${Math.round(u.percent)} %` : null].filter(Boolean).join(' · ')
+    const ago = act ? `${act.byAgent ? 'un sous-agent ' : ''}${act.label} · il y a ${duration(now - act.at)}` : null
+    if (!shown.length && !cost) return next(e)
+    const color = (st: ChipState) => (st === 'run' || st === 'open' ? 'claude' : st === 'done' ? 'success' : st === 'denied' ? 'error' : undefined)
+
+    if (e.surface === 'desktop') {
+      const { Box, Text, Button } = $.ui.resolve(e)
+      await read($, beat)  // « il y a 3 s » avance chaque seconde tant qu'une étape tourne
+      const paneOpen = await isPlaced($)
+      return (
+        <Box flexDirection="row" alignItems="center" columnGap={1} width="100%">
+          {shown.length > 0 && <Text key="title" dimColor wrap="truncate">{m.title}</Text>}
+          {shown.map(c => (
+            <Box key={c.brick} borderStyle="round" paddingX={1} flexShrink={0}
+              borderColor={color(c.state)} borderDimColor={!color(c.state)}>
+              <Text color={color(c.state)} bold={c.state === 'run' || c.state === 'open'} dimColor={!color(c.state)}>
+                {GLYPH[c.state]} {c.label}
+              </Text>
+            </Box>
+          ))}
+          {agents > 0 && (
+            <Box key="agents" borderStyle="round" paddingX={1} flexShrink={0} borderColor="claude">
+              <Text color="claude">{agents} sous-agent{agents > 1 ? 's' : ''}</Text>
+            </Box>
+          )}
+          {ago && <Box key="live" flexShrink={1} minWidth={0}><Text dimColor wrap="truncate"><Text color="claude">◆ </Text>{ago}</Text></Box>}
+          <Box key="gap" flexGrow={1} />
+          {cost && <Text key="cost" dimColor wrap="truncate">{cost}</Text>}
+          <Button key="pane" label={paneOpen ? 'Masquer le détail' : 'Détail'} onPress={() => togglePane($)} />
+        </Box>
+      )
+    }
+
+    // terminal : la même barre en une ligne, l'indicateur tourne sur la brique en cours
+    const { Text } = $.ui.resolve(e)
+    const n = list.some(x => x.endedAt === null) ? await read($, frame) : 0
     return (
       <Text wrap="truncate">
-        <Text color="claude">◆ </Text>
-        <Text bold>{label}</Text>
-        <Text dimColor> · {last.name}{running ? ` · ${running} sous-agent${running > 1 ? 's' : ''} en cours` : ''}{u?.usd != null ? ` · ${money(u.usd)}` : ''}</Text>
+        {shown.length > 0 && <Text dimColor>{m.title}  </Text>}
+        {shown.map((c, i) => (
+          <Text key={c.brick}>
+            {i > 0 && <Text dimColor> › </Text>}
+            <Text color={color(c.state)} bold={c.state === 'run' || c.state === 'open'} dimColor={!color(c.state)}>
+              {c.state === 'run' ? SPIN[n % SPIN.length] : GLYPH[c.state]} {c.label}
+            </Text>
+          </Text>
+        ))}
+        {agents > 0 && <Text color="claude">  {agents} sous-agent{agents > 1 ? 's' : ''}</Text>}
+        {cost && <Text dimColor>{shown.length ? '  ·  ' : ''}{cost}</Text>}
       </Text>
     )
   })

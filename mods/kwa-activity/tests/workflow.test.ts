@@ -1,5 +1,5 @@
 import { expect, test } from 'claude-code/testing'
-import { classify, fromJournal, isOver, model, openBrick, svg } from '../hooks/workflow'
+import { chips, classify, fromJournal, isOver, model, openBrick, svg } from '../hooks/workflow'
 
 const step = (id: string, kind: 'skill' | 'agent' | 'garde', name: string, brick: 'cadrer' | 'faire' | 'prouver' | 'relire' | 'livrer' | 'capitaliser', endedAt: number | null) =>
   ({ id, kind, name, task: '', brick, startedAt: 0, endedAt, isAborted: false })
@@ -197,4 +197,13 @@ test('le journal de Kwa redevient des étapes du Mod, et la branche dit le workf
   expect(byBranch.why).toContain('branche fix/14-panier-promo')
   expect(model([], 0, '/kwa:review', undefined, 'fix/14-x').title).toBe('Relire')   // la skill prime sur la branche
   expect(model([], 0, null, undefined, 'main').detected).toBe(false)
+})
+
+test('la barre a une pastille par brique du workflow, avec son état', async () => {
+  const m = model([step('1', 'skill', '/kwa:debug', 'cadrer', 10), step('2', 'garde', 'guard-write', 'faire', 20), step('3', 'skill', '/kwa:tdd', 'prouver', null)], 30)
+  expect(chips(m).map(c => `${c.label}:${c.state}`)).toEqual(['Cadrer:done', 'Faire:denied', 'Prouver:run', 'Livrer:next', 'Capitaliser:next'])
+  // sans skill, la brique où les outils travaillent est ouverte, celles qu'ils ont touchées sont faites
+  const t = chips(model([], 0, null, { touched: ['cadrer', 'faire'], current: 'faire' }))
+  expect(t.find(c => c.brick === 'cadrer')!.state).toBe('done')
+  expect(t.find(c => c.brick === 'faire')!.state).toBe('open')
 })

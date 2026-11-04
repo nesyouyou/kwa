@@ -269,6 +269,22 @@ export function openBrick(m: Model): Brick | null {
   return reached.length ? reached[reached.length - 1]!.brick : null
 }
 
+// Les pastilles de la barre au-dessus du prompt : une par brique du workflow (ou touchée par les outils), dans l'ordre.
+// run : une étape y tourne ; open : la brique ouverte ; done : une étape y est faite ou les outils y ont travaillé ;
+// denied : seul un garde y a refusé ; passed : sautée ; next : à venir.
+export type ChipState = 'run' | 'open' | 'done' | 'denied' | 'passed' | 'next'
+export type Chip = { brick: Brick; label: string; state: ChipState }
+export function chips(m: Model): Chip[] {
+  const open = openBrick(m)
+  return BRICKS.filter(([b]) => m.rows.some(r => r.brick === b) || m.touched.includes(b)).map(([brick, label]) => {
+    const rows = m.rows.filter(r => r.brick === brick)
+    const has = (...st: Status[]) => rows.some(r => st.includes(r.status))
+    const state: ChipState = has('run') ? 'run' : brick === open ? 'open' : has('done', 'aborted') || m.touched.includes(brick) ? 'done'
+      : has('denied') ? 'denied' : has('passed') ? 'passed' : 'next'
+    return { brick, label, state }
+  })
+}
+
 // Le dessin : un logigramme vertical. Chaque brique est un cadre ; fermée, elle montre une pastille par étape ;
 // ouverte, une boîte par étape, reliées par des flèches qui descendent.
 // `unfoldAgo` : depuis combien de millisecondes on est entré dans la brique ouverte. Tant que le dépliage n'est

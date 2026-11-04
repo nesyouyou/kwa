@@ -65,7 +65,7 @@ test('le panneau suit les briques, les skills, les sous-agents et le coût', asy
   await ui.unmount()
 })
 
-test('sans place pour le panneau, le bandeau prend le relais ; le texte des skills reste intact', async ($, on) => {
+test('dans le terminal, la barre suit la session en une ligne ; le texte des skills reste intact', async ($, on) => {
   engine(on, false)
   await $.session.start({ source: 'startup', cwd: '/tmp', surface: 'terminal', isInteractive: true } as Parameters<typeof $.session.start>[0])
   const out = await $.skill.prompt({ skill: 'kwa:tdd', text: 'Test d’abord.' })
@@ -86,7 +86,7 @@ test('une skill hors Kwa est ignorée ; la commande affiche un panneau en attent
   await band.unmount()
   const r = await $.command.run({ command: 'kwa-activity', args: '' } as Parameters<typeof $.command.run>[0])
   expect(closed.n).toBe(0)
-  expect(JSON.stringify(r)).toContain('ouvert')
+  expect(JSON.stringify(r)).toContain('en attente de place')
 })
 
 test('un sous-agent que le moteur dit fini est clos, même sans fin de tour', async ($, on) => {
@@ -148,18 +148,45 @@ test('fermé par la commande, le Mod repart de zéro : l\u2019anneau se remplit 
   expect(await src()).toContain(ring)                             // rouvert : il se remplit de nouveau
 })
 
-test('sans surface au démarrage, le mod démarre quand même et rouvre son panneau au relevé suivant', async ($, on) => {
+test('sans surface, le panneau demandé est rouvert au relevé suivant', async ($, on) => {
   let bare = true
   let opens = 0
   const clock = engine(on, true, { noSurface: () => { opens++; return bare } })
   await $.session.start({ source: 'startup', cwd: '/tmp', surface: 'terminal', isInteractive: true } as Parameters<typeof $.session.start>[0])
-  expect(opens).toBe(1)
-  // la commande est bien enregistrée malgré l'échec de l'ouverture
+  expect(opens).toBe(0)   // par défaut, seule la barre : le panneau ne s'ouvre pas
+  // la commande est bien enregistrée, et demande le panneau malgré l'échec de l'ouverture
   const r = await $.command.run({ command: 'kwa-activity', args: '' } as Parameters<typeof $.command.run>[0])
   expect(JSON.stringify(r)).toContain('Mod Kwa')
   bare = false
   await clock.advance(4000)
-  expect(opens).toBeGreaterThanOrEqual(3)   // l'ouverture du démarrage, celle de la commande, puis celle du relevé
+  expect(opens).toBeGreaterThanOrEqual(2)   // celle de la commande, puis celle du relevé
+})
+
+test('par défaut, la barre au-dessus du prompt montre le workflow en pastilles, sans ouvrir le panneau', async ($, on) => {
+  let opens = 0
+  engine(on, true, { noSurface: () => { opens++; return false } })
+  await $.session.start({ source: 'startup', cwd: '/tmp', surface: 'desktop', isInteractive: true } as Parameters<typeof $.session.start>[0])
+  expect(opens).toBe(0)
+  await $.skill.prompt({ skill: 'kwa:debug', text: 'x' })
+  await $.skill.prompt({ skill: 'kwa:tdd', text: 'x' })
+  const band = await $.ui.mount({ ...BAND, surface: 'desktop' })
+  expect(await band.find({ type: 'Text', text: /Corriger un bug/ })).toBeDefined()
+  expect(await band.find({ type: 'Text', text: /✓ Cadrer/ })).toBeDefined()
+  expect(await band.find({ type: 'Text', text: /● Prouver/ })).toBeDefined()
+  expect(await band.find({ type: 'Text', text: /○ Livrer/ })).toBeDefined()
+  expect(await band.find({ type: 'Text', text: /0,42 \$ · contexte 38 %/ })).toBeDefined()
+  await band.press({ key: 'pane' })   // le bouton Détail ouvre le panneau latéral
+  expect(opens).toBe(1)
+  await band.unmount()
+})
+
+test('sans skill ni activité, la barre ne montre que le coût et le contexte', async ($, on) => {
+  engine(on)
+  await $.session.start({ source: 'startup', cwd: '/tmp', surface: 'desktop', isInteractive: true } as Parameters<typeof $.session.start>[0])
+  const band = await $.ui.mount({ ...BAND, surface: 'desktop' })
+  expect(await band.find({ type: 'Text', text: /Cadrer/ })).toBeUndefined()
+  expect(await band.find({ type: 'Text', text: /contexte 38 %/ })).toBeDefined()
+  await band.unmount()
 })
 
 test('le schéma ne change pas pendant qu\u2019une étape tourne : seuls les textes natifs avancent', async ($, on) => {
