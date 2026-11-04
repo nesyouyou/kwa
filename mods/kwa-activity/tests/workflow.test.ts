@@ -1,5 +1,5 @@
 import { expect, test } from 'claude-code/testing'
-import { chips, classify, fromJournal, isOver, model, openBrick, svg } from '../hooks/workflow'
+import { classify, fromJournal, isOver, model, openBrick, stepper, svg, toolReached, touch } from '../hooks/workflow'
 
 const step = (id: string, kind: 'skill' | 'agent' | 'garde', name: string, brick: 'cadrer' | 'faire' | 'prouver' | 'relire' | 'livrer' | 'capitaliser', endedAt: number | null) =>
   ({ id, kind, name, task: '', brick, startedAt: 0, endedAt, isAborted: false })
@@ -184,7 +184,7 @@ test('le journal de Kwa redevient des étapes du Mod, et la branche dit le workf
   const r = fromJournal(lines)
   expect(r.branch).toBe('fix/14-panier-promo')
   expect(r.first).toBe('/kwa:debug')
-  expect(r.touched).toEqual(['faire', 'cadrer'])
+  expect(r.touched).toEqual(['cadrer', 'faire'])   // une lecture après une modification ne ramène pas en Cadrer
   expect(r.steps.map(s => `${s.kind}:${s.name}:${s.brick}:${s.endedAt}`)).toEqual([
     'skill:/kwa:debug:cadrer:108000', 'agent:kwa:reviewer:relire:107000', 'garde:guard-write:faire:105000',
     'skill:/kwa:tdd:prouver:110000',   // sans fin dans le journal : close à son dernier événement
@@ -199,11 +199,23 @@ test('le journal de Kwa redevient des étapes du Mod, et la branche dit le workf
   expect(model([], 0, null, undefined, 'main').detected).toBe(false)
 })
 
-test('la barre a une pastille par brique du workflow, avec son état', async () => {
+test('la barre est un pas à pas : une seule brique en cours, les autres derrière ou devant', async () => {
   const m = model([step('1', 'skill', '/kwa:debug', 'cadrer', 10), step('2', 'garde', 'guard-write', 'faire', 20), step('3', 'skill', '/kwa:tdd', 'prouver', null)], 30)
-  expect(chips(m).map(c => `${c.label}:${c.state}`)).toEqual(['Cadrer:done', 'Faire:denied', 'Prouver:run', 'Livrer:next', 'Capitaliser:next'])
-  // sans skill, la brique où les outils travaillent est ouverte, celles qu'ils ont touchées sont faites
-  const t = chips(model([], 0, null, { touched: ['cadrer', 'faire'], current: 'faire' }))
-  expect(t.find(c => c.brick === 'cadrer')!.state).toBe('done')
-  expect(t.find(c => c.brick === 'faire')!.state).toBe('open')
+  const st = stepper(m)
+  expect(st.bricks.map(b => `${b.label}:${b.pos}`)).toEqual(['Cadrer:behind', 'Faire:behind', 'Prouver:current', 'Livrer:ahead', 'Capitaliser:ahead'])
+  expect(st.current).toBe('Prouver')
+  expect(st.step).toBe('/kwa:tdd')
+})
+
+test('les outils ne laissent pas plusieurs briques allumées', async () => {
+  // lire un fichier pendant qu'on modifie le code ne ramène pas en Cadrer
+  let t = touch(touch([], 'cadrer'), 'faire')
+  expect(touch(t, 'cadrer')).toEqual(['cadrer', 'faire'])
+  // un commit, puis de nouveau du code : la brique en cours redevient Faire, et Livrer n'est plus atteinte
+  t = touch(touch(t, 'livrer'), 'faire')
+  expect(t[t.length - 1]).toBe('faire')
+  const m = model([], 0, null, { touched: t, current: 'faire' })
+  expect(stepper(m).bricks.filter(b => b.pos === 'current').map(b => b.brick)).toEqual(['faire'])
+  expect(toolReached(m, 'cadrer')).toBe(true)
+  expect(toolReached(m, 'livrer')).toBe(false)   // ni dans la barre, ni dans le schéma du panneau
 })

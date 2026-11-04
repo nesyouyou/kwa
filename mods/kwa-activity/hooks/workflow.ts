@@ -120,7 +120,7 @@ export function fromJournal(text: string): Restored {
       steps.push({ ...base, kind: 'garde', name: g, brick: guardBrick(g, lastSkill()?.brick), endedAt: t })
     } else if (e.kind === 'tool' && BRICKS.some(([b]) => b === e.brick)) {
       const b = e.brick as Brick
-      if (touched[touched.length - 1] !== b) touched.splice(0, touched.length, ...touched.filter(x => x !== b), b)
+      touched.splice(0, touched.length, ...touch(touched, b))
     }
   })
   const end = events.length ? at(events[events.length - 1]!) : 0
@@ -269,20 +269,34 @@ export function openBrick(m: Model): Brick | null {
   return reached.length ? reached[reached.length - 1]!.brick : null
 }
 
-// Les pastilles de la barre au-dessus du prompt : une par brique du workflow (ou touchée par les outils), dans l'ordre.
-// run : une étape y tourne ; open : la brique ouverte ; done : une étape y est faite ou les outils y ont travaillé ;
-// denied : seul un garde y a refusé ; passed : sautée ; next : à venir.
-export type ChipState = 'run' | 'open' | 'done' | 'denied' | 'passed' | 'next'
-export type Chip = { brick: Brick; label: string; state: ChipState }
-export function chips(m: Model): Chip[] {
+const order = (b: Brick) => BRICKS.findIndex(([x]) => x === b)
+
+// La brique où les outils travaillent passe en dernier de `touched`, dont le dernier élément est la brique en cours.
+// Lire un fichier se fait à toutes les étapes : une lecture ne ramène pas la session en Cadrer depuis une brique
+// plus loin, elle ne fait qu'y compter Cadrer comme touchée.
+export function touch(list: Brick[], b: Brick): Brick[] {
+  const last = list[list.length - 1]
+  if (last === b) return list
+  if (b === 'cadrer' && last && order(last) > order(b)) return list.includes(b) ? list : [b, ...list]
+  return [...list.filter(x => x !== b), b]
+}
+
+// Une brique touchée par les outils ne compte comme atteinte que si elle ne dépasse pas la brique en cours : un
+// commit d'il y a une heure n'allume pas Livrer pendant qu'on modifie de nouveau le code.
+export const toolReached = (m: Model, b: Brick) => m.touched.includes(b) && m.current !== null && order(b) <= order(m.current)
+
+// La barre au-dessus du prompt : un pas à pas d'une ligne, une seule brique allumée à la fois. Les briques du
+// workflow (et celle en cours si elle n'y est pas), chacune derrière, en cours ou devant ; la brique en cours et
+// l'étape qui y tourne.
+export type Pos = 'behind' | 'current' | 'ahead'
+export type Stepper = { bricks: { brick: Brick; label: string; pos: Pos }[]; current: string | null; step: string | null }
+export function stepper(m: Model): Stepper {
   const open = openBrick(m)
-  return BRICKS.filter(([b]) => m.rows.some(r => r.brick === b) || m.touched.includes(b)).map(([brick, label]) => {
-    const rows = m.rows.filter(r => r.brick === brick)
-    const has = (...st: Status[]) => rows.some(r => st.includes(r.status))
-    const state: ChipState = has('run') ? 'run' : brick === open ? 'open' : has('done', 'aborted') || m.touched.includes(brick) ? 'done'
-      : has('denied') ? 'denied' : has('passed') ? 'passed' : 'next'
-    return { brick, label, state }
-  })
+  const at = open ? order(open) : -1
+  const bricks = BRICKS.filter(([b]) => b === open || m.rows.some(r => r.brick === b))
+    .map(([brick, label]) => ({ brick, label, pos: (brick === open ? 'current' : order(brick) < at ? 'behind' : 'ahead') as Pos }))
+  const run = m.rows.find(r => r.status === 'run' && r.brick === open)
+  return { bricks, current: open ? BRICKS[at]![1] : null, step: run ? (run.kind === 'agent' ? run.name.replace(/^kwa:/, '') : run.name) : null }
 }
 
 // Le dessin : un logigramme vertical. Chaque brique est un cadre ; fermée, elle montre une pastille par étape ;
@@ -361,7 +375,7 @@ export function svg(m: Model, u: Usage | null, sessionMs: number, { unfoldAgo = 
     const color = BRICK_COLOR[b]
     const isOpen = b === open
     const live = rows.some(r => r.status === 'run')
-    const reached = rows.some(reachedRow) || m.touched.includes(b)
+    const reached = rows.some(reachedRow) || toolReached(m, b)
     const isDone = !isOpen && rows.some(r => r.status === 'done') && rows.every(r => r.status === 'done' || r.status === 'passed')
     const denied = rows.reduce((n, r) => n + (r.status === 'denied' ? r.count ?? 1 : 0), 0)
     let out = ''

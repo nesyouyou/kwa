@@ -78,7 +78,8 @@ déduit l'avancement :</p>
 <ul class="pn-list">
 <li><b>Une skill Kwa démarre</b> : c'est une étape, rangée dans sa brique (<code>debug</code> en Cadrer,
 <code>tdd</code> en Prouver, <code>ship</code> en Livrer…). La première de la session désigne le workflow.</li>
-<li><b>Un outil est appelé</b> : le Mod en déduit la brique, même sans skill.</li>
+<li><b>Un outil est appelé</b> : le Mod en déduit la brique en cours, même sans skill. Une lecture ne ramène pas en
+Cadrer une session déjà plus loin, et une brique dépassée par la brique en cours ne reste pas allumée.</li>
 <li><b>Un sous-agent part ou revient</b> : il est compté. Le moteur confirme toutes les quatre secondes ceux qui ont
 fini, au cas où leur fin n'aurait pas été signalée.</li>
 <li><b>Un garde de Kwa refuse</b> : une étape rouge. L'action refusée n'a pas eu lieu, elle ne compte pas comme activité.</li>
@@ -106,11 +107,11 @@ l'ouvre ou le ferme :</p>
 
 <h2 class="kw-section-title">Selon l'endroit</h2>
 <ul class="pn-list">
-<li><b>Claude Desktop</b> : au-dessus de la zone de saisie, une pastille par brique du workflow (faite, en cours, à
-venir), les sous-agents qui tournent, la dernière action, le coût et le contexte. Le panneau détaillé montre le dessin
-animé ci-dessus, en thème clair ou sombre, et les textes natifs dessous.</li>
-<li><b>Terminal</b> : la même barre en une ligne de texte, avec un indicateur qui tourne sur la brique en cours. Le
-panneau détaillé y montre les briques numérotées et leurs étapes en dessous.</li>
+<li><b>Claude Desktop</b> : au-dessus de la zone de saisie, une ligne pas à pas. Un point par brique du workflow, une
+seule allumée à la fois, suivie de son nom et de l'étape qui y tourne, puis les sous-agents en cours, le coût et le
+contexte. Le panneau détaillé montre le dessin animé ci-dessus, en thème clair ou sombre, et les textes natifs dessous.</li>
+<li><b>Terminal</b> : la même ligne, avec un indicateur qui tourne sur la brique en cours. Le panneau détaillé y montre
+les briques numérotées et leurs étapes en dessous.</li>
 <li><b>Application mobile</b> : elle n'a pas de barre au-dessus du prompt ; le panneau détaillé s'y ouvre avec
 <code>/kwa-activity</code>.</li>
 </ul>

@@ -162,7 +162,7 @@ test('sans surface, le panneau demandé est rouvert au relevé suivant', async (
   expect(opens).toBeGreaterThanOrEqual(2)   // celle de la commande, puis celle du relevé
 })
 
-test('par défaut, la barre au-dessus du prompt montre le workflow en pastilles, sans ouvrir le panneau', async ($, on) => {
+test('par défaut, la barre au-dessus du prompt montre le workflow pas à pas, sans ouvrir le panneau', async ($, on) => {
   let opens = 0
   engine(on, true, { noSurface: () => { opens++; return false } })
   await $.session.start({ source: 'startup', cwd: '/tmp', surface: 'desktop', isInteractive: true } as Parameters<typeof $.session.start>[0])
@@ -170,10 +170,11 @@ test('par défaut, la barre au-dessus du prompt montre le workflow en pastilles,
   await $.skill.prompt({ skill: 'kwa:debug', text: 'x' })
   await $.skill.prompt({ skill: 'kwa:tdd', text: 'x' })
   const band = await $.ui.mount({ ...BAND, surface: 'desktop' })
-  expect(await band.find({ type: 'Text', text: /Corriger un bug/ })).toBeDefined()
-  expect(await band.find({ type: 'Text', text: /✓ Cadrer/ })).toBeDefined()
-  expect(await band.find({ type: 'Text', text: /● Prouver/ })).toBeDefined()
-  expect(await band.find({ type: 'Text', text: /○ Livrer/ })).toBeDefined()
+  // une seule brique allumée : Prouver, avec l'étape qui y tourne ; un point par brique du workflow de bug
+  expect(await band.find({ type: 'Text', text: /^Prouver$/ })).toBeDefined()
+  expect(await band.find({ type: 'Text', text: /\/kwa:tdd/ })).toBeDefined()
+  expect(await band.find({ type: 'Text', text: /Cadrer|Livrer/ })).toBeUndefined()
+  expect(JSON.stringify(await band.find({ type: 'Text', text: /◉/ }))).toContain('claude')
   expect(await band.find({ type: 'Text', text: /0,42 \$ · contexte 38 %/ })).toBeDefined()
   await band.press({ key: 'pane' })   // le bouton Détail ouvre le panneau latéral
   expect(opens).toBe(1)

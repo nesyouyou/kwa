@@ -2,8 +2,8 @@ import { atom, read, update } from 'claude-code'
 import type { EngineInterface, Register, Timer } from 'claude-code'
 
 import type { Brick, Live, Step, Usage } from '../types'
-import type { ChipState } from './workflow'
-import { BRICK_OF, BRICKS, chips, classify, duration, fromJournal, guardBrick, guardOf, isOver, kilo, model, money, openBrick, svg } from './workflow'
+import type { Pos } from './workflow'
+import { BRICK_OF, BRICKS, classify, duration, fromJournal, guardBrick, guardOf, isOver, kilo, model, money, openBrick, stepper, svg, touch } from './workflow'
 
 // Rien de ce mod n'entre dans le contexte du modèle : il lit les événements et dessine, sans réécrire ni le prompt,
 // ni le texte des skills, ni celui des sous-agents.
@@ -21,7 +21,7 @@ const branch = atom({ plugin: 'kwa-activity', key: 'branch' } as const, null)
 
 const PANE = 'kwa-progress'
 const KEEP = 200
-const GLYPH: Record<ChipState, string> = { run: '●', open: '●', done: '✓', denied: '✕', passed: '–', next: '○' }
+const DOT: Record<Pos, string> = { behind: '●', current: '◉', ahead: '○' }
 const SPIN = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏']
 
 let tick: Timer | null = null
@@ -219,7 +219,7 @@ export const register: Register = on => {
       await update($, live, (): Live => ({ label: seen.label, brick: seen.brick, at: now, byAgent }))
       if (seen.brick && !byAgent) {
         const b = seen.brick
-        await update($, touched, l => (l[l.length - 1] === b ? l : [...l.filter(x => x !== b), b]))
+        await update($, touched, l => touch(l, b))
       }
     }
     return r
@@ -348,69 +348,45 @@ export const register: Register = on => {
     )
   })
 
-  // La barre au-dessus du prompt, l'affichage par défaut du Mod : le workflow en pastilles, ce qui tourne, la dernière
-  // action, le coût et le contexte. Le panneau latéral en est le détail, ouvert à la demande.
+  // La barre au-dessus du prompt, l'affichage par défaut du Mod : une ligne, une seule brique allumée. Un point par
+  // brique du workflow, le nom de la brique en cours et l'étape qui y tourne, les sous-agents, le coût et le contexte.
+  // Le détail (étapes, dernière action, chronomètres) est dans le panneau latéral, ouvert à la demande.
   on('ui.render', { component: 'AbovePrompt' }, async ($, e, next) => {
     if (e.props.hasSurvey) return next(e)
     const list = await read($, steps)
     const u = await read($, usage)
     const t = await read($, touched)
-    const act = await read($, live)
-    const now = await $.clock.now()
-    const m = model(list, now, (await read($, first)) ?? undefined, { touched: t, current: t[t.length - 1] ?? null }, await read($, branch))
+    const m = model(list, await $.clock.now(), (await read($, first)) ?? undefined, { touched: t, current: t[t.length - 1] ?? null }, await read($, branch))
     // sans skill, sans branche parlante et sans activité, le parcours par défaut ne dirait rien : seulement le coût
-    const shown = m.detected || list.length > 0 || t.length > 0 ? chips(m) : []
+    const st = m.detected || list.length > 0 || t.length > 0 ? stepper(m) : null
     const agents = list.filter(x => x.kind === 'agent' && x.endedAt === null).length
     const cost = [u?.usd != null ? money(u.usd) : null, u?.percent != null ? `contexte ${Math.round(u.percent)} %` : null].filter(Boolean).join(' · ')
-    const ago = act ? `${act.byAgent ? 'un sous-agent ' : ''}${act.label} · il y a ${duration(now - act.at)}` : null
-    if (!shown.length && !cost) return next(e)
-    const color = (st: ChipState) => (st === 'run' || st === 'open' ? 'claude' : st === 'done' ? 'success' : st === 'denied' ? 'error' : undefined)
-
-    if (e.surface === 'desktop') {
-      const { Box, Text, Button } = $.ui.resolve(e)
-      await read($, beat)  // « il y a 3 s » avance chaque seconde tant qu'une étape tourne
-      const paneOpen = await isPlaced($)
-      return (
-        <Box flexDirection="row" alignItems="center" columnGap={1} width="100%">
-          {shown.length > 0 && <Text key="title" dimColor wrap="truncate">{m.title}</Text>}
-          {shown.map(c => (
-            <Box key={c.brick} borderStyle="round" paddingX={1} flexShrink={0}
-              borderColor={color(c.state)} borderDimColor={!color(c.state)}>
-              <Text color={color(c.state)} bold={c.state === 'run' || c.state === 'open'} dimColor={!color(c.state)}>
-                {GLYPH[c.state]} {c.label}
-              </Text>
-            </Box>
-          ))}
-          {agents > 0 && (
-            <Box key="agents" borderStyle="round" paddingX={1} flexShrink={0} borderColor="claude">
-              <Text color="claude">{agents} sous-agent{agents > 1 ? 's' : ''}</Text>
-            </Box>
-          )}
-          {ago && <Box key="live" flexShrink={1} minWidth={0}><Text dimColor wrap="truncate"><Text color="claude">◆ </Text>{ago}</Text></Box>}
-          <Box key="gap" flexGrow={1} />
-          {cost && <Text key="cost" dimColor wrap="truncate">{cost}</Text>}
-          <Button key="pane" label={paneOpen ? 'Masquer le détail' : 'Détail'} onPress={() => togglePane($)} />
-        </Box>
-      )
-    }
-
-    // terminal : la même barre en une ligne, l'indicateur tourne sur la brique en cours
-    const { Text } = $.ui.resolve(e)
-    const n = list.some(x => x.endedAt === null) ? await read($, frame) : 0
-    return (
-      <Text wrap="truncate">
-        {shown.length > 0 && <Text dimColor>{m.title}  </Text>}
-        {shown.map((c, i) => (
-          <Text key={c.brick}>
-            {i > 0 && <Text dimColor> › </Text>}
-            <Text color={color(c.state)} bold={c.state === 'run' || c.state === 'open'} dimColor={!color(c.state)}>
-              {c.state === 'run' ? SPIN[n % SPIN.length] : GLYPH[c.state]} {c.label}
-            </Text>
+    if (!st && !cost) return next(e)
+    const running = list.some(x => x.endedAt === null)
+    const n = running && e.surface !== 'desktop' ? await read($, frame) : 0
+    const { Box, Text, Button } = $.ui.resolve(e)
+    const line = (
+      <Text key="line" wrap="truncate">
+        {st && st.bricks.map((b, i) => (
+          <Text key={b.brick} color={b.pos === 'current' ? 'claude' : undefined} dimColor={b.pos !== 'current'}>
+            {i > 0 ? ' ' : ''}{b.pos === 'current' && running && e.surface !== 'desktop' ? SPIN[n % SPIN.length] : DOT[b.pos]}
           </Text>
         ))}
-        {agents > 0 && <Text color="claude">  {agents} sous-agent{agents > 1 ? 's' : ''}</Text>}
-        {cost && <Text dimColor>{shown.length ? '  ·  ' : ''}{cost}</Text>}
+        {st && (st.current
+          ? <Text>  <Text bold color="claude">{st.current}</Text>{st.step && <Text dimColor> · {st.step}</Text>}</Text>
+          : <Text dimColor>  {m.title}</Text>)}
+        {agents > 0 && <Text color="claude">  · {agents} sous-agent{agents > 1 ? 's' : ''}</Text>}
       </Text>
+    )
+    if (e.surface !== 'desktop') return <Text wrap="truncate">{line}{cost && <Text dimColor>{st ? '  ·  ' : ''}{cost}</Text>}</Text>
+    const paneOpen = await isPlaced($)
+    return (
+      <Box flexDirection="row" alignItems="center" columnGap={2} width="100%">
+        <Box key="flow" flexShrink={1} minWidth={0}>{line}</Box>
+        <Box key="gap" flexGrow={1} />
+        {cost && <Text key="cost" dimColor>{cost}</Text>}
+        <Button key="pane" label={paneOpen ? 'Masquer' : 'Détail'} onPress={() => togglePane($)} />
+      </Box>
     )
   })
 }
